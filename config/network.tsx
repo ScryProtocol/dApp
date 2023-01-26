@@ -10,10 +10,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from "react";
 import React from 'react';
 
-const FTMC: Chain = {
-  id: 250,
-  name: 'Fantom',
-  network: 'fantom',
+const SepC: Chain = {
+  id: 11155111,
+  name: 'Sepolia',
+  network: 'sepolia',
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
@@ -22,17 +22,13 @@ const FTMC: Chain = {
     symbol: 'FTM',
   },
   rpcUrls: {
-    default: 'https://rpc.ftm.tools'//'https://rpc.ftm.tools/',
+    default: 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b',
   },
-  blockExplorers: {
-    default: { name: 'FTM', url: '	https://ftmscan.com/' },
-  },
-  testnet: false,
+  testnet: true,
 };
-const FTMRPC = 'https://rpc.ftm.tools/'
-const FTMA = '0x0947ef8Bf078b8201013c77C39b5f0A5Bb8f58EC'
-const FTMN = '0xBE153Eb48062ba3892C10389844643d37cedA639'
-const FTMM = <MenuItem value={'0x0947ef8Bf078b8201013c77C39b5f0A5Bb8f58EC'}>Main</MenuItem>
+const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
+const SepA = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
+const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -65,11 +61,12 @@ const PolyA = '0x00f0feed50dcdf57b4f1b532e8f5e7f291e0c84b'
 const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
-  chainn:PolyC,//chainn,
-  rpc: PolyRPC,
+  chainn:SepC,//chainn,
+  rpc: SepRPC,
     createn: PolyN,
-    contractn: PolyA,
-    menun:PolyM
+    contractn: SepA,
+    menun:SepM
 }
 
 export default envVars
+
