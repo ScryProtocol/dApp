@@ -328,7 +328,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                         </img></a>
                     </Grid><Grid xs={2}>
                       <a href='https://Sepolia.dapp.scry.finance/'>
-                        <img src='hhttps://sepolia.dev/wp-content/uploads/elementor/thumbs/the-dolphin-po0q7ezlhqqzvrfmzw0atih2l0vqelut73w4eh5qtc.png' style={{ width: 42 }}>
+                        <img src='https://sepolia.dev/wp-content/uploads/elementor/thumbs/the-dolphin-po0q7ezlhqqzvrfmzw0atih2l0vqelut73w4eh5qtc.png' style={{ width: 42 }}>
                         </img></a>
                     </Grid><Grid xs={2}>
                       <a href='https://ARB.dapp.scry.finance/'>
