@@ -27,8 +27,8 @@ const SepC: Chain = {
   testnet: true,
 };
 const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
-const SepA = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
-const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
+const SepA = '0xB504A9e1B24dD18b9400db85B29e6d79C4857C69'
+const SepM = <MenuItem value={'0xB504A9e1B24dD18b9400db85B29e6d79C4857C69'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -52,7 +52,7 @@ const BSCRPC = 'https://bsc-dataseed.binance.org/'
 const BSCA = '0x18C519E0dA619d017908aFf504e782E381552620'
 const BSCN = '0xB8112446078378f0998FBf834D4683B6C8Ac08C7'
 const BSCM = [<MenuItem value={'0x18C519E0dA619d017908aFf504e782E381552620'}>Main</MenuItem>]
-const PolyM = [<MenuItem value={'0x00f0feed50dcdf57b4f1b532e8f5e7f291e0c84b'}>Main</MenuItem>,
+const PolyM = [<MenuItem value={'0xB504A9e1B24dD18b9400db85B29e6d79C4857C69'}>Main</MenuItem>,
 <MenuItem value={'0x79ae22bf1db3938db61989e805e5cd1d5990007c'}>Demo</MenuItem>,
 ]
 const PolyC = chain.polygon
