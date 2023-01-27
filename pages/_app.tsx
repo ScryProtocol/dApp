@@ -327,8 +327,8 @@ const App = ({ Component, pageProps }: AppProps) => {
                         <img src='https://cryptologos.cc/logos/fantom-ftm-logo.png?v=023' style={{ width: 42 }}>
                         </img></a>
                     </Grid><Grid xs={2}>
-                      <a href='https://BSC.dapp.scry.finance/'>
-                        <img src='https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=023' style={{ width: 42 }}>
+                      <a href='https://Sepolia.dapp.scry.finance/'>
+                        <img src='hhttps://sepolia.dev/wp-content/uploads/elementor/thumbs/the-dolphin-po0q7ezlhqqzvrfmzw0atih2l0vqelut73w4eh5qtc.png' style={{ width: 42 }}>
                         </img></a>
                     </Grid><Grid xs={2}>
                       <a href='https://ARB.dapp.scry.finance/'>
