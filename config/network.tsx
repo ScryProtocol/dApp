@@ -27,8 +27,8 @@ const SepC: Chain = {
   testnet: true,
 };
 const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
-const SepA = '0xB504A9e1B24dD18b9400db85B29e6d79C4857C69'
-const SepM = <MenuItem value={'0xB504A9e1B24dD18b9400db85B29e6d79C4857C69'}>Main</MenuItem>
+const SepA = '0x63622676c54813C952421A3bA24ba6679AC44A4b'
+const SepM = <MenuItem value={'0x63622676c54813C952421A3bA24ba6679AC44A4b'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
