@@ -157,7 +157,7 @@ function useData() {
       if (loaded == 0) {
         toast("Loading")
       }
-      const provider2 = new ethers.providers.JsonRpcProvider('https://polygon-rpc.com')
+      const provider2 = new ethers.providers.JsonRpcProvider(rpc)
 
       Contract = new ethers.Contract(contractaddrs, Abi, provider2);
 
