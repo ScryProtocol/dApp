@@ -216,7 +216,7 @@ function useData() {
 
       updateUIStates()
 
-    }, 30000);
+    }, 3000);
     // clearing interval
     return () => clearInterval(timer);
   },);
