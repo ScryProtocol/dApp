@@ -22,11 +22,11 @@ const Opt: Chain = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    default: 'https://mainnet.optimism.io',
+    default: 'https://endpoints.omniatech.io/v1/op/mainnet/public',
   },
   testnet: true,
 };
-const RPC = 'https://mainnet.optimism.io'
+const RPC = 'https://endpoints.omniatech.io/v1/op/mainnet/public'
 const A = '0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'
 const M = <MenuItem value={'0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'}>Main</MenuItem>
 const BSCC: Chain = {
