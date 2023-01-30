@@ -10,25 +10,25 @@ import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from "react";
 import React from 'react';
 
-const SepC: Chain = {
-  id: 11155111,
-  name: 'Sepolia',
-  network: 'sepolia',
+const Opt: Chain = {
+  id: 10,
+  name: 'Optimism',
+  network: 'Optimism',
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'Ethereum',
+    symbol: 'ETH',
   },
   rpcUrls: {
-    default: 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b',
+    default: 'https://mainnet.optimism.io',
   },
   testnet: true,
 };
-const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
-const SepA = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
-const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
+const RPC = 'https://mainnet.optimism.io'
+const A = '0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'
+const M = <MenuItem value={'0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -61,11 +61,11 @@ const PolyA = '0x00f0feed50dcdf57b4f1b532e8f5e7f291e0c84b'
 const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
-  chainn:PolyC,//chainn,
-  rpc: PolyRPC,
+  chainn:Opt,//chainn,
+  rpc: RPC,
     createn: PolyN,
-    contractn: PolyA,
-    menun:PolyM
+    contractn: A,
+    menun:M
 }
 
 export default envVars
