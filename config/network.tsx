@@ -58,7 +58,7 @@ const PolyM = [<MenuItem value={'0x00f0feed50dcdf57b4f1b532e8f5e7f291e0c84b'}>Ma
 const PolyC = chain.polygon
 const PolyRPC = 'https://polygon-rpc.com'
 const PolyA = '0x00f0feed50dcdf57b4f1b532e8f5e7f291e0c84b'
-const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
+const N = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
   chainn:C,//chainn,
