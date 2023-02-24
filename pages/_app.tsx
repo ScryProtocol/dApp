@@ -339,7 +339,26 @@ const App = ({ Component, pageProps }: AppProps) => {
                       <a href='https://fantom.dapp.scry.finance/'>
                         <img src='https://cryptologos.cc/logos/fantom-ftm-logo.png?v=024' style={{ width: 42 }}>
                         </img></a>
-                    </Grid></Grid>
+                    </Grid>
+                    <Grid xs={2}>
+
+                      <a href='https://base.dapp.scry.finance/'>
+
+                        <img src='https://cdn.discordapp.com/attachments/810019961165578294/1078592932812165140/image0.png' style={{ width: 42 }}>
+
+                        </img></a>
+
+                    </Grid><Grid xs={2}>
+
+                      <a href='https://canto.dapp.scry.finance/'>
+
+                        <img src='https://avatars.githubusercontent.com/u/114695859?s=200&v=4' style={{ width: 42 }}>
+
+                        </img></a>
+
+                    </Grid>
+
+</Grid>
                 </Grid>
               </Grid></Box>
             <Component {...pageProps} />
