@@ -157,7 +157,6 @@ function useData() {
       if (loaded == 0) {
         toast("Loading")
       }
-
       const provider2 = new ethers.providers.JsonRpcProvider(rpc)
 
       Contract = new ethers.Contract(contractaddrs, Abi, provider2);
@@ -345,6 +344,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                       <a href='https://base.dapp.scry.finance/'>
 
                         <img src='https://cdn.discordapp.com/attachments/810019961165578294/1078592932812165140/image0.png' style={{ width: 42 }}>
+
 
                         </img></a>
 
