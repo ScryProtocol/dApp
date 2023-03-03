@@ -11,24 +11,27 @@ import { useEffect, useState } from "react";
 import React from 'react';
 
 const C: Chain = {
-  id: 5,
-  name: 'Goerli',
-  network: 'goerli',
+
+  id: 84531,
+  name: 'base',
+  network: 'Base Goerli',
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'F',
+    symbol: 'F',
   },
   rpcUrls: {
-    default: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+
+    default: 'https://goerli.base.org',
   },
   testnet: true,
 };
-const RPC = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-const A = '0x7Bae4f06a69C7E6664E52C71465d19ab946F0377'
-const M = <MenuItem value={'0x7Bae4f06a69C7E6664E52C71465d19ab946F0377'}>Main</MenuItem>
+const RPC = 'https://goerli.base.org'
+const A = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
+const M = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
+
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -54,13 +57,13 @@ const BSCN = '0xB8112446078378f0998FBf834D4683B6C8Ac08C7'
 const BSCM = [<MenuItem value={'0x18C519E0dA619d017908aFf504e782E381552620'}>Main</MenuItem>]
 
 const PolyC = chain.polygon
+
 const N = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
   chainn:C,//chainn,
   rpc: RPC,
     createn: N,
-
     contractn: A,
     menun:M
 }
