@@ -52,7 +52,7 @@ const BSCRPC = 'https://bsc-dataseed.binance.org/'
 const BSCA = '0x18C519E0dA619d017908aFf504e782E381552620'
 const BSCN = '0xB8112446078378f0998FBf834D4683B6C8Ac08C7'
 const BSCM = [<MenuItem value={'0x18C519E0dA619d017908aFf504e782E381552620'}>Main</MenuItem>]
-const PolyM = [<MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>,
+const M = [<MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>,
 ]
 const PolyC = chain.polygon
 const RPC = 'https://eth.plexnode.wtf'
