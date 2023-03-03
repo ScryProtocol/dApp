@@ -10,25 +10,25 @@ import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from "react";
 import React from 'react';
 
-const SepC: Chain = {
-  id: 11155111,
-  name: 'Sepolia',
-  network: 'sepolia',
+const C: Chain = {
+  id: 84531,
+  name: 'base',
+  network: 'Base Goerli',
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'F',
+    symbol: 'F',
   },
   rpcUrls: {
-    default: 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b',
+    default: 'https://goerli.base.org',
   },
   testnet: true,
 };
-const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
-const SepA = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
-const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
+const RPC = 'https://goerli.base.org'
+const A = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
+const M = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -52,17 +52,14 @@ const BSCRPC = 'https://bsc-dataseed.binance.org/'
 const BSCA = '0x18C519E0dA619d017908aFf504e782E381552620'
 const BSCN = '0xB8112446078378f0998FBf834D4683B6C8Ac08C7'
 const BSCM = [<MenuItem value={'0x18C519E0dA619d017908aFf504e782E381552620'}>Main</MenuItem>]
-const M = [<MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>,
-]
+
 const PolyC = chain.polygon
-const RPC = 'https://eth.plexnode.wtf'
-const A = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
-const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
+const N = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
-  chainn:PolyC,//chainn,
+  chainn:C,//chainn,
   rpc: RPC,
-    createn: PolyN,
+    createn: N,
     contractn: A,
     menun:M
 }
