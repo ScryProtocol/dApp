@@ -23,7 +23,6 @@ const C: Chain = {
     symbol: 'F',
   },
   rpcUrls: {
-
     default: 'https://goerli.base.org',
   },
   testnet: true,
