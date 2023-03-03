@@ -157,6 +157,7 @@ function useData() {
       if (loaded == 0) {
         toast("Loading")
       }
+
       const provider2 = new ethers.providers.JsonRpcProvider(rpc)
 
       Contract = new ethers.Contract(contractaddrs, Abi, provider2);
@@ -281,7 +282,6 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [openA, setOpenA] = useState(false);
   return (
 
-    <ThemeProvider attribute="class">
       <div className="m-auto bg-white dark:bg-gray-900 dark:text-white">
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>
@@ -440,7 +440,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           </RainbowKitProvider>
         </WagmiConfig>
       </div>
-    </ThemeProvider>
+    
   )
 }
 export default App
