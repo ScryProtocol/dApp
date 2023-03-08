@@ -10,25 +10,27 @@ import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from "react";
 import React from 'react';
 
-const C: Chain = {
-  id: 5,
-  name: 'Goerli',
-  network: 'goerli',
+
+const Opt: Chain = {
+  id: 10,
+  name: 'Optimism',
+  network: 'Optimism',
+
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'Ethereum',
+    symbol: 'ETH',
   },
   rpcUrls: {
-    default: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    default: 'https://endpoints.omniatech.io/v1/op/mainnet/public',
   },
   testnet: true,
 };
-const RPC = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-const A = '0x7Bae4f06a69C7E6664E52C71465d19ab946F0377'
-const M = <MenuItem value={'0x7Bae4f06a69C7E6664E52C71465d19ab946F0377'}>Main</MenuItem>
+const RPC = 'https://endpoints.omniatech.io/v1/op/mainnet/public'
+const A = '0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'
+const M = <MenuItem value={'0x4b29431bc5374e83b3234cf0ad18033ddbef8fba'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
   name: 'Binance Chain',
@@ -57,10 +59,9 @@ const PolyC = chain.polygon
 const N = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
-  chainn:C,//chainn,
+  chainn:Opt,//chainn,
   rpc: RPC,
-    createn: N,
-
+    createn: PolyN,
     contractn: A,
     menun:M
 }
