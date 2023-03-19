@@ -27,7 +27,7 @@ const SepC: Chain = {
   testnet: true,
 };
 const SepRPC = 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b'
-const SepA = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
+const SepA = '0xCFB8D1808Ac37580f55Fa9b280B7fd70034E1464'
 const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
@@ -61,9 +61,9 @@ const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
   chainn:PolyC,//chainn,
-  rpc: RPC,
+  rpc: SepRPC,
     createn: PolyN,
-    contractn: A,
+    contractn: SepA,
     menun:M
 }
 

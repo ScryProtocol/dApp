@@ -34,15 +34,17 @@
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.9",
     "hardhat": "^2.10.1",
+    "latest": "^0.2.0",
     "next": "^12.2.4",
     "next-themes": "^0.2.0",
     "postcss": "^8.4.16",
     "react": "^18.2.0",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.3.0",
     "tailwindcss": "^3.1.8",
     "unstated-next": "^1.1.0",
-    "wagmi": "^0.6.2",
+    "wagmi": "0.6.2",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
