@@ -188,7 +188,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
       let pay = await contract.pay(accounts[0]);
       console.log(pay)
-     // setWon(ethers.utils.formatEther(pay.toString()));
+      // setWon(ethers.utils.formatEther(pay.toString()));
       const salt = ethers.utils.id(Date.now().toString());
       await contract.placeBet(leverage, 'salt', { value: ethers.utils.parseEther(betAmount.toString()) });
     }
@@ -213,27 +213,27 @@ const App = ({ Component, pageProps }: AppProps) => {
                 Welcome to ChainDice
               </h1>
               <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                Chaindice uses the latest tech for verifiable VRFs with its own custom Hash RanCh onchain verification which requires that your bet is custom seeded and fully unique, with the roll being only submitted as long as all the bets for all transactions use the same root hash, allowing verifiability and security in realtime by the contract.
+                Chaindice uses the latest tech for verifiable VRFs with its own custom Hash RanCh onchain verification which requires that your bet is custom seeded and fully unique, with the roll being only submitted as long as all the bets for all transactions use the same root hash, allowing verifiability and security in realtime by the contract. This guarantees randomness at the contract level, allowing your funds to never be accessible and your rolls to be cryptographically secure and executed fully autonomously onchain.
               </h1><div className="flex-col bg-white dark:bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto w-1/2 min-w-400 shadow-md rounded-md border border-solid light:border-gray-200 dark:border-gray-500 overflow-hidden">
-             <Typography variant="h5"  className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                Winnings</Typography><Typography style={{ color: '#51ffaa' }}variant="h4"  className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                {wonAmount} ETH</Typography></div>
+                <Typography variant="h5" className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue w-3/4">
+                  Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
+                  {wonAmount} ETH</Typography></div>
               <Grid item xs={12}>
                 <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue w-3/4">Place Bet</Typography>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  
-                  <Typography variant="h5" className="top-6 m-auto text-center rotating-hue">Bet Amount</Typography>
+
+                  <Typography variant="h5" className="top-12  m-auto text-center rotating-hue">Bet Amount</Typography>
                   <textarea style={{
-                    background: "#00000071", color: 'white', margin: "auto",
+                    background: "#00aaff51", color: 'white', margin: "auto",
                     resize: "none", height: 42
                   }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2"
                     label="Bet Amount"
                     value={betAmount}
                     onChange={e => setBetAmount(e.target.value)}
                   />
-                  <Typography variant="h5" className="m-auto text-center rotating-hue">Leverage</Typography>
+                  <Typography variant="h5" className="m-auto text-center  rotating-hue">Leverage</Typography>
                   <select style={{
-                    background: "#00000071", color: 'white', margin: "auto",
+                    background: "#00aaff51", color: 'white', margin: "auto",
                     resize: "none", height: 42
                   }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" label="Leverage"
                     value={leverage}
@@ -274,7 +274,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                       <Grid item xs={12}>
                         <Typography variant="h5" style={{ background: "#519aff", color: 'white', margin: "auto" }}>Bet ID: {event.betId.toString()}</Typography>
                         <Typography>{event.playerRoll}x</Typography>
-      <Typography className="text-1xl font-bold" variant="h5">
+                        <Typography className="text-1xl font-bold" variant="h5">
                           {ethers.utils.formatEther(event.amount)} ETH
                         </Typography>
                         <Typography>
