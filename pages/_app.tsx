@@ -215,8 +215,8 @@ const App = ({ Component, pageProps }: AppProps) => {
               <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
                 Chaindice uses the latest tech for verifiable VRFs with its own custom Hash RanCh onchain verification which requires that your bet is custom seeded and fully unique, with the roll being only submitted as long as all the bets for all transactions use the same root hash, allowing verifiability and security in realtime by the contract. This guarantees randomness at the contract level, allowing your funds to never be accessible and your rolls to be cryptographically secure and executed fully autonomously onchain.
               </h1><div className="flex-col bg-white dark:bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto w-1/2 min-w-400 shadow-md rounded-md border border-solid light:border-gray-200 dark:border-gray-500 overflow-hidden">
-                <Typography variant="h5" className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                  Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
+                <Typography variant="h5" className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue">
+                  Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
                   {wonAmount} ETH</Typography></div>
               <Grid item xs={12}>
                 <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue w-3/4">Place Bet</Typography>
