@@ -219,7 +219,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                   Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
                   {wonAmount} ETH</Typography></div>
               <Grid item xs={12}>
-                <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue w-3/4">Place Bet</Typography>
+                <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue">Place Bet</Typography>
                 <div style={{ display: "flex", justifyContent: "center" }}>
 
                   <Typography variant="h5" className="top-12  m-auto text-center rotating-hue">Bet Amount</Typography>
@@ -247,7 +247,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                     <option value="20">20x</option>
                     <option value="50">50x</option></select></div>
               </Grid>
-              <Typography variant="h5" className="m-auto text-center md:mt-8 text-xl md:text-xl font-bold rotating-hue w-3/4">
+              <Typography variant="h5" className="m-auto text-center md:mt-8 text-xl md:text-xl font-bold rotating-hue">
 
                 Roll under {lev
                 } / 100 to win {betAmount * leverage
