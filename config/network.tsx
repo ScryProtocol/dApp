@@ -27,7 +27,7 @@ const SepC: Chain = {
   testnet: true,
 };
 const SepRPC = 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-const SepA = '0x330f4B3b9e7ed39af2950E40D4B1d1eBc64911e4'
+const SepA = '0x67a24ce4321ab3af51c2d0a4801c3e111d88c9d9'
 const SepM = <MenuItem value={'0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'}>Main</MenuItem>
 const BSCC: Chain = {
   id: 56,
