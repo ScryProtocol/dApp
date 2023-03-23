@@ -50,7 +50,7 @@ const alchemyId = NEXT_PUBLIC_ALCHEMY_ID
 const etherscanApiKey = NEXT_PUBLIC_ETHERSCAN_API_KEY
 
 const { chains, provider } = configureChains(
-  [chain.goerli],//, chain.arbitrum],//, //chain.optimism, chain.arbitrum, chain.localhost],
+  [chain.sepolia],//, chain.arbitrum],//, //chain.optimism, chain.arbitrum, chain.localhost],
   [jsonRpcProvider({
     rpc: (chainn) => ({
       http: rpc,
