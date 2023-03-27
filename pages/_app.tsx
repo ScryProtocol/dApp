@@ -96,6 +96,7 @@ const signer = provider2.getSigner();
 const App = ({ Component, pageProps }: AppProps) => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
+  const [rolld, setRolled] = useState(0);
   const [betAmount, setBetAmount] = useState(0);
   const [leverage, setLeverage] = useState(2);
   const [events, setEvents] = useState([]);
@@ -146,9 +147,12 @@ const App = ({ Component, pageProps }: AppProps) => {
         console.log(bid, bid[betId], addrs)
         if (won && bid[betId].toString().toLowerCase() == addrs) {
           setShowConfetti(true);
+          setRolled(playRoll.toString())
           setTimeout(() => {
             setShowConfetti(false);
           }, 5000); // Stop confetti animation after 5 seconds
+        }if (bid[betId].toString().toLowerCase() == addrs) {
+          setRolled(playRoll.toString())
         }
 
         console.log(bid, bid[betId], betId, addrs)
@@ -218,6 +222,11 @@ const App = ({ Component, pageProps }: AppProps) => {
                 <Typography variant="h5" className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue">
                   Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
                   {wonAmount} ETH</Typography></div>
+                  {
+                  rolld != 0 && (
+                    <Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
+                    Rolled {rolld}</Typography>
+                  )}
               <Grid item xs={12}>
                 <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue">Place Bet</Typography>
                 <div style={{ display: "flex", justifyContent: "center" }}>
