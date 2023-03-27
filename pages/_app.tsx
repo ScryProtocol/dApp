@@ -271,7 +271,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               <Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
                 placeBet();
               }}>Bet
-              </Button><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-aut  md:mt-8 rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
+              </Button><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-aut top-2 rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
                 claim();
               }}>Claim
               </Button>
