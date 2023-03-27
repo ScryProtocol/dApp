@@ -196,6 +196,13 @@ const App = ({ Component, pageProps }: AppProps) => {
       const salt = ethers.utils.id(Date.now().toString());
       await contract.placeBet(leverage, 'salt', { value: ethers.utils.parseEther(betAmount.toString()) });
     }
+  };const claim = async () => {
+    if (contract) {
+      const provider3 = new ethers.providers.Web3Provider(window.ethereum);
+      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      let pay = await contract.withdraw();
+      console.log(pay)}
   };
   return (
     <ThemeProvider attribute="class">
@@ -264,6 +271,9 @@ const App = ({ Component, pageProps }: AppProps) => {
               <Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
                 placeBet();
               }}>Bet
+              </Button><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
+                claim();
+              }}>Claim
               </Button>
               <div style={{ display: "flex", justifyContent: "center" }}><a href='https://docs.scry.finance/docs/morpheus'><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black" type="button"> About Scry Hash RanCh
               </Button></a>
