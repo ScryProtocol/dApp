@@ -50,7 +50,7 @@ const alchemyId = NEXT_PUBLIC_ALCHEMY_ID
 const etherscanApiKey = NEXT_PUBLIC_ETHERSCAN_API_KEY
 
 const { chains, provider } = configureChains(
-  [chain.sepolia],//, chain.arbitrum],//, //chain.optimism, chain.arbitrum, chain.localhost],
+  [chainn],//, chain.arbitrum],//, //chain.optimism, chain.arbitrum, chain.localhost],
   [jsonRpcProvider({
     rpc: (chainn) => ({
       http: rpc,
@@ -78,14 +78,7 @@ const signerw = wagmiClient.provider;
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
 
-let contractaddrs = contractn;
-const Abi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "betId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "player", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "playerRoll", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "salt", "type": "string" }], "name": "BetPlaced", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "betId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "playRoll", "type": "uint256" }, { "indexed": false, "internalType": "bool", "name": "won", "type": "bool" }], "name": "BetSettled", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }], "name": "OwnershipTransferred", "type": "event" }, { "inputs": [], "name": "a", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "betAmount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "bets", "outputs": [{ "internalType": "address", "name": "player", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "string", "name": "salt", "type": "string" }, { "internalType": "uint256", "name": "playerRoll", "type": "uint256" }, { "internalType": "uint256", "name": "playRoll", "type": "uint256" }, { "internalType": "bool", "name": "settled", "type": "bool" }, { "internalType": "bool", "name": "won", "type": "bool" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "play", "type": "uint256" }], "name": "defaultRoll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "hash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "maxRoll", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minRoll", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "nextBetId", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "pay", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "lev", "type": "uint256" }, { "internalType": "string", "name": "salt", "type": "string" }], "name": "placeBet", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "roll", "type": "bytes32" }, { "internalType": "string", "name": "salt", "type": "string" }], "name": "randomRoll", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "newBetAmount", "type": "uint256" }], "name": "setBetAmount", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "playRoll", "type": "bytes32" }], "name": "submitRoll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "total", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawHouse", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
-let values
-let allowance
 
-let addrs
-let bid = []
-//const accounts = window.ethereum.request({ method: 'eth_requestAccounts' });
 let provider2 = signerw// = new ethers.providers.Web3Provider(window.ethereum);
 if (typeof window !== 'undefined') {
   provider2 = new ethers.providers.Web3Provider(window.ethereum);
@@ -96,113 +89,46 @@ const signer = provider2.getSigner();
 const App = ({ Component, pageProps }: AppProps) => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
-  const [rolld, setRolled] = useState(0);
-  const [betAmount, setBetAmount] = useState(0);
-  const [leverage, setLeverage] = useState(2);
-  const [events, setEvents] = useState([]);
-  const [wonAmount, setWon] = useState();
-  const [lev, setLev] = useState(50);
+ 
   const [showConfetti, setShowConfetti] = useState(false);
-  ch()
-  try {
-    check();
-  } catch {
-  }
-  useEffect(() => {
-
-    const signer = provider2.getSigner();
-    try {
-      check();
-    } catch {
-    }
-    if (contractaddrs) {
-      const chaindiceContract = new ethers.Contract(contractaddrs, Abi, signer);
-      setContract(chaindiceContract);
-
-      signer.getAddress().then(address => {
-        setAccount(address);
-      });
-    }
-  }, [provider2, contractaddrs]);
-  useEffect(() => {
-    if (contract) {
-      contract.on("BetPlaced", (betId, player, amount, playerRoll, salt) => {
-        amount = amount.toString()
-        playerRoll = playerRoll.toString()
-        console.log(betId, player, amount, playerRoll, salt)
-        let won = 0
-        let playRoll = 0
-        let id = betId + 'a'
-        bid[betId] = player
-        setEvents(prevEvents => [{ id, betId, player, amount, playerRoll, salt }, ...prevEvents,]);
-
-      });
-      contract.on("BetSettled", (betId, playRoll, won) => {
-        let amount = 0
-        let playerRoll = 0
-        playRoll = playRoll.toString()
-        let salt = 0
-        betId = betId - 1
-        let id = betId
-        console.log(bid, bid[betId], addrs)
-        if (won && bid[betId].toString().toLowerCase() == addrs) {
-          setShowConfetti(true);
-          setRolled(playRoll.toString())
-          setTimeout(() => {
-            setShowConfetti(false);
-          }, 5000); // Stop confetti animation after 5 seconds
-        }if (bid[betId].toString().toLowerCase() == addrs) {
-          setRolled(playRoll.toString())
-        }
-
-        console.log(bid, bid[betId], betId, addrs)
-        setEvents(prevEvents => [{ id, betId, amount, playerRoll, salt, playRoll, won }, ...prevEvents]);
-        check();
-      });
-    }
-  }, [contract, account]);
-  async function check() {
-    if (contract) {
-      console.log(2);
-      const provider3 = new ethers.providers.Web3Provider(window.ethereum);
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      let pay = await contract.pay(accounts[0]);
-      if (accounts[0] != null) {
-        addrs = accounts[0]
-      }
-      console.log(pay)
-      setWon(ethers.utils.formatEther(pay.toString()));
-    }
-  }
+  
   async function ch() {
-    try {
-      const provider3 = new ethers.providers.Web3Provider(window.ethereum);
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      if (accounts[0] != null) {
-        addrs = accounts[0]
+      if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const signer = provider.getSigner();
+          return { provider, signer };
+        } catch (error) {
+          console.error('User rejected connection request:', error);
+          return null;
+        }
+      } else {
+        console.error('MetaMask not detected');
+        return null;
       }
-      console.log(addrs)
-    } catch {
-    }
   }
   const placeBet = async () => {
-    if (contract) {
-      const provider3 = new ethers.providers.Web3Provider(window.ethereum);
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      let pay = await contract.pay(accounts[0]);
-      console.log(pay)
-      // setWon(ethers.utils.formatEther(pay.toString()));
-      const salt = ethers.utils.id(Date.now().toString());
-      await contract.placeBet(leverage, 'salt', { value: ethers.utils.parseEther(betAmount.toString()) });
-    }
-  };const claim = async () => {
-    if (contract) {
-      const provider3 = new ethers.providers.Web3Provider(window.ethereum);
-      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      let pay = await contract.withdraw();
-      console.log(pay)}
+    const ABI = [
+        { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }, { "indexed": false, "internalType": "uint256", "name": "signerThreshold", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "contractSetup", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "description", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "decimal", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timelsot", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "mode", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }], "name": "feedAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "feedSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "supportvalue", "type": "uint256" }], "name": "feedSupported", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newFee", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "cost", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feed", "type": "uint256" }], "name": "newFeedCost", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "newPayoutAddress", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "addressValue", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "oracleType", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "proposer", "type": "address" }], "name": "newProposal", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "mode", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feed", "type": "uint256" }], "name": "newRevenueMode", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "newSigner", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newThreshold", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "proposalSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" }], "name": "routerFeeTaken", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "signerRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "newPass", "type": "uint256" }], "name": "subscriptionPassPriceUpdated", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "buyer", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "buyPass", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "string[]", "name": "names", "type": "string[]" }, { "internalType": "string[]", "name": "descriptions", "type": "string[]" }, { "internalType": "uint256[]", "name": "decimals", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "timeslots", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "feedCosts", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "revenueModes", "type": "uint256[]" }], "name": "createNewFeeds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "createProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "factoryContract", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "feedSupport", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "feedID", "type": "uint256" }], "name": "getFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getFeedLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeedList", "outputs": [{ "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "timestamps", "type": "uint256[]" }], "name": "getHistoricalFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address[]", "name": "signers_", "type": "address[]" }, { "internalType": "uint256", "name": "signerThreshold_", "type": "uint256" }, { "internalType": "address payable", "name": "payoutAddress_", "type": "address" }, { "internalType": "uint256", "name": "subscriptionPassPrice_", "type": "uint256" }, { "internalType": "address", "name": "factoryContract_", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "payoutAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "proposalList", "outputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "address", "name": "proposer", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "proposalFeedId", "type": "uint256" }, { "internalType": "uint256", "name": "proposalActive", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "proposalId", "type": "uint256" }], "name": "signProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "signerLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "signerThreshold", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "signers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "submitFeed", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "durations", "type": "uint256[]" }, { "internalType": "address", "name": "buyer", "type": "address" }], "name": "subscribeToFeed", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "subscriptionPassPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIds", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "supportFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "withdrawFunds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+    ]; const metaMaskConnection = await ch();
+      const { provider, signer } = metaMaskConnection;
+  
+    const bc = '0x60606040523415600e57600080fd5b603580601b6000396000f3fe6080604052600080fdfea2646970667358221220f9c03cfb9337d94c2b26e7e8d1b11e7f0dfc6d26a8b9de230a9881290c5fb6d564736f6c63430008000033';
+    const provider3 = new ethers.providers.Web3Provider(window.ethereum);        console.log("Deploying your contract");
+        // Get the ABI (Application Binary Interface) of the contract
+        // Replace with the actual ABI of your contract
+        const contractFactory = new ethers.ContractFactory(ABI, bc, signer);
+        const deployedContract = await contractFactory.deploy();
+        await deployedContract.deployed();
+    
+        console.log("Contract address:", deployedContract.address);
+        // Create a contract object
+        setShowConfetti(true);  
+        setTimeout(() => {
+          window.location.href = 'https://quests.base.org/';
+        }, 5000); // Wait 5 seconds (5000 milliseconds) before redirecting
+      
   };
   return (
     <ThemeProvider attribute="class">
@@ -216,99 +142,20 @@ const App = ({ Component, pageProps }: AppProps) => {
               height: 100, width: 200
             }}><h1 className="m-auto text-center md:mt-8 text-5xl md:text-5xl font-extrabold rotating-hue">
 
-                  <Typography variant="h5" className="m-auto text-center md:mt-8 text-2xl md:text-3xl font-extrabold rotating-hue">You Won</Typography></h1></div></Dialog></Confetti>
+                  <Typography variant="h5" className="m-auto text-center md:mt-8 text-2xl md:text-3xl font-extrabold rotating-hue">Deployed</Typography></h1></div></Dialog></Confetti>
             }
 
             <div className="flex flex-col bg-white dark:bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid light:border-gray-200 dark:border-gray-500 overflow-hidden">
               <h1 className="m-auto text-center md:mt-8 text-2xl md:text-3xl font-extrabold rotating-hue w-3/4">
-                Welcome to ChainDice
+                Welcome to Base Contract DEPLOY
               </h1>
               <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                Chaindice uses the latest tech for verifiable VRFs with its own custom Hash RanCh onchain verification which requires that your bet is custom seeded and fully unique, with the roll being only submitted as long as all the bets for all transactions use the same root hash, allowing verifiability and security in realtime by the contract. This guarantees randomness at the contract level, allowing your funds to never be accessible and your rolls to be cryptographically secure and executed fully autonomously onchain.
-              </h1><div className="flex-col bg-white dark:bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto w-1/2 min-w-400 shadow-md rounded-md border border-solid light:border-gray-200 dark:border-gray-500 overflow-hidden">
-                <Typography variant="h5" className="m-auto text-center text-1xl md:text-1xl font-bold rotating-hue">
-                  Winnings</Typography><Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
-                  {wonAmount} ETH</Typography></div>
-                  {
-                  rolld != 0 && (
-                    <Typography style={{ color: '#51ffaa' }} variant="h4" className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue">
-                    Rolled {rolld}</Typography>
-                  )}
-              <Grid item xs={12}>
-                <Typography variant="h5" className="m-auto text-center text-2xl md:text-3xl font-extrabold rotating-hue">Place Bet</Typography>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-
-                  <Typography variant="h5" className="top-12  m-auto text-center rotating-hue">Bet Amount</Typography>
-                  <textarea style={{
-                    background: "#00aaff51", color: 'white', margin: "auto",
-                    resize: "none", height: 42
-                  }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2"
-                    label="Bet Amount"
-                    value={betAmount}
-                    onChange={e => setBetAmount(e.target.value)}
-                  />
-                  <Typography variant="h5" className="m-auto text-center  rotating-hue">Leverage</Typography>
-                  <select style={{
-                    background: "#00aaff51", color: 'white', margin: "auto",
-                    resize: "none", height: 42
-                  }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" label="Leverage"
-                    value={leverage}
-                    onChange={e => {
-                      setLeverage(e.target.value);
-                      setLev(100 / e.target.value);
-                    }}>
-                    <option value="2">2x</option>
-                    <option value="5">5x</option>
-                    <option value="10">10x</option>
-                    <option value="20">20x</option>
-                    <option value="50">50x</option></select></div>
-              </Grid>
-              <Typography variant="h5" className="m-auto text-center md:mt-8 text-xl md:text-xl font-bold rotating-hue">
-
-                Roll under {lev
-                } / 100 to win {betAmount * leverage
-                } ETH</Typography>
+              Just mint your NFT once you've deployed the contract by the simple 1 click deployment. </h1>
               <Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
                 placeBet();
-              }}>Bet
-              </Button><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-aut top-2 rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
-                claim();
-              }}>Claim
-              </Button>
-              <div style={{ display: "flex", justifyContent: "center" }}><a href='https://docs.scry.finance/docs/morpheus'><Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black" type="button"> About Scry Hash RanCh
-              </Button></a>
-              </div>
-              <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                Transactions</h1>{events.reduce((accumulator, event) => {
-                  if (accumulator.findIndex((item) => item.id === event.id) === -1) {
-                    accumulator.push(event);
-                  }
-                  return accumulator;
-                }, []).map((event, index) => (
-                  <h1
-                    className="m-auto text-center rounded-md border border-solid md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4"
-                    key={index}
-                  >
-                    {event.amount != 0 ? (
-                      <Grid item xs={12}>
-                        <Typography variant="h5" style={{ background: "#519aff", color: 'white', margin: "auto" }}>Bet ID: {event.betId.toString()}</Typography>
-                        <Typography>{event.playerRoll}x</Typography>
-                        <Typography className="text-1xl font-bold" variant="h5">
-                          {ethers.utils.formatEther(event.amount)} ETH
-                        </Typography>
-                        <Typography>
-                          Player: {event.player}
-                        </Typography>
-                      </Grid>
-                    ) : (
-                      <Grid item xs={12}>
-                        <Typography variant="h5" style={{ background: "#51ffaa", color: '519aff', margin: "auto" }}>Filled ID: {event.betId.toString()}</Typography>
-                        <Typography>Roll: {event.playRoll}</Typography>
-                        <Typography>Won: {event.won.toString()}</Typography>
-                      </Grid>
-                    )}
-                  </h1>
-                ))}
+              }}>Deploy
+              </Button><h1 className="rotating-hue w-3/4 top-16" >
+              .</h1>
             </div>
             <h1 className="rotating-hue w-3/4 top-16" >
               .</h1>

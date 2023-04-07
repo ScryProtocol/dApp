@@ -11,15 +11,15 @@ import { useEffect, useState } from "react";
 import React from 'react';
 
 const SepC: Chain = {
-  id: 11155111,
-  name: 'Sepolia',
-  network: 'sepolia',
+  id: 84531,
+  name: 'Base',
+  network: 'Base',
   iconUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.svg?v=023',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'ETH',
+    symbol: 'ETH',
   },
   rpcUrls: {
     default: 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b',
@@ -60,7 +60,7 @@ const A = '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017'
 const PolyN = '0x99029716DEeE316894DC8ce4f55Ab066222AACe6'
 
 const envVars = {
-  chainn:PolyC,//chainn,
+  chainn:SepC,//chainn,
   rpc: RPC,//SepRPC,
     createn: PolyN,
     contractn: SepA,
