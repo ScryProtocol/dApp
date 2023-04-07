@@ -150,7 +150,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                 Welcome to Base Contract DEPLOY
               </h1>
               <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-              Just mint your NFT once you've deployed the contract by the simple 1 click deployment. </h1>
+              Just mint your NFT once youve deployed the contract by the simple 1 click deployment. </h1>
               <Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
                 placeBet();
               }}>Deploy
