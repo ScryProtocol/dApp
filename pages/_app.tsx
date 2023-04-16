@@ -66,20 +66,19 @@ const wagmiClient = createClient({
   connectors,
   provider,
 })
-let addrs
 // MetaMask requires requesting permission to connect users accounts
 
 // The MetaMask plugin also allows signing transactions to
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
-const signerw = wagmiClient.provider;
+const wagmi = wagmiClient.provider;
 
 // The MetaMask plugin also allows signing transactions to
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
 
 
-let provider2 = signerw// = new ethers.providers.Web3Provider(window.ethereum);
+let provider2 = wagmi// = new ethers.providers.Web3Provider(window.ethereum);
 if (typeof window !== 'undefined') {
   provider2 = new ethers.providers.Web3Provider(window.ethereum);
 }
@@ -89,76 +88,92 @@ const signer = provider2.getSigner();
 const App = ({ Component, pageProps }: AppProps) => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
-
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  async function ch() {
-    if (typeof window.ethereum !== 'undefined') {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const signer = provider.getSigner();
-        return { provider, signer };
-      } catch (error) {
-        console.error('User rejected connection request:', error);
-        return null;
-      }
-    } else {
-      console.error('MetaMask not detected');
-      return null;
+  const [filter, setFilter] = useState();  function data() {
+    let t0 = []
+    let oracle = []
+    oracle[0] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
+      href:'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
+      networks: ['goerli']
     }
-  }
-  const placeBet = async () => {
-    const ABI = [
-      { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }, { "indexed": false, "internalType": "uint256", "name": "signerThreshold", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "contractSetup", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "description", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "decimal", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timelsot", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "mode", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }], "name": "feedAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "feedSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "supportvalue", "type": "uint256" }], "name": "feedSupported", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newFee", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "cost", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feed", "type": "uint256" }], "name": "newFeedCost", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "newPayoutAddress", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "addressValue", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "oracleType", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "proposer", "type": "address" }], "name": "newProposal", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "mode", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feed", "type": "uint256" }], "name": "newRevenueMode", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "newSigner", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newThreshold", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "proposalSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" }], "name": "routerFeeTaken", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "signerRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "newPass", "type": "uint256" }], "name": "subscriptionPassPriceUpdated", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "buyer", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "buyPass", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "string[]", "name": "names", "type": "string[]" }, { "internalType": "string[]", "name": "descriptions", "type": "string[]" }, { "internalType": "uint256[]", "name": "decimals", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "timeslots", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "feedCosts", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "revenueModes", "type": "uint256[]" }], "name": "createNewFeeds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "createProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "factoryContract", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "feedSupport", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "feedID", "type": "uint256" }], "name": "getFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getFeedLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeedList", "outputs": [{ "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "timestamps", "type": "uint256[]" }], "name": "getHistoricalFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address[]", "name": "signers_", "type": "address[]" }, { "internalType": "uint256", "name": "signerThreshold_", "type": "uint256" }, { "internalType": "address payable", "name": "payoutAddress_", "type": "address" }, { "internalType": "uint256", "name": "subscriptionPassPrice_", "type": "uint256" }, { "internalType": "address", "name": "factoryContract_", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "payoutAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "proposalList", "outputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "address", "name": "proposer", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "proposalFeedId", "type": "uint256" }, { "internalType": "uint256", "name": "proposalActive", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "proposalId", "type": "uint256" }], "name": "signProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "signerLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "signerThreshold", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "signers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "submitFeed", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "durations", "type": "uint256[]" }, { "internalType": "address", "name": "buyer", "type": "address" }], "name": "subscribeToFeed", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "subscriptionPassPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIds", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "supportFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "withdrawFunds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
-    ]; const metaMaskConnection = await ch();
-    const { provider, signer } = metaMaskConnection;
+    oracle[1] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
+      href:'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
+      networks: ['sepolia']
+    }
+    oracle[2] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433',
+      href:'https://optimistic.etherscan.io/address/0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433#writeContract',
+      networks: ['optimism']
+    }
+    oracle[3] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
+      href:'https://arbiscan.io/address/0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
+      networks: ['arbitrum']
+    }
+    oracle[4] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
+      href:'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
+      networks: ['base']
+    }
+    let oracleS = oracle
+    if (filter!=null&&filter!='All'){
+    oracleS = oracle.filter((o) => o.networks.includes(filter));}
+    oracleS.sort((a, b) => parseInt(b.stake) - parseInt(a.stake));
+    for (let n = 0; n < oracleS.length; n++) {
+      t0[n] = (<Grid><div style={{ color: '#00ff55', width:420}} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-6  m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+        <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+          {oracleS[n].name}
+        </h1>
+        <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">
+          Staked: {oracleS[n].stake}
+        </h1>
+        <div style={{ color: '#77ff8b' }}className="m-auto text-center color-green-500 text-1xl font-bold">
+          Address: <br />{oracleS[n].addrs}
+        </div>
+        <div style={{ color: '#77ff8b' }}>
+          Supported networks: {oracleS[n].networks}
+        </div>
+      </div></Grid>
+      )}return (<Grid container spacing={2}className="bg-gray-900 w-3/4">{t0}</Grid>)}
 
-    const bc = '0x60606040523415600e57600080fd5b603580601b6000396000f3fe6080604052600080fdfea2646970667358221220f9c03cfb9337d94c2b26e7e8d1b11e7f0dfc6d26a8b9de230a9881290c5fb6d564736f6c63430008000033';
-    const provider3 = new ethers.providers.Web3Provider(window.ethereum); console.log("Deploying your contract");
-    // Get the ABI (Application Binary Interface) of the contract
-    // Replace with the actual ABI of your contract
-    const contractFactory = new ethers.ContractFactory(ABI, bc, signer);
-    const deployedContract = await contractFactory.deploy();
-    await deployedContract.deployed();
-    addrs =  deployedContract.address;
-    console.log("Contract address:", deployedContract.address);
-    // Create a contract object
-    setShowConfetti(true);
-  };
-  return (
-    <ThemeProvider attribute="class">
-      <div className="bg-white dark:bg-gray-900 dark:text-white" >
+    return (
+      <div className="bg-gray-900 h-full w-full min-h-screen" >
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>
-            <Navbar />{showConfetti && <Confetti> <Dialog open={showConfetti} style={{
-              background: "#00000050", color: '#ffaa0050',
-            }}><div style={{
-              background: "#00ff0090", color: '#ffffff'
-            }}><h1 className="m-auto text-center rotating-hue">
-
-                  <Typography variant="h5" className="m-auto text-center font-extrabold rotating-hue">Deployed at {addrs}</Typography></h1></div></Dialog></Confetti>
-            }
-
-            <div className="flex flex-col bg-white dark:bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid light:border-gray-200 dark:border-gray-500 overflow-hidden">
-              <h1 className="m-auto text-center md:mt-8 text-2xl md:text-3xl font-extrabold rotating-hue w-3/4">
-                Welcome to Base Contract DEPLOY
-              </h1>
-              
-              <h1 className="m-auto text-center md:mt-8 text-1xl md:text-1xl font-bold rotating-hue w-3/4">
-                Just mint your NFT once youve deployed the contract by the simple 1 click deployment. {addrs}</h1>
-              <Button style={{ background: "#519aff", color: 'white', margin: "auto" }} className="btn m-auto rounded-md border border-solid light:border-black dark:border-black light:text-gray-800 dark:text-black top-2" type="button" onClick={() => {
-                placeBet();
-              }}>Deploy
-              </Button><h1 className="rotating-hue w-3/4 top-16" >
-                .</h1>
-            </div>
-            <h1 className="rotating-hue w-3/4 top-16" >
-              .</h1>
-          </RainbowKitProvider>
+            <Navbar />
+            <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+                Welcome to Morpheus
+              </h1><div style={{ color: '#77ff8b' }}>
+                Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
+              </div>
+              <Button  style={{ color: '#77ff8b' }}variant='outlined'className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+            </div> {filter}
+        <InputLabel id="filter-label"style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
+        <Select
+          labelId="filter-label"
+          id="filter-select"
+          value={filter}style={{ color: '#00ff55' }} 
+          onChange={(event: SelectChangeEvent) =>setFilter(event.target.value) }className="bg-gray-800 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+          <MenuItem value="sepolia">Sepolia</MenuItem>
+          <MenuItem value="optimism">Optimism</MenuItem>
+          <MenuItem value="base">Base</MenuItem>
+          <MenuItem value="arbitrum">Arbitrum</MenuItem>
+        </Select><div style={{top:10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}className="bg-gray-900">{data()}</div>
+          </RainbowKitProvider>.
         </WagmiConfig>
       </div>
-    </ThemeProvider>
-  )
-}
-export default App
+    )
+  }
+  export default App
