@@ -345,6 +345,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
                         <img src='https://cdn.discordapp.com/attachments/810019961165578294/1078592932812165140/image0.png' style={{ width: 42 }}>
 
+
                         </img></a>
 
                     </Grid><Grid xs={2}>
