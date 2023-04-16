@@ -18,8 +18,8 @@ const SepC: Chain = {
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
-    name: 'Fantom',
-    symbol: 'FTM',
+    name: 'Ethereum',
+    symbol: 'ETH',
   },
   rpcUrls: {
     default: 'https://sepolia.infura.io/v3/6822e4e6edc847829086404ffe6d5b2b',
