@@ -159,18 +159,19 @@ const App = ({ Component, pageProps }: AppProps) => {
                 Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
               </div>
               <Button  style={{ color: '#77ff8b' }}variant='outlined'className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-            </div>
+            </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
+              
         <InputLabel id="filter-label"style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
         <Select
           labelId="filter-label"
           id="filter-select"
           value={filter}style={{ color: '#00ff55' }} 
-          onChange={(event: SelectChangeEvent) =>setFilter(event.target.value) }className="bg-gray-800 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+          onChange={(event: SelectChangeEvent) =>setFilter(event.target.value) }className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
           <MenuItem value="sepolia">Sepolia</MenuItem>
           <MenuItem value="optimism">Optimism</MenuItem>
           <MenuItem value="base">Base</MenuItem>
           <MenuItem value="arbitrum">Arbitrum</MenuItem>
-        </Select><div style={{top:10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}className="bg-gray-900">{data()}</div>
+        </Select></div><div style={{top:10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}className="bg-gray-900">{data()}</div>
           </RainbowKitProvider>.
         </WagmiConfig>
       </div>
