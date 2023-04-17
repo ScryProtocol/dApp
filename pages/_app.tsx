@@ -180,7 +180,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               <MenuItem value="All">All</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
               <MenuItem value="optimism">Optimism</MenuItem>
               <MenuItem value="base">Base</MenuItem>
-              <MenuItem value="arbitrum">Scroll</MenuItem><MenuItem value="scroll">Scroll</MenuItem>
+              <MenuItem value="arbitrum">Scroll</MenuItem>
             </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
         </RainbowKitProvider>.
       </WagmiConfig>
