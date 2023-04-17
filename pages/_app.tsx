@@ -88,93 +88,103 @@ const signer = provider2.getSigner();
 const App = ({ Component, pageProps }: AppProps) => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
-  const [filter, setFilter] = useState();  function data() {
+  const [filter, setFilter] = useState(); function data() {
     let t0 = []
     let oracle = []
     oracle[0] = {
       name: 'Scry Team',
       stake: '1000000',
       addrs: '0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
-      href:'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
+      href: 'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
       networks: ['goerli']
     }
     oracle[1] = {
       name: 'Scry Team',
       stake: '1000000',
       addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
-      href:'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
+      href: 'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       networks: ['sepolia']
     }
     oracle[2] = {
       name: 'Scry Team',
       stake: '1000000',
       addrs: '0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433',
-      href:'https://optimistic.etherscan.io/address/0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433#writeContract',
+      href: 'https://optimistic.etherscan.io/address/0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433#writeContract',
       networks: ['optimism']
     }
     oracle[3] = {
       name: 'Scry Team',
       stake: '1000000',
       addrs: '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
-      href:'https://arbiscan.io/address/0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
+      href: 'https://arbiscan.io/address/0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
       networks: ['arbitrum']
     }
     oracle[4] = {
       name: 'Scry Team',
       stake: '1000000',
       addrs: '0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
-      href:'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
+      href: 'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
       networks: ['base']
     }
+    oracle[5] = {
+      name: 'Scry Team',
+      stake: '1000000',
+      addrs: '0xa991e008b063db9c9aa864D1AE26018C63AF1864',
+      href: 'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
+      networks: ['scroll']
+    }
     let oracleS = oracle
-    if (filter!=null&&filter!='All'){
-    oracleS = oracle.filter((o) => o.networks.includes(filter));}
+    if (filter != null && filter != 'All') {
+      oracleS = oracle.filter((o) => o.networks.includes(filter));
+    }
     oracleS.sort((a, b) => parseInt(b.stake) - parseInt(a.stake));
     for (let n = 0; n < oracleS.length; n++) {
-      t0[n] = (<Grid><div style={{ color: '#00ff55', width:420}} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-6  m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+      t0[n] = (<Grid><div style={{ color: '#00ff55', width: 420 }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-6  m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
           {oracleS[n].name}
         </h1>
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">
           Staked: {oracleS[n].stake}
         </h1>
-        <div style={{ color: '#77ff8b' }}className="m-auto text-center color-green-500 text-1xl font-bold">
+        <div style={{ color: '#77ff8b' }} className="m-auto text-center color-green-500 text-1xl font-bold">
           Address: <br />{oracleS[n].addrs}
         </div>
         <div style={{ color: '#77ff8b' }}>
           Supported networks: {oracleS[n].networks}
         </div>
       </div></Grid>
-      )}return (<Grid container spacing={2}className="bg-gray-900 w-3/4">{t0}</Grid>)}
-
-    return (
-      <div className="bg-gray-900 h-full w-full min-h-screen" >
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>
-            <Navbar />
-            <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-                Welcome to Morpheus
-              </h1><div style={{ color: '#77ff8b' }}>
-                Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
-              </div>
-              <Button onClick={() =>window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus') } style={{ color: '#77ff8b' }}variant='outlined'className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-            </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
-              
-        <InputLabel id="filter-label"style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
-        <Select
-          labelId="filter-label"
-          id="filter-select"
-          value={filter}style={{ color: '#00ff55' }} 
-          onChange={(event: SelectChangeEvent) =>setFilter(event.target.value) }className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-          <MenuItem value="sepolia">Sepolia</MenuItem>
-          <MenuItem value="optimism">Optimism</MenuItem>
-          <MenuItem value="base">Base</MenuItem>
-          <MenuItem value="arbitrum">Arbitrum</MenuItem>
-        </Select></div><div style={{top:10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}className="bg-gray-900">{data()}</div>
-          </RainbowKitProvider>.
-        </WagmiConfig>
-      </div>
-    )
+      )
+    } return (<Grid container spacing={2} className="bg-gray-900 w-3/4">{t0}</Grid>)
   }
-  export default App
+
+  return (
+    <div className="bg-gray-900 h-full w-full min-h-screen" >
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <Navbar />
+          <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-12 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+            <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+              Welcome to Morpheus
+            </h1><div style={{ color: '#77ff8b' }}>
+              Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
+            </div>
+            <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+          </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
+
+            <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
+            <Select
+              labelId="filter-label"
+              id="filter-select"
+              value={filter} style={{ color: '#00ff55' }}
+              onChange={(event: SelectChangeEvent) => setFilter(event.target.value)} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+              <MenuItem value="All">All</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
+              <MenuItem value="optimism">Optimism</MenuItem>
+              <MenuItem value="base">Base</MenuItem>
+              <MenuItem value="arbitrum">Scroll</MenuItem><MenuItem value="scroll">Scroll</MenuItem>
+            </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
+        </RainbowKitProvider>.
+      </WagmiConfig>
+    </div>
+  )
+}
+export default App
