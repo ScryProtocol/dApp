@@ -94,9 +94,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     oracle[0] = {
       name: 'Scry Team',
       stake: '1000000',
-      addrs: '0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
+      addrs: '0x0000000000ef2f8d8bf81d959e5fdb81d497c25c',
       href: 'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
-      networks: ['goerli']
+      networks: ['ethmainnet,sepolia,optimism,arbitrum,arbitrum,base,scroll']
     }
     oracle[1] = {
       name: 'Scry Team',
@@ -104,34 +104,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       href: 'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       networks: ['sepolia']
-    }
-    oracle[2] = {
-      name: 'Scry Team',
-      stake: '1000000',
-      addrs: '0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433',
-      href: 'https://optimistic.etherscan.io/address/0x7F3dB2C9D4A52D78C4eEAECe4CDD5dc32Ab5d433#writeContract',
-      networks: ['optimism']
-    }
-    oracle[3] = {
-      name: 'Scry Team',
-      stake: '1000000',
-      addrs: '0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
-      href: 'https://arbiscan.io/address/0xE565f05422481345b5Fad564DD9Ab7B0cE3Ec017',
-      networks: ['arbitrum']
-    }
-    oracle[4] = {
-      name: 'Scry Team',
-      stake: '1000000',
-      addrs: '0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
-      href: 'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
-      networks: ['base']
-    }
-    oracle[5] = {
-      name: 'Scry Team',
-      stake: '1000000',
-      addrs: '0xa991e008b063db9c9aa864D1AE26018C63AF1864',
-      href: 'https://goerli.basescan.org/address/0xb354e1d7265aff180d15f3b3a2ef917fef212b81',
-      networks: ['scroll']
     }
     let oracleS = oracle
     if (filter != null && filter != 'All') {
@@ -177,7 +149,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               id="filter-select"
               value={filter} style={{ color: '#00ff55' }}
               onChange={(event: SelectChangeEvent) => setFilter(event.target.value)} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-              <MenuItem value="All">All</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
+              <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
               <MenuItem value="optimism">Optimism</MenuItem>
               <MenuItem value="base">Base</MenuItem>
               <MenuItem value="arbitrum">Scroll</MenuItem>
