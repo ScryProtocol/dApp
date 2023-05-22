@@ -1,0 +1,3 @@
+[submodule "van2"]
+	path = van2
+	url = https://github.com/10gic/vanitygen-plusplus
