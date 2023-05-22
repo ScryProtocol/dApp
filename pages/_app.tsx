@@ -96,7 +96,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       stake: '1000000',
       addrs: '0x0000000000ef2f8d8bf81d959e5fdb81d497c25c',
       href: 'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
-      networks: ['ethmainnet,sepolia,optimism,arbitrum,arbitrum,base,scroll']
+      networks: ['ethmainnet,sepolia,optimism,arbitrum,arbitrum,base,scroll,canto,arbitrum']
     }
     oracle[1] = {
       name: 'Scry Team',
@@ -150,7 +150,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               value={filter} style={{ color: '#00ff55' }}
               onChange={(event: SelectChangeEvent) => setFilter(event.target.value)} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
               <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
-              <MenuItem value="optimism">Optimism</MenuItem>
+              <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
               <MenuItem value="base">Base</MenuItem>
               <MenuItem value="arbitrum">Scroll</MenuItem>
             </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
