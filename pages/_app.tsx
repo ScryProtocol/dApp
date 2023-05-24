@@ -94,13 +94,13 @@ const App = ({ Component, pageProps }: AppProps) => {
     oracle[0] = {
       name: 'Scry Team',
       stake: '1000000',
-      addrs: '0x0000000000ef2f8d8bf81d959e5fdb81d497c25c',
-      href: 'https://goerli.etherscan.io/address/0x00FA498eD77F0eeb55acD56E1b869cbC405972a1',
+      addrs: '0x0000000000071821e8033345a7be174647be0706',
+      href: 'https://ssepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
       networks: ['ethmainnet,sepolia,optimism,arbitrum,arbitrum,base,scroll,canto,arbitrum']
     }
     oracle[1] = {
       name: 'Scry Team',
-      stake: '1000000',
+      stake: '0',
       addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       href: 'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       networks: ['sepolia']
