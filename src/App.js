@@ -75,7 +75,7 @@ function App() {
   }
 
   return (
-    <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
+    <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full mx-6 min-h-screen" >
       <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
           Welcome to Morpheus
