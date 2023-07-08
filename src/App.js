@@ -22,7 +22,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
-function  App() {
+function App() {
   const [filter, setFilter] = React.useState('All');
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
@@ -37,8 +37,8 @@ function  App() {
       stake: '1000000',
       addrs: '0x0000000000071821e8033345a7be174647be0706',
       href: 'https://sepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
-      networks: ['ethmainnet','sepolia','optimism','arbitrum','base','scroll','canto','arbitrum'],
-      networksL:'Ethereum, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
+      networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
+      networksL: 'Ethereum, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
     }
     oracle[1] = {
       name: 'Scry Team',
@@ -46,7 +46,7 @@ function  App() {
       addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       href: 'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
       networks: ['sepolia'],
-      networksL:'Sepolia'
+      networksL: 'Sepolia'
 
     }
 
@@ -76,26 +76,26 @@ function  App() {
 
   return (
     <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
-          <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-            <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              Welcome to Morpheus
-            </h1><div style={{ color: '#77ff8b' }}>
-              Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
-            </div>
-            <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-          </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
+      <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+        <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+          Welcome to Morpheus
+        </h1><div style={{ color: '#77ff8b' }}>
+          Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
+        </div>
+        <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+      </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
 
-            <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
-            <Select
-              labelId="filter-label"
-              id="filter-select"
-              value={filter} style={{ color: '#00ff55' }}
-              onChange={handleChange} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-              <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
-              <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
-              <MenuItem value="base">Base</MenuItem>
-              <MenuItem value="arbitrum">Scroll</MenuItem>
-            </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
+        <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
+        <Select
+          labelId="filter-label"
+          id="filter-select"
+          value={filter} style={{ color: '#00ff55' }}
+          onChange={handleChange} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+          <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
+          <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
+          <MenuItem value="base">Base</MenuItem>
+          <MenuItem value="scroll">Scroll</MenuItem>
+        </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
     </div>
   )
 }
