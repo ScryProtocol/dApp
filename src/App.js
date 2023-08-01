@@ -246,8 +246,7 @@ function App() {
                 color='success' style={{ color: 'green', top:'1px' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
               />
             <Button onClick={() => fetchBalance()} style={{ color: '#77ff8b', }} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Fetch Hedge Contract</Button>
-            </div></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
-        </div></RainbowKitProvider>
+            </div></div>.</div></RainbowKitProvider>
     </WagmiConfig>
   )
 }
