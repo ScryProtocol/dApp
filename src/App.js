@@ -111,7 +111,7 @@ function App() {
     );
     let amt = await tok.allowance(signer.getAddress(), addrs)
     let d = await tok.decimals()
-    if (amt < BigInt(parseUnits((amount * strike).toString(), d))) {
+    if (amt < (parseUnits((amount * strike).toString(), d))) {
       console.log('LO')
       await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
     }
