@@ -165,7 +165,7 @@ function App() {
     }
 
     let oracleS = oracle
-    if (filter != null && filter != 'All') {
+    if (filter !== null && filter !== 'All') {
       oracleS = oracle.filter((o) => o.networks.includes(filter));
     }
     oracleS.sort((a, b) => parseInt(b.stake) - parseInt(a.stake));
