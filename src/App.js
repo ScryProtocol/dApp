@@ -246,19 +246,7 @@ function App() {
                 color='success' style={{ color: 'green', top:'1px' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
               />
             <Button onClick={() => fetchBalance()} style={{ color: '#77ff8b', }} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Fetch Hedge Contract</Button>
-            </div></div><div style={{ color: '#00ff55' }} className="flex flex-col w-1/2 justify-center overflow-hidden">
-
-            <InputLabel id="filter-label" style={{ color: '#00ff55', width: '100px' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
-            <Select
-              labelId="filter-label"
-              id="filter-select"
-              value={filter} style={{ color: '#00ff55' }}
-              onChange={handleChange} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-              <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
-              <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
-              <MenuItem value="base">Base</MenuItem>
-              <MenuItem value="scroll">Scroll</MenuItem>
-            </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
+            </div></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
         </div></RainbowKitProvider>
     </WagmiConfig>
   )
