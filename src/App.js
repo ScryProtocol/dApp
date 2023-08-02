@@ -101,11 +101,11 @@ if(window.ethereum.isConnected()){
     );
     ad = signer.getAddress()
     console.log(ad, 'lo')
-  }let d = 10n ** await contract.decimals()
-      const bal = await contract.balanceOf(ad)/d;
+  }let d = 10n ** (await contract.decimals()-2n)
+      const bal = Number(await contract.balanceOf(ad)/d)/100;
       
       setBalance(bal.toString());
-      setCollateral((await contract.collateral(ad)/d).toString());
+      setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
       setprice((await contract.currentPrice()).toString());
       let a = (1000n * await contract.expiry()).toString()
       let date = new Date(Number(a));
@@ -140,7 +140,9 @@ if(window.ethereum.isConnected()){
     }
     console.log('LOL')
     let am = parseUnits(amount.toString(), d)
-    contract.mint(signer.getAddress(), am)
+    let tx = contract.mint(signer.getAddress(), am)
+    await tx.wait()
+    fetchBalance()
   }
   async function handleRedeem() {
     contract.redeem()
@@ -156,10 +158,10 @@ if(window.ethereum.isConnected()){
       signer
     );
     console.log(addrs)
-    let d = 10n ** await contract.decimals()
-    const bal = await contract.balanceOf(ad)/d;
+    let d = 10n ** (await contract.decimals() - 2n)
+    const bal = Number(await contract.balanceOf(ad)/d)/100;
     setBalance(bal.toString());
-    setCollateral((await contract.collateral(ad)/d).toString());
+    setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
     setprice((await contract.currentPrice()).toString());
     let a = (1000n * await contract.expiry()).toString()
     let date = new Date(Number(a));
