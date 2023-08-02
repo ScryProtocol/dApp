@@ -63,6 +63,8 @@ let signer = provider.getSigner();let addrs = "0x4b28A73d1FBf118374741090FC747A8
 function App() {
   const [filter, setFilter] = React.useState('All');
   const [amount, setAmount] = useState(1);
+  const [name, setname] = useState();
+  const [sym, setsym] = useState();
   const [balance, setBalance] = useState(null);
   const [delta, setDelta] = useState(null);
   const [price, setprice] = useState(null);
@@ -103,7 +105,8 @@ if(window.ethereum.isConnected()){
     console.log(ad, 'lo')
   }let d = 10n ** (await contract.decimals()-2n)
       const bal = Number(await contract.balanceOf(ad)/d)/100;
-      
+      setname(await contract.name());
+      setsym(await contract.sym());
       setBalance(bal.toString());
       setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
       setprice((await contract.currentPrice()).toString());
@@ -167,6 +170,8 @@ if(window.ethereum.isConnected()){
     console.log(addrs)
     let d = 10n ** (await contract.decimals() - 2n)
     const bal = Number(await contract.balanceOf(ad)/d)/100;
+    setname(await contract.name());
+      setsym(await contract.sym());
     setBalance(bal.toString());
     setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
     setprice((await contract.currentPrice()).toString());
@@ -249,6 +254,7 @@ if(window.ethereum.isConnected()){
             /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Hedge
             </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
+            <div>{name} {setsym}</div>
               <div>Hedges: {balance}</div>
               <div>Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
