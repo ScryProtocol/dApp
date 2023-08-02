@@ -140,11 +140,17 @@ if(window.ethereum.isConnected()){
     }
     console.log('LOL')
     let am = parseUnits(amount.toString(), d)
-    let tx = contract.mint(signer.getAddress(), am)
+    let tx = await contract.mint(signer.getAddress(), am)
     await tx.wait()
     fetchBalance()
   }
   async function handleRedeem() {
+    signer = await provider.getSigner();
+    contract = new ethers.Contract(
+      addrs,
+      ABI,
+      signer
+    );
     contract.redeem()
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
