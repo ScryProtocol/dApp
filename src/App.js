@@ -156,6 +156,19 @@ function App() {
     );
     let tx = await contract.redeem()
     await tx.wait()
+  }async function handleUnlock() {
+    signer = await provider.getSigner();
+    contract = new ethers.Contract(
+      addrs,
+      ABI,
+      signer
+    );
+    let d = await contract.decimals()
+    console.log('LOL')
+    let am = parseUnits(amount.toString(), d)
+    let tx = await contract.unlock(am)
+    await tx.wait()
+    fetchBalance()
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
   })
@@ -274,7 +287,7 @@ function App() {
               />
             </div><div className="flex flex-col justify-center m-auto overflow-hidden"><Button onClick={() => Mint()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Mint</Button>
               <Button onClick={() => handleRedeem()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Redeem</Button>
-            </div><div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
+              <Button onClick={() => handleUnlock()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Unlock Collateral</Button></div><div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
               <Button onClick={() => window.location.assign(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
             </div>
           </div> <div style={{
