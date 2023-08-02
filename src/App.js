@@ -62,7 +62,7 @@ let provider = new ethers.BrowserProvider(window.ethereum);
 let signer = provider.getSigner();let addrs = "0x4b28A73d1FBf118374741090FC747A84DCF5806F";
 function App() {
   const [filter, setFilter] = React.useState('All');
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(1);
   const [balance, setBalance] = useState(null);
   const [delta, setDelta] = useState(null);
   const [price, setprice] = useState(null);
