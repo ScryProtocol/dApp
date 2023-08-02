@@ -106,7 +106,7 @@ if(window.ethereum.isConnected()){
   }let d = 10n ** (await contract.decimals()-2n)
       const bal = Number(await contract.balanceOf(ad)/d)/100;
       setname(await contract.name());
-      setsym(await contract.sym());
+      setsym(await contract.symbol());
       setBalance(bal.toString());
       setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
       setprice((await contract.currentPrice()).toString());
@@ -171,7 +171,7 @@ if(window.ethereum.isConnected()){
     let d = 10n ** (await contract.decimals() - 2n)
     const bal = Number(await contract.balanceOf(ad)/d)/100;
     setname(await contract.name());
-      setsym(await contract.sym());
+      setsym(await contract.symbol());
     setBalance(bal.toString());
     setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
     setprice((await contract.currentPrice()).toString());
