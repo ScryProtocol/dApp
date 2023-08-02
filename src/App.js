@@ -165,9 +165,9 @@ if(window.ethereum.isConnected()){
     );
     console.log(addrs)
     let d = 10n ** (await contract.decimals() - 2n)
-    const bal = Number(await contract.balanceOf(ad)/d)/100;
+    const bal = Number((await contract.balanceOf(ad)/d).toString())/100;
     setBalance(bal.toString());
-    setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
+    setCollateral((Number((await contract.collateral(ad)/d).toString())/100).toString());
     setprice((await contract.currentPrice()).toString());
     let a = (1000n * await contract.expiry()).toString()
     let date = new Date(Number(a));
