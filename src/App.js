@@ -151,7 +151,8 @@ if(window.ethereum.isConnected()){
       ABI,
       signer
     );
-    contract.redeem()
+    let tx =await contract.redeem()
+    await tx.wait()
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
   })
