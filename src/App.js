@@ -59,7 +59,7 @@ const wagmiConfig = createConfig({
   publicClient
 })
 let provider = new ethers.BrowserProvider(window.ethereum);
-let signer = provider.getSigner();let addrs = "0x4b28A73d1FBf118374741090FC747A84DCF5806F";
+let signer = provider.getSigner(); let addrs = "0xcbec62f9d2b46bc4e6d011585d56e825d2daff45";
 function App() {
   const [filter, setFilter] = React.useState('All');
   const [amount, setAmount] = useState(1);
@@ -89,26 +89,26 @@ function App() {
   );
   useEffect(() => {
     const fetchBalance = async () => {
-      let ad ="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5"
+      let ad = "0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5"
       console.log(await window.ethereum.request({ method: 'eth_requestAccounts' }))
 
-if(window.ethereum.isConnected()){
-  console.log('l')  
-  signer = await provider.getSigner();
-  await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    ad = signer.getAddress()
-    console.log(ad, 'lo')
-  }let d = 10n ** (await contract.decimals()-2n)
-      const bal = Number(await contract.balanceOf(ad)/d)/100;
+      if (window.ethereum.isConnected()) {
+        console.log('l')
+        signer = await provider.getSigner();
+        await provider.getSigner();
+        contract = new ethers.Contract(
+          addrs,
+          ABI,
+          signer
+        );
+        ad = signer.getAddress()
+        console.log(ad, 'lo')
+      } let d = 10n ** (await contract.decimals() - 2n)
+      const bal = Number(await contract.balanceOf(ad) / d) / 100;
       setname(await contract.name());
       setsym(await contract.symbol());
       setBalance(bal.toString());
-      setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
+      setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
       setprice((await contract.currentPrice()).toString());
       let a = (1000n * await contract.expiry()).toString()
       let date = new Date(Number(a));
@@ -138,8 +138,8 @@ if(window.ethereum.isConnected()){
     let d = await tok.decimals()
     if (amt < (parseUnits((amount * strike).toString(), d))) {
       console.log('LO')
-     let tx = await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
-     await tx.wait()
+      let tx = await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
+      await tx.wait()
     }
     console.log('LOL')
     let am = parseUnits(amount.toString(), d)
@@ -154,7 +154,7 @@ if(window.ethereum.isConnected()){
       ABI,
       signer
     );
-    let tx =await contract.redeem()
+    let tx = await contract.redeem()
     await tx.wait()
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
@@ -169,11 +169,11 @@ if(window.ethereum.isConnected()){
     );
     console.log(addrs)
     let d = 10n ** (await contract.decimals() - 2n)
-    const bal = Number(await contract.balanceOf(ad)/d)/100;
+    const bal = Number(await contract.balanceOf(ad) / d) / 100;
     setname(await contract.name());
-      setsym(await contract.symbol());
+    setsym(await contract.symbol());
     setBalance(bal.toString());
-    setCollateral((Number(await contract.collateral(ad)/d)/100).toString());
+    setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
     setprice((await contract.currentPrice()).toString());
     let a = (1000n * await contract.expiry()).toString()
     let date = new Date(Number(a));
@@ -254,7 +254,7 @@ if(window.ethereum.isConnected()){
             /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Hedge
             </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
-            <div>{name} {sym}</div>
+              <div>{name} {sym}</div>
               <div>Hedges: {balance}</div>
               <div>Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
