@@ -79,6 +79,7 @@ function App() {
     addrs = (event.target.value);
   }; //let addrs = "0x4b28A73d1FBf118374741090FC747A84DCF5806F";
   const ABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "profit", "type": "uint256" }], "name": "Delta", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "symbol", "type": "string" }, { "indexed": false, "internalType": "address[]", "name": "morpheus", "type": "address[]" }, { "indexed": false, "internalType": "address", "name": "collateralToken", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "lev", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "APIendpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "dec", "type": "uint256" }, { "indexed": false, "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "Initialized", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "from", "type": "address" }], "name": "Minted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "PriceUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "optionamount", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "collateral", "type": "uint256" }], "name": "Redeemed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "from", "type": "address" }], "name": "Unlocked", "type": "event" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "IDs", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "collateral", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "collateralToken", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "currentPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" }], "name": "decreaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "expiry", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getDelta", "outputs": [{ "internalType": "uint256", "name": "profit", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "addedValue", "type": "uint256" }], "name": "increaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "name_", "type": "string" }, { "internalType": "string", "name": "symbol_", "type": "string" }, { "internalType": "address[]", "name": "_morpheus", "type": "address[]" }, { "internalType": "address", "name": "_collateralToken", "type": "address" }, { "internalType": "uint256", "name": "_expiry", "type": "uint256" }, { "internalType": "uint256", "name": "_strikePrice", "type": "uint256" }, { "internalType": "uint256", "name": "_lev", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }, { "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "init", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "lev", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "morpheus", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "positionClosed", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "redeem", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "strikePrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "timestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "from", "type": "address" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "unlock", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "updateFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "updatePrice", "outputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }]; // ABI of your contract  
+
   let contract = new ethers.Contract(
     addrs,
     ABI,
@@ -86,9 +87,25 @@ function App() {
   );
   useEffect(() => {
     const fetchBalance = async () => {
-      const bal = await contract.balanceOf("0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5");
+      let ad ="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5"
+      console.log(await window.ethereum.request({ method: 'eth_requestAccounts' }))
+
+if(window.ethereum.isConnected()){
+  console.log('l')  
+  signer = await provider.getSigner();
+  await provider.getSigner();
+    contract = new ethers.Contract(
+      addrs,
+      ABI,
+      signer
+    );
+    ad = signer.getAddress()
+    console.log(ad, 'lo')
+  }let d = 10n ** await contract.decimals()
+      const bal = await contract.balanceOf(ad)/d;
+      
       setBalance(bal.toString());
-      setCollateral((await contract.collateral("0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5")).toString());
+      setCollateral((await contract.collateral(ad)/d).toString());
       setprice((await contract.currentPrice()).toString());
       let a = (1000n * await contract.expiry()).toString()
       let date = new Date(Number(a));
@@ -118,7 +135,8 @@ function App() {
     let d = await tok.decimals()
     if (amt < (parseUnits((amount * strike).toString(), d))) {
       console.log('LO')
-      await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
+     let tx = await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
+     await tx.wait()
     }
     console.log('LOL')
     let am = parseUnits(amount.toString(), d)
@@ -131,16 +149,17 @@ function App() {
   })
   async function fetchBalance() {
     signer = await provider.getSigner();
-    console.log(await signer.getAddress())
+    let ad = (await signer.getAddress())
     contract = new ethers.Contract(
       addrs,
       ABI,
       signer
     );
     console.log(addrs)
-    const bal = await contract.balanceOf("0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5");
+    let d = 10n ** await contract.decimals()
+    const bal = await contract.balanceOf(ad)/d;
     setBalance(bal.toString());
-    setCollateral((await contract.collateral("0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5")).toString());
+    setCollateral((await contract.collateral(ad)/d).toString());
     setprice((await contract.currentPrice()).toString());
     let a = (1000n * await contract.expiry()).toString()
     let date = new Date(Number(a));
