@@ -34,11 +34,11 @@
   },
   "browserslist": {
     "production": [
-      "last 2 chrome version",
+      "chrome >= 67",
       "edge >= 79",
-      "last 2 firefox version",
+      "firefox >= 68",
       "opera >= 54",
-      "last 2 safari version"
+      "safari >= 14"
     ],
     "development": [
       "last 1 chrome version",
