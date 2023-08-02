@@ -250,7 +250,7 @@ function App() {
             <ConnectButton showBalance={true} accountStatus={{
               smallScreen: 'full',
               largeScreen: 'full',
-            }} chainStatus="none"
+            }} chainStatus="icon"
             /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Hedge
             </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
