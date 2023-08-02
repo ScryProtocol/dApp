@@ -254,7 +254,7 @@ if(window.ethereum.isConnected()){
             /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Hedge
             </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
-            <div>{name} {setsym}</div>
+            <div>{name} {sym}</div>
               <div>Hedges: {balance}</div>
               <div>Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
