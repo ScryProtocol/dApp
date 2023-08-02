@@ -274,8 +274,8 @@ function App() {
               />
             </div><div className="flex flex-col justify-center m-auto overflow-hidden"><Button onClick={() => Mint()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Mint</Button>
               <Button onClick={() => handleRedeem()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Redeem</Button>
-            </div><div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.replace(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
-              <Button onClick={() => window.location.replace(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
+            </div><div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
+              <Button onClick={() => window.location.assign(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
             </div>
           </div> <div style={{
             color: '#00ff55', position: 'relative',
