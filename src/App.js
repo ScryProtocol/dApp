@@ -66,6 +66,7 @@ function App() {
   const [name, setname] = useState();
   const [sym, setsym] = useState();
   const [balance, setBalance] = useState(null);
+  const [sup, setsup] = useState(null);
   const [delta, setDelta] = useState(null);
   const [price, setprice] = useState(null);
   const [expiry, setexpiry] = useState(null);
@@ -107,7 +108,8 @@ function App() {
       const bal = Number(await contract.balanceOf(ad) / d) / 100;
       setname(await contract.name());
       setsym(await contract.symbol());
-      setBalance(bal.toString());
+      setBalance(bal.toString());const sup = Number(await contract.totalSupply(ad) / d) / 100;
+      setSup(sup.toString());
       setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
       setprice((await contract.currentPrice()).toString());
       let a = (1000n * await contract.expiry()).toString()
@@ -172,6 +174,8 @@ function App() {
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
   })
+  window.ethereum.on('chainChanged', handler: (chainId: string) => void);    fetchBalance()
+  })
   async function fetchBalance() {
     signer = await provider.getSigner();
     let ad = (await signer.getAddress())
@@ -186,6 +190,8 @@ function App() {
     setname(await contract.name());
     setsym(await contract.symbol());
     setBalance(bal.toString());
+    const sup = Number(await contract.totalSupply(ad) / d) / 100;
+    setSup(sup.toString());
     setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
     setprice((await contract.currentPrice()).toString());
     let a = (1000n * await contract.expiry()).toString()
@@ -273,6 +279,7 @@ function App() {
               <div>Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
               Profit per token: {delta}  || Expiry: {expiry}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+              <div>Total Hedges: {sup}</div>
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
             <div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
