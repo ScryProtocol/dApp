@@ -66,7 +66,7 @@ function App() {
   const [name, setname] = useState();
   const [sym, setsym] = useState();
   const [balance, setBalance] = useState(null);
-  const [sup, setsup] = useState(null);
+  const [sup, setSup] = useState(null);
   const [delta, setDelta] = useState(null);
   const [price, setprice] = useState(null);
   const [expiry, setexpiry] = useState(null);
