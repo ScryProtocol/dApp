@@ -174,7 +174,8 @@ function App() {
   } window.ethereum.on('accountsChanged', function (accounts) {
     fetchBalance()
   })
-  window.ethereum.on('chainChanged', handler: (chainId: string) => void);    fetchBalance()
+ window.ethereum.on('chainChanged', function (accounts) {
+  fetchBalance()
   })
   async function fetchBalance() {
     signer = await provider.getSigner();
@@ -278,8 +279,8 @@ function App() {
               <div>Hedges: {balance}</div>
               <div>Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
-              Profit per token: {delta}  || Expiry: {expiry}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
-              <div>Total Hedges: {sup}</div>
+              Profit per token: {delta}  || Expiry: {expiry}
+              <div>Total Hedges: {sup}</div></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
             <div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
