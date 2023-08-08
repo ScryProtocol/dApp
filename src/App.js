@@ -34,7 +34,7 @@ function App() {
     let oracle = []
     oracle[0] = {
       name: 'Scry Team',
-      stake: '1000000',
+      stake: 'Scry',
       addrs: '0x0000000000071821e8033345a7be174647be0706',
       href: 'https://sepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
       networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
@@ -51,7 +51,7 @@ function App() {
     }
 oracle[2] = {
       name: 'CryptoDevs @Post',
-      stake: '0',
+      stake: 'Partner',
       addrs: '0x38887b21213BC057CaBE94b23cC394B2E79C218D',
       href: 'https://optimistic.etherscan.io/address/0x38887b21213BC057CaBE94b23cC394B2E79C218D',
       networks: ['optimism'],
