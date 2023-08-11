@@ -42,7 +42,7 @@ import { ethers } from "ethers";
 import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider } from "ethers";
 
 const { chains, publicClient } = configureChains(
-  [sepolia],//mainnet, polygon, optimism, arbitrum, sepolia],
+  [sepolia,optimism],//mainnet, polygon, optimism, arbitrum, sepolia],
   [
     alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
