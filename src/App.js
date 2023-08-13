@@ -274,7 +274,7 @@ function App() {
     const [decimals, setDecimals] = useState(0);
     const handleCreateDelta = async () => {
       // Check if MetaMask is installed
-      if (typeof window.ethereum !== 'undefined') {
+     try{ if (typeof window.ethereum !== 'undefined') {
         let fABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "deltaaddrs", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "ID", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "symbol", "type": "string" }, { "indexed": false, "internalType": "address[]", "name": "morpheus", "type": "address[]" }, { "indexed": false, "internalType": "address", "name": "collateralToken", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "APIendpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "deltaDeployed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "DeltaInfo", "outputs": [{ "internalType": "address", "name": "collateralToken", "type": "address" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }, { "internalType": "string", "name": "_symbol", "type": "string" }, { "internalType": "address[]", "name": "_morpheus", "type": "address[]" }, { "internalType": "address", "name": "_collateralToken", "type": "address" }, { "internalType": "uint256", "name": "_expiry", "type": "uint256" }, { "internalType": "uint256", "name": "_strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "createDelta", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "deployedDeltas", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getDeployedDeltas", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "total", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
         const deltaFactory = new ethers.Contract('0xD1Dc98541126fa36Dc0F63209125194aF27E5Ba9', fABI, signer);
 
@@ -301,7 +301,7 @@ function App() {
           alert('Delta created successfully at ', adrs.toString()); addrs = adrs.toString()
         })
         closeOptionModal()
-      }
+      }}catch { console.log()}
     };
     const handleLookup = async () => {
       // try {
@@ -436,10 +436,10 @@ function App() {
               </FormControl>
             </div>
             <div className="flex justify-center">
-              <Button onClick={handleLookup}>Deploy</Button>
+              <Button onClick={handleCreateDelta}>Deploy</Button>
             </div>
             <div className="flex justify-center">
-              <Button onClick={handleCreateDelta}>Lookup API</Button>
+              <Button onClick={handleLookup}>Lookup API</Button>
             </div>
             <div className="flex justify-center">
               <Button onClick={closeOptionModal}>close</Button>
