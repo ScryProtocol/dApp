@@ -276,10 +276,10 @@ function App() {
       // Check if MetaMask is installed
      try{ if (typeof window.ethereum !== 'undefined') {
         let fABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "deltaaddrs", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "ID", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "symbol", "type": "string" }, { "indexed": false, "internalType": "address[]", "name": "morpheus", "type": "address[]" }, { "indexed": false, "internalType": "address", "name": "collateralToken", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "APIendpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "deltaDeployed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "DeltaInfo", "outputs": [{ "internalType": "address", "name": "collateralToken", "type": "address" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }, { "internalType": "string", "name": "_symbol", "type": "string" }, { "internalType": "address[]", "name": "_morpheus", "type": "address[]" }, { "internalType": "address", "name": "_collateralToken", "type": "address" }, { "internalType": "uint256", "name": "_expiry", "type": "uint256" }, { "internalType": "uint256", "name": "_strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "createDelta", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "deployedDeltas", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getDeployedDeltas", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "total", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
-        const deltaFactory = new ethers.Contract('0xD1Dc98541126fa36Dc0F63209125194aF27E5Ba9', fABI, signer);
+        const deltaFactory = new ethers.Contract('0xcA849DCfD993364dA80EC12046390ca9f1cdaa82', fABI, signer);
 
         // Convert date string to UNIX timestamp
-        const expiryTimestamp = Math.floor(new Date(date).getTime() - Date.now() / 1000 / 3600);
+        const expiryTimestamp = Math.floor((new Date(date).getTime() - Date.now()) / 1000 / 3600);
 
         // Call the createDelta function
         const tx = await deltaFactory.createDelta(
@@ -295,11 +295,12 @@ function App() {
         );
 
         // Wait for the transaction to be mined
-        await tx.wait();
         deltaFactory.on('deltaDeployed', (adrs, a1, a2, a3, a4, a5, a6, a7, a8, a9, a0) => {
           console.log(adrs)
-          alert('Delta created successfully at ', adrs.toString()); addrs = adrs.toString()
+          alert('Delta created successfully at ', adrs); addrs = adrs.toString()
         })
+        
+        await tx.wait();
         closeOptionModal()
       }}catch { console.log()}
     };
@@ -436,10 +437,10 @@ function App() {
               </FormControl>
             </div>
             <div className="flex justify-center">
-              <Button onClick={handleCreateDelta}>Deploy</Button>
+              <Button onClick={handleCreateDelta} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Deploy</Button>
             </div>
             <div className="flex justify-center">
-              <Button onClick={handleLookup}>Lookup API</Button>
+              <Button onClick={handleLookup} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Lookup API</Button>
             </div>
             <div className="flex justify-center">
               <Button onClick={closeOptionModal}>close</Button>
@@ -491,7 +492,6 @@ function App() {
               Profit per token: {delta}  || Expiry: {expiry}
               <div>Total Hedges: {sup}</div></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
-            <Button onClick={openOptionModal}>Create Option</Button>
             <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
                 id="number"
@@ -505,7 +505,8 @@ function App() {
               />
             </div><div className="flex flex-col justify-center m-auto overflow-hidden"><Button onClick={() => Mint()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Mint</Button>
               <Button onClick={() => handleRedeem()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Redeem</Button>
-              <Button onClick={() => handleUnlock()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Unlock Collateral</Button></div><div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
+              <Button onClick={() => handleUnlock()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Unlock Collateral</Button></div><Button onClick={openOptionModal}>Create Option</Button>
+            <div className="justify-center m-auto overflow-hidden"> <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
               <Button onClick={() => window.location.assign(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
             </div>
           </div> <div style={{
