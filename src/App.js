@@ -57,7 +57,8 @@ oracle[2] = {
       networks: ['optimism'],
       networksL: 'Optimism'
 
-    }oracle[3] = {
+    }
+  oracle[3] = {
       name: 'CryptoDevs @treyzania',
       stake: 'Partner',
       addrs: '0xc69d240e7bd109d4b8a485dfda0b6481738f18c9',
