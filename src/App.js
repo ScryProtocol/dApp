@@ -57,6 +57,14 @@ oracle[2] = {
       networks: ['optimism'],
       networksL: 'Optimism'
 
+    }oracle[3] = {
+      name: 'CryptoDevs @treyzania',
+      stake: 'Partner',
+      addrs: '0xc69d240e7bd109d4b8a485dfda0b6481738f18c9',
+      href: 'https://optimistic.etherscan.io/address/0xc69d240e7bd109d4b8a485dfda0b6481738f18c9',
+      networks: ['optimism'],
+      networksL: 'Optimism'
+
     }
     let oracleS = oracle
     if (filter != null && filter != 'All') {
