@@ -67,6 +67,15 @@ oracle[2] = {
       networksL: 'Optimism'
 
     }
+    oracle[4] = {
+      name: '0xchibi',
+      stake: 'Partner',
+      addrs: '0xF478b60A72AB5D3a076cC222428FBfCa1A0163dd',
+      href: 'https://optimistic.etherscan.io/address/0xF478b60A72AB5D3a076cC222428FBfCa1A0163dd',
+      networks: ['optimism'],
+      networksL: 'Optimism'
+
+    }
     let oracleS = oracle
     if (filter != null && filter != 'All') {
       oracleS = oracle.filter((o) => o.networks.includes(filter));
@@ -80,7 +89,7 @@ oracle[2] = {
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">
           Staked: {oracleS[n].stake}
         </h1>
-        <div style={{ color: '#77ff8b' }} className="m-auto text-center color-green-500 text-1xl font-bold">
+        <div  style={{ color: '#77ff8b' }} className="m-auto text-center color-green-500 text-1xl font-bold">
           Address: <br />{oracleS[n].addrs}
         </div>
         <div style={{ color: '#77ff8b' }} className='mx-6'>
