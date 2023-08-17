@@ -346,7 +346,20 @@ function App() {
   }
   return (
     <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
-      <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains} theme={darkTheme({
+        accentColor: '#00ff55',
+        showBalance: true,
+        accentColorForeground: 'white',
+        borderRadius: 'small',
+        fontStack: 'system',
+        overlayBlur: 'small',
+      })}>
+       <ConnectButton showBalance={true} accountStatus={{
+              smallScreen: 'full',
+              largeScreen: 'full',
+            }} chainStatus="icon"
+            /> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
         <OptionModal open={openModal} onClose={closeOptionModal} /> <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
           Welcome to Morpheus
         </h1><div style={{ color: '#77ff8b' }} className='mx-6' >
@@ -367,7 +380,8 @@ function App() {
           <MenuItem value="base">Base</MenuItem>
           <MenuItem value="scroll">Scroll</MenuItem>
         </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
-       </div>
+        </RainbowKitProvider>
+    </WagmiConfig> </div>
   )
 }
 
