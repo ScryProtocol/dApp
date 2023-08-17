@@ -229,8 +229,8 @@ function App() {
         signer
       );
 
-      am = parseUnits(amount.toString(), 18)
-      tx = await t.unstake(oraclead, am)
+      let am = parseUnits(amount.toString(), 18)
+      let tx = await t.unstake(oraclead, am)
       await tx.wait()
       getStake()
     }
@@ -242,8 +242,8 @@ function App() {
         signer
       );
 
-      am = parseUnits(amount.toString(), 18)
-      tx = await t.withdrawStake(oraclead, am)
+      let am = parseUnits(amount.toString(), 18)
+      let tx = await t.withdrawStake(oraclead, am)
       await tx.wait()
       getStake()
     }
