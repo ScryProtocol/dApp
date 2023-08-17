@@ -40,6 +40,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from "ethers";
 import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider } from "ethers";
+import zIndex from '@mui/material/styles/zIndex';
 
 const { chains, publicClient } = configureChains(
   [sepolia, optimism],//mainnet, polygon, optimism, arbitrum, sepolia],
@@ -76,6 +77,7 @@ function App() {
   const [stakes, setstakes] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [openModal, setOpenModal] = useState(false)
   const [userstake, setuserstake] = useState('0');
+  const [oraclestake, setoraclestake] = useState('0');
   const [useroracle, setuseroracle] = useState('0');
   const [userreward, setuserreward] = useState('0');
   const [userrewardstaked, setuserrewardstaked] = useState('0');
@@ -214,6 +216,8 @@ function App() {
       let ba
       let ts
       [ba, ts] = (await contract.stakeWithdraw(oraclead, await signer.getAddress()))
+      let ls= (await contract.userStake(oraclead, await signer.getAddress()))
+      setoraclestake(Number(ls) / 10 ** 18)
       //ts = (await contract.earned(await signer.getAddress())).toString()
       setuseroracle(Number(ba) / 10 ** 18)
       const date = new Date(Number(ts * 1000n));
@@ -304,9 +308,13 @@ function App() {
               <h1 className="text-center md:mt-8 text-color-red-500 text-2xl md:text-3xl font-extrabold w-3/4">
                 Earned  {userreward} OP
               </h1>
+            </div><div className="flex justify-center">
+              <h1 className="text-center text-color-red-500 text-2xl font-extrabold w-3/4">
+                Staked for Oracle: {oraclestake}
+              </h1>
             </div>
             <div className="flex justify-center">
-              <h1 className="text-center md:mt-8 text-color-red-500 text-2xl md:text-3xl font-extrabold w-3/4">
+              <h1 className="text-center text-color-red-500 text-2xl  font-extrabold w-3/4">
 
                 Unstaking: {useroracle} Available to withdraw at: {userrewardstaked}
               </h1>
