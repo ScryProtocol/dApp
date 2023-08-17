@@ -102,7 +102,7 @@ function App() {
       oracleS = oracle.filter((o) => o.networks.includes(filter));
     }
     for (let n = 0; n < oracleS.length; n++) {
-      s[n] = ((await contract.getstake(oracleS[n].addrs) / 10n ** 18n).toString());
+      s[oracleS[n].addrs] = ((await contract.getstake(oracleS[n].addrs) / 10n ** 18n).toString());
       //alert(s[n])
     }
 
@@ -186,7 +186,7 @@ function App() {
           {oracleS[n].name}
         </h1>
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">
-          Staked: {stakes[n]}
+          Staked: {stakes[oracleS[n].addrs]}
         </h1>
         <div style={{ color: '#77ff8b' }} className="m-auto text-center color-green-500 text-1xl font-bold">
           Address: <br />{oracleS[n].addrs}
