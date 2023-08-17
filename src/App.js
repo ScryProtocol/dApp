@@ -353,7 +353,8 @@ function App() {
           Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
         </div>
         <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-      </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
+        <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+     </div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
 
         <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
         <Select
@@ -366,9 +367,7 @@ function App() {
           <MenuItem value="base">Base</MenuItem>
           <MenuItem value="scroll">Scroll</MenuItem>
         </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
-      <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-      <Button onClick={() => getStake()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-    </div>
+       </div>
   )
 }
 
