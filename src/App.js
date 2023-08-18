@@ -83,7 +83,13 @@ function App() {
   const [userrewardstaked, setuserrewardstaked] = useState('0');
   const [amount, setamount] = useState('');
   const [oraclead, setoraclead] = useState('');
-
+provider.on("network", (newNetwork, oldNetwork) => {
+  // When a Provider makes its initial connection, it emits a "network"
+  // event with a null oldNetwork along with the newNetwork. So, if the
+  // oldNetwork exists, it represents a changing network
+  if (oldNetwork) {
+      window.location.reload();
+  }});
   function openOptionModal() {
     setOpenModal(true);
   }
