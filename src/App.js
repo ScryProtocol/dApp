@@ -245,7 +245,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
       let ts
       let sw
       [sw,ts] = await contract.stakeWithdraw(await signer.getAddress,oraclead)
-if(Number(s)>Math.floor(Date.now() / 1000))//
+if(Number(ts)>Math.floor(Date.now() / 1000))//
      { let am = parseUnits(amount.toString(), 18)
       let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
       await tx.wait()}
