@@ -235,33 +235,33 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
       let t = new ethers.Contract(
         addrst,
-        fABI,
+        ABI,//fABI,
         signer
       );
 
       let am = parseUnits(amount.toString(), 18)
       let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
       await tx.wait()
+      let ts
+      let sw
+      (sw,ts) = await contract.stakeWithdraw(await signer.getAddress,oraclead)
+if(Number(s)>Math.floor(Date.now() / 1000))//
+     { let am = parseUnits(amount.toString(), 18)
+      let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
+      await tx.wait()}
       getStake()
     }
     async function withdraw() {
       signer = await provider.getSigner();
       let t = new ethers.Contract(
-        addrst,
+        addrs,//addrst,
         ABI,//fABI,
         signer
       );
-      let ts
-      let sw
-      (sw,ts) = await t.stakeWithdraw(await signer.getAddress,oraclead)
-if(Number(s)>Math.floor(Date.now() / 1000))//
-     { let am = parseUnits(amount.toString(), 18)
-      
-      let tx = await t.withdraw(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
-      await tx.wait()}
-else{let am = parseUnits(amount.toString(), 18)
-  let tx = await t.unstake(oraclead,am)//let tx = await t.withdrawStake(oraclead, am)
-  await tx.wait()}
+
+      let am = parseUnits(amount.toString(), 18)
+      let tx = await t.withdrawStake(oraclead, am)
+      await tx.wait()
       getStake()
     }
     async function stake() {
