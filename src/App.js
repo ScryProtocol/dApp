@@ -83,13 +83,14 @@ function App() {
   const [userrewardstaked, setuserrewardstaked] = useState('0');
   const [amount, setamount] = useState('');
   const [oraclead, setoraclead] = useState('');
-provider.on("network", (newNetwork, oldNetwork) => {
-  // When a Provider makes its initial connection, it emits a "network"
-  // event with a null oldNetwork along with the newNetwork. So, if the
-  // oldNetwork exists, it represents a changing network
-  if (oldNetwork) {
+  provider.on("network", (newNetwork, oldNetwork) => {
+    // When a Provider makes its initial connection, it emits a "network"
+    // event with a null oldNetwork along with the newNetwork. So, if the
+    // oldNetwork exists, it represents a changing network
+    if (oldNetwork) {
       window.location.reload();
-  }});
+    }
+  });
   function openOptionModal() {
     setOpenModal(true);
   }
@@ -222,7 +223,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
       let ba
       let ts
       [ba, ts] = (await contract.stakeWithdraw(oraclead, await signer.getAddress()))
-      let ls= (await contract.userStake(oraclead, await signer.getAddress()))
+      let ls = (await contract.userStake(oraclead, await signer.getAddress()))
       setoraclestake(Number(ls) / 10 ** 18)
       //ts = (await contract.earned(await signer.getAddress())).toString()
       setuseroracle(Number(ba) / 10 ** 18)
@@ -235,20 +236,28 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
       let t = new ethers.Contract(
         addrst,
-        ABI,//fABI,
+        fABI,
         signer
       );
 
       let am = parseUnits(amount.toString(), 18)
-      let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
-      await tx.wait()
+      if (t.balanceOf(await signer.getAddress) > 0) {
+        let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
+        await tx.wait()
+      }
       let ts
       let sw
-      [sw,ts] = await contract.stakeWithdraw(await signer.getAddress,oraclead)
-if(Number(ts)>Math.floor(Date.now() / 1000))//
-     { let am = parseUnits(amount.toString(), 18)
-      let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
-      await tx.wait()}
+      [sw, ts] = await contract.userStake(oraclead, await signer.getAddress)
+      if (Number(ts) < Math.floor(Date.now() / 1000))//
+      {
+        let am = parseUnits(amount.toString(), 18)
+        let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
+        await tx.wait()
+      }
+      else {
+        let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
+        await tx.wait()
+      }
       getStake()
     }
     async function withdraw() {
@@ -353,7 +362,7 @@ if(Number(ts)>Math.floor(Date.now() / 1000))//
             </div><div className="flex justify-center"><Button onClick={() => unstake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Unstake from Oracle</Button>
             </div><div className="flex justify-center"><Button onClick={() => withdraw()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Withdraw from Oracle</Button>
             </div><div className="flex justify-center"><Button onClick={() => getS()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Check Oracle Stake</Button>
-           
+
             </div>
             <div className="flex justify-center">
               <Button onClick={closeOptionModal}>close</Button>
@@ -367,43 +376,43 @@ if(Number(ts)>Math.floor(Date.now() / 1000))//
   }
   return (
     <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={darkTheme({
-        accentColor: '#00ff55',
-        showBalance: true,
-        accentColorForeground: 'white',
-        borderRadius: 'small',
-        fontStack: 'system',
-        overlayBlur: 'small',
-      })}>
-       <ConnectButton showBalance={true} accountStatus={{
-              smallScreen: 'full',
-              largeScreen: 'full',
-            }} chainStatus="icon"
-            /> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-        <OptionModal open={openModal} onClose={closeOptionModal} /> <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-          Welcome to Morpheus
-        </h1><div style={{ color: '#77ff8b' }} className='mx-6' >
-          Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
-        </div>
-        <div style={{ color: '#00ff55' }} className="flex justify-center">
-<Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-        <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 left-4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
-        </div></div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider chains={chains} theme={darkTheme({
+          accentColor: '#00ff55',
+          showBalance: true,
+          accentColorForeground: 'white',
+          borderRadius: 'small',
+          fontStack: 'system',
+          overlayBlur: 'small',
+        })}>
+          <ConnectButton showBalance={true} accountStatus={{
+            smallScreen: 'full',
+            largeScreen: 'full',
+          }} chainStatus="icon"
+          /> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+            <OptionModal open={openModal} onClose={closeOptionModal} /> <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+              Welcome to Morpheus
+            </h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+              Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
+            </div>
+            <div style={{ color: '#00ff55' }} className="flex justify-center">
+              <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+              <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 left-4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
+            </div></div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
 
-        <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
-        <Select
-          labelId="filter-label"
-          id="filter-select"
-          value={filter} style={{ color: '#00ff55' }}
-          onChange={handleChange} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-          <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
-          <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
-          <MenuItem value="base">Base</MenuItem>
-          <MenuItem value="scroll">Scroll</MenuItem>
-        </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
+            <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
+            <Select
+              labelId="filter-label"
+              id="filter-select"
+              value={filter} style={{ color: '#00ff55' }}
+              onChange={handleChange} className="bg-gray-800 w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+              <MenuItem value="All">All</MenuItem><MenuItem value="ethmainnet">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
+              <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="canto">Canto</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
+              <MenuItem value="base">Base</MenuItem>
+              <MenuItem value="scroll">Scroll</MenuItem>
+            </Select></div><div style={{ top: 10, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="bg-gray-900">{data()}</div>
         </RainbowKitProvider>
-    </WagmiConfig> </div>
+      </WagmiConfig> </div>
   )
 }
 
