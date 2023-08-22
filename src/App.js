@@ -233,7 +233,7 @@ function App() {
     }
     async function unstake() {
       signer = await provider.getSigner();
-
+      console.log(10,await signer.getAddress())
       let t = new ethers.Contract(
         addrst,
         fABI,
@@ -241,21 +241,27 @@ function App() {
       );
 
       let am = parseUnits(amount.toString(), 18)
-      if (t.balanceOf(await signer.getAddress) > 0) {
+      console.log(10)
+      if (await t.balanceOf(await signer.getAddress()) > 0) {
         let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
         await tx.wait()
       }
+      console.log(await contract.stakeWithdraw(oraclead, await signer.getAddress()))
+
       let ts
       let sw
-      [sw, ts] = await contract.userStake(oraclead, await signer.getAddress)
-      if (Number(ts) < Math.floor(Date.now() / 1000))//
-      {
+      [sw, ts] = await contract.stakeWithdraw(oraclead, await signer.getAddress())
+      console.log(sw,ts,Date.now())
+      if (Number(ts) < (Date.now() / 1000))//
+      { console.log(2)
         let am = parseUnits(amount.toString(), 18)
-        let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
+        let tx = await contract.unstakeStake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
         await tx.wait()
       }
-      else {
-        let tx = await contract.unstake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
+  
+
+      else { console.log(3)
+        let tx = await contract.withdrawStake(oraclead, am)//let tx = await t.withdrawStake(oraclead, am)
         await tx.wait()
       }
       getStake()
@@ -263,13 +269,13 @@ function App() {
     async function withdraw() {
       signer = await provider.getSigner();
       let t = new ethers.Contract(
-        addrs,//addrst,
-        ABI,//fABI,
+        addrst,//addrst,
+        fABI,//fABI,
         signer
       );
 
       let am = parseUnits(amount.toString(), 18)
-      let tx = await t.withdrawStake(oraclead, am)
+      let tx = await t.exit()
       await tx.wait()
       getStake()
     }
@@ -360,7 +366,7 @@ function App() {
               />
             </div><div className="flex justify-center"><Button onClick={() => stake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
             </div><div className="flex justify-center"><Button onClick={() => unstake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Unstake from Oracle</Button>
-            </div><div className="flex justify-center"><Button onClick={() => withdraw()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Withdraw from Oracle</Button>
+            
             </div><div className="flex justify-center"><Button onClick={() => getS()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Check Oracle Stake</Button>
 
             </div>
