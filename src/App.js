@@ -274,8 +274,7 @@ function App() {
         signer
       );
 
-      let am = parseUnits(amount.toString(), 18)
-      let tx = await t.exit()
+      let tx = await t.getReward()
       await tx.wait()
       getStake()
     }
@@ -366,6 +365,7 @@ function App() {
               />
             </div><div className="flex justify-center"><Button onClick={() => stake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
             </div><div className="flex justify-center"><Button onClick={() => unstake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Unstake from Oracle</Button>
+            </div><div className="flex justify-center"><Button onClick={() => withdraw()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Claim Reward</Button>
             
             </div><div className="flex justify-center"><Button onClick={() => getS()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Check Oracle Stake</Button>
 
