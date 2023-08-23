@@ -76,7 +76,8 @@ function App() {
   const [filter, setFilter] = React.useState('All');
   const [stakes, setstakes] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [openModal, setOpenModal] = useState(false)
-  const [userstake, setuserstake] = useState('0');
+  const [userstake, setuserstake] = useState('0');  const [tstake, settstake] = useState('0');
+
   const [oraclestake, setoraclestake] = useState('0');
   const [useroracle, setuseroracle] = useState('0');
   const [userreward, setuserreward] = useState('0');
@@ -124,7 +125,12 @@ function App() {
       addrst,
       fABI,
       signer
-    );
+    );let t = new ethers.Contract(
+      addrsS,
+      ABI,
+      signer
+    );console.log()
+    settstake((await t.balanceOf(addrs)/10n**18n).toString())
     let ba = (await contract.balanceOf(await signer.getAddress()) / 10n ** 18n + await tok.balanceOf(await signer.getAddress()) / 10n ** 18n).toString()
     let aa = (await tok.earned(await signer.getAddress())).toString()
     setuserstake(ba)
@@ -398,14 +404,16 @@ function App() {
           /> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
             <OptionModal open={openModal} onClose={closeOptionModal} /> <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Welcome to Morpheus
-            </h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+            </h1> <div style={{ color: '#77ff8b' }} className='mx-6' >
               Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
             </div>
             <div style={{ color: '#00ff55' }} className="flex justify-center">
               <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
               <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 left-4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
             </div></div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
-
+            <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
+              OP Staked: {tstake}
+            </h1> 
             <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
             <Select
               labelId="filter-label"
