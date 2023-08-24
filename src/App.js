@@ -151,7 +151,7 @@ function App() {
       networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
       networksL: 'Ethereum, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
     }
-    oracle[9] = {
+    oracle[5] = {
       name: 'Scry Team',
       stake: '0',
       addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
@@ -187,7 +187,7 @@ function App() {
       networksL: 'Optimism'
 
     }
- oracle[5] = {
+ oracle[1] = {
       name: 'Velodrome',
       stake: 'Partner',
       addrs: '0x805Eaa904889A5c3754E1A11C1b4a49bCDDd828A',
