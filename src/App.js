@@ -187,7 +187,7 @@ function App() {
       networksL: 'Optimism'
 
     }
- oracle[4] = {
+ oracle[5] = {
       name: 'Velodrome',
       stake: 'Partner',
       addrs: '0x805Eaa904889A5c3754E1A11C1b4a49bCDDd828A',
