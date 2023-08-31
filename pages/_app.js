@@ -110,9 +110,12 @@ function App() {
     setGame(gameData);
     const feedId = game.vrfFeedId;
     const { value } = await morpheus.getFeed(feedId);
+    try {
     if (parseInt(value) !== 0) {
       const tx = await contract.connect(signer).determineWinner(gameId);
       await tx.wait();
+    }} catch (error) {
+      
     }
   };
 
