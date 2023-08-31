@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "lol.js"  ],
+, "lol.js", "pages/_app.js"  ],
   "exclude": [
     "node_modules"
   ]

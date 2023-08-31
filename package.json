@@ -45,6 +45,7 @@
     "tailwindcss": "^3.1.8",
     "unstated-next": "^1.1.0",
     "wagmi": "0.6.2",
+    "web3": "^4.1.1",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
