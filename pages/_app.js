@@ -46,7 +46,10 @@ function App() {
       setAmount(ethers.utils.formatUnits(gameData.betAmount, 18).toString())
       setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
       console.log(await contract.games(gameId))
-      setOracleReady((Number(feedValue)) !== 0);
+      let feedValue
+      [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
+      console.log('T', feedValue)
+      setOracleReady((Number(feedValue)));
     } window.ethereum.request({ method: 'eth_requestAccounts' });
     init();
   }, []);
@@ -111,11 +114,12 @@ function App() {
     const feedId = game.vrfFeedId;
     const { value } = await morpheus.getFeed(feedId);
     try {
-    if (parseInt(value) !== 0) {
-      const tx = await contract.connect(signer).determineWinner(gameId);
-      await tx.wait();
-    }} catch (error) {
-      
+      if (parseInt(value) !== 0) {
+        const tx = await contract.connect(signer).determineWinner(gameId);
+        await tx.wait();
+      }
+    } catch (error) {
+
     }
   };
 
