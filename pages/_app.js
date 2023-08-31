@@ -152,7 +152,7 @@ function App() {
               </div>
             </div> {/* Determine Winner */}
               <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>
-            {(OracleReady==0 &&<>Awaiting VRF...</>)}
+            {(OracleReady==1 &&<>Awaiting VRF...</>)}
             <div className="m-auto justify-center text-center space-x-6 space-y-1">
               <h2>Join Game with Bet</h2>
 
