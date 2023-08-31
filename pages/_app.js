@@ -88,7 +88,7 @@ function App() {
   }, [gameId]);
   const createGame = async () => {
     const signer = provider.getSigner()
-    const tx = await contract.connect(signer).createGame(gameId, ethers.utils.parseEther('0.0001'));
+    const tx = await contract.connect(signer).createGame(gameId, ethers.utils.parseEther(amount));
     await tx.wait();
     setGameId(gameId);
   };
@@ -171,7 +171,7 @@ function App() {
             <h2>Create Game</h2>
            
               <input type="text"style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Chosen Game ID" onChange={(e) => setGameId(e.target.value)} />
-              <input type="text"style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Bet Amount" value={player1} onChange={(e) => setPlayer1(e.target.value)} />
+              <input type="text"style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Bet Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
               <div><Button onClick={createGame}>Create Game</Button>
               </div>
           </div> <Modal
