@@ -47,7 +47,7 @@ function App() {
       setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
       console.log(await contract.games(gameId))
     }  window.ethereum.request({ method: 'eth_requestAccounts' });
-    init(); setWinnerModalOpen(true);
+    init(); 
   }, []);
 
   useEffect(() => {
