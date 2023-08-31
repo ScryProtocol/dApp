@@ -77,13 +77,12 @@ function App() {
           betAmount: ethers.utils.formatUnits(gameData.betAmount, 18).toString(),
           vrfFeedId: gameData.vrfFeedId.toString()
         }); setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
-
+        let feedValue
+        [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
+        console.log('T', feedValue)
+        setOracleReady((Number(feedValue)) !== 0);
       }
       console.log('LOL', game)
-      let feedValue
-      [feedValue, , ,] = await morpheus.getFeed(game.vrfFeedId); // Replace this with your actual call
-      console.log('T', feedValue)
-      setOracleReady((Number(feedValue)) !== 0);
     }, 10000);
     return () => clearInterval(interval);
   }, [gameId]);
@@ -151,8 +150,8 @@ function App() {
                 <p>Roll: {game.player2roll}</p>
               </div>
             </div> {/* Determine Winner */}
-              <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>
-            {(OracleReady==1 &&<>Awaiting VRF...</>)}
+            <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>
+            {(OracleReady == 1 && <>Awaiting VRF...</>)}
             <div className="m-auto justify-center text-center space-x-6 space-y-1">
               <h2>Join Game with Bet</h2>
 
