@@ -149,10 +149,10 @@ function App() {
                 <p>Bet: {game.player2bet} ETH</p>
                 <p>Roll: {game.player2roll}</p>
               </div>
-            </div> {/* Determine Winner */} {OracleReady!==0 &&
-              <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>}
-            {OracleReady==0 &&
-              <>Rolling VRF...</>}
+            </div> {/* Determine Winner */} {(OracleReady!==0 &&
+              <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>)}
+            {(OracleReady==0 &&
+              <>Rolling VRF...</>)}
             <div className="m-auto justify-center text-center space-x-6 space-y-1">
               <h2>Join Game with Bet</h2>
 
