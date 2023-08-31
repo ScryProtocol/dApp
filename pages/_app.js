@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     async function init() {
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      
+
       contract = new ethers.Contract(contractAddress, abi, provider);
       morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
       console.log((await provider.getBalance('0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5')).toString())
@@ -42,12 +42,12 @@ function App() {
         player2roll: gameData.player2roll.toString(),
         betAmount: ethers.utils.formatUnits(gameData.betAmount, 18).toString(),
         vrfFeedId: gameData.vrfFeedId.toString()
-      });    const signer = provider.getSigner()
+      }); const signer = provider.getSigner()
       setAmount(ethers.utils.formatUnits(gameData.betAmount, 18).toString())
       setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
       console.log(await contract.games(gameId))
-    }  window.ethereum.request({ method: 'eth_requestAccounts' });
-    init(); 
+    } window.ethereum.request({ method: 'eth_requestAccounts' });
+    init();
   }, []);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ function App() {
           player2roll: gameData.player2roll.toString(),
           betAmount: ethers.utils.formatUnits(gameData.betAmount, 18).toString(),
           vrfFeedId: gameData.vrfFeedId.toString()
-        });setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
+        }); setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
 
       }
       console.log('LOL', game)
@@ -149,42 +149,42 @@ function App() {
                 <p>Bet: {game.player2bet} ETH</p>
                 <p>Roll: {game.player2roll}</p>
               </div>
-            </div> {/* Determine Winner */} {OracleReady &&
+            </div> {/* Determine Winner */} {OracleReady!==0 &&
               <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>}
-            {!OracleReady &&
+            {OracleReady==0 &&
               <>Rolling VRF...</>}
-<div className="m-auto justify-center text-center space-x-6 space-y-1">
-            <h2>Join Game with Bet</h2>
-           
-              <input type="text"  style={{backgroundColor:'#111111', right: '2px' }}value={commit} onChange={(e) => setCommit(e.target.value)} />
-              <input style={{backgroundColor:'#111111'}}type="text" placeholder="Bet Amount in ETH" value={amount} onChange={(e) => setAmount(e.target.value)} />
-              <div><Button variant='outlined'onClick={joinGame}>Join Game</Button>
+            <div className="m-auto justify-center text-center space-x-6 space-y-1">
+              <h2>Join Game with Bet</h2>
+
+              <input type="text" style={{ backgroundColor: '#111111', right: '2px' }} value={commit} onChange={(e) => setCommit(e.target.value)} />
+              <input style={{ backgroundColor: '#111111' }} type="text" placeholder="Bet Amount in ETH" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <div><Button variant='outlined' onClick={joinGame}>Join Game</Button>
               </div>
-          </div>
-          <div>Withdrawable: {bal}<Button onClick={withdraw}>Withdraw</Button>
-          </div></div>  {/* Create Game */}
+            </div>
+            <div>Withdrawable: {bal}<Button onClick={withdraw}>Withdraw</Button>
+            </div></div>  {/* Create Game */}
           Game ID
-          <input type="text" 
-           style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="0" onChange={(e) => setGameId(e.target.value)} />
+          <input type="text"
+            style={{ backgroundColor: '#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="0" onChange={(e) => setGameId(e.target.value)} />
           {/* Join Game */}
           <div className="justify-center text-center space-x-6">
             <h2>Create Game</h2>
-           
-              <input type="text"style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Chosen Game ID" onChange={(e) => setGameId(e.target.value)} />
-              <input type="text"style={{backgroundColor:'#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Bet Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-              <div><Button onClick={createGame}>Create Game</Button>
-              </div>
+
+            <input type="text" style={{ backgroundColor: '#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Chosen Game ID" onChange={(e) => setGameId(e.target.value)} />
+            <input type="text" style={{ backgroundColor: '#111111', color: 'green', top: '1px' }} className="m-auto justify-center text-center bg-green-500" placeholder="Bet Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+            <div><Button onClick={createGame}>Create Game</Button>
+            </div>
           </div> <Modal
             open={winnerModalOpen}
             onClose={() => setWinnerModalOpen(false)}
           >
             <div style={{ backgroundColor: '#222222', color: '#00ff55' }} className="text-center textflex flex-col space-y-6 justify-center m-auto w-1/2   shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
               <p>Winner Determined!</p>
+              <p>Winner: {winnerInfo.winner}</p>
               <p>Player 1: {game.player1}</p>
               <p>Player 1 Roll: {winnerInfo.player1roll}</p>
               <p>Player 2: {game.player2}</p>
               <p>Player 2 Roll: {winnerInfo.player2roll}</p>
-              <p>Winner: {winnerInfo.winner}</p>
               <p>Amount: {winnerInfo.amount} ETH</p>
             </div>
           </Modal></div></div ></div >
