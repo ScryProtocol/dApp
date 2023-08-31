@@ -65,26 +65,27 @@ function App() {
     });
     const interval = setInterval(async () => {
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      if (gameId) {
-        const gameData = await contract.games(gameId);
-        setGame({
-          player1: gameData.player1.toString(),
-          player2: gameData.player2.toString(),
-          winner: gameData.winner.toString(),
-          commit1: gameData.commit1.toString(),
-          commit2: gameData.commit2.toString(),
-          player1bet: ethers.utils.formatUnits(gameData.player1bet, 18).toString(),
-          player2bet: ethers.utils.formatUnits(gameData.player2bet, 18).toString(),
-          player1roll: gameData.player1roll.toString(),
-          player2roll: gameData.player2roll.toString(),
-          betAmount: ethers.utils.formatUnits(gameData.betAmount, 18).toString(),
-          vrfFeedId: gameData.vrfFeedId.toString()
-        }); setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
-        let feedValue
-        [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
-        console.log('T', feedValue)
-        setOracleReady((Number(feedValue)));
-      }
+      const signer = provider.getSigner()
+      // if (gameId) {
+      const gameData = await contract.games(gameId);
+      setGame({
+        player1: gameData.player1.toString(),
+        player2: gameData.player2.toString(),
+        winner: gameData.winner.toString(),
+        commit1: gameData.commit1.toString(),
+        commit2: gameData.commit2.toString(),
+        player1bet: ethers.utils.formatUnits(gameData.player1bet, 18).toString(),
+        player2bet: ethers.utils.formatUnits(gameData.player2bet, 18).toString(),
+        player1roll: gameData.player1roll.toString(),
+        player2roll: gameData.player2roll.toString(),
+        betAmount: ethers.utils.formatUnits(gameData.betAmount, 18).toString(),
+        vrfFeedId: gameData.vrfFeedId.toString()
+      }); setBal(ethers.utils.formatUnits(await contract.pay(signer.getAddress()), 18).toString())
+      let feedValue
+      [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
+      console.log('T', feedValue)
+      setOracleReady((Number(feedValue)));
+      //  }
       console.log('LOL', game)
     }, 10000);
     return () => clearInterval(interval);
@@ -109,8 +110,6 @@ function App() {
   };
   const determineWinner = async () => {
     const signer = provider.getSigner()
-    const gameData = await contract.games(gameId);
-    setGame(gameData);
     const feedId = game.vrfFeedId;
     const { value } = await morpheus.getFeed(feedId);
     try {
@@ -157,8 +156,8 @@ function App() {
                 <p>Roll: {game.player2roll}</p>
               </div>
             </div> {/* Determine Winner */}
-            <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>
-            {(OracleReady == 1 && <>Awaiting VRF...</>)}
+            {OracleReady !== 0 && <Button style={{ color: '#77ff8b' }} variant='outlined' className="top-1 color-green-500 border-green-500" onClick={determineWinner}>Determine Winner</Button>
+            }{(OracleReady == 0 && <>Awaiting VRF...</>)}
             <div className="m-auto justify-center text-center space-x-6 space-y-1">
               <h2>Join Game with Bet</h2>
 
