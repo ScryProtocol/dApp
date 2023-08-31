@@ -80,7 +80,7 @@ function App() {
         let feedValue
         [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
         console.log('T', feedValue)
-        setOracleReady((Number(feedValue)) !== 0);
+        setOracleReady((Number(feedValue)));
       }
       console.log('LOL', game)
     }, 10000);
