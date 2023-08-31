@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "lol.js", "pages/_app.js"  ],
+, "lol.js", "pages/_app.js", "contracts/deathRoll.sol"  ],
   "exclude": [
     "node_modules"
   ]
