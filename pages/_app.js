@@ -14,7 +14,7 @@ let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
 function App() {
   const [accounts, setAccounts] = useState([]);
   const [game, setGame] = useState('0');
-  const [gameId, setGameId] = useState(0); const [OracleReady, setOracleReady] = useState('0');
+  const [gameId, setGameId] = useState(0); const [OracleReady, setOracleReady] = useState(0);
   const [winnerModalOpen, setWinnerModalOpen] = useState(false);
   const [winnerInfo, setWinnerInfo] = useState({}); const [player1, setPlayer1] = useState("");
   const [bal, setBal] = useState("0");
