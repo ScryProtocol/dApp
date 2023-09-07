@@ -22,9 +22,9 @@ const Home: NextPage = () => {
   return (
     <div className="max-w-screen-xl m-auto pb-4 md:pb-12">
       <Head>
-        <title>Scry Data</title>
-        <meta name="description" content="High Scale, Decentralized Oracles and Data" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Veryfi</title>
+        <meta name="description" content="Verify that you own any NFTs, ERCs, are staking or any other ownership that uses balanceOf, for any other network! Veryfi lets you easily check membership and ownership for your community/project!" />
+        <link rel="icon" href="./public/veryfi.png" />
       </Head>
       <Toaster />
 
