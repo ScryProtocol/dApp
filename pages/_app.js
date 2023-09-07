@@ -91,6 +91,7 @@ function App() {
   };
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
+      <Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white" onClick={window.location.assign('https://docs.veryfi.xyz')}>Our Docs</Button>
       <div style={{ color: '#ffffff', backgroundColor: '#00e1ff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
           Veryfi
