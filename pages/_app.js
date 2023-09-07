@@ -106,11 +106,11 @@ Verify that you own any NFTs, ERCs, are staking or any other ownership that uses
               id="filter-select"
               value={network} style={{color: 'white',backgroundColor:'#00ccff' }}
               onChange={(e) => setNetwork(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-              <MenuItem value="All">All</MenuItem><MenuItem value="1">Ethereum</MenuItem><MenuItem value="sepolia">Sepolia</MenuItem>
-              <MenuItem value="arbitrum">Arbitrum</MenuItem><MenuItem value="optimism">Optimism</MenuItem>
-              <MenuItem value="base">Base</MenuItem>
-              <MenuItem value="scroll">Scroll</MenuItem>
-            </Select>{feedID} LOL {OracleReady}
+             <MenuItem value="1">Ethereum</MenuItem><MenuItem value="11155111">Sepolia</MenuItem>
+              <MenuItem value="42161">Arbitrum</MenuItem><MenuItem value="10">Optimism</MenuItem>
+              <MenuItem value="8453">Base</MenuItem>
+              <MenuItem value="534351">Scroll</MenuItem>
+            </Select>
             <h3>Token</h3>
             <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden"/>
             <Button style={{backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
