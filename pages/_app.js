@@ -91,8 +91,7 @@ function App() {
   };
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
-           <div ><a href='https://veryfi.xyz' ><img style={{ height:'42px',position:'fixed' }} src="/veryfi.png" className="top-2 left-2 color-white border-white"/>
-          </a></div><div ><a href='https://scry.finance' ><img style={{ height:'42px',position:'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white"/>
+           <div ><a href='https://scry.finance' ><img style={{ height:'42px',position:'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white"/>
           </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height:'42px',position:'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white"/>
           </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height:'42px',position:'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white"/>
           </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff',position:'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
