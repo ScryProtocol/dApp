@@ -103,7 +103,8 @@ function App() {
         <h2 className="m-auto text-center color-white text-2xl  font-extrabold w-3/4">
           Your Balance for {token}
         </h2><h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          {bal}
+          {bal} {(bal!=0 && <span className="text-green-300 ml-2">✓ Veryfied</span>)}
+        
         </h2>
         <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
           <h2>Network</h2>
