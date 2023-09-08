@@ -90,12 +90,12 @@ function App() {
     }
   };
   return (
-    <div style={{ color: '#00ff55', backgroundColor: '#002e3f' }} className="h-full w-full min-h-screen">
+    <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
            <div ><a href='https://scry.finance' ><img style={{ height:'42px',position:'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white"/>
           </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height:'42px',position:'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white"/>
           </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height:'42px',position:'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white"/>
           </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff',position:'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
-          </a><div style={{ color: '#ffffff', backgroundColor: '#006977', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+          </a><div style={{ color: '#ffffff', backgroundColor: '#00e1ff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
           Veryfi
         </h1> <h3 style={{}} className='mx-6 font-bold' >
@@ -110,7 +110,7 @@ function App() {
           <Select
             labelId="filter-label"
             id="filter-select"
-            value={network} style={{ color: 'white', backgroundColor: '#006a85' }}
+            value={network} style={{ color: 'white', backgroundColor: '#00ccff' }}
             onChange={(e) => setNetwork(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
             <MenuItem value="1">Ethereum</MenuItem>
             <MenuItem value="42161">Arbitrum</MenuItem>
@@ -122,12 +122,12 @@ function App() {
 
           </Select>
           <h3>Token</h3>
-          <input type="text" style={{ backgroundColor: '#006a85', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
+          <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
+          <Button style={{ backgroundColor: '#53baff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
           <div></div>{(OracleReady > 1 && <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={update}>Set Balance</Button>)
           }{(OracleReady == 1 && <div style={{ position: 'relative', top: '4px' }}>Awaiting Oracle...</div>)}
-          <div style={{ color: '#006a8500', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
-          <input type="text" style={{ backgroundColor: '#006a85', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
+          <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
+          <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
         </div>Please note there is a 0.001 ETH oracle fee.</div ></div >
   );
 }
