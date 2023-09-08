@@ -99,7 +99,7 @@ function App() {
         <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
           Veryfi
         </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Verify that you own any NFTs, ERCs, are staking or any other ownership that uses balanceOf, for any other network! Veryfi lets you easily check membership and ownership for your community/project!</h3>
+          Verify that you own any NFTs, ERCs, are staking or any other ownership that uses balanceOf, for any other network! Veryfi lets you easily check membership and ownership for your community/project! Simply choose the network, enter the token or contract address and Request Veryfication! The app will then show you when the oracles ready and you can submit the verification and it's ready to use onchain!</h3>
         <h2 className="m-auto text-center color-white text-2xl  font-extrabold w-3/4">
           Your Balance for {token}
         </h2><h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
