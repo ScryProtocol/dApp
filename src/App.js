@@ -40,13 +40,13 @@ const morpheusAddress = '0x0000000000071821e8033345A7Be174647bE0706';
 let signer
 let contract = new ethers.Contract(contractAddress, abi, provider);
 let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
-//let IPFS;
+let IPFS;
 
 function App() {
   const [accounts, setAccounts] = useState();
   const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
   const [ID, setID] = useState('1');
-  const [IPFS, setIPFS] = useState();
+  //const [IPFS, setIPFS] = useState();
   const [sigs, setsigs] = useState();
   const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
@@ -261,7 +261,7 @@ function App() {
             }
           });
           console.log(res.data.IpfsHash);
-          setIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
+          IPFS =res.data.IpfsHash//IPFS = res.data.IpfsHash)
         } catch (error) {
           console.log(error);
         }
