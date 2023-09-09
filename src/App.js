@@ -1,27 +1,9 @@
 import './App.css';
 // @ts-nocheck
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import 'tailwindcss/tailwind.css'
 import '@rainbow-me/rainbowkit/styles.css'
-import { useEffect, useState } from "react";
-import Button from '@mui/material/Button'
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Modal from '@mui/material/Modal'
-import Snackbar from '@mui/material/Snackbar'
-import Card from '@mui/material/Card'
-import Dialog from '@mui/material/Dialog'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import Checkbox from '@mui/material/Checkbox'
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
+
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultWallets,
@@ -39,517 +21,412 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from "ethers";
-import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider } from "ethers";
+import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider,Contract } from "ethers";
 
-const { chains, publicClient } = configureChains(
-  [sepolia, optimism],//mainnet, polygon, optimism, arbitrum, sepolia],
-  [
-    alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
-    publicProvider()
-  ]
-);
-const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
-  projectId: '6970767696eab42de8f4a532ef57bb52',
-  chains
-});
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient
-})
-let provider = new ethers.BrowserProvider(window.ethereum);
-let signer = provider.getSigner(); let addrs = "0xa9e8db01e4c9440e0f417e3ae3f839cc3da71378";
+import { Container, TextField, Button, Typography, Paper, Grid, Modal, Select, MenuItem } from '@mui/material';
+import 'tailwindcss/tailwind.css'
+import { chainId } from 'wagmi';
+import axios from 'axios';
+const FormData = require('form-data')
+const JWT = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyYTY2ZDRiNS1kNTE1LTQ5MGMtYjBlMy1kY2I1M2M2MTg0MTkiLCJlbWFpbCI6InByMEB0YW1hLmxvbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI0YTZhMmY5ZGMzZDc4YTA5NjEwNiIsInNjb3BlZEtleVNlY3JldCI6Ijg3NzAyZDU1Y2U3YzQ5NzI2ZjFmM2E1YjUxYmVjYTZhOGQzMmYwNWU2YTAyODRiMDViYzk1M2I3ZTA2YzE3ZjEiLCJpYXQiOjE2OTQyNTAzMTR9.PNU6kAhWRUIxKxRJqiCKqGUMJaKh8ZO8pcuCkLTrrhg'
+
+let provider = new ethers.BrowserProvider(window.ethereum)
+
+let abi = [{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "NFTSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "SignaturesSet", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "autographs", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getAllAutographs", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signer", "type": "address" }], "name": "getAutograph", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getShownSignatures", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "nftSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "setSignaturesToShow", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "shownSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "signNFT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
+let morpheusAbi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }, { "indexed": false, "internalType": "uint256", "name": "signerThreshold", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "contractSetup", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "endpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "endpointp", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "feedRequested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "feedSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "", "type": "string" }], "name": "feedSubmitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "supportvalue", "type": "uint256" }], "name": "feedSupported", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "newPayoutAddress", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "addressValue", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "oracleType", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "proposer", "type": "address" }], "name": "newProposal", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "newSigner", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newThreshold", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "proposalSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" }], "name": "routerFeeTaken", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "signerRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "newPass", "type": "uint256" }], "name": "subscriptionPassPriceUpdated", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "buyer", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "buyPass", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "createProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "factoryContract", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "feedSupport", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "feedID", "type": "uint256" }], "name": "getFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getFeedLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address[]", "name": "signers_", "type": "address[]" }, { "internalType": "uint256", "name": "signerThreshold_", "type": "uint256" }, { "internalType": "address payable", "name": "payoutAddress_", "type": "address" }, { "internalType": "uint256", "name": "subscriptionPassPrice_", "type": "uint256" }, { "internalType": "address", "name": "factoryContract_", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "payoutAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "proposalList", "outputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "address", "name": "proposer", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "proposalFeedId", "type": "uint256" }, { "internalType": "uint256", "name": "proposalActive", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string[]", "name": "APIendpoint", "type": "string[]" }, { "internalType": "string[]", "name": "APIendpointPath", "type": "string[]" }, { "internalType": "uint256[]", "name": "decimals", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "requestFeeds", "outputs": [{ "internalType": "uint256[]", "name": "feeds", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "proposalId", "type": "uint256" }], "name": "signProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "signerLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "signerThreshold", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "signers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }, { "internalType": "string[]", "name": "vals", "type": "string[]" }], "name": "submitFeed", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "subscriptionPassPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIds", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "supportFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "withdrawFunds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
+
+const contractAddress = '0x5938CF3fDeeF437029192e2aF949Ae88ee87B503';
+const morpheusAddress = '0x0000000000071821e8033345A7Be174647bE0706';
+let signer
+let contract = new ethers.Contract(contractAddress, abi, provider);
+let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
+//let IPFS;
+
 function App() {
-  const [filter, setFilter] = React.useState('All');
-  const [amount, setAmount] = useState(1);
-  const [name, setname] = useState();
-  const [sym, setsym] = useState();
-  const [balance, setBalance] = useState(null);
-  const [sup, setSup] = useState(null);
-  const [delta, setDelta] = useState(null);
-  const [price, setprice] = useState(null);
-  const [expiry, setexpiry] = useState(null);
-  const [dec, setdec] = useState(null);
-  const [profit, setprofit] = useState(null);
-  const [strike, setstrike] = useState(null);
-
-  const [collateral, setCollateral] = useState(null);
-  const [account, setAccount] = useState(null); const [openModal, setOpenModal] = useState(false);
-  function openOptionModal() {
-    setOpenModal(true);
-  }
-
-  function closeOptionModal() {
-    setOpenModal(false);
-  }
-  const handleChange = (event) => {
-    setAmount(event.target.value);
-  }; const handleaddrs = (event) => {
-    addrs = (event.target.value);
-  }; //let addrs = "0x4b28A73d1FBf118374741090FC747A84DCF5806F";
-  const ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"profit","type":"uint256"}],"name":"Delta","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"symbol","type":"string"},{"indexed":false,"internalType":"address[]","name":"morpheus","type":"address[]"},{"indexed":false,"internalType":"address","name":"collateralToken","type":"address"},{"indexed":false,"internalType":"uint256","name":"expiry","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"strikePrice","type":"uint256"},{"indexed":false,"internalType":"string","name":"APIendpoint","type":"string"},{"indexed":false,"internalType":"string","name":"APIendpointPath","type":"string"},{"indexed":false,"internalType":"uint256","name":"dec","type":"uint256"},{"indexed":false,"internalType":"uint256[]","name":"bounties","type":"uint256[]"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"from","type":"address"}],"name":"Minted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"PriceUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"optionamount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"collateral","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":true,"internalType":"address","name":"from","type":"address"}],"name":"Unlocked","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"IDs","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"collateral","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"collateralToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"currentPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"expiry","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getDelta","outputs":[{"internalType":"uint256","name":"profit","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"name_","type":"string"},{"internalType":"string","name":"symbol_","type":"string"},{"internalType":"address[]","name":"_morpheus","type":"address[]"},{"internalType":"address","name":"_collateralToken","type":"address"},{"internalType":"uint256","name":"_expiry","type":"uint256"},{"internalType":"uint256","name":"_strikePrice","type":"uint256"},{"internalType":"string","name":"APIendpoint","type":"string"},{"internalType":"string","name":"APIendpointPath","type":"string"},{"internalType":"uint256","name":"dec","type":"uint256"}],"name":"init","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"morpheus","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"priceDec","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"redeem","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"strikePrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"timestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"unlock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"updateFeeds","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"updatePrice","outputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"stateMutability":"nonpayable","type":"function"}]
-
-  let contract = new ethers.Contract(
-    addrs,
-    ABI,
-    provider//signer
-  );
+  const [accounts, setAccounts] = useState();
+  const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
+  const [ID, setID] = useState('1');
+  const [IPFS, setIPFS] = useState();
+  const [sigs, setsigs] = useState();
+  const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
+  const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   useEffect(() => {
-    const fetchBalance = async () => {
-      let ad = "0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5"
-      console.log(await window.ethereum.request({ method: 'eth_requestAccounts' }))
+    async function init() {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      provider = new ethers.BrowserProvider(window.ethereum)
+      signer = await provider.getSigner()
+      contract = new ethers.Contract(contractAddress, abi, await signer);
 
-      if (window.ethereum.isConnected()) {
-        console.log('l')
-        signer = await provider.getSigner();
-        await provider.getSigner();
-        contract = new ethers.Contract(
-          addrs,
-          ABI,
-          signer
-        );
-        ad = signer.getAddress()
-        console.log(ad, 'lo')
-      } let d = 10n ** (await contract.decimals() - 2n)
-      const bal = Number(await contract.balanceOf(ad) / d) / 100;
-      setname(await contract.name());
-      setsym(await contract.symbol());
-      setBalance(bal.toString());
-      const sup = Number(await contract.totalSupply() / d) / 100;
-      setSup(sup.toString());
-      setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
-      let pric = ((Number(await contract.currentPrice())));
-      setprice((pric / 10 ** Number(await contract.priceDec())).toString())
-      let a = (1000n * await contract.expiry()).toString()
-      let date = new Date(Number(a));
-      console.log('tt')
-      date = date.toLocaleString()
-      setexpiry(date);
-      setDelta((Number(await contract.getDelta()) / (10 ** Number(await contract.priceDec()))).toString());
-      setdec((await contract.decimals()).toString());
-      setstrike((Number(await contract.strikePrice()) / (10 ** Number(await contract.priceDec()))).toString());
-      console.log('LOL', bal, date.toLocaleString())
-    }
-    fetchBalance();
-  }, []);
-  async function Mint() {
-    signer = await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    let tok = new ethers.Contract(
-      (await contract.collateralToken()).toString(),
-      ABI,
-      signer
-    );
-    let amt = await tok.allowance(signer.getAddress(), addrs)
-    let d = await tok.decimals()
-    if (amt < (parseUnits((amount * strike).toString(), d))) {
-      console.log('LO')
-      let tx = await tok.approve(addrs, (parseUnits((amount * strike).toString(), d)))
-      await tx.wait()
-    }
-    console.log('LOL')
-    let am = parseUnits(amount.toString(), d)
-    let tx = await contract.mint(signer.getAddress(), am)
-    await tx.wait()
-    fetchBalance()
-  }
-  async function handleRedeem() {
-    signer = await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    let tx = await contract.redeem()
-    await tx.wait()
-  }async function Feeds() {
-    console.log(addrs)
-    signer = await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    let am = (amount.toString())
-    let tx = await contract.updateFeeds({value:ethers.parseEther(am)})
-    await tx.wait()
-  }async function Price() {
-    signer = await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    let tx = await contract.updatePrice()
-    await tx.wait()
-    fetchBalance()
-  } async function handleUnlock() {
-    signer = await provider.getSigner();
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    let d = await contract.decimals()
-    console.log('LOL')
-    let am = parseUnits(amount.toString(), d)
-    let tx = await contract.unlock(am)
-    await tx.wait()
-    fetchBalance()
-  } window.ethereum.on('accountsChanged', function (accounts) {
-    fetchBalance()
-  })
-  window.ethereum.on('chainChanged', function (accounts) {
-    fetchBalance()
-  })
-  async function fetchBalance() {
-    signer = await provider.getSigner();
-    let ad = (await signer.getAddress())
-    contract = new ethers.Contract(
-      addrs,
-      ABI,
-      signer
-    );
-    console.log(addrs)
-    let d = 10n ** (await contract.decimals() - 2n)
-    const bal = Number(await contract.balanceOf(ad) / d) / 100;
-    setname(await contract.name());
-    setsym(await contract.symbol());
-    setBalance(bal.toString());
-    const sup = Number(await contract.totalSupply() / d) / 100;
-    setSup(sup.toString());
-    setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
-    let pric = ((Number(await contract.currentPrice()))); //pdec)).toString());
-    setprice((pric / 10 ** Number(await contract.priceDec())).toString())
-    let a = (1000n * await contract.expiry()).toString()
-    let date = new Date(Number(a));
-    console.log('tt')
-    date = date.toLocaleString()
-    setexpiry(date);
-    setDelta((Number(await contract.getDelta()) / (10 ** Number(await contract.priceDec()))).toString());
-    setdec((await contract.decimals()).toString());
-    setstrike((Number(await contract.strikePrice()) / (10 ** Number(await contract.priceDec()))).toString());
-    console.log('LOL', bal, date.toLocaleString())
-  }
-  let UniURL = 'https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=' + addrs
-  let LPURL = 'https://app.uniswap.org/#/add/' + addrs
-  function data() {
-    let t0 = []
-    let oracle = []
-    oracle[0] = {
-      name: 'Scry Team',
-      stake: '1000000',
-      addrs: '0x0000000000071821e8033345a7be174647be0706',
-      href: 'https://sepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
-      networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
-      networksL: 'Ethereum, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
-    }
-    oracle[1] = {
-      name: 'Scry Team',
-      stake: '0',
-      addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
-      href: 'https://sepolia.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
-      networks: ['sepolia'],
-      networksL: 'Sepolia'
+      let NFTb
+      const NFT = new Contract('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c', [
+        // Assuming the NFT contract is ERC721 compliant
+        'function tokenURI(uint256 tokenId) external view returns (string)',
+      ], signer)//provider);
 
-    }
+      try {
+        let uri = await NFT.tokenURI(ID);
+        console.log('LOL', uri)
+        uri = uri.replace("ipfs://", "");
+        console.log('https://ipfs.io/ipfs/' + uri)
 
-    let oracleS = oracle
-    if (filter !== null && filter !== 'All') {
-      oracleS = oracle.filter((o) => o.networks.includes(filter));
-    }
-    oracleS.sort((a, b) => parseInt(b.stake) - parseInt(a.stake));
-    for (let n = 0; n < oracleS.length; n++) {
-      t0[n] = (<Grid><div style={{ color: '#00ff55', width: 420 }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-6  m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-        <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-          {oracleS[n].name}
-        </h1>
-        <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">
-          Staked: {oracleS[n].stake}
-        </h1>
-        <div style={{ color: '#77ff8b' }} className="m-auto text-center color-green-500 text-1xl font-bold">
-          Address: <br />{oracleS[n].addrs}
-        </div>
-        <div style={{ color: '#77ff8b' }} className='mx-6'>
-          Supported networks: {oracleS[n].networksL}
-        </div>
-      </div></Grid>
-      )
-    } return (<Grid container spacing={2} className="bg-gray-900 w-3/4">{t0}</Grid>)
-  }
-  function OptionModal({ open, onClose }) {
-    const [api, setApi] = useState('');
-    const [path, setPath] = useState('');
-    const [collateralT, setcollateralT] = useState('');
-    const [newName, setNewName] = useState('');
-    const [newSymbol, setNewSymbol] = useState('');
-    const [strike, setStrike] = useState('');
-    const [date, setDate] = useState(new Date());
-    const [oracle, setOracle] = useState('');
-    const [sampleData, setSampleData] = useState('');
-    const [decimals, setDecimals] = useState(0);
-    const handleCreateDelta = async () => {
-      // Check if MetaMask is installed
-     try{ if (typeof window.ethereum !== 'undefined') {
-        let fABI = [{ "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "deltaaddrs", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "ID", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "symbol", "type": "string" }, { "indexed": false, "internalType": "address[]", "name": "morpheus", "type": "address[]" }, { "indexed": false, "internalType": "address", "name": "collateralToken", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "APIendpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "deltaDeployed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "DeltaInfo", "outputs": [{ "internalType": "address", "name": "collateralToken", "type": "address" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint256", "name": "strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }, { "internalType": "string", "name": "_symbol", "type": "string" }, { "internalType": "address[]", "name": "_morpheus", "type": "address[]" }, { "internalType": "address", "name": "_collateralToken", "type": "address" }, { "internalType": "uint256", "name": "_expiry", "type": "uint256" }, { "internalType": "uint256", "name": "_strikePrice", "type": "uint256" }, { "internalType": "string", "name": "APIendpoint", "type": "string" }, { "internalType": "string", "name": "APIendpointPath", "type": "string" }, { "internalType": "uint256", "name": "dec", "type": "uint256" }], "name": "createDelta", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "deployedDeltas", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getDeployedDeltas", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "total", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
-        const deltaFactory = new ethers.Contract('0xcA849DCfD993364dA80EC12046390ca9f1cdaa82', fABI, signer);
-
-        // Convert date string to UNIX timestamp
-        const expiryTimestamp = Math.floor((new Date(date).getTime() - Date.now()) / 1000 / 3600);
-
-        // Call the createDelta function
-        const tx = await deltaFactory.createDelta(
-          newName,
-          newSymbol,
-          [oracle], // Morpheus array - fill as needed
-          collateralT,
-          expiryTimestamp,
-          strike, // Assuming strike is in Ether
-          api,
-          path,
-          decimals, { value: '1000000000000000' } // Bounties array - fill as needed
-        );
-
-        // Wait for the transaction to be mined
-        deltaFactory.on('deltaDeployed', (adrs, a1, a2, a3, a4, a5, a6, a7, a8, a9, a0) => {
-          console.log(adrs)
-          alert('Delta created successfully at ', adrs); addrs = adrs.toString()
-        })
-        
-        await tx.wait();
-        closeOptionModal()
-      }}catch { console.log()}
-    };
-    const handleLookup = async () => {
-      // try {
-
-      let res = await fetch(api);
-      let body = await res.json();
-      console.log(body)
-      let j;
-      let toParse = body;
-      let parsingargs = path.split(',')
-      for (j = 0; j < parsingargs.length; j++) {
-        toParse = toParse[parsingargs[j]]
+        const response = await fetch('https://ipfs.io/ipfs/' + uri);
+        const metadata = await response.json();
+        NFTb = (metadata.image);
+        NFTb = 'https://ipfs.io/ipfs/' + NFTb.replace("ipfs://", "");
+        console.log(NFTb)
+      } catch (error) {
+        console.error("Error fetching NFT image:", error);
       }
 
-      setSampleData(toParse)
+      let hash = []
+      let lol = []
+      hash = await contract.getAllAutographs(
+        addrs,
+        ID
+      ); console.log(hash)
+
+      function convertHashesToUrls(ipfsHashes) {
+        const baseUrl = "https://ipfs.io/ipfs/";
+        let urls = [NFTb]//'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
+
+        for (let i = 0; i < ipfsHashes.length; i++) {
+          urls.push(baseUrl + ipfsHashes[i]);
+        }
+        setpngs(urls)
+        return urls;
+      }
+
+      // Usage:
+      const hashes = hash[1];
+      const messages = await getMessagesForAccounts(hash[0]);
+      setAccounts(messages)
+
+      const urls = convertHashesToUrls(hashes);
+      console.log(urls);
+
+      setsigs(urls)
+      console.log(sigs)
+    } 
+    init();
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const signer = await provider.getSigner()
+      let hash = []
+      let lol = []
+      hash = await contract.getAllAutographs(
+        addrs,
+        ID
+      ); console.log(hash)
+
+      function convertHashesToUrls(ipfsHashes) {
+        const baseUrl = "https://ipfs.io/ipfs/";
+        let urls = ['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
+
+        for (let i = 0; i < ipfsHashes.length; i++) {
+          urls.push(baseUrl + ipfsHashes[i]);
+        }
+        setpngs(urls)
+        return urls;
+      }
+
+      // Usage:
+      const hashes = hash[1];
+      console.log(hashes)
+      const urls = convertHashesToUrls(hashes);
+      console.log(urls);
+
+      setsigs(urls)
+      console.log(sigs)
+    }, 600000);
+    return () => clearInterval(interval);
+  }, []);
+  const getBalance = async () => {
+    const signer =  await provider.getSigner()
+  };
+  const sign = async () => {
+    console.log(
+      addrs,
+      ID,
+      IPFS);
+    await contract.signNFT(
+      addrs,
+      ID,
+      IPFS
+    );
+    const tx = await contract.signNFT(
+      addrs,
+      ID,
+      IPFS
+    );
+    await tx.wait();
+  };
+  const sig = async (e) => {
+
+  };
+  const DrawOnLayeredCanvas = ({ pngs }) => {
+    const backgroundCanvasRef = useRef(null);
+    const drawingCanvasRef = useRef(null);
+    const contextRef = useRef(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [color, setColor] = useState('#000000');
+
+    useEffect(() => {
+      const backgroundCanvas = backgroundCanvasRef.current;
+      const drawingCanvas = drawingCanvasRef.current;
+      const drawingContext = drawingCanvas.getContext("2d");
+      contextRef.current = drawingContext;
+
+      // Layer the PNGs onto the background canvas
+      let loadedImages = [];
+      pngs.forEach((src) => {
+        let img = new Image();
+        img.src = src;
+        img.onload = () => {
+          loadedImages.push(img);
+          if (loadedImages.length === pngs.length) {
+            loadedImages.forEach(image => {
+              backgroundCanvas.getContext("2d").drawImage(image, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+            });
+          }
+        };
+      });
+
+      drawingContext.lineCap = "round";
+      drawingContext.strokeStyle = color;
+      drawingContext.lineWidth = 5;
+
+    }, [pngs, color]);
+
+    const startDrawing = ({ nativeEvent }) => {
+      const { offsetX, offsetY } = nativeEvent;
+      contextRef.current.beginPath();
+      contextRef.current.moveTo(offsetX, offsetY);
+      setIsDrawing(true);
     };
 
+    const finishDrawing = () => {
+      contextRef.current.closePath();
+      setIsDrawing(false);
+    };
+
+    const draw = ({ nativeEvent }) => {
+      if (!isDrawing) {
+        return;
+      }
+      const { offsetX, offsetY } = nativeEvent;
+      contextRef.current.lineTo(offsetX, offsetY);
+      contextRef.current.stroke();
+    };
+
+    const clearDrawing = () => {
+      const context = contextRef.current;
+      context.clearRect(0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
+    };
+
+    const saveCanvas = async () => {
+      const drawingCanvas = drawingCanvasRef.current;
+      const dataUrl = drawingCanvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.download = 'drawing.png';
+      link.href = dataUrl;
+      link.click();
+      await pinFileToIPFS()
+      await sign()
+    };
+    const pinFileToIPFS = async () => {
+      const drawingCanvas = drawingCanvasRef.current;
+      await drawingCanvas.toBlob(async (blob) => {
+        try {
+          const formData = new FormData();
+          formData.append('file', blob, 'drawing.png'); // Append the blob with a filename
+
+          const pinataMetadata = JSON.stringify({
+            name: 'File name',
+          });
+          formData.append('pinataMetadata', pinataMetadata);
+
+          const pinataOptions = JSON.stringify({
+            cidVersion: 0,
+          })
+          formData.append('pinataOptions', pinataOptions);
+
+
+          const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+            maxBodyLength: "Infinity",
+            headers: {
+              'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+              Authorization: JWT
+            }
+          });
+          console.log(res.data.IpfsHash);
+          awaitsetIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }
     return (
-      <Modal open={open} onClose={onClose}>
-        <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full min-h-screen">
-          <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '25px',
-          }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+      <div style={{ position: 'relative', width: '500px', height: '500px' }}>
+        <canvas
+          ref={backgroundCanvasRef}
+          width={500}
+          height={500}
+          style={{ position: 'absolute', left: '0', top: '0' }}
+        />
+        <canvas
+          ref={drawingCanvasRef}
+          width={500}
+          height={500}
+          style={{ position: 'absolute', left: '0', top: '0' }}
+          onMouseDown={startDrawing}
+          onMouseUp={finishDrawing}
+          onMouseMove={draw}
+        />
+        <div style={{ height: '42px', position: 'relative' }} className="top-2 left-2 color-white border-white">
+          <button
+            style={{ marginRight: '10px' }}
+            onClick={clearDrawing}>
+            Clear Drawing
+          </button>
 
-            <div className="flex justify-center">
-              <h1 className="text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-                Create your own option
-              </h1>
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Symbol"
-                value={newSymbol}
-                onChange={(e) => setNewSymbol(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="API"
-                value={api}
-                onChange={(e) => setApi(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Path"
-                value={path}
-                onChange={(e) => setPath(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Strike"
-                value={strike}
-                onChange={(e) => setStrike(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Date"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'green' }}>Oracle</InputLabel>
-                <Select
-                  value={oracle}
-                  onChange={(e) => setOracle(e.target.value)}
-                  style={{ color: 'green', backgroundColor: '#00ff55' }}
-                >
-                  {/* Add your oracle options here */}
-                  <MenuItem value="0x0000000000071821e8033345a7be174647be0706">Scry</MenuItem>
-                  <MenuItem value="oracle2">Oracle 2</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'green' }}>Collateral Type</InputLabel>
-                <Select
-                  value={collateralT}
-                  onChange={(e) => setcollateralT(e.target.value)}
-                  style={{ color: 'green', backgroundColor: '#00ff55' }}
-                >
-                  {/* Add your collateral options here */}
-                  <MenuItem value="0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0">Collateral 1</MenuItem>
-                  <MenuItem value="collateral2">Collateral 2</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'dark-green' }}>Decimals</InputLabel>
-                <TextField
-                  id="outlined"
-                  defaultValue='2'
-                  label="Decimals"
-                  onChange={(e) => setDecimals(e.target.value)}
-                  color='success' style={{ color: 'dark-green', top: '1px' }} className="text-center text-white bg-green-500 w-full" focused
-                />
-              </FormControl>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={handleCreateDelta} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Deploy</Button>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={handleLookup} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Lookup API</Button>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={closeOptionModal}>close</Button>
-            </div>
-            <div className="flex justify-center w-1/2 m-auto">
-              {sampleData}
-            </div>
-
-          </div>
+          <input
+            style={{ marginRight: '10px' }}
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="border-black" /><button onClick={saveCanvas}>Save</button>
         </div>
-      </Modal>
-
+      </div>
     );
+  }; async function LOL() {
+    let hash = []
+    let lol = []
+    hash = await contract.getAllAutographs(
+      addrs,
+      ID
+    ); console.log(hash)
+    let NFTb
+    const NFT = new ethers.Contract('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c', [
+      // Assuming the NFT contract is ERC721 compliant
+      'function tokenURI(uint256 tokenId) external view returns (string)',
+    ], signer);
+
+    try {
+      let uri = await NFT.tokenURI(ID);
+      console.log('LOL', uri)
+      uri = uri.replace("ipfs://", "");
+      console.log('https://ipfs.io/ipfs/' + uri)
+
+      const response = await fetch('https://ipfs.io/ipfs/' + uri);
+      const metadata = await response.json();
+      NFTb = (metadata.image);
+      NFTb = 'https://ipfs.io/ipfs/' + NFTb.replace("ipfs://", "");
+      console.log(NFTb)
+    } catch (error) {
+      console.error("Error fetching NFT image:", error);
+    }
+    function convertHashesToUrls(ipfsHashes) {
+      const baseUrl = "https://ipfs.io/ipfs/";
+      let urls = [NFTb]//'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
+
+      for (let i = 0; i < ipfsHashes.length; i++) {
+        urls.push(baseUrl + ipfsHashes[i]);
+      }
+      setpngs(urls)
+      return urls;
+    }
+
+    // Usage:
+    const hashes = hash[1];
+    console.log(hashes)
+    const urls = convertHashesToUrls(hashes);
+    console.log(urls);
+    const messages = await getMessagesForAccounts(hash[0]);
+    setAccounts(messages)
+
+    setsigs(urls)
+    console.log(sigs)
+  }
+  // const pngs = [
+  // 'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media',
+  // sigs//https://gateway.pinata.cloud/ipfs/QmfKG5DyFvpdzRAxuWGBQNyRGj8oiUiGZJL5iiNcvX6gPr sigs
+
+  // ... more PNG URLs
+  //    ];
+  // 1. Create a function to resolve ENS names.
+  async function resolveENS(address) {
+    try {
+      let pro = new JsonRpcProvider('https://eth.llamarpc.com');
+      const ensName = await pro.lookupAddress(address);
+      if (ensName != null) {
+        return ensName;
+      }
+    } catch {
+      // return the address itself if no ENS name is associated
+    }
+    return address;
   }
 
+  // 2. Map over the accounts and generate messages.
+  async function getMessagesForAccounts(accounts) {
+    const messages = [];
+    for (let i = 0; i < accounts.length; i++) {
+      const nameOrAddress = await resolveENS(accounts[i]);
+      messages.push(<h2><span className="font-bold">{nameOrAddress}</span> has signed this NFT</h2>);
+    }
+    return messages;
+  }
+
+
+
+
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} theme={darkTheme({
-        accentColor: '#00ff55',
-        showBalance: true,
-        accentColorForeground: 'white',
-        borderRadius: 'small',
-        fontStack: 'system',
-        overlayBlur: 'small',
-      })}>
-        <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
-          <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '25px',
-          }} className=" flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-            <ConnectButton showBalance={true} accountStatus={{
-              smallScreen: 'full',
-              largeScreen: 'full',
-            }} chainStatus="icon"
-            /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              Hedge
-            </h1>
-            <h1 style={{
-              color: 'orange', position: 'relative',
-              top: '25px',
-            }} className="m-auto text-center md:mt-8 color-red-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              ALPHA - YOU MAY LOSE ALL YOUR MONEY.
-            </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
-              <div>{name}</div>
-              <div> {sym}</div>
-              <div>Hedges: {balance}</div>
-              <div>Collateral: {collateral}</div>
-              <div>Price: {price}  ||  Strike: {strike}</div>
-              Profit per token: {delta}  || Expiry: {expiry}
-              <div>Total Hedges: {sup}</div></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
-              Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
-            <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
-              <TextField
-                id="number"
-                label=""
-                type="number"
-                defaultValue='1'
-                InputLabelProps={{
-                  shrink: true,
-                }} onChange={handleChange}
-                color='success' style={{ color: 'green' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
-              />
-            </div><div className="flex flex-col justify-center m-auto overflow-hidden"><Button onClick={() => Mint()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Mint</Button>
-              <Button onClick={() => handleRedeem()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Redeem</Button>
-              <Button onClick={() => handleUnlock()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Unlock Collateral</Button></div><Button onClick={openOptionModal}>Create Option</Button>
-             <div className="justify-center m-auto overflow-hidden"> <Button onClick={() => (Feeds())} style={{ color: '#77ff8b',position: 'absolute', right:'140px' }} variant='outlined' className=" text-center color-pink-500 border-pink-500">Oracle Update</Button>
-              <Button onClick={() => (Price())} style={{ color: '#77ff8b',position: 'absolute', right:'0px'  }} variant='outlined' className="  text-center color-pink-500 border-pink-500">Update Price</Button>
-             <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
-              <Button onClick={() => window.location.assign(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
+    <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
+      <div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+      </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
+      </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
+      </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
+      </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+        <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
+          Signat
+        </h1> <h3 style={{}} className='mx-6 font-bold' >
+          Welcome to Signat, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your signats!</h3>
+        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+          <DrawOnLayeredCanvas pngs={pngs} />
+        </div>{
+          accounts && accounts.map((account, index) => (
+            <div key={index} className="account-item">
+              {account}
             </div>
-          </div> <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '40px', height: '150px'
-          }} className="space-y-6 justify-center m-auto max-w-xl min-w-80 overflow-hidden">
-            <div className="top-20 flex flex-col justify-center m-auto overflow-hidden">
-              <TextField
-                id="outlined"
-                label=""
-                defaultValue='0xa9e8db01e4c9440e0f417e3ae3f839cc3da71378'
-                InputLabelProps={{
-                  shrink: true,
-                }} onChange={handleaddrs}
-                color='success' style={{ color: 'green', top: '1px' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
-              />
-              <Button onClick={() => fetchBalance()} style={{ color: '#77ff8b', }} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Fetch Hedge Contract</Button>
-            </div></div>.</div></RainbowKitProvider>
-    </WagmiConfig>
-  )
+          ))
+        }<div>
+
+        </div> <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
+          <h2>NFT</h2>
+          <Select
+            labelId="filter-label"
+            id="filter-select"
+            value={'0x0000000000071821e8033345a7be174647be0706'} style={{ color: 'white', backgroundColor: '#00ccff' }}
+            onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+            <MenuItem value="0x0000000000071821e8033345a7be174647be0706">uwucrew</MenuItem>
+            <MenuItem value="42161">Arbitrum</MenuItem>
+            <MenuItem value="8453">Base</MenuItem>
+            <MenuItem value="10">Optimism</MenuItem>
+            <MenuItem value="137">Polygon</MenuItem>
+            <MenuItem value="534351">Scroll</MenuItem>
+            <MenuItem value="11155111">Sepolia</MenuItem>
+          </Select>
+          <h3>Token</h3>
+          <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
+          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={sign}>Refresh</Button>
+<Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
+          <div></div></div>Please note there is a 0.001 ETH fee.</div >
+      <div>
+      </div>
+    </div >
+  );
 }
 
 export default App;
