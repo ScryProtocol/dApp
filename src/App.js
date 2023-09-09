@@ -261,7 +261,7 @@ function App() {
             }
           });
           console.log(res.data.IpfsHash);
-          awaitsetIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
+          await setIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
         } catch (error) {
           console.log(error);
         }
