@@ -261,7 +261,7 @@ function App() {
             }
           });
           console.log(res.data.IpfsHash);
-          await setIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
+          setIPFS(res.data.IpfsHash)//IPFS = res.data.IpfsHash)
         } catch (error) {
           console.log(error);
         }
@@ -420,8 +420,7 @@ function App() {
           </Select>
           <h3>Token</h3>
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={sign}>Refresh</Button>
-<Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
+          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
           <div></div></div>Please note there is a 0.001 ETH fee.</div >
       <div>
       </div>
