@@ -228,10 +228,10 @@ function App() {
     const saveCanvas = async () => {
       const drawingCanvas = drawingCanvasRef.current;
       const dataUrl = drawingCanvas.toDataURL("image/png");
-      const link = document.createElement('a');
-      link.download = 'drawing.png';
-      link.href = dataUrl;
-      link.click();
+    //  const link = document.createElement('a');
+    //  link.download = 'drawing.png';
+    //  link.href = dataUrl;
+    //  link.click();
       await pinFileToIPFS()
       await sign()
     };
