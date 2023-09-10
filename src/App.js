@@ -21,7 +21,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from "ethers";
-import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider,Contract } from "ethers";
+import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider, Contract } from "ethers";
 
 import { Container, TextField, Button, Typography, Paper, Grid, Modal, Select, MenuItem } from '@mui/material';
 import 'tailwindcss/tailwind.css'
@@ -106,7 +106,7 @@ function App() {
 
       setsigs(urls)
       console.log(sigs)
-    } 
+    }
     init();
   }, [])
 
@@ -143,18 +143,10 @@ function App() {
     return () => clearInterval(interval);
   }, []);
   const getBalance = async () => {
-    const signer =  await provider.getSigner()
+    const signer = await provider.getSigner()
   };
   const sign = async () => {
-    console.log(
-      addrs,
-      ID,
-      IPFS);
-    await contract.signNFT(
-      addrs,
-      ID,
-      IPFS
-    );
+   
     const tx = await contract.signNFT(
       addrs,
       ID,
@@ -171,11 +163,18 @@ function App() {
     const contextRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [color, setColor] = useState('#000000');
+    const [isErasing, setIsErasing] = useState(false);
+
+
+    const [lineWidth, setLineWidth] = useState(5);
+    const undoStack = useRef([]);
 
     useEffect(() => {
       const backgroundCanvas = backgroundCanvasRef.current;
       const drawingCanvas = drawingCanvasRef.current;
-      const drawingContext = drawingCanvas.getContext("2d");
+      let drawingContext = drawingCanvas.getContext("2d");
+      drawingContext.lineWidth = lineWidth;
+
       contextRef.current = drawingContext;
 
       // Layer the PNGs onto the background canvas
@@ -196,17 +195,23 @@ function App() {
       drawingContext.lineCap = "round";
       drawingContext.strokeStyle = color;
       drawingContext.lineWidth = 5;
-
-    }, [pngs, color]);
+      drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
+    }, [pngs, color, lineWidth, isErasing]);
 
     const startDrawing = ({ nativeEvent }) => {
       const { offsetX, offsetY } = nativeEvent;
+      contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.beginPath();
       contextRef.current.moveTo(offsetX, offsetY);
       setIsDrawing(true);
     };
 
     const finishDrawing = () => {
+      const canvas = drawingCanvasRef.current;
+      const imgData = canvas.toDataURL();
+      undoStack.current.push(imgData);
+
+      contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.closePath();
       setIsDrawing(false);
     };
@@ -216,8 +221,22 @@ function App() {
         return;
       }
       const { offsetX, offsetY } = nativeEvent;
+      contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.lineTo(offsetX, offsetY);
       contextRef.current.stroke();
+    };
+    const toggleEraser = () => setIsErasing(!isErasing);
+    const undo = () => {
+      if (undoStack.current.length > 1) {
+        undoStack.current.pop(); // remove current state
+        const prevImgData = undoStack.current[undoStack.current.length - 1];
+        const img = new Image();
+        img.src = prevImgData;
+        img.onload = () => {
+          contextRef.current.clearRect(0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
+          contextRef.current.drawImage(img, 0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
+        };
+      }
     };
 
     const clearDrawing = () => {
@@ -228,10 +247,10 @@ function App() {
     const saveCanvas = async () => {
       const drawingCanvas = drawingCanvasRef.current;
       const dataUrl = drawingCanvas.toDataURL("image/png");
-    //  const link = document.createElement('a');
-    //  link.download = 'drawing.png';
-    //  link.href = dataUrl;
-    //  link.click();
+      //  const link = document.createElement('a');
+      //  link.download = 'drawing.png';
+      //  link.href = dataUrl;
+      //  link.click();
       await pinFileToIPFS()
       await sign()
     };
@@ -261,7 +280,7 @@ function App() {
             }
           });
           console.log(res.data.IpfsHash);
-          IPFS =res.data.IpfsHash//IPFS = res.data.IpfsHash)
+          IPFS = res.data.IpfsHash//IPFS = res.data.IpfsHash)
         } catch (error) {
           console.log(error);
         }
@@ -284,8 +303,19 @@ function App() {
           onMouseUp={finishDrawing}
           onMouseMove={draw}
         />
-        <div style={{ height: '42px', position: 'relative' }} className="top-2 left-2 color-white border-white">
-          <button
+        <div style={{ height: '42px', position: 'relative' }} className="top-2 color-white border-white">
+          <button style={{ marginRight: '10px' }}
+            onClick={toggleEraser}>{isErasing ? "Draw" : "Erase"}</button>
+          <button style={{ marginRight: '10px' }}
+            onClick={undo}>Undo</button>
+          <input
+            style={{ marginRight: '10px' }}
+            type="range"
+            min="1"
+            max="20"
+            value={lineWidth}
+            onChange={(e) => setLineWidth(e.target.value)}
+          /> <button
             style={{ marginRight: '10px' }}
             onClick={clearDrawing}>
             Clear Drawing
