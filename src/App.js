@@ -62,7 +62,7 @@ function App() {
       contract = new ethers.Contract(contractAddress, abi, await signer);
 
       let NFTb
-      const NFT = new Contract('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c', [
+      const NFT = new Contract(addrs, [
         // Assuming the NFT contract is ERC721 compliant
         'function tokenURI(uint256 tokenId) external view returns (string)',
       ], signer)//provider);
@@ -70,13 +70,13 @@ function App() {
       try {
         let uri = await NFT.tokenURI(ID);
         console.log('LOL', uri)
-        uri = uri.replace("ipfs://", "");
-        console.log('https://ipfs.io/ipfs/' + uri)
+        uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
+        console.log(uri)
 
-        const response = await fetch('https://ipfs.io/ipfs/' + uri);
+        const response = await fetch(uri);
         const metadata = await response.json();
         NFTb = (metadata.image);
-        NFTb = 'https://ipfs.io/ipfs/' + NFTb.replace("ipfs://", "");
+        NFTb = NFTb.replace("ipfs://", "https://ipfs.io/ipfs/");
         console.log(NFTb)
       } catch (error) {
         console.error("Error fetching NFT image:", error);
@@ -455,7 +455,7 @@ function App() {
       ID
     ); console.log(hash)
     let NFTb
-    const NFT = new ethers.Contract('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c', [
+    const NFT = new ethers.Contract(addrs, [
       // Assuming the NFT contract is ERC721 compliant
       'function tokenURI(uint256 tokenId) external view returns (string)',
     ], signer);
@@ -463,14 +463,16 @@ function App() {
     try {
       let uri = await NFT.tokenURI(ID);
       console.log('LOL', uri)
-      uri = uri.replace("ipfs://", "");
-      console.log('https://ipfs.io/ipfs/' + uri)
+      uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
+      console.log(uri)
 
-      const response = await fetch('https://ipfs.io/ipfs/' + uri);
+      const response = await fetch(uri);
+      console.log(response)
+
       const metadata = await response.json();
       NFTb = (metadata.image);
-      NFTb = 'https://ipfs.io/ipfs/' + NFTb.replace("ipfs://", "");
-      console.log(NFTb)
+      NFTb = NFTb.replace("ipfs://", "https://ipfs.io/ipfs/");
+      console.log("NT",NFTb)
     } catch (error) {
       console.error("Error fetching NFT image:", error);
     }
@@ -553,11 +555,11 @@ function App() {
           <Select
             labelId="filter-label"
             id="filter-select"
-            value={'0x0000000000071821e8033345a7be174647be0706'} style={{ color: 'white', backgroundColor: '#00ccff' }}
+            value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
             onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0x0000000000071821e8033345a7be174647be0706">uwucrew</MenuItem>
-            <MenuItem value="42161">Arbitrum</MenuItem>
-            <MenuItem value="8453">Base</MenuItem>
+            <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
+            <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
+            <MenuItem value="0x3e9d45ad0da57683b5375d0f3d5bc606429128f9">Base</MenuItem>
             <MenuItem value="10">Optimism</MenuItem>
             <MenuItem value="137">Polygon</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
