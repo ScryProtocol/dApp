@@ -474,9 +474,9 @@ function App() {
       </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
       </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          Signat
+         Signet
         </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Welcome to Signat, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your signats!</h3>
+          Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets!</h3>
         <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
           <DrawOnLayeredCanvas pngs={pngs} />
         </div>{
