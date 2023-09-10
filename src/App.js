@@ -109,6 +109,7 @@ function App() {
 
       setsigs(urls)
       console.log(sigs)
+      LOL()
     }
     init();window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
