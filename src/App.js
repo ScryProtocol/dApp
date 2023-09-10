@@ -49,7 +49,8 @@ function App() {
   const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
   const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
-  //const [IPFS, setIPFS] = useState();
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+//const [IPFS, setIPFS] = useState();
   const [sigs, setsigs] = useState();
   const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
@@ -163,8 +164,11 @@ function App() {
     );
     await tx.wait();
   };
-  const sig = async (e) => {
-
+  const sig = async (sig1,amt) => {
+    const tx = await contract.BidForSignet(addrs,
+      ID,sig1,{value:amt})
+      await tx.wait();
+      alert('Your bid has been sent.')
   };
   const DrawOnLayeredCanvas = ({ pngs }) => {
     const backgroundCanvasRef = useRef(null);
@@ -384,7 +388,41 @@ function App() {
         </div>
       </Modal>
     );
-  }async function LOL() {
+  }function BidModal({ isOpen, onClose }) {
+    const [signer, setSigner] = useState('');
+    const [amount, setAmount] = useState(0);
+
+    const handleSubmitBid = async () => {
+            sig(addrs, ethers.parseEther(amount));
+    };
+
+    return (
+        <Modal open={isOpen} onClose={onClose}>
+            <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="w-2/4 justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+                <h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-2xl font-extrabold w-3/4">Bid for Signet</h2>
+                <div className="m-auto w-3/4 space-y-4">
+                <h2 className="font-bold ">Address to place bid for that will receive a reward for signing your NFT</h2>
+                <input 
+                        style={{ color: '#ffffff', backgroundColor: '#00ccff' }}type="text" 
+                        value={signer} 
+                        onChange={e => setSigner(e.target.value)} 
+                        className="p-2 rounded border border-solid border-white w-full"
+                    /><h2 className="font-bold">Amount to Bid</h2>
+
+                    <input 
+                        style={{ color: '#ffffff', backgroundColor: '#00ccff' }}type="number" 
+                        placeholder="Amount in ETH" 
+                        value={amount} 
+                        onChange={e => setAmount(e.target.value)} 
+                        className="p-2 rounded border border-solid border-white w-full"
+                    />
+                    <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className=" top-3 color-white border-white"onClick={handleSubmitBid}>Submit Bid</Button>
+                </div>
+                <Button onClick={onClose}>Close</Button>
+            </div>
+        </Modal>
+    );
+}async function LOL() {
     let hash = []
     let lol = []
     hash = await contract.getAllAutographs(
@@ -504,10 +542,14 @@ function App() {
       <BidsModal
         isOpen={isBidsModalOpen}
         onClose={() => setIsBidsModalOpen(false)}
-      /><h3>Token</h3>
+      /><BidModal
+      isOpen={isBidModalOpen}
+      onClose={() => setIsBidModalOpen(false)}
+    /><h3>Token</h3>
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
           <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white"onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
+          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white"onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
           <div>.</div></div></div></div >
       <div>.
       </div>
