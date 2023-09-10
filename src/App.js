@@ -107,7 +107,12 @@ function App() {
       setsigs(urls)
       console.log(sigs)
     }
-    init();
+    init();window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length > 0) {
+          // Refresh the component content
+          init();
+      }
+  });
   }, [])
 
   useEffect(() => {
@@ -193,6 +198,7 @@ function App() {
       });
 
       drawingContext.lineCap = "round";
+      drawingContext.lineJoin = "round";
       drawingContext.strokeStyle = color;
       drawingContext.lineWidth = 5;
       drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
