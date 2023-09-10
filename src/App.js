@@ -215,17 +215,26 @@ function App() {
       drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
     }, [pngs, color, lineWidth, isErasing]);
 
-    const startDrawing = ({ nativeEvent }) => {
-      const { offsetX, offsetY } = nativeEvent;
-      contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
+    const startDrawing  = (e) =>  {
+      let  offsetX, offsetY 
+      if (e.type === "touchstart") {
+        const touch = e.touches[0];
+        offsetX = touch.pageX - e.target.offsetLeft;
+        offsetY = touch.pageY - e.target.offsetTop;
+    } else {  // Mouse event
+        offsetX = e.nativeEvent.offsetX;
+        offsetY = e.nativeEvent.offsetY;
+    }contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.shadowBlur = smoothness; // Set the lineWidth here
       contextRef.current.beginPath();
       contextRef.current.moveTo(offsetX, offsetY);
       setIsDrawing(true);
     };
 
-    const finishDrawing = () => {
-      const canvas = drawingCanvasRef.current;
+    const finishDrawing  = (e) =>  {
+      if (e.type.startsWith('touch')) {
+        e.preventDefault();
+    }const canvas = drawingCanvasRef.current;
       const imgData = canvas.toDataURL();
       undoStack.current.push(imgData);
 
@@ -235,12 +244,19 @@ function App() {
     };
 
     let lastX, lastY;
-    const draw = ({ nativeEvent }) => {
+    const draw  = (e) =>  {
       if (!isDrawing) {
         return;
       }
-      const { offsetX, offsetY } = nativeEvent;
-
+      let  offsetX, offsetY 
+      if (e.type === "touchmove") {
+        const touch = e.touches[0];
+        offsetX = touch.pageX - e.target.offsetLeft;
+        offsetY = touch.pageY - e.target.offsetTop;
+    } else {  // Mouse event
+        offsetX = e.nativeEvent.offsetX;
+        offsetY = e.nativeEvent.offsetY;
+    }
       // Wrap the drawing code inside requestAnimationFrame
       requestAnimationFrame(() => {
         contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
@@ -330,7 +346,9 @@ function App() {
           style={{ position: 'absolute', left: '0', top: '0' }}
           onMouseDown={startDrawing}
           onMouseUp={finishDrawing}
-          onMouseMove={draw}
+          onMouseMove={draw} onTouchStart={startDrawing}
+          onTouchEnd={finishDrawing}
+          onTouchMove={draw}
         />
         <div style={{ position: 'absolute', top: '0', left: '50px', }} className="justify-center top-2 color-white border-white">
           {menuOpen && (
