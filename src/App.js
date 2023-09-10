@@ -559,7 +559,7 @@ function App() {
             onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
             <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
-            <MenuItem value="0x3e9d45ad0da57683b5375d0f3d5bc606429128f9">Base</MenuItem>
+            <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
             <MenuItem value="10">Optimism</MenuItem>
             <MenuItem value="137">Polygon</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
