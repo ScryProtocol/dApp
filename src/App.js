@@ -353,18 +353,22 @@ function App() {
         }
       });
     }
+    const maxWidth = 500;
+    const canvasWidth = Math.min(maxWidth, window.innerWidth);
+    const canvasHeight = Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
+    
     return (
-      <div style={{ position: 'relative', width: '500px', height: '500px' }}>
+      <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px`  }}>
         <canvas
           ref={backgroundCanvasRef}
-          width={500}
-          height={500}
+          width={canvasWidth}
+          height={canvasHeight}
           style={{ position: 'absolute', left: '0', top: '0' }}
         />
         <canvas
           ref={drawingCanvasRef}
-          width={500}
-          height={500}
+          width={canvasWidth}
+          height={canvasHeight}
           style={{ position: 'absolute', left: '0', top: '0' }}
           onMouseDown={startDrawing}
           onMouseUp={finishDrawing}
