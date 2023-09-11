@@ -310,7 +310,8 @@ function App() {
       contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.closePath();
       setIsDrawing(false);
-    };
+      lastX = undefined;
+      lastY = undefined;};
 
     let lastX, lastY;
     const draw = (e) => {
