@@ -688,7 +688,7 @@ function App() {
             <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
             <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
-            <MenuItem value="0xbc679db028f8fda5216a4b0e81e895170ab8b55e">KGF</MenuItem>
+            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">Optimism</MenuItem>
             <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">Polygon</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
