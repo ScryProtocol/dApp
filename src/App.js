@@ -195,9 +195,9 @@ function App() {
         if (error.message.includes("undefined (reading 'then')")) {
           // Log the error for debugging or provide feedback to the user
           console.error('Failed to sign the NFT. Attempt:', retries + 1, error.message);
-    
+
           retries++;
-    
+
           if (retries === MAX_RETRIES) {
             console.error('Max retries reached. Aborting...');
           } else {
@@ -208,6 +208,7 @@ function App() {
           // If the error message is different, log it and break out of the loop without retrying
           console.error('Encountered an unexpected error:', error.message);
           break;
+        }
       }
     }
   };
@@ -271,14 +272,15 @@ function App() {
       drawingContext.shadowColor = color;
       drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
     }, [pngs]);
-useEffect(() => {
-    if (contextRef.current) {
+    useEffect(() => {
+      if (contextRef.current) {
         contextRef.current.strokeStyle = color;
         contextRef.current.shadowColor = color;
         contextRef.current.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
         contextRef.current.lineWidth = 5;
         contextRef.current.shadowBlur = 1;  // adjust for desired softness}
-      }}, [color, isErasing]);
+      }
+    }, [color, isErasing]);
     const startDrawing = (e) => {
       let offsetX, offsetY
       if (e.type.startsWith('touch')) {
@@ -323,7 +325,8 @@ useEffect(() => {
       contextRef.current.closePath();
       setIsDrawing(false);
       lastX = undefined;
-      lastY = undefined;};
+      lastY = undefined;
+    };
 
     let lastX, lastY;
     const draw = (e) => {
