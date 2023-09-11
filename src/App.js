@@ -192,17 +192,22 @@ function App() {
         );
         await tx.wait(); break;
       } catch (error) {
-        // Log the error for debugging or provide feedback to the user
-        console.error('Failed to sign the NFT. Attempt:', retries + 1, error.message);
-
-        retries++;
-
-        if (retries === MAX_RETRIES) {
-          console.error('Max retries reached. Aborting...');
+        if (error.message.includes("undefined (reading 'then')")) {
+          // Log the error for debugging or provide feedback to the user
+          console.error('Failed to sign the NFT. Attempt:', retries + 1, error.message);
+    
+          retries++;
+    
+          if (retries === MAX_RETRIES) {
+            console.error('Max retries reached. Aborting...');
+          } else {
+            // Wait for the specified delay time before retrying
+            await sleep(2000);
+          }
         } else {
-          // Wait for the specified delay time before retrying
-          await sleep(2000);
-        }
+          // If the error message is different, log it and break out of the loop without retrying
+          console.error('Encountered an unexpected error:', error.message);
+          break;
       }
     }
   };
