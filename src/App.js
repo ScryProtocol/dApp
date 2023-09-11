@@ -132,7 +132,7 @@ function App() {
 
       setsigs(urls)
       console.log(sigs)
-       LOL()
+      LOL()
     }
     init(); window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
@@ -178,13 +178,33 @@ function App() {
     const signer = await provider.getSigner()
   };
   const sign = async () => {
+    const MAX_RETRIES = 3; // Adjust as needed
+    let retries = 0;
 
-    const tx = await contract.signNFT(
-      addrs,
-      ID,
-      IPFS
-    );
-    await tx.wait();
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    while (retries < MAX_RETRIES) {
+      try {
+        const tx = await contract.signNFT(
+          addrs,
+          ID,
+          IPFS
+        );
+        await tx.wait(); break;
+      } catch (error) {
+        // Log the error for debugging or provide feedback to the user
+        console.error('Failed to sign the NFT. Attempt:', retries + 1, error.message);
+
+        retries++;
+
+        if (retries === MAX_RETRIES) {
+          console.error('Max retries reached. Aborting...');
+        } else {
+          // Wait for the specified delay time before retrying
+          await sleep(2000);
+        }
+      }
+    }
   };
   const sig = async (sig1, amt) => {
     const tx = await contract.BidForSignet(addrs,
@@ -212,6 +232,16 @@ function App() {
       drawingContext.lineWidth = lineWidth;
 
       contextRef.current = drawingContext;
+      const dpr = window.devicePixelRatio || 1;
+      backgroundCanvas.width = canvasWidth * dpr;
+      backgroundCanvas.height = canvasHeight * dpr;
+      drawingCanvas.width = canvasWidth * dpr;
+      drawingCanvas.height = canvasHeight * dpr;
+
+      backgroundCanvas.style.width = `${canvasWidth}px`;
+      backgroundCanvas.style.height = `${canvasHeight}px`;
+      drawingCanvas.style.width = `${canvasWidth}px`;
+      drawingCanvas.style.height = `${canvasHeight}px`;
 
       // Layer the PNGs onto the background canvas
       let loadedImages = [];
@@ -239,11 +269,14 @@ function App() {
 
     const startDrawing = (e) => {
       let offsetX, offsetY
-      if (e.type === "touchstart") {
+      if (e.type.startsWith('touch')) {
+        e.preventDefault();
         const touch = e.touches[0];
-        offsetX = touch.pageX - e.target.offsetLeft;
-        offsetY = touch.pageY - e.target.offsetTop;
-      } else {  // Mouse event
+        const rect = e.target.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        offsetX = (touch.clientX - rect.left) * dpr;
+        offsetY = (touch.clientY - rect.top) * dpr;
+      } else {
         offsetX = e.nativeEvent.offsetX;
         offsetY = e.nativeEvent.offsetY;
       } contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
@@ -251,8 +284,22 @@ function App() {
       contextRef.current.beginPath();
       contextRef.current.moveTo(offsetX, offsetY);
       setIsDrawing(true);
-    };
+    }; useEffect(() => {
+      const canvasElement = drawingCanvasRef.current;
 
+      if (canvasElement) {
+        const handleTouchMove = (e) => {
+          e.preventDefault();
+        };
+
+        canvasElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        // Cleanup the event listener on component unmount
+        return () => {
+          canvasElement.removeEventListener('touchmove', handleTouchMove);
+        };
+      }
+    }, []);
     const finishDrawing = (e) => {
       if (e.type.startsWith('touch')) {
         e.preventDefault();
@@ -271,11 +318,14 @@ function App() {
         return;
       }
       let offsetX, offsetY
-      if (e.type === "touchmove") {
+      if (e.type.startsWith('touch')) {
+        e.preventDefault();
         const touch = e.touches[0];
-        offsetX = touch.pageX - e.target.offsetLeft;
-        offsetY = touch.pageY - e.target.offsetTop;
-      } else {  // Mouse event
+        const rect = e.target.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        offsetX = (touch.clientX - rect.left) * dpr;
+        offsetY = (touch.clientY - rect.top) * dpr;
+      } else {
         offsetX = e.nativeEvent.offsetX;
         offsetY = e.nativeEvent.offsetY;
       }
@@ -356,9 +406,9 @@ function App() {
     const maxWidth = 500;
     const canvasWidth = Math.min(maxWidth, window.innerWidth);
     const canvasHeight = Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
-    
+
     return (
-      <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px`  }}>
+      <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
         <canvas
           ref={backgroundCanvasRef}
           width={canvasWidth}
@@ -500,17 +550,18 @@ function App() {
     const NFTIDURL = await queryParams.get('ID');
     let NFTaddrs = addrs
     let NFTID = ID
-    console.log('L',stateL)
+    console.log('L', stateL)
     if (!stateL) {
 
-    if (NFTaddrsURL != null) {
-      NFTaddrs = NFTaddrsURL
-      console.log(NFTaddrs)
+      if (NFTaddrsURL != null) {
+        NFTaddrs = NFTaddrsURL
+        console.log(NFTaddrs)
+      }
+      if (NFTIDURL != null) {
+        NFTID = NFTIDURL
+        console.log(NFTID)
+      }
     }
-    if (NFTIDURL != null) {
-      NFTID = NFTIDURL
-      console.log(NFTID)
-    }}
     hash = await contract.getAllAutographs(
       NFTaddrs,
       NFTID
