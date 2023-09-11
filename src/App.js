@@ -269,6 +269,7 @@ function App() {
 useEffect(() => {
     if (contextRef.current) {
         contextRef.current.strokeStyle = color;
+        contextRef.current.shadowColor = color;
         contextRef.current.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
         contextRef.current.lineWidth = 5;
         contextRef.current.shadowBlur = 1;  // adjust for desired softness}
