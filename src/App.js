@@ -1,6 +1,7 @@
 import './App.css';
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';import { useLocation } from 'react-router-dom';
+
 import 'tailwindcss/tailwind.css'
 import '@rainbow-me/rainbowkit/styles.css'
 
@@ -23,7 +24,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from "ethers";
 import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider, Contract } from "ethers";
 import { List, ListItem } from '@mui/material';
-
+import toast, { Toaster } from 'react-hot-toast';
 import { Container, TextField, Button, Typography, Paper, Grid, Modal, Select, MenuItem } from '@mui/material';
 import 'tailwindcss/tailwind.css'
 import { chainId } from 'wagmi';
@@ -54,21 +55,38 @@ function App() {
   const [sigs, setsigs] = useState();
   const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
+  const location = useLocation();
   useEffect(() => {
     async function init() {
+     
+        const queryParams = new URLSearchParams(location.search);
+        const NFTaddrsURL =await queryParams.get('NFT');
+        const NFTIDURL =await queryParams.get('ID');
+        let NFTaddrs =addrs
+        let NFTID =ID
+        
+        if(NFTaddrsURL!= null){
+    setaddrs(NFTaddrsURL)
+    NFTaddrs=NFTaddrsURL
+    console.log(NFTaddrs)
+  }
+  if(NFTIDURL!= null){
+    setID(NFTIDURL)  
+    NFTID=NFTIDURL  
+    console.log(NFTID)
+  }
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
       contract = new ethers.Contract(contractAddress, abi, await signer);
-
       let NFTb
-      const NFT = new Contract(addrs, [
+      const NFT = new Contract(NFTaddrs, [
         // Assuming the NFT contract is ERC721 compliant
         'function tokenURI(uint256 tokenId) external view returns (string)',
       ], signer)//provider);
 
       try {
-        let uri = await NFT.tokenURI(ID);
+        let uri = await NFT.tokenURI(NFTID);
         console.log('LOL', uri)
         uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
         console.log(uri)
@@ -85,8 +103,8 @@ function App() {
       let hash = []
       let lol = []
       hash = await contract.getAllAutographs(
-        addrs,
-        ID
+        NFTaddrs,
+        NFTID
       ); console.log(hash)
 
       function convertHashesToUrls(ipfsHashes) {
@@ -110,7 +128,7 @@ function App() {
 
       setsigs(urls)
       console.log(sigs)
-      LOL()
+     // LOL()
     }
     init(); window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
@@ -168,7 +186,7 @@ function App() {
     const tx = await contract.BidForSignet(addrs,
       ID, sig1, { value: amt })
     await tx.wait();
-    alert('Your bid has been sent.')
+    toast.success('Your bid has been sent.')
   };
   const DrawOnLayeredCanvas = ({ pngs }) => {
     const backgroundCanvasRef = useRef(null);
@@ -551,7 +569,7 @@ function App() {
 
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="min-h-screen">
-      <div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+      <Toaster/><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
       </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
       </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
       </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
@@ -578,8 +596,8 @@ function App() {
             <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
             <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
-            <MenuItem value="10">Optimism</MenuItem>
-            <MenuItem value="137">Polygon</MenuItem>
+            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">Optimism</MenuItem>
+            <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">Polygon</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
@@ -594,7 +612,10 @@ function App() {
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
           <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-2 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
-            <div>.</div></div></div></div >
+            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {let currentURL = new URL(window.location.href);
+currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL +'?NFT='+addrs+'&ID='+ID );toast.success("Copied :)")
+}}>Link me to others</Button>
+<div>.</div></div></div></div >
       <div>.
       </div>
     </div >
