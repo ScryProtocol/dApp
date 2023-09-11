@@ -1,6 +1,6 @@
 import './App.css';
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react'; import { useLocation } from 'react-router-dom';
 
 import 'tailwindcss/tailwind.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -44,13 +44,16 @@ let signer
 let contract = new ethers.Contract(contractAddress, abi, provider);
 let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
 let IPFS;
-
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 function App() {
   const [accounts, setAccounts] = useState();
   const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
   const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [stateL, setstateL] = useState();
   //const [IPFS, setIPFS] = useState();
   const [sigs, setsigs] = useState();
   const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
@@ -58,23 +61,24 @@ function App() {
   const location = useLocation();
   useEffect(() => {
     async function init() {
-     
-        const queryParams = new URLSearchParams(location.search);
-        const NFTaddrsURL =await queryParams.get('NFT');
-        const NFTIDURL =await queryParams.get('ID');
-        let NFTaddrs =addrs
-        let NFTID =ID
-        
-        if(NFTaddrsURL!= null){
-    setaddrs(NFTaddrsURL)
-    NFTaddrs=NFTaddrsURL
-    console.log(NFTaddrs)
-  }
-  if(NFTIDURL!= null){
-    setID(NFTIDURL)  
-    NFTID=NFTIDURL  
-    console.log(NFTID)
-  }
+
+      const queryParams = new URLSearchParams(location.search);
+      const NFTaddrsURL = await queryParams.get('NFT');
+      const NFTIDURL = await queryParams.get('ID');
+      let NFTaddrs = addrs
+      let NFTID = ID
+
+      if (NFTaddrsURL != null) {
+        setstateL(NFTaddrsURL)
+        setaddrs(NFTaddrsURL)
+        NFTaddrs = NFTaddrsURL
+        console.log(NFTaddrs)
+      }
+      if (NFTIDURL != null) {
+        setID(NFTIDURL)
+        NFTID = NFTIDURL
+        console.log(NFTID)
+      }
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
@@ -128,7 +132,7 @@ function App() {
 
       setsigs(urls)
       console.log(sigs)
-     // LOL()
+       LOL()
     }
     init(); window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
@@ -233,26 +237,26 @@ function App() {
       drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
     }, [pngs, color, lineWidth, isErasing]);
 
-    const startDrawing  = (e) =>  {
-      let  offsetX, offsetY 
+    const startDrawing = (e) => {
+      let offsetX, offsetY
       if (e.type === "touchstart") {
         const touch = e.touches[0];
         offsetX = touch.pageX - e.target.offsetLeft;
         offsetY = touch.pageY - e.target.offsetTop;
-    } else {  // Mouse event
+      } else {  // Mouse event
         offsetX = e.nativeEvent.offsetX;
         offsetY = e.nativeEvent.offsetY;
-    }contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
+      } contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
       contextRef.current.shadowBlur = smoothness; // Set the lineWidth here
       contextRef.current.beginPath();
       contextRef.current.moveTo(offsetX, offsetY);
       setIsDrawing(true);
     };
 
-    const finishDrawing  = (e) =>  {
+    const finishDrawing = (e) => {
       if (e.type.startsWith('touch')) {
         e.preventDefault();
-    }const canvas = drawingCanvasRef.current;
+      } const canvas = drawingCanvasRef.current;
       const imgData = canvas.toDataURL();
       undoStack.current.push(imgData);
 
@@ -262,19 +266,19 @@ function App() {
     };
 
     let lastX, lastY;
-    const draw  = (e) =>  {
+    const draw = (e) => {
       if (!isDrawing) {
         return;
       }
-      let  offsetX, offsetY 
+      let offsetX, offsetY
       if (e.type === "touchmove") {
         const touch = e.touches[0];
         offsetX = touch.pageX - e.target.offsetLeft;
         offsetY = touch.pageY - e.target.offsetTop;
-    } else {  // Mouse event
+      } else {  // Mouse event
         offsetX = e.nativeEvent.offsetX;
         offsetY = e.nativeEvent.offsetY;
-    }
+      }
       // Wrap the drawing code inside requestAnimationFrame
       requestAnimationFrame(() => {
         contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
@@ -483,21 +487,38 @@ function App() {
         </div>
       </Modal>
     );
-  } async function LOL() {
+  }
+  async function LOL() {
     let hash = []
     let lol = []
+    const queryParams = new URLSearchParams(location.search);
+    const NFTaddrsURL = await queryParams.get('NFT');
+    const NFTIDURL = await queryParams.get('ID');
+    let NFTaddrs = addrs
+    let NFTID = ID
+    console.log('L',stateL)
+    if (!stateL) {
+
+    if (NFTaddrsURL != null) {
+      NFTaddrs = NFTaddrsURL
+      console.log(NFTaddrs)
+    }
+    if (NFTIDURL != null) {
+      NFTID = NFTIDURL
+      console.log(NFTID)
+    }}
     hash = await contract.getAllAutographs(
-      addrs,
-      ID
+      NFTaddrs,
+      NFTID
     ); console.log(hash)
     let NFTb
-    const NFT = new ethers.Contract(addrs, [
+    const NFT = new ethers.Contract(NFTaddrs, [
       // Assuming the NFT contract is ERC721 compliant
       'function tokenURI(uint256 tokenId) external view returns (string)',
     ], signer);
 
     try {
-      let uri = await NFT.tokenURI(ID);
+      let uri = await NFT.tokenURI(NFTID);
       console.log('LOL', uri)
       uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
       console.log(uri)
@@ -508,7 +529,7 @@ function App() {
       const metadata = await response.json();
       NFTb = (metadata.image);
       NFTb = NFTb.replace("ipfs://", "https://ipfs.io/ipfs/");
-      console.log("NT",NFTb)
+      console.log("NT", NFTb)
     } catch (error) {
       console.error("Error fetching NFT image:", error);
     }
@@ -569,7 +590,7 @@ function App() {
 
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="min-h-screen">
-      <Toaster/><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+      <Toaster /><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
       </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
       </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
       </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
@@ -612,10 +633,11 @@ function App() {
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
           <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-2 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {let currentURL = new URL(window.location.href);
-currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL +'?NFT='+addrs+'&ID='+ID );toast.success("Copied :)")
-}}>Link me to others</Button>
-<div>.</div></div></div></div >
+            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {
+              let currentURL = new URL(window.location.href);
+              currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
+            }}>Link me to others</Button>
+            <div>.</div></div></div></div >
       <div>.
       </div>
     </div >
