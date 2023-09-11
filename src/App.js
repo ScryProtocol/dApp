@@ -265,8 +265,14 @@ function App() {
       drawingContext.shadowBlur = 1;  // adjust for desired softness
       drawingContext.shadowColor = color;
       drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-    }, [pngs, color, lineWidth, isErasing]);
-
+    }, [pngs]);
+useEffect(() => {
+    if (contextRef.current) {
+        contextRef.current.strokeStyle = color;
+        contextRef.current.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
+        contextRef.current.lineWidth = 5;
+        contextRef.current.shadowBlur = 1;  // adjust for desired softness}
+      }}, [color, isErasing]);
     const startDrawing = (e) => {
       let offsetX, offsetY
       if (e.type.startsWith('touch')) {
