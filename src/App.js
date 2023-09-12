@@ -82,6 +82,8 @@ function App() {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
+      if(signer.chainId!=11155111)
+      {toast.error('Change chain to Sepolia and refresh')}
       contract = new ethers.Contract(contractAddress, abi, await signer);
       let NFTb
       const NFT = new Contract(NFTaddrs, [
