@@ -144,7 +144,7 @@ function App() {
     init(); window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
         // Refresh the component content
-      //  init();
+        init();
       }
     });
   }, [])
