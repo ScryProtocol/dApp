@@ -46,9 +46,9 @@ let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
 let IPFS;
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
+}let check
 function App() {
-  const [accounts, setAccounts] = useState();
+  const [accounts, setAccounts] = useState([]);
   const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
   const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
@@ -79,6 +79,10 @@ function App() {
         NFTID = NFTIDURL
         console.log(NFTID)
       }
+      if(accounts.length==0&&check==null){
+        check=1
+        toast('Connecting wallet')}
+
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
@@ -140,7 +144,7 @@ function App() {
     init(); window.ethereum.on('accountsChanged', (accounts) => {
       if (accounts.length > 0) {
         // Refresh the component content
-        init();
+      //  init();
       }
     });
   }, [])
