@@ -329,9 +329,7 @@ function App() {
       } const canvas = drawingCanvasRef.current;
       const imgData = canvas.toDataURL();
       undoStack.current.push(imgData);
-
       contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
-      contextRef.current.closePath();
       setIsDrawing(false);
       lastX = undefined;
       lastY = undefined;
