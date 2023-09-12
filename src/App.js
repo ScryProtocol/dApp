@@ -151,38 +151,6 @@ function App() {
     });
   }, [])
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const signer = await provider.getSigner()
-      let hash = []
-      let lol = []
-      hash = await contract.getShownAutographs(
-        addrs,
-        ID
-      ); console.log(hash)
-
-      function convertHashesToUrls(ipfsHashes) {
-        const baseUrl = "https://ipfs.io/ipfs/";
-        let urls = ['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
-
-        for (let i = 0; i < ipfsHashes.length; i++) {
-          urls.push(baseUrl + ipfsHashes[i]);
-        }
-        setpngs(urls)
-        return urls;
-      }
-
-      // Usage:
-      const hashes = hash[1];
-      console.log(hashes)
-      const urls = convertHashesToUrls(hashes);
-      console.log(urls);
-
-      setsigs(urls)
-      console.log(sigs)
-    }, 600000);
-    return () => clearInterval(interval);
-  }, []);
   const getBalance = async () => {
     const signer = await provider.getSigner()
   };
