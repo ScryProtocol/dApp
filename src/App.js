@@ -570,6 +570,7 @@ function App() {
   async function LOL() {
     let hash = []
     let lol = []
+    console.log(addrs)
     const queryParams = new URLSearchParams(location.search);
     const NFTaddrsURL = await queryParams.get('NFT');
     const NFTIDURL = await queryParams.get('ID');
@@ -697,12 +698,13 @@ function App() {
             <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
             <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
-            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">Optimism</MenuItem>
+            <MenuItem value="">Custom</MenuItem>
             <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">Polygon</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
-          <BidsModal
+          {addrs==''&&<input type="text" style={{ backgroundColor: '#00ccff', top: '2px' }} placeholder="" value={addrs} onChange={(e) => {toast.success('Custom NFT set');setaddrs(e.target.value)}} className=" w-80 top-2 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
+        }<BidsModal
             isOpen={isBidsModalOpen}
             onClose={() => setIsBidsModalOpen(false)}
           /><BidModal
