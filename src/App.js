@@ -47,6 +47,7 @@ let IPFS;
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }let check
+let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
   const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
@@ -86,8 +87,9 @@ function App() {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
-      if((await provider.getNetwork()).chainId!='11155111')
-      {toast.error('Change chain to Sepolia and refresh')}
+      if((await provider.getNetwork()).chainId!='11155111' &&check2==null)
+      {        check2=1
+        toast.error('Change chain to Sepolia and refresh')}
       console.log('LOL', (await provider.getNetwork()).chainId)
       contract = new ethers.Contract(contractAddress, abi, await signer);
       let NFTb
