@@ -699,7 +699,7 @@ function App() {
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
             <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
             <MenuItem value="">Custom</MenuItem>
-            <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">Polygon</MenuItem>
+            <MenuItem value="0x57ec0bc409b3d8a89b34b1737781adb3cf34a639">PudgyPenguins</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
