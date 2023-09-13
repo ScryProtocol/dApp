@@ -158,6 +158,7 @@ function App() {
     const signer = await provider.getSigner()
   };
   const sign = async () => {
+    toast.success('Signing')
     const MAX_RETRIES = 3; // Adjust as needed
     let retries = 0;
 
