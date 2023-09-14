@@ -500,10 +500,10 @@ function App() {
       async function fetchBids() {
 
         // Fetch bids for the user. You might need to modify this based on the smart contract's functions.
-        const bidCount = await contract.Bids('0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5');
+        const bidCount = await contract.Bids(signer.getAddress());
         let bidsArray = [];
         for (let i = 0; i < bidCount; i++) {
-          const bid = await contract.Bider('0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', i);  // Assuming Bider takes user, id, and index as arguments
+          const bid = await contract.Bider(signer.getAddress(), i);  // Assuming Bider takes user, id, and index as arguments
           console.log(bid)
           bidsArray.push(bid);
         }
