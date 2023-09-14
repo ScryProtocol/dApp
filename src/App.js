@@ -181,7 +181,7 @@ function App() {
     oracle[4] = {
       name: '0xchibi',
       stake: 'Partner',
-      addrs: '0xF478b60A72AB5D3a076cC222428FBfCa1A0163dd',
+      addrs: '0xf97e7651e76ca3da6839d6f414ea0fc675f8d295',
       href: 'https://optimistic.etherscan.io/address/0xF478b60A72AB5D3a076cC222428FBfCa1A0163dd',
       networks: ['optimism'],
       networksL: 'Optimism'
