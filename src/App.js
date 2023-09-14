@@ -85,9 +85,9 @@ function App() {
         check = 1
         toast('Connecting wallet')
       }
-
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
       try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
       
