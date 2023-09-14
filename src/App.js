@@ -91,17 +91,17 @@ function App() {
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
       
-    } catch (error) {
-      provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
-      signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
-
-    }
+    
       if ((await provider.getNetwork()).chainId != '11155111' && check2 == null) {
         check2 = 1
         toast.error('Change chain to Sepolia and refresh')
       }
       console.log('LOL', (await provider.getNetwork()).chainId)
-      contract = new ethers.Contract(contractAddress, abi, await signer);
+    } catch (error) {
+      provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+      signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+
+    } contract = new ethers.Contract(contractAddress, abi, await signer);
       let NFTb
       const NFT = new Contract(NFTaddrs, [
         // Assuming the NFT contract is ERC721 compliant
