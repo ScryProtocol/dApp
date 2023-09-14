@@ -87,8 +87,15 @@ function App() {
       }
 
       await window.ethereum.request({ method: 'eth_requestAccounts' });
+      try {
       provider = new ethers.BrowserProvider(window.ethereum)
       signer = await provider.getSigner()
+      
+    } catch (error) {
+      provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+      signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+
+    }
       if ((await provider.getNetwork()).chainId != '11155111' && check2 == null) {
         check2 = 1
         toast.error('Change chain to Sepolia and refresh')
