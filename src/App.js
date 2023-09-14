@@ -243,7 +243,7 @@ function App() {
       drawingContext.lineWidth = lineWidth;
 
       contextRef.current = drawingContext;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = 1;
       backgroundCanvas.width = canvasWidth * dpr;
       backgroundCanvas.height = canvasHeight * dpr;
       drawingCanvas.width = canvasWidth * dpr;
@@ -292,7 +292,7 @@ function App() {
         e.preventDefault();
         const touch = e.touches[0];
         const rect = e.target.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = 1;
         offsetX = (touch.clientX - rect.left) * dpr;
         offsetY = (touch.clientY - rect.top) * dpr;
       } else {
@@ -341,7 +341,7 @@ function App() {
         e.preventDefault();
         const touch = e.touches[0];
         const rect = e.target.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
+        const dpr =  1;
         offsetX = (touch.clientX - rect.left) * dpr;
         offsetY = (touch.clientY - rect.top) * dpr;
       } else {
@@ -423,8 +423,10 @@ function App() {
       });
     }
     const maxWidth = 500;
-    const canvasWidth = Math.min(maxWidth, window.innerWidth);
-    const canvasHeight = Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
+    const maxHeight = 500;
+
+    const canvasWidth = 500//Math.min(maxWidth, window.innerWidth);
+    const canvasHeight = 500//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
 
     return (
       <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
