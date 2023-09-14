@@ -146,12 +146,12 @@ function App() {
       console.log(sigs)
       LOL()
     }
-    init(); window.ethereum.on('accountsChanged', (accounts) => {
-      if (accounts.length > 0) {
-        // Refresh the component content
-        init();
-      }
-    });
+    init(); //window.ethereum.on('accountsChanged', (accounts) => {
+      //if (accounts.length > 0) {
+      //  // Refresh the component content
+      //  init();
+      //}
+    //});
   }, [])
 
   const getBalance = async () => {
