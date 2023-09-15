@@ -202,6 +202,8 @@ function App() {
     }
   };
   const sig = async (sig1, amt) => {
+    provider = new ethers.BrowserProvider(window.ethereum)
+      signer = await provider.getSigner()
     if (!sigTog) {
       console.log(addrs, ID, sig1, 0, amt)
       const tx = await contract.BidForSignet(addrs,
@@ -498,7 +500,10 @@ function App() {
 
     useEffect(() => {
       async function fetchBids() {
-
+        try{
+        provider = new ethers.BrowserProvider(window.ethereum)
+        signer = await provider.getSigner()}
+        catch{}
         // Fetch bids for the user. You might need to modify this based on the smart contract's functions.
         const bidCount = await contract.Bids(signer.getAddress());
         let bidsArray = [];
