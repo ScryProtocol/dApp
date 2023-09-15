@@ -57,7 +57,8 @@ function App() {
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
 
   //const [IPFS, setIPFS] = useState();
-  const [sigs, setsigs] = useState();
+  const [sigs, setsigs] = useState();  const [claim, setclaim] = useState();
+
   const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   const location = useLocation();
@@ -648,6 +649,20 @@ function App() {
 
     setsigs(urls)
     console.log(sigs)
+    try{
+      provider = new ethers.BrowserProvider(window.ethereum)
+      signer = await provider.getSigner()}
+      catch{}
+      console.log('LOLLOL',await contract.Bid(
+        NFTaddrs,
+        NFTID,
+        await signer.getAddress()
+      ))
+    setclaim((await contract.Bid(
+      NFTaddrs,
+      NFTID,
+      await signer.getAddress()
+    ) ).toString()/10**18);
   }
   // const pngs = [
   // 'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media',
@@ -695,7 +710,7 @@ function App() {
           Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets!</h3>
         <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
           <DrawOnLayeredCanvas pngs={pngs} />
-        </div>{
+        </div>{claim != 0 && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{
           accounts && accounts.map((account, index) => (
             <div key={index} className="account-item">
               {account}
