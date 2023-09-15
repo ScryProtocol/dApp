@@ -746,7 +746,7 @@ function App() {
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {
               let currentURL = new URL(window.location.href);
               currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
-            }}>Link me to others</Button>
+            }}>share signing link</Button>
             <div>.</div></div></div></div >
       <div>.
       </div>
