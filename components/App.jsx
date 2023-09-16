@@ -105,7 +105,7 @@ function App() {
       console.log('LOL', (await provider.getNetwork()).chainId)
     } catch (error) {
       provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
-      signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
+    //  signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
 
     } contract = new ethers.Contract(contractAddress, abi, provider);
       let NFTb
