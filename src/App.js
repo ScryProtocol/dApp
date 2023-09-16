@@ -50,8 +50,8 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
-  const [addrs, setaddrs] = useState('0x0e3088C7Ef2f69E5bF5f80c22D31B2C1CEc5fa2F');
-  const [ID, setID] = useState('1');
+  const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
+  const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
@@ -726,9 +726,10 @@ function App() {
             <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
             <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
             <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
+            <MenuItem value="">Custom</MenuItem>
             <MenuItem value="0x57ec0bc409b3d8a89b34b1737781adb3cf34a639">PudgyPenguins</MenuItem>
-            <MenuItem value="0x0e3088C7Ef2f69E5bF5f80c22D31B2C1CEc5fa2F">Signet</MenuItem>
-<MenuItem value="">Custom</MenuItem>
+            <MenuItem value="534351">Scroll</MenuItem>
+            <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
           {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           }<BidsModal
