@@ -737,8 +737,8 @@ function App() {
           /><h3>Token</h3>
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
-          <div style={{position: 'relative', top: '12px' }}><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-2 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
+          <div style={{position: 'relative', top: '12px' }}><Button style={{ backgroundColor: '#00aaff', color: '#ffffff',marginRight: '2px'  }} variant='outlined' className="top-3 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
+            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',marginRight: '2px' }} variant='outlined' className="top-3 left-2 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {
               let currentURL = new URL(window.location.href);
               currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
