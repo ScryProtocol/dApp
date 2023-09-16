@@ -57,7 +57,7 @@ function App() {
         setOracleReady(Number(feedValue))
       }
       //  }
-    }, 10000);
+    }, 100000);
     return () => clearInterval(interval);
   }, [token, feedID]);
   const getBalance = async () => {
