@@ -7,17 +7,17 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
 import {
-  mainnet,
+  sepolia,
   polygon,
   optimism,
   arbitrum,
   base,
-  zora,
+  mainnet,
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 const { chains, publicClient } = configureChains(
-  [sepolia,mainnet, polygon, optimism, arbitrum, base, zora],
+  [sepolia],
   [
     //alchemyProvider({ apiKey: 'noFpU53uptypQtmZDodsoYQwqcK2V3AC' }),
     publicProvider()
