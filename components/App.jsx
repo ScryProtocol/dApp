@@ -504,11 +504,7 @@ function App() {
 
     useEffect(() => {
       async function fetchBids() {
-        try{
-        provider = new ethers.BrowserProvider(window.ethereum)
-       contract = new ethers.Contract(contractAddress, abi, provider);
-    }
-        catch{}
+       
         // Fetch bids for the user. You might need to modify this based on the smart contract's functions.
         const bidCount = await contract.Bids(address);
         let bidsArray = [];
@@ -653,10 +649,7 @@ function App() {
 
     setsigs(urls)
     console.log(sigs)
-    try{
-      provider = new ethers.BrowserProvider(window.ethereum)
-      }
-      catch{}
+    
       console.log('LOLLOL',await contract.Bid(
         NFTaddrs,
         NFTID,
