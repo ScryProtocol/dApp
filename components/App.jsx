@@ -176,10 +176,13 @@ function App() {
     let retries = 0;
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  contract = new ethers.Contract(contractAddress, abi, signer);
 
     while (retries < MAX_RETRIES) {
+      
       try {
-        const tx = await contract.connect(signer).signNFT(
+        
+        const tx = await contract.signNFT(
           addrs,
           ID,
           IPFS
@@ -208,6 +211,8 @@ function App() {
   };
   const sig = async (sig1, amt) => {
     provider = new ethers.BrowserProvider(window.ethereum)
+    contract = new ethers.Contract(contractAddress, abi, signer);
+
     if (!sigTog) {
       console.log(addrs, ID, sig1, 0, amt)
       const tx = await contract.connect(signer).BidForSignet(addrs,
@@ -221,16 +226,16 @@ function App() {
           'function allowance(address,address) external view returns (uint)',
           'function approve(address spender, uint256 amount) external returns (bool)'
         ],
-        provider
+        signer
       );
-      let amount = await tok.connect(signer).allowance(address, contractAddress)
+      let amount = await tok.allowance(address, contractAddress)
 
       if (amount < amt) {
         let tx = await tok.connect(signer).approve(addrs, amt)
         await tx.wait()
       }
       let am = amount
-      const tx = await contract.connect(signer).BidForSignet(addrs,
+      const tx = await contract.BidForSignet(addrs,
         ID, sig1, amt)
       await tx.wait();
 
