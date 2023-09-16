@@ -12,9 +12,6 @@ let morpheusAbi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "con
 let provider
 const contractAddress = '0xb21931f28AfED2A4fa6Cf18e8802AEf58A7242E9';
 const morpheusAddress = '0x0000000000071821e8033345A7Be174647bE0706';
-
-let contract = new ethers.Contract(contractAddress, abi, provider);
-let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
 let signer
 function App() {
   const [accounts, setAccounts] = useState([]);
@@ -26,7 +23,8 @@ function App() {
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   provider = useEthersProvider()
   signer = useEthersSigner();
-
+  let contract = new ethers.Contract(contractAddress, abi, provider);
+  let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
   useEffect(() => {
     async function init() {
       contract = new ethers.Contract(contractAddress, abi, provider);
