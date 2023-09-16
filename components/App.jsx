@@ -702,7 +702,7 @@ function App() {
 
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
-     <ConnectButton/> <Toaster /><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+     <ConnectButton style={{ position: 'fixed', top: '2px', }}className="top-2 left-2"/> <Toaster /><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
       </a></div><div ><a href='https://discord.gg/sp5ubMK9Zt' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
       </a></div><div ><a href='https://twitter.com/heysignet' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
       </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
