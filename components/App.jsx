@@ -107,7 +107,7 @@ function App() {
       provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
       signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public')
 
-    } contract = new ethers.Contract(contractAddress, abi, await signer);
+    } contract = new ethers.Contract(contractAddress, abi, provider);
       let NFTb
       const NFT = new Contract(NFTaddrs, [
         // Assuming the NFT contract is ERC721 compliant
