@@ -732,7 +732,7 @@ function App() {
             <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
             <MenuItem value="">Custom</MenuItem>
             <MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
-            <MenuItem value="534351">Scroll</MenuItem>
+            <MenuItem value="0x6be69b2a9b153737887cfcdca7781ed1511c7e36">Killer GF</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
           {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
