@@ -254,7 +254,7 @@ function App() {
       drawingContext.lineWidth = lineWidth;
 
       contextRef.current = drawingContext;
-      const dpr = 1;
+      const dpr =window.devicePixelRatio ||  1;
       backgroundCanvas.width = canvasWidth * dpr;
       backgroundCanvas.height = canvasHeight * dpr;
       drawingCanvas.width = canvasWidth * dpr;
@@ -303,7 +303,7 @@ function App() {
         e.preventDefault();
         const touch = e.touches[0];
         const rect = e.target.getBoundingClientRect();
-        const dpr = 1;
+        const dpr = window.devicePixelRatio || 1;
         offsetX = (touch.clientX - rect.left) * dpr;
         offsetY = (touch.clientY - rect.top) * dpr;
       } else {
@@ -352,7 +352,7 @@ function App() {
         e.preventDefault();
         const touch = e.touches[0];
         const rect = e.target.getBoundingClientRect();
-        const dpr =  1;
+        const dpr =  window.devicePixelRatio || 1;
         offsetX = (touch.clientX - rect.left) * dpr;
         offsetY = (touch.clientY - rect.top) * dpr;
       } else {
