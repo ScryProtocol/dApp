@@ -50,7 +50,7 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
-  const [addrs, setaddrs] = useState('0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c');
+  const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
   const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
@@ -104,10 +104,12 @@ function App() {
 
     } contract = new ethers.Contract(contractAddress, abi, await signer);
       let NFTb
+      let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+
       const NFT = new Contract(NFTaddrs, [
         // Assuming the NFT contract is ERC721 compliant
         'function tokenURI(uint256 tokenId) external view returns (string)',
-      ], signer)//provider);
+      ], pr)//provider);
 
       try {
         let uri = await NFT.tokenURI(NFTID);
@@ -607,10 +609,12 @@ function App() {
       NFTID
     ); console.log(hash)
     let NFTb
+    let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+
     const NFT = new ethers.Contract(NFTaddrs, [
       // Assuming the NFT contract is ERC721 compliant
       'function tokenURI(uint256 tokenId) external view returns (string)',
-    ], signer);
+    ], pr)//signer);
 
     try {
       let uri = await NFT.tokenURI(NFTID);
@@ -708,7 +712,7 @@ function App() {
           Signet
         </h1> <h3 style={{}} className='mx-6 font-bold' >
           Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets!</h3>
-        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+        In the Alpha we mirror Mainnet NFTs. Use the Mainnet NFT address for NFTs while on the Sepolia Alpha.<div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
           <DrawOnLayeredCanvas pngs={pngs} />
         </div>{claim != 0 &&claim != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{
           accounts && accounts.map((account, index) => (
@@ -723,11 +727,11 @@ function App() {
             id="filter-select"
             value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
             onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0xd14cb764f012ef8d0ed7a1cba97e04156ec1455c">uwucrew</MenuItem>
-            <MenuItem value="0x19422ad584a93979b729fb93831c8db2de86b151">BAYC</MenuItem>
-            <MenuItem value="0x706e00262e164092bca31c2e716dc0e8ec86c9e1">Azuki</MenuItem>
+            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
+            <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">BAYC</MenuItem>
+            <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
             <MenuItem value="">Custom</MenuItem>
-            <MenuItem value="0x57ec0bc409b3d8a89b34b1737781adb3cf34a639">PudgyPenguins</MenuItem>
+            <MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
             <MenuItem value="534351">Scroll</MenuItem>
             <MenuItem value="11155111">Sepolia</MenuItem>
           </Select>
