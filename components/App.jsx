@@ -62,18 +62,42 @@ function App() {
   }, [token, feedID]);
   const getBalance = async () => {
     if (alt == null) {
-      const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
+      let success = false;
+      while (!success) {
+        try {const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
       await tx.wait();
+      success = true;
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+    }
+  }
     }
     else {
-      const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.01') });
+      let success = false;
+      while (!success) {
+        try {const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.01') });
       await tx.wait();
+      success = true;
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+    }
+  }
     }
     setOracleReady(1)
   };
   const update = async () => {
+    let success = false;
+  while (!success) {
+    try {
     const tx = await contract.connect(signer).setBalance(address, token, network)//,  });
-    await tx.wait();
+    await tx.wait();success = true;
+  } catch (error) {
+    console.error("Transaction failed:", error);
+    await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+  }
+}
   };
   const sync = async (e) => {
     await setToken(e.target.value);
