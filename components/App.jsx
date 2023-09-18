@@ -60,7 +60,7 @@ function App() {
         setOracleReady(Number(feedValue))
       }
       //  }
-    }, 100000);
+    }, 40000);
     return () => clearInterval(interval);
   }, [token, feedID]);
   const getBalance = async () => {
@@ -107,7 +107,9 @@ function App() {
     while (!success) {
       try {
         const tx = await contract.connect(signer).setBalance(address, token, network)//,  });
-        await tx.wait(); success = true;
+        await tx.wait();
+        lol()
+         success = true;
       } catch (error) {
         console.error("Transaction failed:", error);
         if (error.message.includes("rejected")) {
