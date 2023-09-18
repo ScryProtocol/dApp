@@ -5,6 +5,7 @@ import 'tailwindcss/tailwind.css'
 import { chainId } from 'wagmi';import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
+import { useAccount, useConnect, useEnsName } from 'wagmi'
 
 
 let abi = [{ "inputs": [], "stateMutability": "payable", "type": "constructor" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "RPC", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_address", "type": "address" }], "name": "addressToBytes", "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "data", "type": "bytes" }], "name": "bytesToHexString", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "Own", "type": "address" }, { "internalType": "uint256", "name": "nfee", "type": "uint256" }, { "internalType": "string", "name": "newRPC", "type": "string" }, { "internalType": "uint256", "name": "i", "type": "uint256" }], "name": "changeOwnerFEEAndRPC", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "address", "name": "TOKEN", "type": "address" }, { "internalType": "uint256", "name": "chainID", "type": "uint256" }], "name": "getBalance", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "TOKEN", "type": "address" }, { "internalType": "uint256", "name": "chainID", "type": "uint256" }], "name": "getMyBalance", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "target", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "chainID", "type": "uint256" }], "name": "setBalance", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "chainID", "type": "uint256" }], "name": "setMyBalance", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" }], "name": "userBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" }], "name": "userBalanceFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
@@ -23,21 +24,20 @@ function App() {
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   provider = useEthersProvider()
   signer = useEthersSigner();
+  const { address, isConnected } = useAccount()
   let contract = new ethers.Contract(contractAddress, abi, provider);
   let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
   useEffect(() => {
     async function init() {
-      contract = new ethers.Contract(contractAddress, abi, provider);
-      morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
-      setBal(Number(await contract.userBalance(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)) / 10 ** 18);
-      setfeedID(Number(await contract.userBalanceFeed(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)));
+      setBal(Number(await contract.userBalance(network, address, token)) / 10 ** 18);
+      setfeedID(Number(await contract.userBalanceFeed(network, await address, token)));
       let feedValue
       [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
       console.log('T', feedValue)
       setOracleReady((Number(feedValue)));
     } window.ethereum.request({ method: 'eth_requestAccounts' });
     init();
-    const listenForWinner = morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
+    morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
       // Update state to show the modal
       if (Number(feedId) == feedID) {
         setOracleReady((Number(value)));
@@ -47,9 +47,9 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      setBal(Number(await contract.userBalance(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)) / 10 ** 18);
-      console.log(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token, alt, 'LOL', Number(await contract.userBalance(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)) / 10 ** 18)
-      setfeedID(Number(await contract.userBalanceFeed(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)));
+      setBal(Number(await contract.userBalance(network, await address, token)) / 10 ** 18);
+      console.log(network, await address, token, alt, 'LOL', Number(await contract.userBalance(network, await address, token)) / 10 ** 18)
+      setfeedID(Number(await contract.userBalanceFeed(network, await address, token)));
       let feedValue
       [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
       console.log('T', feedValue, 'lol', feedID)
@@ -62,7 +62,7 @@ function App() {
   }, [token, feedID]);
   const getBalance = async () => {
     if (alt == null) {
-      const tx = await contract.connect(signer).getBalance('0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token, network, { value: ethers.parseEther('0.01') });
+      const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
       await tx.wait();
     }
     else {
@@ -72,14 +72,28 @@ function App() {
     setOracleReady(1)
   };
   const update = async () => {
-    const tx = await contract.connect(signer).setBalance('0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token, network)//,  });
+    const tx = await contract.connect(signer).setBalance(address, token, network)//,  });
     await tx.wait();
   };
   const sync = async (e) => {
     await setToken(e.target.value);
-    setBal(Number(await contract.userBalance(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', e.target.value)) / 10 ** 18);
-    console.log(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', e.target.value, alt, 'LOL', Number(await contract.userBalance(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', token)) / 10 ** 18)
-    setfeedID(Number(await contract.userBalanceFeed(network, await '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5', e.target.value)));
+    setBal(Number(await contract.userBalance(network, await address, e.target.value)) / 10 ** 18);
+    console.log(network, await address, e.target.value, alt, 'LOL', Number(await contract.userBalance(network, await address, token)) / 10 ** 18)
+    setfeedID(Number(await contract.userBalanceFeed(network, await address, e.target.value)));
+    let feedValue
+    [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
+    console.log('T', feedValue, 'lol', feedID)
+    if (feedValue != 0) {
+      setOracleReady(Number(feedValue))
+    }
+  };
+
+  async function lol() {
+    let addrs = address
+    if (alt != null){addrs =alt}
+    setBal(Number(await contract.userBalance(network, await addrs, token)) / 10 ** 18);
+    console.log(network, await addrs, token, alt, 'LOL', Number(await contract.userBalance(network, await addrs, token)) / 10 ** 18)
+    setfeedID(Number(await contract.userBalanceFeed(network, await addrs, token)));
     let feedValue
     [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
     console.log('T', feedValue, 'lol', feedID)
@@ -123,7 +137,8 @@ function App() {
           <h3>Token</h3>
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
-          <div></div>{(OracleReady > 1 && <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={update}>Set Balance</Button>)
+          <h3><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={lol}>Refresh and Check</Button>
+          </h3><div></div>{(OracleReady > 1 && <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={update}>Set Balance</Button>)
           }{(OracleReady == 1 && <div style={{ position: 'relative', top: '4px' }}>Awaiting Oracle...</div>)}
           <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
           <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
