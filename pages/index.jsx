@@ -4,7 +4,19 @@ import App from "../components/App";
 
 export default function Home() {
   return (<>  
-
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/veryfi.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Verify that you own any NFTs, ERCs, are staking or any other ownership that uses balanceOf, for any other network! Veryfi lets you easily check membership and ownership for your community/project!"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/veryfi.png" />
+    
+    <title>Verify</title>
+  </head>
         <App />
     </>
   );
