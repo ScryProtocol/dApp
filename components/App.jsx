@@ -29,7 +29,7 @@ function App() {
   let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
   morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
     // Update state to show the modal
-    console.log('oracle',value)
+    console.log('oracle', value)
     if (Number(feedId) == feedID) {
       setOracleReady((Number(value)));
     }
@@ -45,7 +45,7 @@ function App() {
     }
     try { window.ethereum.request({ method: 'eth_requestAccounts' }); } catch { }
     init();
-   
+
   }, []);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ function App() {
       let success = false;
       while (!success) {
         try {
-          const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
+          const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.001') });
           await tx.wait();
           success = true;
         } catch (error) {
@@ -86,7 +86,7 @@ function App() {
       let success = false;
       while (!success) {
         try {
-          const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.01') });
+          const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.001') });
           await tx.wait();
           success = true;
         } catch (error) {
@@ -136,26 +136,27 @@ function App() {
   async function lol() {
     let addrs = address
     if (alt != null) { addrs = alt }
-    let feed =(Number(await contract.userBalanceFeed(network,  addrs, token)));
+    let feed = (Number(await contract.userBalanceFeed(network, addrs, token)));
     setfeedID(feed)
     let feedValue
     console.log(feed);
     let success = false;
     while (!success) {
-    try {
-    [feedValue, , ,] = await morpheus.getFeed(feed); // Replace this with your actual call
-    console.log('T', feedValue, 'lol', feed)
-    if (feedValue != 0) {
-      setOracleReady(Number(feedValue))
+      try {
+        [feedValue, , ,] = await morpheus.getFeed(feed); // Replace this with your actual call
+        console.log('T', feedValue, 'lol', feed)
+        if (feedValue != 0) {
+          setOracleReady(Number(feedValue))
 
-    }      success = true
+        } success = true
 
-  } catch {
+      } catch {
 
-  }}
-    setBal(Number(await contract.userBalance(network,  addrs, token)) / 10 ** 18);
-    console.log(network, addrs, token, alt, 'LOL', Number(await contract.userBalance(network,  addrs, token)) / 10 ** 18)
-    
+      }
+    }
+    setBal(Number(await contract.userBalance(network, addrs, token)) / 10 ** 18);
+    console.log(network, addrs, token, alt, 'LOL', Number(await contract.userBalance(network, addrs, token)) / 10 ** 18)
+
   };
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
@@ -194,8 +195,8 @@ function App() {
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
           <h3><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={lol}>Refresh and Check</Button>
-          </h3><div></div>{(OracleReady > 1 &&OracleReady !=11155111&& <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-6 color-white border-white" onClick={update}>Set Balance</Button>)
-          }{(OracleReady ==11155111  && <div style={{ position: 'relative', top: '12px' }}>Awaiting Oracle...</div>)}
+          </h3><div></div>{(OracleReady > 1 && OracleReady != 11155111 && <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-6 color-white border-white" onClick={update}>Set Balance</Button>)
+          }{(OracleReady == 11155111 && <div style={{ position: 'relative', top: '12px' }}>Awaiting Oracle...</div>)}
           <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
           <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
         </div>Please note there is a 0.001 ETH oracle fee.</div ></div >
