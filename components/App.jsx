@@ -96,8 +96,10 @@ function App() {
     await tx.wait();success = true;
   } catch (error) {
     console.error("Transaction failed:", error);
+    if (error.message.includes("revert")) {
     await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
   }
+  else{break}
 }
   };
   const sync = async (e) => {
