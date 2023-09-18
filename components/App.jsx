@@ -35,7 +35,8 @@ function App() {
       [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
       console.log('T', feedValue)
       setOracleReady((Number(feedValue)));
-    } window.ethereum.request({ method: 'eth_requestAccounts' });
+    } 
+    try{window.ethereum.request({ method: 'eth_requestAccounts' });} catch{}
     init();
     morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
       // Update state to show the modal
