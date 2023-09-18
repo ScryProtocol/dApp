@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Container, TextField, Button, Typography, Paper, Grid, Modal, Select, MenuItem } from '@mui/material';
 import 'tailwindcss/tailwind.css'
-import { chainId } from 'wagmi';import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { chainId } from 'wagmi'; import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
 import { useAccount, useConnect, useEnsName } from 'wagmi'
@@ -27,6 +27,13 @@ function App() {
   const { address, isConnected } = useAccount()
   let contract = new ethers.Contract(contractAddress, abi, provider);
   let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
+  morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
+    // Update state to show the modal
+    console.log('oracle',value)
+    if (Number(feedId) == feedID) {
+      setOracleReady((Number(value)));
+    }
+  });
   useEffect(() => {
     async function init() {
       setBal(Number(await contract.userBalance(network, address, token)) / 10 ** 18);
@@ -35,15 +42,10 @@ function App() {
       [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
       console.log('T', feedValue)
       setOracleReady((Number(feedValue)));
-    } 
-    try{window.ethereum.request({ method: 'eth_requestAccounts' });} catch{}
+    }
+    try { window.ethereum.request({ method: 'eth_requestAccounts' }); } catch { }
     init();
-    morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
-      // Update state to show the modal
-      if (Number(feedId) == feedID) {
-        setOracleReady((Number(value)));
-      }
-    });
+   
   }, []);
 
   useEffect(() => {
@@ -65,42 +67,57 @@ function App() {
     if (alt == null) {
       let success = false;
       while (!success) {
-        try {const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
-      await tx.wait();
-      success = true;
-    } catch (error) {
-      console.error("Transaction failed:", error);
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
-    }
-  }
+        try {
+          const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.01') });
+          await tx.wait();
+          success = true;
+        } catch (error) {
+          if (error.message.includes("rejected")) {
+            success = true
+            break
+          } else {
+            console.error("Transaction failed:", error);
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+          }
+        }
+      }
     }
     else {
       let success = false;
       while (!success) {
-        try {const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.01') });
-      await tx.wait();
-      success = true;
-    } catch (error) {
-      console.error("Transaction failed:", error);
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+        try {
+          const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.01') });
+          await tx.wait();
+          success = true;
+        } catch (error) {
+          if (error.message.includes("rejected")) {
+            success = true
+            break
+          } else {
+            console.error("Transaction failed:", error);
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+          }
+        }
+      }
     }
-  }
-    }
-    setOracleReady(1)
+    setOracleReady(11155111)
   };
   const update = async () => {
     let success = false;
-  while (!success) {
-    try {
-    const tx = await contract.connect(signer).setBalance(address, token, network)//,  });
-    await tx.wait();success = true;
-  } catch (error) {
-    console.error("Transaction failed:", error);
-    if (error.message.includes("revert")) {
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
-  }
-  else{break}
-}
+    while (!success) {
+      try {
+        const tx = await contract.connect(signer).setBalance(address, token, network)//,  });
+        await tx.wait(); success = true;
+      } catch (error) {
+        console.error("Transaction failed:", error);
+        if (error.message.includes("rejected")) {
+          success = true
+          break
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
+        }
+      }
+    }
   };
   const sync = async (e) => {
     await setToken(e.target.value);
@@ -108,6 +125,7 @@ function App() {
     console.log(network, await address, e.target.value, alt, 'LOL', Number(await contract.userBalance(network, await address, token)) / 10 ** 18)
     setfeedID(Number(await contract.userBalanceFeed(network, await address, e.target.value)));
     let feedValue
+    console.log(feedID);
     [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
     console.log('T', feedValue, 'lol', feedID)
     if (feedValue != 0) {
@@ -117,24 +135,35 @@ function App() {
 
   async function lol() {
     let addrs = address
-    if (alt != null){addrs =alt}
-    setBal(Number(await contract.userBalance(network, await addrs, token)) / 10 ** 18);
-    console.log(network, await addrs, token, alt, 'LOL', Number(await contract.userBalance(network, await addrs, token)) / 10 ** 18)
-    setfeedID(Number(await contract.userBalanceFeed(network, await addrs, token)));
+    if (alt != null) { addrs = alt }
+    let feed =(Number(await contract.userBalanceFeed(network,  addrs, token)));
+    setfeedID(feed)
     let feedValue
-    [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
-    console.log('T', feedValue, 'lol', feedID)
+    console.log(feed);
+    let success = false;
+    while (!success) {
+    try {
+    [feedValue, , ,] = await morpheus.getFeed(feed); // Replace this with your actual call
+    console.log('T', feedValue, 'lol', feed)
     if (feedValue != 0) {
       setOracleReady(Number(feedValue))
-    }
+
+    }      success = true
+
+  } catch {
+
+  }}
+    setBal(Number(await contract.userBalance(network,  addrs, token)) / 10 ** 18);
+    console.log(network, addrs, token, alt, 'LOL', Number(await contract.userBalance(network,  addrs, token)) / 10 ** 18)
+    
   };
   return (
     <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff' }} className="h-full w-full min-h-screen">
-           <ConnectButton /><div ><a href='https://scry.finance' ><img style={{ height:'42px',position:'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white"/>
-          </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height:'42px',position:'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white"/>
-          </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height:'42px',position:'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white"/>
-          </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff',position:'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
-          </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+      <ConnectButton /><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+      </a></div><div ><a href='https://discord.gg/3Z2qvm9BDg' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
+      </a></div><div ><a href='https://twitter.com/scryprotocol' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
+      </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
+      </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
           Veryfi
         </h1> <h3 style={{}} className='mx-6 font-bold' >
@@ -142,8 +171,8 @@ function App() {
         <h2 className="m-auto text-center color-white text-2xl  font-extrabold w-3/4">
           Your Balance for {token}
         </h2><h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          {bal} {(bal!=0 && <span className="text-green-300 ml-2">✓ Veryfied</span>)}
-        
+          {bal} {(bal != 0 && <span className="text-green-300 ml-2">✓ Veryfied</span>)}
+
         </h2>
         <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
           <h2>Network</h2>
@@ -165,8 +194,8 @@ function App() {
           <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={token} onChange={sync} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={getBalance}>Request Veryfication</Button>
           <h3><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={lol}>Refresh and Check</Button>
-          </h3><div></div>{(OracleReady > 1 && <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={update}>Set Balance</Button>)
-          }{(OracleReady == 1 && <div style={{ position: 'relative', top: '4px' }}>Awaiting Oracle...</div>)}
+          </h3><div></div>{(OracleReady > 1 &&OracleReady !=11155111&& <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-6 color-white border-white" onClick={update}>Set Balance</Button>)
+          }{(OracleReady ==11155111  && <div style={{ position: 'relative', top: '12px' }}>Awaiting Oracle...</div>)}
           <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
           <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
         </div>Please note there is a 0.001 ETH oracle fee.</div ></div >
