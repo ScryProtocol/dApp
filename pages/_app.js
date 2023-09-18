@@ -16,7 +16,7 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 const { chains, publicClient } = configureChains(
-  [sepolia,mainnet,  optimism, arbitrum, base],
+  [sepolia,  optimism, arbitrum, base],
   [
     //alchemyProvider({ apiKey: 'noFpU53uptypQtmZDodsoYQwqcK2V3AC' }),
     publicProvider()
