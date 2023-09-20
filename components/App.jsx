@@ -50,17 +50,8 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      setBal(Number(await contract.userBalance(network, await address, token)) / 10 ** 18);
-      console.log(network, await address, token, alt, 'LOL', Number(await contract.userBalance(network, await address, token)) / 10 ** 18)
-      setfeedID(Number(await contract.userBalanceFeed(network, await address, token)));
-      let feedValue
-      [feedValue, , ,] = await morpheus.getFeed(feedID); // Replace this with your actual call
-      console.log('T', feedValue, 'lol', feedID)
-      if (feedValue != 0) {
-        setOracleReady(Number(feedValue))
-      }
-      //  }
-    }, 40000);
+      lol() 
+    }, 10000);
     return () => clearInterval(interval);
   }, [token, feedID]);
   const getBalance = async () => {
