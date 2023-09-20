@@ -51,7 +51,7 @@ let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
   const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
-  const [ID, setID] = useState('4841');
+  const [ID, setID] = useState('6');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
