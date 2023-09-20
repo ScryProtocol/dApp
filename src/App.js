@@ -383,7 +383,9 @@ function App() {
         img.src = prevImgData;
         img.onload = () => {
           contextRef.current.clearRect(0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
+          contextRef.current.shadowBlur = 0;
           contextRef.current.drawImage(img, 0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
+          contextRef.current.shadowBlur = smoothness;
         };
       }
     };
