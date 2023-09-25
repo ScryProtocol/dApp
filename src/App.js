@@ -538,7 +538,7 @@ function App() {
             {availableBids.map((bid, index) => (
               <h2 key={index}>
                 <h2 className="font-bold">You have a Bid for NFT: </h2>
-                <h2>{bid.NFT}</h2><h2 className="font-bold"> ID: {bid[1].toString()}, ETH Bounty: {Number(bid[2]) / 10 ** 18}
+                <h2>{bid.NFT}</h2><h2 className="font-bold"> ID: {bid[1].toString()}, ETH Bounty: {Number(bid[2]) / 10 ** 18}, Sig Bounty: {Number(bid[3]) / 10 ** 18}
                 </h2>_________________________________________</h2>
             ))}
           </List>
@@ -566,7 +566,7 @@ function App() {
               value={Signer}
               onChange={e => setSigner(e.target.value)}
               className="p-2 rounded border border-solid border-white w-full"
-            /><h2 className="font-bold">Amount to Bid in ETH (Minimum 0.01 )</h2>
+            /><h2 className="font-bold">Amount to Bid (Minimum 0.01 ETH or 20 SIG)</h2>
 
             <input
               style={{ color: '#ffffff', backgroundColor: '#00ccff' }} type="number"
@@ -575,9 +575,13 @@ function App() {
               onChange={e => setAmount(e.target.value)}
               className="p-2 rounded border border-solid border-white w-full"
             />
-            
-            <div>
-             
+            <h2 className="font-bold ">Bounty in ETH or SIG Tokens</h2>
+
+            <div className="font-bold ">
+              {sigTog ? "Signets" : "ETH"}<Switch
+                checked={sigTog}
+                onChange={() => { setsigTog(prev => !prev) }}>
+              </Switch>
             </div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className=" top-3 color-white border-white" onClick={handleSubmitBid}>Submit Bid</Button>
           </div>
           <Button onClick={onClose}>Close</Button>
