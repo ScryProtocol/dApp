@@ -534,6 +534,9 @@ function App() {
       <Modal open={isOpen} onClose={onClose}>
         <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
           <h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-2xl font-extrabold w-3/4">Your Bids</h2>
+          <h2>
+
+          Here you can see all NFTs with buonties for you to sign with their rewards in ETH (20% fee) or SIG (0 fee).</h2>
           <List>
             {availableBids.map((bid, index) => (
               <h2 key={index}>
