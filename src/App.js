@@ -50,7 +50,7 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
-  const [addrs, setaddrs] = useState('0xe4e6a75fc9dd6da12d2a1b7e301365704f34d3b3');
+  const [addrs, setaddrs] = useState('0x51Be787c6188185C3D4291554e2a90Ca993A737F');
   const [ID, setID] = useState('1');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
