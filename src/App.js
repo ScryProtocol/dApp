@@ -686,7 +686,7 @@ function App() {
   // 1. Create a function to resolve ENS names.
   async function resolveENS(address) {
     try {
-      let pro = new JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public');
+      let pro = new JsonRpcProvider('https://eth.llamarpc.com	');
       const ensName = await pro.lookupAddress(address);
       if (ensName != null) {
         return ensName;
