@@ -59,7 +59,7 @@ const wagmiConfig = createConfig({
   publicClient
 })
 let provider = new ethers.BrowserProvider(window.ethereum);
-let signer = provider.getSigner(); let addrs = "0xa9e8db01e4c9440e0f417e3ae3f839cc3da71378";
+let signer = provider.getSigner(); let addrs = "0xAa8190D6881E2D06cA5bb1441bc974d3c8092e10";
 function App() {
   const [filter, setFilter] = React.useState('All');
   const [amount, setAmount] = useState(1);
@@ -507,8 +507,8 @@ function App() {
             </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
               <div>{name}</div>
               <div> {sym}</div>
-              <div>Hedges: {balance}</div>
-              <div>Collateral: {collateral}</div>
+              <div>My Hedges: {balance}</div>
+              <div>My Collateral: {collateral}</div>
               <div>Price: {price}  ||  Strike: {strike}</div>
               Profit per token: {delta}  || Expiry: {expiry}
               <div>Total Hedges: {sup}</div></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
@@ -540,7 +540,7 @@ function App() {
               <TextField
                 id="outlined"
                 label=""
-                defaultValue='0xa9e8db01e4c9440e0f417e3ae3f839cc3da71378'
+                defaultValue='0xAa8190D6881E2D06cA5bb1441bc974d3c8092e10'
                 InputLabelProps={{
                   shrink: true,
                 }} onChange={handleaddrs}
