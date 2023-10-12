@@ -719,10 +719,10 @@ function App() {
       </a><DrawOnLayeredCanvas pngs={pngs} />
       <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px', width: '1000px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
       <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          collab.art
+      Collab
         </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Welcome to collab.art by Signet, collab.art allows you to engage in a new, more personal way, and collectors to have a whole new dimension of value and collectability. The walls a constantly evolving fully onchain and decentralized space to collaboratively draw and contribute to a single art piece, with each snapshot showing a moment in time, with fully onchain authentication for those who contributed using IPFS attestation and layering. Draw, collaborate, collect. It all starts with a blank canvas.</h3>
-       {
+          Welcome to Collab  by Signet, Collab allows you to engage in a new, more personal way, and collectors to have a whole new dimension of value and collectability. The Collabs a constantly evolving fully onchain and decentralized space to collaboratively draw and contribute to a single art piece, with each snapshot NFT showing a moment in time, with fully onchain authentication for those who contributed using IPFS attestation and layering. Draw, collaborate, collect. It all starts with a blank canvas. Contribute for free to the testnet Collab which will be used as the base for the launch!</h3>
+           {
           accounts && accounts.map((account, index) => (
             <div key={index} className="account-item">
               {account}
