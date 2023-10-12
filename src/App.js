@@ -38,7 +38,7 @@ let abi = [{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "
 //[{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "NFTSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "SignaturesSet", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "autographs", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getAllAutographs", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signer", "type": "address" }], "name": "getAutograph", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getShownSignatures", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "nftSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "setSignaturesToShow", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "shownSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "signNFT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
 let morpheusAbi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }, { "indexed": false, "internalType": "uint256", "name": "signerThreshold", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "contractSetup", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "endpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "endpointp", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "feedRequested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "feedSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "", "type": "string" }], "name": "feedSubmitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "supportvalue", "type": "uint256" }], "name": "feedSupported", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "newPayoutAddress", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "addressValue", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "oracleType", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "proposer", "type": "address" }], "name": "newProposal", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "newSigner", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newThreshold", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "proposalSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" }], "name": "routerFeeTaken", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "signerRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "newPass", "type": "uint256" }], "name": "subscriptionPassPriceUpdated", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "buyer", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "buyPass", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "createProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "factoryContract", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "feedSupport", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "feedID", "type": "uint256" }], "name": "getFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getFeedLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address[]", "name": "signers_", "type": "address[]" }, { "internalType": "uint256", "name": "signerThreshold_", "type": "uint256" }, { "internalType": "address payable", "name": "payoutAddress_", "type": "address" }, { "internalType": "uint256", "name": "subscriptionPassPrice_", "type": "uint256" }, { "internalType": "address", "name": "factoryContract_", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "payoutAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "proposalList", "outputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "address", "name": "proposer", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "proposalFeedId", "type": "uint256" }, { "internalType": "uint256", "name": "proposalActive", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string[]", "name": "APIendpoint", "type": "string[]" }, { "internalType": "string[]", "name": "APIendpointPath", "type": "string[]" }, { "internalType": "uint256[]", "name": "decimals", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "requestFeeds", "outputs": [{ "internalType": "uint256[]", "name": "feeds", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "proposalId", "type": "uint256" }], "name": "signProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "signerLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "signerThreshold", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "signers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }, { "internalType": "string[]", "name": "vals", "type": "string[]" }], "name": "submitFeed", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "subscriptionPassPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIds", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "supportFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "withdrawFunds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
 
-const contractAddress = '0x133703dCDFCfB7Aa0f1B7945e9eae7fbFFd4A5CA';
+const contractAddress = '0xF1D38Ce14455AA4754b613Be27a66556825B6aCE';
 const addrsS = '0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0';
 let signer
 let contract = new ethers.Contract(contractAddress, abi, provider);
@@ -50,8 +50,8 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState([]);
-  const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
-  const [ID, setID] = useState('6');
+  const [addrs, setaddrs] = useState('0x51Be787c6188185C3D4291554e2a90Ca993A737F');
+  const [ID, setID] = useState('1');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
@@ -59,7 +59,7 @@ function App() {
   //const [IPFS, setIPFS] = useState();
   const [sigs, setsigs] = useState();  const [claim, setclaim] = useState();
 
-  const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
+  const [pngs, setpngs] = useState(['https://htmlcolorcodes.com/assets/images/colors/white-color-solid-background-1920x1080.png']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   const location = useLocation();
   useEffect(() => {
@@ -93,18 +93,18 @@ function App() {
       signer = await provider.getSigner()
       
     
-      if ((await provider.getNetwork()).chainId != '1' && check2 == null) {
+      if ((await provider.getNetwork()).chainId != '11155111' && check2 == null) {
         check2 = 1
-        toast.error('Change chain to Mainnet and refresh')
+        toast.error('Change chain to Sepolia and refresh')
       }
       console.log('LOL', (await provider.getNetwork()).chainId)
     } catch (error) {
-      provider = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
-      signer = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+      provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public		')
+      signer = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public		')
 
     } contract = new ethers.Contract(contractAddress, abi, await signer);
       let NFTb
-      let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+      let pr = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public		')
 
       const NFT = new Contract(NFTaddrs, [
         // Assuming the NFT contract is ERC721 compliant
@@ -437,11 +437,11 @@ function App() {
         }
       });
     }
-    const maxWidth = 500;
-    const maxHeight = 500;
+    const maxWidth = 1920;
+    const maxHeight = 1080;
 
-    const canvasWidth = 500//Math.min(maxWidth, window.innerWidth);
-    const canvasHeight = 500//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
+    const canvasWidth = 1920//Math.min(maxWidth, window.innerWidth);
+    const canvasHeight = 1080//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
 
     return (
       <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
@@ -618,7 +618,7 @@ function App() {
       NFTID
     ); console.log(hash)
     let NFTb
-    let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+    let pr = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public		')
 
     const NFT = new ethers.Contract(NFTaddrs, [
       // Assuming the NFT contract is ERC721 compliant
@@ -686,7 +686,7 @@ function App() {
   // 1. Create a function to resolve ENS names.
   async function resolveENS(address) {
     try {
-      let pro = new JsonRpcProvider('https://eth.llamarpc.com');
+      let pro = new JsonRpcProvider('https://eth.llamarpc.com	');
       const ensName = await pro.lookupAddress(address);
       if (ensName != null) {
         return ensName;
@@ -711,57 +711,25 @@ function App() {
 
 
   return (
-    <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
+    <div style={{ color: '#53baff', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
       <Toaster /><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
       </a></div><div ><a href='https://discord.gg/sp5ubMK9Zt' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
       </a></div><div ><a href='https://twitter.com/heysignet' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
       </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
-      </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-        <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          Signet
+      </a><DrawOnLayeredCanvas pngs={pngs} />
+      <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px', width: '1000px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+      <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
+          collab.art
         </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets!</h3>
-        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-          <DrawOnLayeredCanvas pngs={pngs} />
-        </div>{claim != 0 &&claim != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{
+          Welcome to collab.art by Signet, collab.art allows you to engage in a new, more personal way, and collectors to have a whole new dimension of value and collectability. The walls a constantly evolving fully onchain and decentralized space to collaboratively draw and contribute to a single art piece, with each snapshot showing a moment in time, with fully onchain authentication for those who contributed using IPFS attestation and layering. Draw, collaborate, collect. It all starts with a blank canvas.</h3>
+       {
           accounts && accounts.map((account, index) => (
             <div key={index} className="account-item">
               {account}
             </div>
           ))
-        } <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
-          <h2>NFT</h2>
-          <Select
-            labelId="filter-label"
-            id="filter-select"
-            value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
-            onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
-            <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">BAYC</MenuItem>
-            <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
-            <MenuItem value="">Custom</MenuItem>
-            <MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
-            <MenuItem value="0x6be69b2a9b153737887cfcdca7781ed1511c7e36">Killer GF</MenuItem>
-          </Select>
-          {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          }<BidsModal
-            isOpen={isBidsModalOpen}
-            onClose={() => setIsBidsModalOpen(false)}
-          /><BidModal
-            isOpen={isBidModalOpen}
-            onClose={() => setIsBidModalOpen(false)}
-          /><h3>Token</h3>
-          <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
-          <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-2 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bids for Signet</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-3 left-4 color-white border-white" onClick={() => {
-              let currentURL = new URL(window.location.href);
-              currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
-            }}>copy link</Button>
-            <div>.</div></div></div></div >
-      <div>.
-      </div>
+        } <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
+ </div >
     </div >
   );
 }
