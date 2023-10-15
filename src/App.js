@@ -440,7 +440,7 @@ function App() {
                   style={{ color: 'green', backgroundColor: '#00ff55' }}
                 >
                   {/* Add your collateral options here */}
-                  <MenuItem value="0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0">Collateral 1</MenuItem>
+                  <MenuItem value="0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0">USDC</MenuItem>
                   <MenuItem value="collateral2">Collateral 2</MenuItem>
                 </Select>
               </FormControl>
