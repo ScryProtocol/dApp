@@ -93,7 +93,7 @@ function App() {
       signer = await provider.getSigner()
       
     
-      if ((await provider.getNetwork()).chainId != '11155111'||(await provider.getNetwork()).chainId != '534351' && check2 == null) {
+      if ((await provider.getNetwork()).chainId != '11155111'||(await provider.getNetwork()).chainId != '534351') && check2 == null) {
         check2 = 1
         toast.error('Change chain to Sepolia and refresh')
       }
