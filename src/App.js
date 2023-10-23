@@ -74,6 +74,7 @@ function App() {
   const [profit, setprofit] = useState(null);
   const [strike, setstrike] = useState(null);
   const [APIs, setAPIs] = useState();
+  const [oracle, setoracle] = useState();
 
   const [collateral, setCollateral] = useState(null);
   const [account, setAccount] = useState(null); const [openModal, setOpenModal] = useState(false);
@@ -116,7 +117,7 @@ function App() {
       const bal = Number(await contract.balanceOf(ad) / d) / 100;
       setname(await contract.name());
       setsym(await contract.symbol()); setAPIs(await contract.API());
-
+      setoracle(await contract.morpheus(0));
       setBalance(bal.toString());
       const sup = Number(await contract.totalSupply() / d) / 100;
       setSup(sup.toString());
@@ -221,7 +222,8 @@ function App() {
     let d = 10n ** (await contract.decimals() - 2n)
     const bal = Number(await contract.balanceOf(ad) / d) / 100;
     setname(await contract.name());
-    setsym(await contract.symbol()); setAPIs(await contract.API());
+    setsym(await contract.symbol()); setAPIs(await contract.API());      setoracle(await contract.morpheus(0));
+
     setBalance(bal.toString());
     const sup = Number(await contract.totalSupply() / d) / 100;
     setSup(sup.toString());
@@ -516,7 +518,7 @@ function App() {
               <div>Price: {price}  ||  Strike: {strike}</div>
               Profit per token: {delta}  || Expiry: {expiry}
               <div>Total Hedges: {sup}</div>
-              <h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+              <h1 className="text-base "style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></h1><div style={{ color: '#77ff8b' }} className='mx-6' >
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
             <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
