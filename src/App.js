@@ -522,11 +522,11 @@ function App() {
               <Button 
         style={{ color: '#00caff' }} 
         variant='outlined' 
-        className="m-auto text-center color-green-500 border-green-500"
+        className="m-auto text-center color-green-500 border-green-500 top-1"
         onClick={() => {tech==1?settech(0) : settech(1)}}  // Toggle between true and false
       >
         {tech==0 ? 'Hide Info' : 'Show Oracle Info'}
-      </Button> {tech==0 && (<><h1 style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 style={{ color: '#00caff' }}>Price Source: {APIs}</h1></>)}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+      </Button> {tech==0 && (<><h1 className="text-base "style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></>)}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
             <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
