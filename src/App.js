@@ -93,10 +93,10 @@ function App() {
       signer = await provider.getSigner()
       
     
-      if ((await provider.getNetwork()).chainId != '11155111' && check2 == null) {
+     // if ((await provider.getNetwork()).chainId != '11155111'||(await provider.getNetwork()).chainId != '534351') && check2 == null) {
         check2 = 1
-        toast.error('Change chain to Sepolia and refresh')
-      }
+     //   toast.error('Change chain to Sepolia and refresh')
+      //}
       console.log('LOL', (await provider.getNetwork()).chainId)
     } catch (error) {
       provider = new ethers.JsonRpcProvider('https://endpoints.omniatech.io/v1/eth/sepolia/public		')
