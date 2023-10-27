@@ -120,6 +120,8 @@ function App() {
           <h3 style={{}} className='font-bold' >{ID}</h3>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="place-self-center	top-2 color-white border-white w-1/2" onClick={sign}>Deploy Large Contract</Button>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="place-self-center	color-white border-white w-1/2" onClick={sig}>Deploy Smol Contract</Button>
+            <Button style={{ backgroundColor: '#ff89fd', color: '#ffffff' }} variant='outlined' className="place-self-center	color-white border-white w-1/2" onClick={() => window.location.assign('https://collab.signet.art/')}>Check out Collab by Signet</Button>
+            <Button style={{ backgroundColor: '#1ad900', color: '#ffffff' }} variant='outlined' className="place-self-center	color-white border-white w-1/2" onClick={() => window.location.assign('https://scry.finance/')}>Check out Scry Oracles</Button>
 .</div >
     </div >
   );
