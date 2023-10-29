@@ -75,7 +75,7 @@ function App() {
   const [strike, setstrike] = useState(null);
   const [APIs, setAPIs] = useState();
   const [oracle, setoracle] = useState();
-  const [tech, settech] = useState();
+  const [tech, settech] = useState(1);
 
   const [collateral, setCollateral] = useState(null);
   const [account, setAccount] = useState(null); const [openModal, setOpenModal] = useState(false);
@@ -324,8 +324,8 @@ function App() {
           // Wait for the transaction to be mined
           deltaFactory.on('deltaDeployed', (adrs, a1, a2, a3, a4, a5, a6, a7, a8, a9, a0) => {
             console.log(adrs)
-            alert('Delta created successfully at ', adrs); addrs = adrs.toString()
-          })
+            alert('Delta created successfully. Loading Hedge.'); addrs = adrs.toString()
+            fetchBalance()})
 
           await tx.wait();
           closeOptionModal()
@@ -525,8 +525,8 @@ function App() {
         className="m-auto text-center color-green-500 border-green-500 top-1"
         onClick={() => {tech==1?settech(0) : settech(1)}}  // Toggle between true and false
       >
-        {tech==0 ? 'Hide Info' : 'Show Oracle Info'}
-      </Button> {tech==0 && (<><h1 className="text-base "style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></>)}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
+        {tech==0 ? 'Hide Info' : 'Show Technical Info'}
+      </Button> {tech==0 && (<><h1 className="text-base "style={{ color: '#00caff' }}>Hedge Address: {addrs}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></>)}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
               Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
             <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
               <TextField
