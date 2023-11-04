@@ -41,6 +41,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ethers } from "ethers";
 import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider } from "ethers";
 import zIndex from '@mui/material/styles/zIndex';
+import toast, { Toaster } from 'react-hot-toast';
 
 const { chains, publicClient } = configureChains(
   [optimism],//mainnet, polygon, optimism, arbitrum, sepolia],
@@ -313,22 +314,30 @@ function App() {
 
       if (amt < (parseUnits((amount).toString(), 18))) {
         console.log('LO')
+        toast('Please approve the oracle staking contract')
+
         let tx = await tok.approve(addrs, (parseUnits((amount).toString(), 18)))
         await tx.wait()
       }
       console.log('LOL')
       let am = parseUnits(amount.toString(), 18)
+      toast('Please approve the oracle staking stake transaction')
+
       let tx = await contract.stakeTokens(oraclead, am)
       await tx.wait()
       amt = await contract.allowance(signer.getAddress(), addrst)
 
       if (amt < (parseUnits((amount).toString(), 18))) {
         console.log('LO')
+        toast('Please approve the reward staking contract')
+
         let tx = await contract.approve(addrst, (parseUnits((amount).toString(), 18)))
         await tx.wait()
       }
       console.log('LOL')
       am = parseUnits(amount.toString(), 18)
+      toast('Please approve the reward stake transaction')
+
       tx = await t.stake(am)
       await tx.wait()
       getStake()
@@ -410,7 +419,7 @@ function App() {
             smallScreen: 'full',
             largeScreen: 'full',
           }} chainStatus="icon"
-          /> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+          /><Toaster/> <div style={{ color: '#00ff55' }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
             <OptionModal open={openModal} onClose={closeOptionModal} /> <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Welcome to Morpheus
             </h1> <div style={{ color: '#77ff8b' }} className='mx-6' >
