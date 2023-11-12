@@ -78,7 +78,7 @@ function App() {
   const [stakes, setstakes] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [openModal, setOpenModal] = useState(false)
   const [userstake, setuserstake] = useState('0');  const [tstake, settstake] = useState('0');
-
+  const [usertoken, setusertoken] = useState('0'); 
   const [oraclestake, setoraclestake] = useState('0');
   const [useroracle, setuseroracle] = useState('0');
   const [userreward, setuserreward] = useState('0');
@@ -136,6 +136,7 @@ function App() {
     let aa = (await tok.earned(await signer.getAddress())).toString()
     setuserstake(ba)
     setuserreward(Number(aa / 10 ** 18))
+    setusertoken((await t.balanceOf(await signer.getAddress())/10n**18n).toString())
   }
   useEffect(() => {
 
@@ -362,6 +363,10 @@ function App() {
             </div><div className="flex justify-center">
               <h1 className="text-center text-color-red-500 text-2xl font-extrabold w-3/4">
                 Staked for Oracle: {oraclestake}
+              </h1>
+            </div><div className="flex justify-center">
+              <h1 className="text-center color-green-500 text-2xl font-extrabold w-3/4">
+               {usertoken} OP Available
               </h1>
             </div>
             <div className="flex justify-center">
