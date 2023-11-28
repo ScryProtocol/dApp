@@ -53,8 +53,8 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState(['Loading Signers']);
-  const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
-  const [ID, setID] = useState('6');
+  const [addrs, setaddrs] = useState('0x51Be787c6188185C3D4291554e2a90Ca993A737F');
+  const [ID, setID] = useState('1');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
@@ -62,7 +62,7 @@ function App() {
   //const [IPFS, setIPFS] = useState();
   const [sigs, setsigs] = useState();  const [claim, setclaim] = useState();
   const [claimS, setclaimS] = useState();
-  const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
+  const [pngs, setpngs] = useState(['https://htmlcolorcodes.com/assets/images/colors/white-color-solid-background-1920x1080.png']);
   const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
   let location 
 
@@ -110,7 +110,7 @@ function App() {
 
     } 
     LOL()  
-    let NFTb
+    let NFTb='https://raw.githubusercontent.com/ScryProtocol/dApp/Collab/pub/b.png'
       let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
 
       const NFT = new Contract(NFTaddrs, [
@@ -118,21 +118,7 @@ function App() {
         'function tokenURI(uint256 tokenId) external view returns (string)',
       ], pr)//provider);
 
-      try {
-        let uri = await NFT.tokenURI(NFTID);
-        console.log('LOL', uri)
-        uri = uri.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-        console.log(uri)
-
-        const response = await fetch(uri);
-        const metadata = await response.json();
-        NFTb = (metadata.image);
-        NFTb = NFTb.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-        console.log(NFTb)
-      } catch (error) {
-        console.error("Error fetching NFT image:", error);
-      }
-
+      
       let hash = []
       let lol = []
       try {
@@ -463,11 +449,11 @@ function App() {
         }
       });
     }
-    const maxWidth = 500;
-    const maxHeight = 500;
+    const maxWidth = 1920;
+    const maxHeight = 1080;
 
-    const canvasWidth = 500//Math.min(maxWidth, window.innerWidth);
-    const canvasHeight = 500//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
+    const canvasWidth = 1920//Math.min(maxWidth, window.innerWidth);
+    const canvasHeight = 1080//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
 
     return (
       <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
@@ -652,30 +638,9 @@ function App() {
       NFTaddrs,
       NFTID
     ); console.log(hash)
-    let NFTb
+    let NFTb='https://raw.githubusercontent.com/ScryProtocol/dApp/Collab/pub/b.png'
     let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
 
-    const NFT = new ethers.Contract(NFTaddrs, [
-      // Assuming the NFT contract is ERC721 compliant
-      'function tokenURI(uint256 tokenId) external view returns (string)',
-    ], pr)//signer);
-
-    try {
-      let uri = await NFT.tokenURI(NFTID);
-      console.log('LOL', uri)
-      uri = uri.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-      console.log(uri)
-
-      const response = await fetch(uri);
-      console.log(response)
-
-      const metadata = await response.json();
-      NFTb = (metadata.image);
-      NFTb = NFTb.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-      console.log("NT", NFTb)
-    } catch (error) {
-      console.error("Error fetching NFT image:", error);
-    }
     function convertHashesToUrls(ipfsHashes) {
       const baseUrl = "https://cloudflare-ipfs.com/ipfs/";
       let urls = [NFTb]//'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
@@ -749,60 +714,37 @@ function App() {
 
 
   return (
-    <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
-      <Toaster /><ConnectButton style={{position: 'relative', top: '4px',right: '4px' }}/><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
+    <div style={{ color: '#53baff', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
+      <Toaster /><ConnectButton style={{ height: '42px', position: 'fixed' }}/><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
       </a></div><div ><a href='https://discord.gg/sp5ubMK9Zt' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
       </a></div><div ><a href='https://twitter.com/heysignet' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
-      </a></div><div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff', position: 'fixed' }} variant='outlined' className="w-28 top-12 right-2 color-white border-white" onClick={() =>{window.location.replace('https://collab.signet.art')}}>Collab</Button>
-            </div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
-      </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-        <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          Signet
-        </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets! In Alpha.</h3>
-       <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-          <DrawOnLayeredCanvas pngs={pngs} />
-        </div>{claim != 0 &&claim != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{claimS != 0 &&claimS != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claimS} SIG!</h2>}
-        {
+      </a></div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
+      </a><DrawOnLayeredCanvas pngs={pngs} style={{ position: 'fixed', top: '0px' }}/>
+      <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px', width: '1000px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
+      <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
+      Collab
+        </h1><div style={{ display: 'flex', justifyContent: 'center' }}>
+    <a href='https://scry.finance'>
+        <img style={{ height: '64px' }} src="/scry.png" className="color-white border-white" />
+    </a>
+    <a href='https://discord.gg/sp5ubMK9Zt' style={{ marginLeft: '16px' }}>
+        <img style={{ height: '64px' }} src="/discord.png" className="color-white border-white" />
+    </a>
+    <a href='https://twitter.com/heysignet' style={{ marginLeft: '16px' }}>
+        <img style={{ height: '64px' }} src="/twitter.png" className="color-white border-white" />
+    </a>
+</div>
+ <h3 style={{}} className='mx-6 font-bold' >
+          Welcome to Collab  by Signet, Collab allows you to engage in a new, more personal way, and collectors to have a whole new dimension of value and collectability. The Collabs a constantly evolving fully onchain and decentralized space to collaboratively draw and contribute to a single art piece, with each snapshot NFT showing a moment in time, with fully onchain authentication for those who contributed using IPFS attestation and layering. Draw, collaborate, collect. It all starts with a blank canvas. Contribute to the Collab which will be used as the base for the launch! Just sign NFT when done to submit your contribution! Supported on Base, Optimism, Scroll, Sepolia and Ethereum.</h3>
+           {
           accounts && accounts.map((account, index) => (
             <div key={index} className="account-item">
               {account}
             </div>
           ))
-        } <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
-          <h2>NFT</h2>
-          <Select
-            labelId="filter-label"
-            id="filter-select"
-            value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
-            onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
-            <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
-<MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">BAYC</MenuItem>
-            <MenuItem value="0x1a92f7381b9f03921564a437210bb9396471050c">Cool Cats</MenuItem>
-            <MenuItem value="">Custom</MenuItem>
-            <MenuItem value="0x6be69b2a9b153737887cfcdca7781ed1511c7e36">Killer GF</MenuItem>
-<MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
-          </Select>
-          {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          }<BidsModal
-            isOpen={isBidsModalOpen}
-            onClose={() => setIsBidsModalOpen(false)}
-          /><BidModal
-            isOpen={isBidModalOpen}
-            onClose={() => setIsBidModalOpen(false)}
-          /><h3>Token</h3>
-          <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
-          <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 right-2 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bid for Signet</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 left-2 color-white border-white" onClick={() => {
-              let currentURL = new URL(window.location.href);
-              currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
-            }}>copy link</Button>
-            <div style={{ backgroundColor: '#53baff', color: '#53baff' }}>.</div></div></div></div >
-      <div>.
-      </div>
+        } <div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={() =>{window.location.replace('https://signet.art')}}>Open Signet</Button>
+        </div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
+ </div >
     </div >
   );
 }
