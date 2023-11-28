@@ -752,7 +752,7 @@ function App() {
        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
           <DrawOnLayeredCanvas pngs={pngs} />
         </div>{claim != 0 &&claim != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{claimS != 0 &&claimS != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claimS} SIG!</h2>}
-        <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim 200 SIG!</h2>{
+        {
           accounts && accounts.map((account, index) => (
             <div key={index} className="account-item">
               {account}
