@@ -155,6 +155,7 @@ function App() {
         setpngs(urls)
         return urls;
       }
+      const hashes = hash[1];  const msg = [];
 
       const urls = convertHashesToUrls(hashes);
       console.log(urls);
@@ -162,7 +163,6 @@ function App() {
       setsigs(urls)
       console.log(sigs)
       // Usage:
-      const hashes = hash[1];  const msg = [];
       for (let i = 0; i < accounts.length; i++) {
         msg.push(<h2><span className="font-bold">{accounts[i]}</span> has signed this NFT</h2>);
       }      setAccounts(msg)
@@ -620,6 +620,17 @@ function App() {
     let hash = []
     let lol = []
     console.log(addrs)
+    
+    if ((await provider.getNetwork()).chainId != 1) {
+      contractAddress=('0x00051600077302Fe69126F8bD8FC4D00DAB1994d')
+      contract = new ethers.Contract(contractAddress, abi, provider);
+       }
+       else{
+        contractAddress=('0x133703dCDFCfB7Aa0f1B7945e9eae7fbFFd4A5CA')
+        contract = new ethers.Contract(contractAddress, abi, provider);
+         }
+    console.log('LOL', (await provider.getNetwork()).chainId)
+      contract = new ethers.Contract(contractAddress, abi, provider);
     const queryParams = new URLSearchParams(location);
     const NFTaddrsURL = await queryParams.get('NFT');
     const NFTIDURL = await queryParams.get('ID');
