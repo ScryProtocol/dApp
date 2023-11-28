@@ -5,18 +5,18 @@ import {
   getDefaultWallets,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, sepolia, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
   optimism,
   arbitrum,
-  base,
+  base,sepolia
 
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 const { chains, publicClient } = configureChains(
-  [sepolia,  optimism, arbitrum, base],
+  [mainnet,sepolia, optimism, arbitrum, base],
   [
     //alchemyProvider({ apiKey: 'noFpU53uptypQtmZDodsoYQwqcK2V3AC' }),
     publicProvider()
@@ -36,6 +36,7 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<WagmiConfig config={wagmiConfig}>
 		<RainbowKitProvider chains={chains}>
+   
 					<Component {...pageProps} />
 					</RainbowKitProvider>
     </WagmiConfig>
