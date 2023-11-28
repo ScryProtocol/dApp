@@ -6,16 +6,16 @@ export default function Home() {
   return (<>  
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="./pub/veryfi.png" />
+    <link rel="icon" href="./pub/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Verify that you own any NFTs, ERCs, are staking or any other ownership that uses balanceOf, for any other network! Veryfi lets you easily check membership and ownership for your community/project!"
+      content="Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your signats!"
     />
-    <link rel="apple-touch-icon" href="./pub/veryfi.png" />
+    <link rel="apple-touch-icon" href="./pub/logo.png" />
     
-    <title>Verify</title>
+    <title>Signet</title>
   </head>
         <App />
     </>
