@@ -1,10 +1,10 @@
+// @ts-nocheck
 import * as React from 'react'
 import { type PublicClient, usePublicClient } from 'wagmi'
 import { FallbackProvider, JsonRpcProvider } from 'ethers'
 import { type HttpTransport } from 'viem'
 import { type WalletClient, useWalletClient } from 'wagmi'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
-// @ts-nocheck
 
 export function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient
