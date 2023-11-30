@@ -6,14 +6,14 @@ export default function Home() {
   return (<>  
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="./pub/logo.png" />
+    <link rel="icon" href="/sl.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your signats!"
     />
-    <link rel="apple-touch-icon" href="./pub/logo.png" />
+    <link rel="apple-touch-icon" href="/sl.png" />
     
     <title>Signet</title>
   </head>
