@@ -560,7 +560,7 @@ function App() {
           <h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-2xl font-extrabold w-3/4">Your Bids</h2>
           <h2>
 
-          Here you can see all NFTs with buonties for you to sign with their rewards in ETH (20% fee) or SIG (0 fee).</h2>
+          Here you can see all NFTs with bounties for you to sign with their rewards in ETH (20% fee) or SIG (0 fee).</h2>
           <List>
             {availableBids.map((bid, index) => (
               <h2 key={index}>
@@ -610,7 +610,7 @@ function App() {
                 onChange={() => { setsigTog(prev => !prev) }}>
               </Switch>
             </div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className=" top-3 color-white border-white" onClick={handleSubmitBid}>Submit Bid</Button>
-            <div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff' }} variant='outlined' className=" color-white border-white" onClick={() =>{window.location.replace('https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x000000000075f13bcf2e6652e84821e8b544f6f9&chain=mainnet')}}>Buy SIG</Button></div>
+            <div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff',top: '4px' }} variant='outlined' className=" color-white border-white" onClick={() =>{window.location.replace('https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x000000000075f13bcf2e6652e84821e8b544f6f9&chain=mainnet')}}>Buy SIG</Button></div>
             </div><Button onClick={onClose}>Close</Button>
         </div>
       </Modal>
@@ -797,7 +797,7 @@ function App() {
           <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
           <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 right-2 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bid for Signet</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 left-2 color-white border-white" onClick={() => {
+            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',left: '8px' }} variant='outlined' className="top-4 left-3 color-white border-white" onClick={() => {
               let currentURL = new URL(window.location.href);
               currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
             }}>copy link</Button>
