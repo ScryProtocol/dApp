@@ -186,7 +186,7 @@ function App() {
     
   };
   
-const ShareButton = ({ title, text, url }) => {
+const ShareButton = ({ title, text}) => {
   const [isShareSupported, setIsShareSupported] = useState(false);
 
   useEffect(() => {
@@ -197,10 +197,12 @@ const ShareButton = ({ title, text, url }) => {
   const handleShare = async () => {
     if (isShareSupported) {
       try {
+        let currentURL = new URL(window.location.href);
+        currentURL = currentURL.origin + '?NFT=' + addrs + '&ID=' + ID;
         await navigator.share({
           title: title,
           text: text,
-          url: url,
+          url: currentURL,
         });
         console.log('Content shared successfully');
       } catch (error) {
@@ -835,9 +837,8 @@ const ShareButton = ({ title, text, url }) => {
               let currentURL = new URL(window.location.href);
               currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
             }}>copy link</Button><ShareButton style={{ left: '100px' }}
-            title="Share this amazing site!" 
-            text="Check out this website, it's awesome!" 
-            url="https://www.example.com" 
+            title="Sign My NFT on Signet!" 
+            text="Check out my NFT and sign it!"  
           />
           
             <div style={{ backgroundColor: '#53baff', color: '#53baff' }}>.</div></div></div></div >
