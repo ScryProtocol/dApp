@@ -185,6 +185,38 @@ function App() {
   const getBalance = async () => {
     
   };
+  
+const ShareButton = ({ title, text, url }) => {
+  const [isShareSupported, setIsShareSupported] = useState(false);
+
+  useEffect(() => {
+    // Check for support after component mounts to ensure we are in the client environment
+    setIsShareSupported(!!navigator.share);
+  }, []);
+
+  const handleShare = async () => {
+    if (isShareSupported) {
+      try {
+        await navigator.share({
+          title: title,
+          text: text,
+          url: url,
+        });
+        console.log('Content shared successfully');
+      } catch (error) {
+        console.error('Error sharing content', error);
+      }
+    } else {
+      console.log('Web Share API is not supported in your browser.');
+    }
+  };
+
+  return (
+    <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',left: '6px'  }} variant='outlined' className="top-4 color-white border-white" onClick={handleShare} disabled={!isShareSupported}>
+      Share
+    </Button>
+  );
+};
   const sign = async () => {
     toast.success('Signing')
     const MAX_RETRIES = 3; // Adjust as needed
@@ -802,7 +834,12 @@ function App() {
             <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',left: '8px' }} variant='outlined' className="top-4 left-3 color-white border-white" onClick={() => {
               let currentURL = new URL(window.location.href);
               currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
-            }}>copy link</Button>
+            }}>copy link</Button><ShareButton style={{ left: '100px' }}
+            title="Share this amazing site!" 
+            text="Check out this website, it's awesome!" 
+            url="https://www.example.com" 
+          />
+          
             <div style={{ backgroundColor: '#53baff', color: '#53baff' }}>.</div></div></div></div >
       <div>.
       </div>
