@@ -54,7 +54,7 @@ let check2
 function App() {
   const [accounts, setAccounts] = useState(['Loading Signers']);
   const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
-  const [ID, setID] = useState('6');
+  const [ID, setID] = useState('17992');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
@@ -811,14 +811,14 @@ const ShareButton = ({ title, text}) => {
             id="filter-select"
             value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
             onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
+            <MenuItem value="0xCa7cA7BcC765F77339bE2d648BA53ce9c8a262bD">Tubby Cats</MenuItem>
+<MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
             <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
 <MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">BAYC</MenuItem>
             <MenuItem value="0x1a92f7381b9f03921564a437210bb9396471050c">Cool Cats</MenuItem>
             <MenuItem value="">Custom</MenuItem>
             <MenuItem value="0x6be69b2a9b153737887cfcdca7781ed1511c7e36">Killer GF</MenuItem>
 <MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
-<MenuItem value="0xCa7cA7BcC765F77339bE2d648BA53ce9c8a262bD">Tubby Cats</MenuItem>
 
           </Select>
           {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
