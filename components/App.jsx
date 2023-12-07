@@ -53,7 +53,7 @@ function delay(ms) {
 let check2
 function App() {
   const [accounts, setAccounts] = useState(['Loading Signers']);
-  const [addrs, setaddrs] = useState('0xf75140376d246d8b1e5b8a48e3f00772468b3c0c');
+  const [addrs, setaddrs] = useState('0xCa7cA7BcC765F77339bE2d648BA53ce9c8a262bD');
   const [ID, setID] = useState('17992');
   const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
