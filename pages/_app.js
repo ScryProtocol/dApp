@@ -10,7 +10,7 @@ import {
   mainnet,
   optimism,
   arbitrum,
-  base,sepolia
+  base,sepolia,scroll
 
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
