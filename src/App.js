@@ -188,14 +188,13 @@ function App() {
       networks: ['optimism'],
       networksL: 'Optimism'
 
-    }
-    oracle[4] = {
-      name: '0xchibi',
-      stake: 'Partner',
-      addrs: '0xf97e7651e76ca3da6839d6f414ea0fc675f8d295',
-      href: 'https://optimistic.etherscan.io/address/0xF478b60A72AB5D3a076cC222428FBfCa1A0163dd',
-      networks: ['optimism'],
-      networksL: 'Optimism'
+    }oracle[5] = {
+      name: 'iMalFect',
+      stake: 'Independant',
+      addrs: '0xcBb10d79a3282f2d31800cE553b80d0d76959178 ',
+      href: 'https://Sepolia.etherscan.io/address/0xcBb10d79a3282f2d31800cE553b80d0d76959178',
+      networks: ['sepolia'],
+      networksL: 'Sepolia'
 
     }
  oracle[1] = {
