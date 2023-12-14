@@ -188,7 +188,8 @@ function App() {
       networks: ['optimism'],
       networksL: 'Optimism'
 
-    }oracle[5] = {
+    }
+      oracle[5] = {
       name: 'iMalFect',
       stake: 'Independant',
       addrs: '0xcBb10d79a3282f2d31800cE553b80d0d76959178 ',
