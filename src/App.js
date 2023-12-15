@@ -192,7 +192,7 @@ function App() {
       oracle[6] = {
       name: 'iMalFect',
       stake: 'Independant',
-      addrs: '0xcBb10d79a3282f2d31800cE553b80d0d76959178 ',
+      addrs: '0xcBb10d79a3282f2d31800cE553b80d0d76959178',
       href: 'https://Sepolia.etherscan.io/address/0xcBb10d79a3282f2d31800cE553b80d0d76959178',
       networks: ['sepolia'],
       networksL: 'Sepolia'
