@@ -374,7 +374,7 @@ function App() {
               </h1>
             </div><div className="flex justify-center">
               <h1 className="text-center color-green-500 text-2xl font-extrabold w-3/4">
-               {usertoken} OP Available
+               {usertoken} Available
               </h1>
             </div>
             <div className="flex justify-center">
@@ -443,7 +443,7 @@ function App() {
               <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 left-4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
             </div></div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
             <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              OP Staked: {tstake}
+              Staked: {tstake}
             </h1> 
             <InputLabel id="filter-label" style={{ color: '#00ff55' }} className="m-auto text-center md:mt-8 color-green-500 text-2xl font-bold w-3/4">Filter Network</InputLabel>
             <Select
