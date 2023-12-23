@@ -44,7 +44,7 @@ import zIndex from '@mui/material/styles/zIndex';
 import toast, { Toaster } from 'react-hot-toast';
 
 const { chains, publicClient } = configureChains(
-  [optimism],//mainnet, polygon, optimism, arbitrum, sepolia],
+  [mainnet],//mainnet, polygon, optimism, arbitrum, sepolia],
   [
     alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
