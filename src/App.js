@@ -61,8 +61,8 @@ const wagmiConfig = createConfig({
   publicClient
 })
 let provider = new ethers.BrowserProvider(window.ethereum);
-let signer = provider.getSigner(); let addrs = "0x00000000000d6080fd69b300ee78295d93f52557";
-let addrsS = "0x64ba55a341ec586a4c5d58d6297cde5125ab55bc";
+let signer = provider.getSigner(); let addrs = "0x000000000000c43f60e8a823c346fb8a162ce97d";
+let addrsS = "0x0000000000071821e8033345a7be174647be0706";
 let addrst = "0x000000000000a8c36fc75a2cbff5b9417c521264";
 
 const ABI = [{ "inputs": [{ "internalType": "contract IERC20", "name": "_token", "type": "address" }, { "internalType": "address", "name": "_slasher", "type": "address" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "symbol", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "oracle", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Slashed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "oracle", "type": "address" }, { "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Staked", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "oracle", "type": "address" }, { "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Unstaked", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "string", "name": "", "type": "string" }], "name": "data", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" }], "name": "decreaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "oracle", "type": "address" }], "name": "getstake", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "addedValue", "type": "uint256" }], "name": "increaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "key", "type": "string" }, { "internalType": "string", "name": "value", "type": "string" }], "name": "setKeyValue", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "slash", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "oracle", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "slashOracle", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "slasher", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "oracle", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "stakeTokens", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" }], "name": "stakeWithdraw", "outputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "unlockTime", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "token", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSlashed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "totalStake", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "sender", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "oracle", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "unstakeTokens", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newSlasher", "type": "address" }], "name": "updateSlasher", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" }], "name": "userStake", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "receiver", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawSlashedTokens", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "oracle", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawStake", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
@@ -267,10 +267,10 @@ function App() {
 
       let am = parseUnits(amount.toString(), 18)
       console.log(10)
-      if (await t.balanceOf(await signer.getAddress()) > 0) {
-        let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
-        await tx.wait()
-      }
+     // if (await t.balanceOf(await signer.getAddress()) > 0) {
+     //   let tx = await t.exit()//let tx = await t.unstake(oraclead, am)
+     //   await tx.wait()
+     // }
       console.log(await contract.stakeWithdraw(oraclead, await signer.getAddress()))
 
       let ts
@@ -334,21 +334,21 @@ function App() {
 
       let tx = await contract.stakeTokens(oraclead, am)
       await tx.wait()
-      amt = await contract.allowance(signer.getAddress(), addrst)
+     // amt = await contract.allowance(signer.getAddress(), addrst)
 
-      if (amt < (parseUnits((amount).toString(), 18))) {
-        console.log('LO')
-        toast('Please approve the reward staking contract')
+    //  if (amt < (parseUnits((amount).toString(), 18))) {
+    //    console.log('LO')
+    //    toast('Please approve the reward staking contract')
 
-        let tx = await contract.approve(addrst, (parseUnits((amount).toString(), 18)))
-        await tx.wait()
-      }
-      console.log('LOL')
-      am = parseUnits(amount.toString(), 18)
-      toast('Please approve the reward stake transaction')
+     //   let tx = await contract.approve(addrst, (parseUnits((amount).toString(), 18)))
+     //   await tx.wait()
+     // }
+    //  console.log('LOL')
+    //  am = parseUnits(amount.toString(), 18)
+    //  toast('Please approve the reward stake transaction')
 
-      tx = await t.stake(am)
-      await tx.wait()
+//      tx = await t.stake(am)
+  //    await tx.wait()
       getStake()
     }
     return (
@@ -402,9 +402,12 @@ function App() {
               />
             </div><div className="flex justify-center"><Button onClick={() => stake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
             </div><div className="flex justify-center"><Button onClick={() => unstake()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Unstake from Oracle</Button>
-            </div><div className="flex justify-center"><Button onClick={() => withdraw()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Claim Reward</Button>
+            </div>{//<div className="flex justify-center"><Button onClick={() => withdraw()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Claim Reward</Button>
+            }
             
-            </div><div className="flex justify-center"><Button onClick={() => getS()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Check Oracle Stake</Button>
+            {//</div>
+            }
+            <div className="flex justify-center"><Button onClick={() => getS()} style={{ color: '#77ff8b' }} variant='outlined' className="w-1/2 m-auto text-center bottom-4 color-green-500 border-green-500">Check Oracle Stake</Button>
 
             </div>
             <div className="flex justify-center">
