@@ -132,7 +132,7 @@ function App() {
       signer
     );console.log()
     settstake((await t.balanceOf(addrs)/10n**18n).toString())
-    let ba = (await contract.balanceOf(await signer.getAddress()) / 10n ** 18n + await tok.balanceOf(await signer.getAddress()) / 10n ** 18n).toString()
+    let ba = (await contract.balanceOf(await signer.getAddress()) / 10n ** 18n ).toString()//+ await tok.balanceOf(await signer.getAddress()) / 10n ** 18n).toString()
     let aa = (await tok.earned(await signer.getAddress())).toString()
     setuserstake(ba)
     setuserreward(Number(aa / 10 ** 18))
