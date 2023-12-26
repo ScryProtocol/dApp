@@ -277,7 +277,7 @@ function App() {
       let sw
       [sw, ts] = await contract.stakeWithdraw(oraclead, await signer.getAddress())
       console.log(sw,ts,Date.now())
-      if (Number(ts) < (Date.now() / 1000))//
+      if (Number(ts) < (Date.now() / 1000)&&Number(ts)!=0)//
       { console.log(2)
         let am = parseUnits(amount.toString(), 18)
         let tx = await contract.unstakeStake(oraclead, sw)//let tx = await t.withdrawStake(oraclead, am)
