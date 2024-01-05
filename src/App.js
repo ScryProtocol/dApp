@@ -442,8 +442,9 @@ function App() {
               Morpheus is designed to create a fully decentralized data market, allowing anyone to host an oracle and anyone to request data for a fee, creating a free and open data market. Oracles can stake $SCRY to create economic incentives to provide honest data to not be slashed. Anyone can run a Scry Morpheus node and help the network and developers access data when they need it.
             </div>
             <div style={{ color: '#00ff55' }} className="flex justify-center">
-              <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
-              <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 left-4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>
+              <Button onClick={() => window.location.assign('https://docs.scry.finance/docs/morpheus/morpehus')} style={{ color: '#77ff8b' }} variant='outlined' className="right-4 w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Morpheus Docs</Button>
+              <Button onClick={() => openOptionModal()} style={{ color: '#77ff8b' }} variant='outlined' className=" w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Stake</Button>              <Button onClick={() => window.location.assign('https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x0000000000071821e8033345a7be174647be0706&chain=mainnet')} style={{ color: '#77ff8b' }} variant='outlined' className=" left-4 w-1/4 m-auto text-center bottom-4 color-green-500 border-green-500">Buy Scry</Button>
+
             </div></div><div style={{ color: '#00ff55' }} className="flex flex-col justify-center m-auto overflow-hidden">
             <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
               Staked: {tstake}
