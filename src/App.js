@@ -198,6 +198,15 @@ function App() {
       networksL: 'Sepolia'
 
     }
+ oracle[1] = {
+      name: 'Scry Team',
+      stake: 'Scry',
+      addrs: '0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
+      href: 'https://optimistic.etherscan.io/address/0x927ba066081d016184a7D74Ba231d3Ce13B10D32',
+      networks: ['sepolia'],
+      networksL: 'Sepolia'
+
+    }
     let oracleS = oracle
     if (filter != null && filter != 'All') {
       oracleS = oracle.filter((o) => o.networks.includes(filter));
