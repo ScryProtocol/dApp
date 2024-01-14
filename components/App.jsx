@@ -96,19 +96,25 @@ function App() {
       [feedValue, , ,] = await morpheus.getFeed(gameData.vrfFeedId); // Replace this with your actual call
       console.log('T', feedValue)
       setOracleReady((Number(feedValue)));
+      let pro = new ethers.JsonRpcProvider('https://ethereum-holesky.publicnode.com');
+      let contrac = new ethers.Contract(contractAddress, abi, pro);  
+      const listenForWinner = contrac.on("WinnerDetermined", (Id, roll, roll1, win, am, event) => {
+        // Update state to show the modal
+        
+        if (Number(Id) == gameId) {    
+          setWinnerInfo({ player1roll: roll.toString(), player2roll: roll1.toString(), winner: win.toString(), amount: ethers.formatEther(am).toString() });
+          console.log(winnerInfo)
+          setWinnerModalOpen(true);
+          const winSound = new Audio('/ded.mp3'); // Replace with the correct path to your audio file
+          winSound.play();
+        }
+      });
     } window.ethereum.request({ method: 'eth_requestAccounts' });
     init();
   }, []);
 
   useEffect(() => {
-    const listenForWinner = contract.on("WinnerDetermined", (Id, roll, roll1, win, am, event) => {
-      // Update state to show the modal
-      if (Number(Id) == gameId) {
-        setWinnerInfo({ player1roll: roll.toString(), player2roll: roll1.toString(), winner: win.toString(), amount: ethers.formatEther(am).toString() });
-        console.log(winnerInfo)
-        setWinnerModalOpen(true);
-      }
-    });
+   
     const interval = setInterval(async () => {
       // if (gameId) {
       const gameData = await contract.games(gameId);
@@ -150,6 +156,10 @@ function App() {
   };
   const withdraw = async () => {
     const tx = await contract.connect(signer).withdraw();
+    await tx.wait();
+  };
+  const withdrawBet = async () => {
+    const tx = await contract.connect(signer).withdrawBet(gameId);
     await tx.wait();
   };
   const determineWinner = async () => {
@@ -305,20 +315,22 @@ function App() {
               margin: '5px 5px',
             }} className="w-1/4 m-auto justify-center text-center bg-green-500" placeholder="Bet Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
             <div><Button onClick={createGame}>Create Game</Button>
-              <Button onClick={pingoracle}>Ping oracle</Button>
+              <Button onClick={pingoracle}>Ping oracle</Button><Button onClick={withdrawBet}>Refund</Button>
+          
             </div>
+              
           </div> <Modal
             open={winnerModalOpen}
             onClose={() => setWinnerModalOpen(false)}
           >
-            <div style={{ backgroundColor: '#222222', color: '#00ff55' }} className="text-center textflex flex-col space-y-6 justify-center m-auto w-1/2   shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-              <p>Winner Determined!</p>
-              <p>Winner: {winnerInfo.winner}</p>
-              <p>Player 1: {game.player1}</p>
-              <p>Player 1 Roll: {winnerInfo.player1roll}</p>
-              <p>Player 2: {game.player2}</p>
-              <p>Player 2 Roll: {winnerInfo.player2roll}</p>
-              <p>Amount: {winnerInfo.amount} ETH</p>
+            <div style={{ backgroundColor: '#222222', color: '#00ff55',position:'relative',top: '20%' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">Winner Determined!</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-xl font-extrabold w-3/4">Winner: {winnerInfo.winner}</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-xl md:text-xl font-extrabold w-3/4">Player 1: {game.player1}</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-xl font-extrabold w-3/4">Player 1 Roll: {winnerInfo.player1roll}</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-xl md:text-xl font-extrabold w-3/4">Player 2: {game.player2}</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-xl font-extrabold w-3/4">Player 2 Roll: {winnerInfo.player2roll}</h1>
+              <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-xl font-extrabold w-3/4">Amount: {winnerInfo.amount} ETH</h1>
             </div>
           </Modal></div></div ></div >
   );
