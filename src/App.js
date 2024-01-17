@@ -151,7 +151,8 @@ function App() {
       addrs: '0x0000000000071821e8033345a7be174647be0706',
       href: 'https://sepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
       networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
-      networksL: 'Ethereum, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
+      networksL: 'Ethereum, Holesky, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
+      ,fb: 'Ethereum, Optimism, Holesky'
     }
     oracle[5] = {
       name: 'Scry Team',
@@ -213,6 +214,12 @@ function App() {
     }
     oracleS.sort((a, b) => parseInt(b.stake) - parseInt(a.stake));
     for (let n = 0; n < oracleS.length; n++) {
+      let f
+    if (oracleS[n].fb){
+      f=( <div style={{ color: '#77ff8b' }} className='mx-6'>
+          Free bounty: {oracleS[n].fb}
+        </div>)
+    }
       t0[n] = (<Grid><div style={{ color: '#00ff55', width: 420 }} className="flex flex-col bg-gray-800 space-y-6 justify-center mt-6 md:mt-6  m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
         <h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
           {oracleS[n].name}
@@ -226,6 +233,7 @@ function App() {
         <div style={{ color: '#77ff8b' }} className='mx-6'>
           Supported networks: {oracleS[n].networksL}
         </div>
+       {f}
       </div></Grid>
       )
     } return (<Grid container spacing={2} className="bg-gray-900 w-3/4">{t0}</Grid>)
