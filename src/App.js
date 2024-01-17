@@ -152,7 +152,7 @@ function App() {
       href: 'https://sepolia.etherscan.io/address/0x0000000000071821e8033345a7be174647be0706',
       networks: ['ethmainnet', 'sepolia', 'optimism', 'arbitrum', 'base', 'scroll', 'canto', 'arbitrum'],
       networksL: 'Ethereum, Holesky, Sepolia, Optimism, Arbitrum , Base, Scroll, Canto'
-      ,fb: 'Ethereum, Optimism, Holesky'
+      ,fb: 'Optimism, Holesky'
     }
     oracle[5] = {
       name: 'Scry Team',
