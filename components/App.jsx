@@ -27,6 +27,8 @@ function App() {
   const { address, isConnected } = useAccount()
   let contract = new ethers.Contract(contractAddress, abi, provider);
   let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
+ let fee = await contract.fee()
+  let fe = Number(fee) / 10 ** 18)
   morpheus.on("feedSubmitted", (feedId, value, timestamp,) => {
     // Update state to show the modal
     console.log('oracle', value)
@@ -59,7 +61,7 @@ function App() {
       let success = false;
       while (!success) {
         try {
-          const tx = await contract.connect(signer).getBalance(address, token, network, { value: ethers.parseEther('0.001') });
+          const tx = await contract.connect(signer).getBalance(address, token, network, { value: fee });
           await tx.wait();
           success = true;
         } catch (error) {
@@ -77,7 +79,7 @@ function App() {
       let success = false;
       while (!success) {
         try {
-          const tx = await contract.connect(signer).getBalance(alt, token, network, { value: ethers.parseEther('0.001') });
+          const tx = await contract.connect(signer).getBalance(alt, token, network, { value: fee });
           await tx.wait();
           success = true;
         } catch (error) {
@@ -192,7 +194,7 @@ function App() {
           }{(OracleReady == 11155111 && <div style={{ position: 'relative', top: '12px' }}>Awaiting Oracle...</div>)}
           <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
           <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-        </div>Please note there is a 0.001 ETH oracle fee.</div ></div >
+        </div>Please note there is a {fe} ETH oracle fee.</div ></div >
   );
 }
 
