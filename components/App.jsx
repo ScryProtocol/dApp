@@ -195,7 +195,7 @@ function App() {
           }{(OracleReady == 11155111 && <div style={{ position: 'relative', top: '12px' }}>Awaiting Oracle...</div>)}
           <div style={{ color: '#00ccff', top: '6px' }}>.</div ><h2 className=" top-6 ">Balance for other address</h2>
           <input type="text" style={{ backgroundColor: '#00ccff', top: '6px' }} placeholder="User Address" value={alt} onChange={(e) => { setAlt(e.target.value) }} className=" top-10 w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-        </div>Please note there is a {Number(fee) / 10 ** 18)} ETH oracle fee.</div ></div >
+        </div>Please note there is a {Number(fee) / 10 ** 18} ETH oracle fee.</div ></div >
   );
 }
 
