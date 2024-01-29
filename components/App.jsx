@@ -133,9 +133,9 @@ let b = await contract.connect(signer).checkBalance(address, token,network)
   async function lol() {
     let addrs = address
     if (alt != null) { addrs = alt }
-    let b = await contract.connect(signer).checkBalance(address, token,network)
+    let b = await contract.connect(signer).checkBalance(addrs, token,network)
       setBal(Number(b[0]) / 10 ** 18);
-    console.log((await contract.checkBalance(await address, token,network)))
+    console.log((await contract.checkBalance(await addrs, token,network)))
 
     let feed = (Number(await contract.connect(signer).userBalanceFeed(network, addrs, token)));
     setfeedID(feed)
