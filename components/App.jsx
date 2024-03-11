@@ -1,850 +1,545 @@
-// @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
-
-import 'tailwindcss/tailwind.css'
-import '@rainbow-me/rainbowkit/styles.css'
-
-import '@rainbow-me/rainbowkit/styles.css';
-import {
-  getDefaultWallets,
-  RainbowKitProvider, darkTheme
-} from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  sepolia,
-  base
-} from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ethers } from "ethers";
-import { BrowserProvider, parseUnits, parseEther, JsonRpcProvider, Contract } from "ethers";
-import { List, ListItem } from '@mui/material';
-import toast, { Toaster } from 'react-hot-toast';
-import { Container, TextField, Button, Typography, Paper, Grid, Modal, Select, MenuItem, Switch } from '@mui/material';
-import 'tailwindcss/tailwind.css'
-import { chainId } from 'wagmi';
-import axios from 'axios';
-const FormData = require('form-data')
-const JWT = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyYTY2ZDRiNS1kNTE1LTQ5MGMtYjBlMy1kY2I1M2M2MTg0MTkiLCJlbWFpbCI6InByMEB0YW1hLmxvbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxN2ZkMDAyYmViMzIzMGE4MzNmMCIsInNjb3BlZEtleVNlY3JldCI6ImMxNjExMDMzODM4N2ZkMGIxZGRiNGRlYmU2ZmM1MTcyOGE2OTQ2YmZkMWU1YTIwZmJhODk3NDM3NjRkZGM4OTAiLCJpYXQiOjE2OTQ2MjU4NjN9.-agiF02ut_dEr_lbkkh05OhYDCDdaF2wOPwAf4UDkao'
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
 import { useAccount, useConnect, useEnsName } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-let provider
+// Replace with your contract ABI and contract address
+const contractABI = [{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "bountyId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "claimer", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }], "name": "BountyClaimed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "bountyId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "creator", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "reward", "type": "uint256" }, { "indexed": false, "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "indexed": false, "internalType": "uint8", "name": "requiredScore", "type": "uint8" }, { "indexed": false, "internalType": "uint8", "name": "flag", "type": "uint8" }, { "indexed": false, "internalType": "uint8", "name": "locked", "type": "uint8" }], "name": "BountyCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "claimer", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }, { "indexed": false, "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "indexed": false, "internalType": "address", "name": "leaderAddress", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "rewardAmount", "type": "uint256" }], "name": "LeaderClaimed", "type": "event" }, { "inputs": [], "name": "AA", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "BB", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "Leader", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LeaderAddr", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LeaderPub", "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PP", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "Scry", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "addr", "type": "address" }, { "internalType": "uint8", "name": "n", "type": "uint8" }], "name": "addressStartsWithNZeroes", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "bounties", "outputs": [{ "internalType": "uint8", "name": "score", "type": "uint8" }, { "internalType": "address payable", "name": "creator", "type": "address" }, { "internalType": "uint256", "name": "reward", "type": "uint256" }, { "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }, { "internalType": "address", "name": "addrs", "type": "address" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }, { "internalType": "bytes", "name": "custom", "type": "bytes" }, { "internalType": "uint8", "name": "locked", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "bounty", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "bountyLeader", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "data", "type": "bytes" }], "name": "bytesToHexString", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "checkCreate2", "outputs": [{ "internalType": "bytes20", "name": "addrBytes", "type": "bytes20" }, { "internalType": "uint256", "name": "score", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "custom", "type": "bytes" }, { "internalType": "uint8", "name": "nLeading0s", "type": "uint8" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }, { "internalType": "uint8", "name": "locked", "type": "uint8" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "createBounty", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "PrivateKey", "type": "bytes32" }], "name": "derivePublicKey", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "bytes32", "name": "", "type": "bytes32" }, { "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddrs", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeControl", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_origin", "type": "address" }], "name": "getNonce0Address", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_origin", "type": "address" }], "name": "getNonce0AddressHex", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "pubKey", "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "addrs", "type": "address" }, { "internalType": "uint256", "name": "addrT", "type": "uint256" }, { "internalType": "bytes", "name": "pubK", "type": "bytes" }], "name": "setAddrs", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "fullKey", "type": "bytes" }], "name": "splitKey", "outputs": [{ "internalType": "uint256", "name": "x", "type": "uint256" }, { "internalType": "uint256", "name": "y", "type": "uint256" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bount", "type": "uint256" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "tipBounty", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey1", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey2", "type": "bytes" }, { "internalType": "uint8", "name": "n", "type": "uint8" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }], "name": "validate", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }], "name": "validatePubkey", "outputs": [{ "internalType": "address", "name": "wallet", "type": "address" }, { "internalType": "address", "name": "nonce0Addr", "type": "address" }, { "internalType": "uint256", "name": "score", "type": "uint256" }, { "internalType": "bytes20", "name": "addrs", "type": "bytes20" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey1", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey2", "type": "bytes" }], "name": "validatePublicKeyAddition", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }], "name": "withdrawBounty", "outputs": [], "stateMutability": "payable", "type": "function" }];
+const contractAddress = '0x000000000001F04A9533e92d7AD4dDe7DC19a8F3';
+const scryContractAddress = '0x64ba55a341ec586a4c5d58d6297cde5125ab55bc';
 
-let abi = [{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "SigAmount", "type": "uint256" }], "name": "Bided", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Claimed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "ClaimedSig", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "NFTSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "SignaturesSet", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "Bid", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signers", "type": "address" }, { "internalType": "uint256", "name": "SigAmount", "type": "uint256" }], "name": "BidForSignet", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "Bider", "outputs": [{ "internalType": "address", "name": "NFT", "type": "address" }, { "internalType": "uint256", "name": "ID", "type": "uint256" }, { "internalType": "uint256", "name": "Amount", "type": "uint256" }, { "internalType": "uint256", "name": "SigAmount", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "Bids", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "SigBid", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "SigBids", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "Sigs", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "autographs", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddrs", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeControl", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getAllAutographs", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signer", "type": "address" }], "name": "getAutograph", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getShownAutographs", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getShownSignatures", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "hasSigned", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "nftSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "Address", "type": "address" }], "name": "setFeeAddrs", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "setSignaturesToShow", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "shownSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "signNFT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signers", "type": "address" }], "name": "unBid", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
-//[{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "signer", "type": "address" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "NFTSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "nftAddress", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "SignaturesSet", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "autographs", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getAllAutographs", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address", "name": "signer", "type": "address" }], "name": "getAutograph", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }], "name": "getShownSignatures", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "nftSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "address[]", "name": "signers", "type": "address[]" }], "name": "setSignaturesToShow", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "shownSigners", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "nftAddress", "type": "address" }, { "internalType": "uint256", "name": "nftId", "type": "uint256" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "signNFT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
-let morpheusAbi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address[]", "name": "signers", "type": "address[]" }, { "indexed": false, "internalType": "uint256", "name": "signerThreshold", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "contractSetup", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "endpoint", "type": "string" }, { "indexed": false, "internalType": "string", "name": "endpointp", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "feedRequested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "feedSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "", "type": "string" }], "name": "feedSubmitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "feedId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "supportvalue", "type": "uint256" }], "name": "feedSupported", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "payout", "type": "address" }], "name": "newPayoutAddress", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "addressValue", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "oracleType", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "proposer", "type": "address" }], "name": "newProposal", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "newSigner", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "newThreshold", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "proposalId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "proposalSigned", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "sender", "type": "address" }], "name": "routerFeeTaken", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "signer", "type": "address" }], "name": "signerRemoved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "newPass", "type": "uint256" }], "name": "subscriptionPassPriceUpdated", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "buyer", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "buyPass", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "feedId", "type": "uint256" }], "name": "createProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "factoryContract", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "feedSupport", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "feedID", "type": "uint256" }], "name": "getFeed", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getFeedLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }], "name": "getFeeds", "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "", "type": "uint256[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }, { "internalType": "string[]", "name": "", "type": "string[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address[]", "name": "signers_", "type": "address[]" }, { "internalType": "uint256", "name": "signerThreshold_", "type": "uint256" }, { "internalType": "address payable", "name": "payoutAddress_", "type": "address" }, { "internalType": "uint256", "name": "subscriptionPassPrice_", "type": "uint256" }, { "internalType": "address", "name": "factoryContract_", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "payoutAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "proposalList", "outputs": [{ "internalType": "uint256", "name": "uintValue", "type": "uint256" }, { "internalType": "address", "name": "addressValue", "type": "address" }, { "internalType": "address", "name": "proposer", "type": "address" }, { "internalType": "uint256", "name": "proposalType", "type": "uint256" }, { "internalType": "uint256", "name": "proposalFeedId", "type": "uint256" }, { "internalType": "uint256", "name": "proposalActive", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string[]", "name": "APIendpoint", "type": "string[]" }, { "internalType": "string[]", "name": "APIendpointPath", "type": "string[]" }, { "internalType": "uint256[]", "name": "decimals", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "bounties", "type": "uint256[]" }], "name": "requestFeeds", "outputs": [{ "internalType": "uint256[]", "name": "feeds", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "proposalId", "type": "uint256" }], "name": "signProposal", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "signerLength", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "signerThreshold", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "signers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIDs", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }, { "internalType": "string[]", "name": "vals", "type": "string[]" }], "name": "submitFeed", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "subscriptionPassPrice", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "feedIds", "type": "uint256[]" }, { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }], "name": "supportFeeds", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "withdrawFunds", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
-
-let contractAddress = '0x133703dCDFCfB7Aa0f1B7945e9eae7fbFFd4A5CA';
-const addrsS = '0x000000000075F13bCF2E6652e84821e8b544F6F9';
-let signer
-let contract
-//let morpheus = new ethers.Contract(morpheusAddress, morpheusAbi, provider);
-let IPFS;
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-} let check
-let check2
+const scryContractABI = [
+  // ... other contract functions ...
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      }
+    ],
+    name: "approve",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address"
+      },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address"
+      }
+    ],
+    name: "allowance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  }
+  // ... other contract functions ...
+];
 function App() {
-  const [accounts, setAccounts] = useState(['Loading Signers']);
-  const [addrs, setaddrs] = useState('0xCa7cA7BcC765F77339bE2d648BA53ce9c8a262bD');
-  const [ID, setID] = useState('17992');
-  const [isBidsModalOpen, setIsBidsModalOpen] = useState(false);
-  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
-  const [stateL, setstateL] = useState(); const [sigTog, setsigTog] = useState();
-  let  address, isConnected 
-  //const [IPFS, setIPFS] = useState();
-  const [sigs, setsigs] = useState();  const [claim, setclaim] = useState();
-  const [claimS, setclaimS] = useState();
-  const [pngs, setpngs] = useState(['https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media']);
-  const [token, setToken] = useState("0x0000000000071821e8033345a7be174647be0706");
-  let location 
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [pubkey, setPubkey] = useState('');
+  const [custom, setCustom] = useState('0x');
+  const [nLeading0s, setNLeading0s] = useState('0');
+  const [addressType, setAddressType] = useState(0);
+  const [amount, setAmount] = useState('0');
+  const [bountyId, setBountyId] = useState('0');
+  const [bountyDetails, setBountyDetails] = useState(null);
+  const [privateKey, setPrivateKey] = useState('');
+  const [privateKeyB, setPrivateKeyB] = useState('');
+  const [bountyreward, setbountyreward] = useState('0');
+  const [bountyC, setbountyC] = useState('0');
 
-  provider = useEthersProvider()
-  signer = useEthersSigner();
-   address =  useAccount().address
-   console.log('lol',address)
+  const [publicKey, setPublicKey] = useState('');
+  const [ethereumAddress, setEthereumAddress] = useState('');
+  const [recoveredPublicKey, setRecoveredPublicKey] = useState('');
+  const [addedPrivateKey, setAddedPrivateKey] = useState('');
+  const [addedAddress, setAddedAddress] = useState('');
+  const [addedContractAddress, setAddedContractAddress] = useState('');
+  const ethersProvider = useEthersProvider();
+
+  const ethersSigner = useEthersSigner();
   useEffect(() => {
-    async function init() {
-      contract = new ethers.Contract(contractAddress, abi, provider);
-      location =  window.location.toString()
-      const queryParams = new URLSearchParams(location);
-      const NFTaddrsURL = await queryParams.get('NFT');
-      const NFTIDURL = await queryParams.get('ID');
-      let NFTaddrs = addrs
-      let NFTID = ID
-
-      if (NFTaddrsURL != null) {
-        setstateL(NFTaddrsURL)
-        setaddrs(NFTaddrsURL)
-        NFTaddrs = NFTaddrsURL
-        console.log(NFTaddrs)
-      }
-      if (NFTIDURL != null) {
-        setID(NFTIDURL)
-        NFTID = NFTIDURL
-        console.log(NFTID)
-      }
-      if (check == null) {
-        check = 1
-        toast('Connecting wallet')
-      }
+    const initializeEthers = async () => {
       try {
-      
-      if ((await provider.getNetwork()).chainId != 1) {
-        contractAddress=('0x00051600077302Fe69126F8bD8FC4D00DAB1994d')
-        contract = new ethers.Contract(contractAddress, abi, provider);
-         }
-        check2 = 1
-      
-      console.log('LOL', (await provider.getNetwork()).chainId)
-    } catch (error) {
-      provider = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
-      signer = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
+        setProvider(ethersProvider);
 
-    } 
-    LOL()  
-    let NFTb
-      let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
-
-      const NFT = new Contract(NFTaddrs, [
-        // Assuming the NFT contract is ERC721 compliant
-        'function tokenURI(uint256 tokenId) external view returns (string)',
-      ], pr)//provider);
-
-      try {
-        let uri = await NFT.tokenURI(NFTID);
-        console.log('LOL', uri)
-        uri = uri.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-        console.log(uri)
-
-        const response = await fetch(uri);
-        const metadata = await response.json();
-        NFTb = (metadata.image);
-        NFTb = NFTb.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-        console.log(NFTb)
-      } catch (error) {
-        console.error("Error fetching NFT image:", error);
-      }
-
-      let hash = []
-      let lol = []
-      try {
+        setSigner(ethersSigner);
         
-     
-      hash = await contract.getShownAutographs(
-        NFTaddrs,
-        NFTID
-      ); console.log(hash)
-    } catch (error) {
-      toast.error('Check connected network. Supports ETH Mainnet, Sepolia, Arbitrum, Optimism and Scroll and refresh')
-    }
-      function convertHashesToUrls(ipfsHashes) {
-        const baseUrl = "https://cloudflare-ipfs.com/ipfs/";
-        let urls = [NFTb]//'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
+        //const prov = new ethers.providers.Web3Provider(window.ethereum);
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      //  const contract2 = new ethers.Contract(contractAddress, contractABI, );
 
-        for (let i = 0; i < ipfsHashes.length; i++) {
-          urls.push(baseUrl + ipfsHashes[i]);
-        }
-        setpngs(urls)
-        return urls;
+        setContract(contract);
+       // contract.on('BountyCreated', (bountyId, creator, reward, publicKey, requiredScore, flag, locked) => {
+    //      console.log('Bounty created successfully with ID:', bountyId.toNumber());
+    //      setBountyId(bountyId.toNumber());
+    //    })
+      } catch (error) {
+        console.error('Error initializing Ethers:', error);
       }
-      const hashes = hash[1];  const msg = [];
 
-      const urls = convertHashesToUrls(hashes);
-      console.log(urls);
+    };
 
-      setsigs(urls)
-      console.log(sigs)
-      // Usage:
-      for (let i = 0; i < accounts.length; i++) {
-        msg.push(<h2><span className="font-bold">{accounts[i]}</span> has signed this NFT</h2>);
-      }      setAccounts(msg)
-      const messages = await getMessagesForAccounts(hash[0]);
-    
-
-      setAccounts(messages)
-
-      
-    }
-    init(); try{window.ethereum.on('accountsChanged', (accounts) => {
-      if (accounts.length > 0) {
-        // Refresh the component content
-        init();
-      }
-    });}
-    catch{}
-  }, [])
-
-  const getBalance = async () => {
-    
-  };
-  
-const ShareButton = ({ title, text}) => {
-  const [isShareSupported, setIsShareSupported] = useState(false);
-
-  useEffect(() => {
-    // Check for support after component mounts to ensure we are in the client environment
-    setIsShareSupported(!!navigator.share);
+    initializeEthers();
   }, []);
 
-  const handleShare = async () => {
-    if (isShareSupported) {
+  const createBounty = async () => {
+    if (contract && signer) {
+      const scryContract = new ethers.Contract(scryContractAddress, scryContractABI, signer);
+      const userAddress = useAccount().address;
+
+      const approvedBalance = await scryContract.allowance(userAddress, contractAddress);
+      console.log(approvedBalance);
+
+      // Check if the approved balance is sufficient
+      const bountyAmount = ethers.parseEther(amount.toString());
+      if (approvedBalance.lt(bountyAmount)) {
+        // Approve the allowance if it's insufficient
+        try {
+          // Get the Scry contract instance
+
+          // Get the user's address
+
+          // Calculate the amount to approve (e.g., MAX_UINT256)
+          const approvalAmount = ethers.constants.MaxUint256;
+
+          // Approve the allowance for the Vain contract
+          const tx = await scryContract.approve(contractAddress, approvalAmount);
+          await tx.wait();
+
+          console.log('Allowance approved successfully');
+        } catch (error) {
+          console.error('Error approving allowance:', error);
+        }
+      }
       try {
-        let currentURL = new URL(window.location.href);
-        currentURL = currentURL.origin + '?NFT=' + addrs + '&ID=' + ID;
-        await navigator.share({
-          title: title,
-          text: text,
-          url: currentURL,
+        console.log(pubkey,
+          custom,
+          nLeading0s,
+          addressType,
+          0,
+          ethers.parseEther(amount.toString()));
+
+        const tx = await contract.createBounty(
+          pubkey,
+          custom,
+          nLeading0s,
+          addressType,
+          0,
+          ethers.parseEther(amount.toString())
+        );
+        await tx.wait();
+        console.log('Bounty created successfully');
+
+        contract.on('BountyCreated', (bountyId, creator, reward, publicKey, requiredScore, flag, locked) => {
+          console.log('Bounty created successfully with ID:', bountyId.toNumber());
+          setBountyId(bountyId.toNumber());
+
         });
-        console.log('Content shared successfully');
       } catch (error) {
-        console.error('Error sharing content', error);
+        console.error('Error creating bounty:', error);
       }
     } else {
-      console.log('Web Share API is not supported in your browser.');
+      console.error('Contract or signer not initialized');
     }
   };
 
-  return (
-    <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',left: '6px'  }} variant='outlined' className="top-4 color-white border-white" onClick={handleShare} disabled={!isShareSupported}>
-      Share
-    </Button>
-  );
-};
-  const sign = async () => {
-    toast.success('Signing')
-    const MAX_RETRIES = 3; // Adjust as needed
-    let retries = 0;
-
-    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-    while (retries < MAX_RETRIES) {
+  const checkBountyStatus = async () => {
+    if (contract) {
       try {
-        const tx = await contract.connect(signer).signNFT(
-          addrs,
-          ID,
-          IPFS
-        );
-        await tx.wait(); break;
+        const bounty = await contract.bounties(bountyId);
+        const isFilled = bounty.reward.eq(0);
+        console.log(`Bounty ${bountyId} is ${isFilled ? 'filled' : 'not filled'}`);
+        setBountyDetails(bounty);
       } catch (error) {
-        if (error.message.includes("undefined (reading 'then')")) {
-          // Log the error for debugging or provide feedback to the user
-          console.error('Failed to sign the NFT. Attempt:', retries + 1, error.message);
-
-          retries++;
-
-          if (retries === MAX_RETRIES) {
-            console.error('Max retries reached. Aborting...');
-          } else {
-            // Wait for the specified delay time before retrying
-            await sleep(2000);
-          }
-        } else {
-          // If the error message is different, log it and break out of the loop without retrying
-          console.error('Encountered an unexpected error:', error.message);
-          break;
-        }
+        console.error('Error checking bounty status:', error);
       }
+    } else {
+      console.error('Contract not initialized');
     }
   };
-  const sig = async (sig1, amt) => {
-      console.log(sigTog)
+  const generateKeyAndAddress = () => {
+    const elliptic = require('elliptic').ec;
+    const ec = new elliptic('secp256k1');
+    const keyPair = ec.genKeyPair();
 
-      if (!sigTog) {
-      console.log(addrs, ID, sig1, 0, amt)
-      const tx = await contract.BidForSignet(addrs,
-        ID, sig1, 0, { value: amt })
-      await tx.wait();
-    }
-    if (sigTog==true) {
-      console.log(11)
+    const privateKey = keyPair.getPrivate().toString('hex');
+    const publicKey = '0x' + keyPair.getPublic().encode('hex').substring(2);
+    const ethereumAddress = '0x' + ethers.keccak256(publicKey).slice(-40);
 
-      let tok = new ethers.Contract(
-        addrsS,
-        [
-          'function allowance(address, address) external view returns (uint)',
-          'function approve(address spender, uint256 amount) external returns (bool)'
-        ],
-        signer
-      );
-      console.log(1)
-
-      let amount = await tok.allowance(await address, contractAddress)
-      console.log(amount)
-      console.log(sigTog)
-      console.log(amt)
-      console.log(sig1)
-
-
-      if (amount < amt) {
-        let tx = await tok.approve(contractAddress, amt)
-        await tx.wait()
-      }
-      let am = amount
-      const tx = await contract.BidForSignet(addrs,
-        ID, sig1, amt)
-      await tx.wait();
-
-    }
-    toast.success('Your bid has been sent.')
+    setPrivateKey(privateKey);
+    setPublicKey(publicKey);
+    setEthereumAddress(ethereumAddress);
   };
-  const DrawOnLayeredCanvas = ({ pngs }) => {
-    const backgroundCanvasRef = useRef(null);
-    const drawingCanvasRef = useRef(null);
-    const contextRef = useRef(null);
-    const [isDrawing, setIsDrawing] = useState(false);
-    const [color, setColor] = useState('#000000');
-    const [isErasing, setIsErasing] = useState(false);
 
-    const [smoothness, setSmoothness] = useState(1);
-    const [lineWidth, setLineWidth] = useState(5);
-    const undoStack = useRef([]);
-    const [menuOpen, setMenuOpen] = useState(false);
+  const addPrivateKeys = (privateKeyA, privateKeyB) => {
+    const secp256k1N = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
+    const addedPrivateKey = (BigInt(`0x${privateKeyA}`) + BigInt(`0x${privateKeyB}`)) % secp256k1N;
+    const addedPrivateKeyHex = addedPrivateKey.toString(16).padStart(64, '0').toUpperCase();
 
-    useEffect(() => {
-      const backgroundCanvas = backgroundCanvasRef.current;
-      const drawingCanvas = drawingCanvasRef.current;
-      let drawingContext = drawingCanvas.getContext("2d");
-      drawingContext.lineWidth = lineWidth;
+    const addedAddress = ethers.computeAddress(`0x${addedPrivateKeyHex}`);
+    const nonce = 0;
+    const addedContractAddress = ethers.getContractAddress({ from: addedAddress, nonce });
 
-      contextRef.current = drawingContext;
-      const dpr =window.devicePixelRatio ||  1;
-      backgroundCanvas.width = canvasWidth * dpr;
-      backgroundCanvas.height = canvasHeight * dpr;
-      drawingCanvas.width = canvasWidth * dpr;
-      drawingCanvas.height = canvasHeight * dpr;
+    setAddedPrivateKey(addedPrivateKeyHex);
+    setAddedAddress(addedAddress);
+    setAddedContractAddress(addedContractAddress);
+  };
 
-      backgroundCanvas.style.width = `${canvasWidth}px`;
-      backgroundCanvas.style.height = `${canvasHeight}px`;
-      drawingCanvas.style.width = `${canvasWidth}px`;
-      drawingCanvas.style.height = `${canvasHeight}px`;
+  const pubKey = () => {
+    const recoveredPublicKey = ethers.computePublicKey(`0x${privateKey}`);
+    setRecoveredPublicKey(`0x${recoveredPublicKey.substring(4)}`);
+  };
 
-      // Layer the PNGs onto the background canvas
-      let loadedImages = [];
-      pngs.forEach((src) => {
-        let img = new Image();
-        img.src = src;
-        img.onload = () => {
-          loadedImages.push(img);
-          if (loadedImages.length === pngs.length) {
-            loadedImages.forEach(image => {
-              backgroundCanvas.getContext("2d").drawImage(image, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+  const signMessage = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+
+        const message = "Hello, world!";
+        const signature = await signer.signMessage(message);
+
+        const messageBytes = ethers.toUtf8Bytes(message);
+        const messageDigest = ethers.keccak256(messageBytes);
+        const recoveredPublicKey = ethers.recoverPublicKey(messageDigest, signature);
+        setRecoveredPublicKey(`0x${recoveredPublicKey.substring(4)}`);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      console.log('Please install MetaMask!');
+    }
+  };
+  const [bounties, setBounties] = useState([]);
+
+  const fetchUserBounties = async () => {
+
+    const vainContractAddress = '0x000000000001F04A9533e92d7AD4dDe7DC19a8F3';
+    const vainContract = new ethers.Contract(vainContractAddress, contractABI, signer);
+
+
+    try {
+      const bountyCount = Number(bountyC);
+
+      const userBounties = [];
+
+      for (let i = 1; i <= bountyCount; i++) {
+        try {
+          const bounty = await vainContract.bounties(i);
+          if (bounty.reward.gte(ethers.parseEther(bountyreward))) {
+            userBounties.push({
+              id: i,
+              score: bounty.score,
+              creator: bounty.creator,
+              reward: ethers.formatUnits(bounty.reward, 18),
+              publicKey: ethers.hexlify(bounty.publicKey),
+              privateKey: ethers.hexlify(bounty.privateKey),
+              addrs: bounty.addrs,
+              flag: bounty.flag,
+              custom: ethers.hexlify(bounty.custom),
+              locked: bounty.locked,
+              filled: bounty.privateKey !== '0x0000000000000000000000000000000000000000000000000000000000000000'
             });
           }
-        };
-      });
-
-      drawingContext.lineCap = "round";
-      //  drawingContext.lineJoin = "round";
-      drawingContext.strokeStyle = color;
-      drawingContext.lineWidth = 5;
-      drawingContext.shadowBlur = 1;  // adjust for desired softness
-      drawingContext.shadowColor = color;
-      drawingContext.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-    }, [pngs]);
-    useEffect(() => {
-      if (contextRef.current) {
-        contextRef.current.strokeStyle = color;
-        contextRef.current.shadowColor = color;
-        contextRef.current.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-        contextRef.current.lineWidth = 5;
-        contextRef.current.shadowBlur = 1;  // adjust for desired softness}
-      }
-    }, [color, isErasing]);
-    const startDrawing = (e) => {
-      let offsetX, offsetY
-      if (e.type.startsWith('touch')) {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = e.target.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        offsetX = (touch.clientX - rect.left) * dpr;
-        offsetY = (touch.clientY - rect.top) * dpr;
-      } else {
-        offsetX = e.nativeEvent.offsetX;
-        offsetY = e.nativeEvent.offsetY;
-      } contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
-      contextRef.current.shadowBlur = smoothness; // Set the lineWidth here
-      contextRef.current.beginPath();
-      contextRef.current.moveTo(offsetX, offsetY);
-      setIsDrawing(true);
-    }; useEffect(() => {
-      const canvasElement = drawingCanvasRef.current;
-
-      if (canvasElement) {
-        const handleTouchMove = (e) => {
-          e.preventDefault();
-        };
-
-        canvasElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-        // Cleanup the event listener on component unmount
-        return () => {
-          canvasElement.removeEventListener('touchmove', handleTouchMove);
-        };
-      }
-    }, []);
-    const finishDrawing = (e) => {
-      if (e.type.startsWith('touch')) {
-        e.preventDefault();
-      } const canvas = drawingCanvasRef.current;
-      const imgData = canvas.toDataURL();
-      undoStack.current.push(imgData);
-      contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
-      setIsDrawing(false);
-      lastX = undefined;
-      lastY = undefined;
-    };
-
-    let lastX, lastY;
-    const draw = (e) => {
-      if (!isDrawing) {
-        return;
-      }
-      let offsetX, offsetY
-      if (e.type.startsWith('touch')) {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = e.target.getBoundingClientRect();
-        const dpr =  window.devicePixelRatio || 1;
-        offsetX = (touch.clientX - rect.left) * dpr;
-        offsetY = (touch.clientY - rect.top) * dpr;
-      } else {
-        offsetX = e.nativeEvent.offsetX;
-        offsetY = e.nativeEvent.offsetY;
-      }
-      // Wrap the drawing code inside requestAnimationFrame
-      requestAnimationFrame(() => {
-        contextRef.current.lineWidth = lineWidth; // Set the lineWidth here
-
-        // This checks if there's a significant difference between the last and current position.
-        if (typeof lastX === 'undefined' || typeof lastY === 'undefined' || Math.abs(lastX - offsetX) > 1 || Math.abs(lastY - offsetY) > 1) {
-          contextRef.current.lineTo(offsetX, offsetY);
-          contextRef.current.stroke();
-          lastX = offsetX;
-          lastY = offsetY;
-        }
-      });
-    };
-    const toggleEraser = () => setIsErasing(!isErasing);
-    const undo = () => {
-      if (undoStack.current.length > 1) {
-        undoStack.current.pop(); // remove current state
-        const prevImgData = undoStack.current[undoStack.current.length - 1];
-        const img = new Image();
-        img.src = prevImgData;
-        img.onload = () => {
-          contextRef.current.clearRect(0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
-          contextRef.current.shadowBlur = 0;
-          contextRef.current.drawImage(img, 0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
-          contextRef.current.shadowBlur = smoothness;
-        };
-      }
-    };
-
-    const clearDrawing = () => {
-      const context = contextRef.current;
-      context.clearRect(0, 0, drawingCanvasRef.current.width, drawingCanvasRef.current.height);
-    };
-
-    const saveCanvas = async () => {
-      const drawingCanvas = drawingCanvasRef.current;
-      const dataUrl = drawingCanvas.toDataURL("image/png");
-      //  const link = document.createElement('a');
-      //  link.download = 'drawing.png';
-      //  link.href = dataUrl;
-      //  link.click();
-      await pinFileToIPFS()
-      await sign()
-    };
-    const pinFileToIPFS = async () => {
-      const drawingCanvas = drawingCanvasRef.current;
-      await drawingCanvas.toBlob(async (blob) => {
-        try {
-          const formData = new FormData();
-          formData.append('file', blob, 'drawing.png'); // Append the blob with a filename
-
-          const pinataMetadata = JSON.stringify({
-            name: 'File name',
-          });
-          formData.append('pinataMetadata', pinataMetadata);
-
-          const pinataOptions = JSON.stringify({
-            cidVersion: 0,
-          })
-          formData.append('pinataOptions', pinataOptions);
-
-
-          const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-            maxBodyLength: "Infinity",
-            headers: {
-              'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-              Authorization: JWT
-            }
-          });
-          console.log(res.data.IpfsHash);
-          IPFS = res.data.IpfsHash//IPFS = res.data.IpfsHash)
         } catch (error) {
-          console.log(error);
+
         }
-      });
-    }
-    const maxWidth = 500;
-    const maxHeight = 500;
-
-    const canvasWidth = 500//Math.min(maxWidth, window.innerWidth);
-    const canvasHeight = 500//Math.min(maxWidth, window.innerHeight); // Assuming you want the height to be the same as the width
-
-    return (
-      <div style={{ position: 'relative', width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
-        <canvas
-          ref={backgroundCanvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-          style={{ position: 'absolute', left: '0', top: '0' }}
-        />
-        <canvas
-          ref={drawingCanvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-          style={{ position: 'absolute', left: '0', top: '0' }}
-          onMouseDown={startDrawing}
-          onMouseUp={finishDrawing}
-          onMouseMove={draw} onTouchStart={startDrawing}
-          onTouchEnd={finishDrawing}
-          onTouchMove={draw}
-        />
-        <div style={{ position: 'absolute', top: '0', left: '50px', }} className="justify-center top-2 color-white border-white">
-          {menuOpen && (
-            <><label >Smooth:</label>
-              <input
-                style={{ marginRight: '10px' }}
-                type="range"
-                min="0"
-                max="5" className="left-20 w-1/4"
-                value={smoothness}
-                onChange={(e) => { setSmoothness(e.target.value) }}
-              />          <label >Width:</label>
-              <input
-                style={{}}
-                type="range"
-                min="1"
-                max="20"
-                value={lineWidth} className="w-1/4"
-                onChange={(e) => setLineWidth(e.target.value)}
-              /></>)} <button style={{ marginRight: '20px' }} onClick={() => setMenuOpen(!menuOpen)}>Menu </button>
-          <button style={{ marginRight: '10px' }}
-            onClick={toggleEraser}>{isErasing ? "Draw" : "Erase"}</button>
-          <button style={{ marginRight: '10px' }}
-            onClick={undo}>Undo</button>
-          <button
-            style={{ marginRight: '10px' }} onClick={clearDrawing}>
-            Clear Drawing
-          </button>
-
-          <input
-            style={{ marginRight: '10px', borderRadius: '5px' }}
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="border-black" /><button onClick={saveCanvas}>Sign NFT</button>
-          <div></div></div>
-      </div>
-    );
-  }; function BidsModal({ isOpen, onClose }) {
-    const [availableBids, setAvailableBids] = useState([]);
-    const [previousBids, setPreviousBids] = useState([]);
-
-    useEffect(() => {
-      async function fetchBids() {
-       
-
-        // Fetch bids for the user. You might need to modify this based on the smart contract's functions.
-        const bidCount = await contract.Bids(address);
-        let bidsArray = [];
-        for (let i = 0; i < bidCount; i++) {
-          const bid = await contract.Bider(address, i);  // Assuming Bider takes user, id, and index as arguments
-          console.log(bid)
-          bidsArray.push(bid);
-        }
-        // Separate available bids from previous bids based on some condition.
-        // This is just a placeholder; adjust conditions as per your contract's logic.
-        let availBids = bidsArray//.filter(bid => /* some condition */);
-        availBids.reverse(); // For numeric bids
-        //const prevBids = bids.filter(bid => /* some condition */);
-
-        setAvailableBids(availBids);
-        //setPreviousBids(prevBids);
       }
 
-      fetchBids();
-    }, []);
-
-    return (
-      <Modal open={isOpen} onClose={onClose}>
-        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-          <h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-2xl font-extrabold w-3/4">Your Bids</h2>
-          <h2>
-
-          Here you can see all NFTs with bounties for you to sign with their rewards in ETH (20% fee) or SIG (0 fee).</h2>
-          <List>
-            {availableBids.map((bid, index) => (
-              <h2 key={index}>
-                <h2 className="font-bold">You have a Bid for NFT: </h2>
-                <h2>{bid.NFT}</h2><h2 className="font-bold"> ID: {bid[1].toString()}, ETH Bounty: {Number(bid[2]) / 10 ** 18}, Sig Bounty: {Number(bid[3]) / 10 ** 18}
-                </h2>_________________________________________</h2>
-            ))}
-          </List>
-
-          <Button onClick={onClose}>Close</Button>
-        </div>
-      </Modal>
-    );
-  } function BidModal({ isOpen, onClose }) {
-    const [Signer, setSigner] = useState('');
-    const [amount, setAmount] = useState(0);
-
-    const handleSubmitBid = async () => {
-      sig(Signer, ethers.parseEther(amount));
-    };
-
-    return (
-      <Modal open={isOpen} onClose={onClose}>
-        <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '50px', borderRadius: '25px' }} className="w-2/4 justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-          <h2 className="m-auto text-center md:mt-8 color-white text-2xl md:text-2xl font-extrabold w-3/4">Bid for Signet</h2>
-          <div className="m-auto w-3/4 space-y-4">
-            <h2 className="font-bold ">Address to place bid for that will receive a reward for signing your NFT</h2>
-            <input
-              style={{ color: '#ffffff', backgroundColor: '#00ccff' }} type="text"
-              value={Signer}
-              onChange={e => setSigner(e.target.value)}
-              className="p-2 rounded border border-solid border-white w-full"
-            /><h2 className="font-bold">Amount to Bid (Minimum 0.01 ETH or 20 SIG)</h2>
-
-            <input
-              style={{ color: '#ffffff', backgroundColor: '#00ccff' }} type="number"
-              placeholder="Amount"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              className="p-2 rounded border border-solid border-white w-full"
-            />
-            <h2 className="font-bold ">Bounty in ETH or SIG Tokens</h2>
-
-            <div className="font-bold ">
-              {sigTog ? "Signets" : "ETH"}<Switch
-                checked={sigTog}
-                onChange={() => { setsigTog(prev => !prev) }}>
-              </Switch>
-            </div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className=" top-3 color-white border-white" onClick={handleSubmitBid}>Submit Bid</Button>
-            <div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff',top: '4px' }} variant='outlined' className=" color-white border-white" onClick={() =>{window.location.replace('https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x000000000075f13bcf2e6652e84821e8b544f6f9&chain=mainnet')}}>Buy SIG</Button></div>
-            </div><Button onClick={onClose}>Close</Button>
-        </div>
-      </Modal>
-    );
-  }
-  async function LOL() {
-    let hash = []
-    let lol = []
-    console.log(addrs)
-    
-    if ((await provider.getNetwork()).chainId != 1) {
-      contractAddress=('0x00051600077302Fe69126F8bD8FC4D00DAB1994d')
-      contract = new ethers.Contract(contractAddress, abi, provider);
-       }
-       else{
-        contractAddress=('0x133703dCDFCfB7Aa0f1B7945e9eae7fbFFd4A5CA')
-        contract = new ethers.Contract(contractAddress, abi, provider);
-         }
-    console.log('LOL', (await provider.getNetwork()).chainId)
-      contract = new ethers.Contract(contractAddress, abi, provider);
-    const queryParams = new URLSearchParams(location);
-    const NFTaddrsURL = await queryParams.get('NFT');
-    const NFTIDURL = await queryParams.get('ID');
-    let NFTaddrs = addrs
-    let NFTID = ID
-    console.log('L', stateL)
-    if (!stateL) {
-
-      if (NFTaddrsURL != null) {
-        NFTaddrs = NFTaddrsURL
-        console.log(NFTaddrs)
-      }
-      if (NFTIDURL != null) {
-        NFTID = NFTIDURL
-        console.log(NFTID)
-      }
-    }
-    hash = await contract.getShownAutographs(
-      NFTaddrs,
-      NFTID
-    ); console.log(hash)
-    let NFTb
-    let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com	')
-
-    const NFT = new ethers.Contract(NFTaddrs, [
-      // Assuming the NFT contract is ERC721 compliant
-      'function tokenURI(uint256 tokenId) external view returns (string)',
-    ], pr)//signer);
-
-    try {
-      let uri = await NFT.tokenURI(NFTID);
-      console.log('LOL', uri)
-      uri = uri.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-      console.log(uri)
-
-      const response = await fetch(uri);
-      console.log(response)
-
-      const metadata = await response.json();
-      NFTb = (metadata.image);
-      NFTb = NFTb.replace("ipfs://", "https://cloudflare-ipfs.com/ipfs/");
-      console.log("NT", NFTb)
+      setBounties(userBounties);
     } catch (error) {
-      console.error("Error fetching NFT image:", error);
+      console.error('Error fetching user bounties:', error);
     }
-    function convertHashesToUrls(ipfsHashes) {
-      const baseUrl = "https://cloudflare-ipfs.com/ipfs/";
-      let urls = [NFTb]//'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media'];
-
-      for (let i = 0; i < ipfsHashes.length; i++) {
-        urls.push(baseUrl + ipfsHashes[i]);
-      }
-      setpngs(urls)
-      return urls;
-    }
-
-    // Usage:
-    const hashes = hash[1];
-    console.log(hashes)
-    const urls = convertHashesToUrls(hashes);
-    console.log(urls);
-    setsigs(urls)
-    const msg = [];
-    for (let i = 0; i < accounts.length; i++) {
-      msg.push(<h2><span className="font-bold">{accounts[i]}</span> has signed this NFT</h2>);
-    }      setAccounts(msg)
-    const messages = await getMessagesForAccounts(hash[0]);
-    setAccounts(messages)
-    console.log(sigs)
-      console.log('LOLLOL',await contract.Bid(
-        NFTaddrs,
-        NFTID,
-        await address
-      ))
-    setclaim((await contract.Bid(
-      NFTaddrs,
-      NFTID,
-      await address
-    ) ).toString()/10**18);
-    setclaimS((await contract.SigBid(
-      NFTaddrs,
-      NFTID,
-      await address
-    ) ).toString()/10**18);
-  }
-  // const pngs = [
-  // 'https://uwulabs.mypinata.cloud/ipfs/QmY1TQeJ31T6juvx32mBevw2pTq5yLFaFqcfREnaJeuhTU/4841.png?alt=media',
-  // sigs//https://gateway.pinata.cloud/ipfs/QmfKG5DyFvpdzRAxuWGBQNyRGj8oiUiGZJL5iiNcvX6gPr sigs
-
-  // ... more PNG URLs
-  //    ];
-  // 1. Create a function to resolve ENS names.
-  async function resolveENS(address) {
-    try {
-      let pro = new JsonRpcProvider('https://eth.llamarpc.com');
-      const ensName = await pro.lookupAddress(address);
-      if (ensName != null) {
-        return ensName;
-      }
-    } catch {
-      // return the address itself if no ENS name is associated
-    }
-    return address;
-  }
-
-  // 2. Map over the accounts and generate messages.
-  async function getMessagesForAccounts(accounts) {
-    const messages = [];
-    for (let i = 0; i < accounts.length; i++) {
-      const nameOrAddress = await resolveENS(accounts[i]);
-      messages.push(<h2><span className="font-bold">{nameOrAddress}</span> has signed this NFT</h2>);
-    }
-    return messages;
-  }
-
-
+  };
 
   return (
-    <div style={{ color: '#00ff55', backgroundColor: '#a8f9ff', display: 'flex', flexDirection: 'column', minHeight: '100%' }} className="min-h-screen">
-      <Toaster /><ConnectButton style={{position: 'relative', top: '4px',right: '4px' }}/><div ><a href='https://scry.finance' ><img style={{ height: '42px', position: 'fixed' }} src="/scry.png" className="top-2 right-56 color-white border-white" />
-      </a></div><div ><a href='https://discord.gg/sp5ubMK9Zt' ><img style={{ height: '42px', position: 'fixed' }} src="/discord.png" className="top-2 right-32 color-white border-white" />
-      </a></div><div ><a href='https://twitter.com/heysignet' ><img style={{ height: '42px', position: 'fixed' }} src="/twitter.png" className="top-2 right-44 color-white border-white" />
-      </a></div><div><Button style={{ backgroundColor: '#ff97c8', color: '#ffffff', position: 'fixed',top: '42px',width: '112px' }} variant='outlined' className=" top-12 right-2 color-white border-white" onClick={() =>{window.location.replace('https://collab.signet.art')}}>Collab</Button>
-      <Button style={{ backgroundColor: '#c060ff', color: '#ffffff', position: 'fixed' ,top: '78px',width: '112px'}} variant='outlined' className=" right-2 color-white border-white" onClick={() =>{window.location.replace('https://tagthewall.org/')}}>the wall</Button>
-            </div><a href='https://docs.veryfi.xyz'><Button style={{ backgroundColor: '#00aaff', color: '#ffffff', position: 'fixed',width: '112px' }} variant='outlined' className="top-2 right-2 color-white border-white">Our Docs</Button>
-      </a><div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '40px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-        <h1 className="m-auto text-center md:mt-8 color-white text-2xl md:text-3xl font-extrabold w-3/4">
-          Signet
-        </h1> <h3 style={{}} className='mx-6 font-bold' >
-          Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your Signets! In Alpha.</h3>
-       <div style={{ color: '#ffffff', backgroundColor: '#53baff', position: 'relative', top: '10px', borderRadius: '25px' }} className="justify-center text-center flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-          <DrawOnLayeredCanvas pngs={pngs} />
-        </div>{claim != 0 &&claim != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claim} ETH!</h2>}{claimS != 0 &&claimS != null && <h2 style={{ color: '#b4ffb4' }}className='font-bold text-2xl'>Claim available! Sign to claim {claimS} SIG!</h2>}
-        {
-          accounts && accounts.map((account, index) => (
-            <div key={index} className="account-item">
-              {account}
-            </div>
-          ))
-        } <div className="m-auto text-center color-white text-1xl md:text-1xl font-bold w-3/4">
-          <h2>NFT</h2>
-          <Select
-            labelId="filter-label"
-            id="filter-select"
-            value={addrs} style={{ color: 'white', backgroundColor: '#00ccff' }}
-            onChange={(e) => setaddrs(e.target.value)} className=" w-80 text-center flex flex-col justify-center mt-4 md:mt-4 px-4 xs:px-0 m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden">
-            <MenuItem value="0xCa7cA7BcC765F77339bE2d648BA53ce9c8a262bD">Tubby Cats</MenuItem>
-<MenuItem value="0xf75140376d246d8b1e5b8a48e3f00772468b3c0c">uwucrew</MenuItem>
-            <MenuItem value="0xed5af388653567af2f388e6224dc7c4b3241c544">Azuki</MenuItem>
-<MenuItem value="0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d">BAYC</MenuItem>
-            <MenuItem value="0x1a92f7381b9f03921564a437210bb9396471050c">Cool Cats</MenuItem>
-            <MenuItem value="">Custom</MenuItem>
-            <MenuItem value="0x6be69b2a9b153737887cfcdca7781ed1511c7e36">Killer GF</MenuItem>
-<MenuItem value="0xbd3531da5cf5857e7cfaa92426877b022e612cf8">PudgyPenguins</MenuItem>
+    <div className="app">
+      <header className="app-header">
+        <h1>Vain dApp</h1>
+      </header>
+      <main className="app-main">
+        <ConnectButton />
+        <div className="form-container">
+          <h2>Create Bounty</h2>
+          <div className="form-group">
+            <label htmlFor="pubkey">Public Key</label>
+            <input
+              type="text"
+              id="pubkey"
+              value={pubkey}
+              onChange={(e) => setPubkey(e.target.value)}
+              className="form-control"
+              placeholder="Enter your public key"
+            />
+          </div><div className="form-group">
+            <label htmlFor="addressType">Address Type</label>
+            <select
+              id="addressType"
+              value={addressType}
+              onChange={(e) => {
+                setAddressType(parseInt(e.target.value));
+                if (e.target.value === '0' || e.target.value === '1' || e.target.value === '2') {
+                  setCustom('0x');
+                  setNLeading0s('0');
+                } else if (e.target.value === '3' || e.target.value === '4' || e.target.value === '5') {
+                  setNLeading0s('0');
+                  setCustom('0x');
 
-          </Select>
-          {addrs == '' && <input type="text" style={{ backgroundColor: '#00ccff', position: 'relative', top: '4px' }} placeholder="" value={addrs} onChange={(e) => { toast.success('Custom NFT set'); setaddrs(e.target.value) }} className=" w-80 top-10 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          }<BidsModal
-            isOpen={isBidsModalOpen}
-            onClose={() => setIsBidsModalOpen(false)}
-          /><BidModal
-            isOpen={isBidModalOpen}
-            onClose={() => setIsBidModalOpen(false)}
-          /><h3>Token</h3>
-          <input type="text" style={{ backgroundColor: '#00ccff', right: '2px' }} placeholder="Token" value={ID} onChange={(e) => { setID(e.target.value) }} className=" w-80 text-center flex flex-col justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-white overflow-hidden" />
-          <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-2 color-white border-white" onClick={LOL}>Refresh</Button>
-          <div><Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 right-2 color-white border-white" onClick={() => setIsBidsModalOpen(true)}>View My Bids</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff' }} variant='outlined' className="top-4 color-white border-white" onClick={() => setIsBidModalOpen(true)}>Bid for Signet</Button>
-            <Button style={{ backgroundColor: '#00aaff', color: '#ffffff',left: '8px' }} variant='outlined' className="top-4 left-3 color-white border-white" onClick={() => {
-              let currentURL = new URL(window.location.href);
-              currentURL = currentURL.origin; navigator.clipboard.writeText(currentURL + '?NFT=' + addrs + '&ID=' + ID); toast.success("Copied :)")
-            }}>copy link</Button><ShareButton style={{ left: '100px' }}
-            title="Sign My NFT on Signet!" 
-            text="Check out my NFT and sign it!"  
+                }
+              }}
+              className="form-control"
+            >
+              <option value={0}>User Wallet EOA with n leading 0s</option>
+              <option value={1}>Contract with n leading 0s</option>
+              <option value={2}>Create2 Contract with n leading 0s</option>
+              <option value={3}>User Wallet EOA with custom prefix</option>
+              <option value={4}>Contract with custom prefix</option>
+              <option value={5}>Create2 Contract with custom prefix</option>
+            </select>
+          </div>
+
+          {addressType === 0 || addressType === 1 || addressType === 2 ? (
+            <div className="form-group">
+              <label htmlFor="nLeading0s">Number of Leading 0s</label>
+              <input
+                type="number"
+                id="nLeading0s"
+                value={nLeading0s}
+                onChange={(e) => setNLeading0s(e.target.value)}
+                className="form-control"
+                placeholder="Enter number of leading 0s"
+              />
+            </div>
+          ) : null}
+
+          {addressType === 3 || addressType === 4 || addressType === 5 ? (
+            <div className="form-group">
+              <label htmlFor="custom">Custom Prefix</label>
+              <input
+                type="text"
+                id="custom"
+                value={custom}
+                onChange={(e) => setCustom(e.target.value)}
+                className="form-control"
+                placeholder="Enter custom prefix"
+              />
+            </div>
+          ) : null}
+          <div className="form-group">
+            <label htmlFor="amount">Bounty Amount (SCRY)</label>
+            <input
+              type="number"
+              id="amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="form-control"
+              placeholder="Enter bounty amount"
+            />
+          </div>
+          <button onClick={createBounty} className="btn btn-primary">
+            Create Bounty
+          </button>
+          <div className="form-group">
+            <label htmlFor="amount">Enter bounty Id</label>
+
+            <input
+              type="number"
+              id="bountyId"
+              value={bountyId}
+              onChange={(e) => setBountyId(e.target.value)}
+              className="form-control"
+              placeholder="Enter bounty Id"
+            />
+            <button onClick={checkBountyStatus} className="btn btn-primary">
+              Check Bounty
+            </button>        </div>
+
+          <div className="bounty-status">
+            <h2>Bounty Details</h2>
+            {bountyDetails ? (
+              <div>
+                <p>Bounty ID: {bountyId}</p>
+                <p>Score: {bountyDetails.score}</p>
+                <p>Creator: {bountyDetails.creator}</p>
+                <p>Reward: {ethers.formatEther(bountyDetails.reward)} SCRY</p>
+                <p>Status: {bountyDetails.reward.eq(0) ? 'Filled' : 'Not Filled'}</p>
+
+                <p>Public Key: {ethers.hexlify(bountyDetails.publicKey)}</p>
+                <p>Private Key: {ethers.hexlify(bountyDetails.privateKey)}</p>
+                <p>Address: {bountyDetails.addrs}</p>
+                <p>Flag: {bountyDetails.flag}</p>
+                <p>Custom: {ethers.hexlify(bountyDetails.custom)}</p>
+                <p>Locked: {bountyDetails.locked}</p>
+              </div>
+            ) : (
+              <p>No bounty details available</p>
+            )}
+          </div> </div>
+        <div className="form-container">
+          <h2>Generate Keys and Addresses</h2>
+          <button onClick={generateKeyAndAddress} className="btn btn-primary">
+            Generate Address
+          </button>
+          <p>Private Key: {privateKey}</p>
+          <p>Public Key: {publicKey}</p>
+          <p>Ethereum Address: {ethereumAddress}</p>
+
+          <br />
+          <label htmlFor="privateKey">Your Private Key:</label>
+          <input
+            type="text"
+            id="privateKey"
+            value={privateKey}
+            onChange={(e) => setPrivateKey(e.target.value)}
+            className="form-control"
           />
-          
-            <div style={{ backgroundColor: '#53baff', color: '#53baff' }}>.</div></div></div></div >
-      <div>.
+          <button onClick={pubKey} className="btn btn-primary">
+            Get Public Key
+          </button>
+          <br />
+
+          <h2>Recover Public Key</h2>
+          <button onClick={signMessage} className="btn btn-primary">
+            Sign Message
+          </button>
+          <p>Recovered Public Key: {recoveredPublicKey}</p>
+          <h2>Private Key Adder</h2>
+          <label htmlFor="privateKeyA">Your Private Key:</label>
+          <input
+            type="text"
+            id="privateKeyA"
+            value={privateKey}
+            onChange={(e) => setPrivateKey(e.target.value)}
+            className="form-control"
+          />
+          <br />
+          <label htmlFor="privateKeyB">Vain Private Key:</label>
+          <input
+            type="text"
+            id="privateKeyB"
+            value={privateKeyB}
+            onChange={(e) => setPrivateKeyB(e.target.value)}
+            className="form-control"
+          />
+          <br />
+          <button
+            onClick={() => addPrivateKeys(privateKey, privateKeyB)}
+            className="btn btn-primary"
+          >
+            Add Private Keys
+          </button>
+          <p>Added Private Key: {addedPrivateKey}</p>
+          <p>Address: {addedAddress}</p>
+          <p>Contract Address: {addedContractAddress}</p>
+        </div>
+      </main>
+      <div className="bounties-section">
+        <h2 className="section-title">Bounties</h2>
+        <div className="filters">
+          <div className="filter-group">
+            <label htmlFor="bountyReward" className="filter-label">
+              Min Bounty Reward
+            </label>
+            <input
+              type="number"
+              id="bountyReward"
+              value={bountyreward}
+              onChange={(e) => setbountyreward(e.target.value)}
+              className="filter-input"
+              placeholder="Enter minimum bounty reward"
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="bountyCount" className="filter-label">
+              Bounty Count
+            </label>
+            <input
+              type="number"
+              id="bountyCount"
+              value={bountyC}
+              onChange={(e) => setbountyC(e.target.value)}
+              className="filter-input"
+              placeholder="Enter bounty count"
+            />
+          </div>
+          <button onClick={() => fetchUserBounties()} className="fetch-button">
+            Fetch Bounties
+          </button>
+        </div>
+        <ul className="bounties-list">
+          {bounties.map((bounty) => (
+            <li key={bounty.id} className="bounty-item">
+              <div className="bounty-header">
+                <h3 className="bounty-title">Bounty ID: {bounty.id}</h3>
+                <span className={`bounty-status ${bounty.filled ? 'filled' : 'open'}`}>
+                  {bounty.filled ? 'Filled' : 'Open'}
+                </span>
+              </div>
+              <div className="bounty-details">
+                <div className="detail-column">
+                  <p className="detail-item">
+                    <span className="detail-label">Score:</span> {bounty.score}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Creator:</span> {bounty.creator}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Reward:</span> {bounty.reward} SCRY
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Public Key:</span> {bounty.publicKey}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Private Key:</span> {bounty.privateKey}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Filled by:</span> {bounty.addrs}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Flag:</span> {bounty.flag}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Custom:</span> {bounty.custom}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Locked:</span> {bounty.locked}
+                  </p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div >
+    </div>
+
   );
 }
 
