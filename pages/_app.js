@@ -57,6 +57,24 @@ const scryContractABI = [
     ],
     stateMutability: "view",
     type: "function"
+  }, {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   }
   // ... other contract functions ...
 ];
@@ -88,6 +106,7 @@ function App() {
   const [showMiningInstructions, setShowMiningInstructions] = useState(false);
     const [showModal, setShowModal] = useState(true);
     const [showMining, setShowMining] = useState(false);
+    const [Balance, setBalance] = useState('');
 
   useEffect(() => {
     const initializeEthers = async () => {
@@ -106,6 +125,9 @@ function App() {
             console.log('Bounty created successfully with ID:', bountyId.toNumber());
             setBountyId(bountyId.toNumber());
           })
+          const scryContract = new ethers.Contract(scryContractAddress, scryContractABI, signer);
+          setBalance(Number(ethers.utils.formatUnits((await scryContract.balanceOf(await signer.getAddress()))), 18).toFixed(2));
+
         } catch (error) {
           console.error('Error initializing Ethers:', error);
         }
@@ -431,11 +453,11 @@ function App() {
                   color: '#0ff',
 
                 }}
-                href="https://twitter.com/not\_pr0/status/1710992292838850591"
+                href="https://twitter.com/not_pr0/status/1710992292838850591"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                https://twitter.com/not\_pr0/status/1710992292838850591
+                https://twitter.com/not_pr0/status/1710992292838850591
               </a>
             </p>
             <p>
@@ -445,11 +467,11 @@ function App() {
                   color: '#0ff',
 
                 }}
-                href="https://twitter.com/not\_pr0/status/1710992292838850591"
+                href="https://twitter.com/not_pr0/status/1710992292838850591"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                https://twitter.com/not\_pr0/status/1710992292838850591
+                https://twitter.com/not_pr0/status/1710992292838850591
               </a>
             </p>
           </ol>
@@ -565,14 +587,24 @@ function App() {
               onChange={(e) => setAmount(e.target.value)}
               className="form-control"
               placeholder="Enter bounty amount"
-            />
+            /><strong>Scry Available </strong>{Balance} <a
+            style={{
+              color: '#0f0',
+
+            }}
+            href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55a341ec586a4c5d58d6297cde5125ab55bc
+            "
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Buy Scry
+          </a>
           </div>
           <button onClick={createBounty} className="btn btn-primary">
             Create Bounty
           </button>
-          <div className="form-group">
+          <div className="form-group"><br/>
             <label htmlFor="amount">Enter bounty Id</label>
-
             <input
               type="number"
               id="bountyId"

@@ -11,11 +11,11 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Welcome to Signet, sign NFTs for all your fans, collect signatures from your favourite creators and show off all your signats!"
+      content="Welcome to Vain!"
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Signet</title>
+    <title>Vain</title>
   </head>
         <App />
     </>
