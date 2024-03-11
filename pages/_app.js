@@ -295,7 +295,7 @@ function App() {
           const bounty = await vainContract.bounties(Bountys- i);
           if (bounty.reward.gte(ethers.utils.parseEther(bountyreward))) {
             userBounties.push({
-              id: i,
+              id: Bountys-i,
               score: bounty.score,
               creator: bounty.creator,
               reward: ethers.utils.formatUnits(bounty.reward, 18),
@@ -483,7 +483,10 @@ function App() {
   const handleSubmitMining = async () => {
     if (contract && signer && bountyToSubmit && minedPrivateKey) {
             console.log(bountyToSubmit.id);
-
+            if (minedPrivateKey.startsWith('0x')) {
+              setMinedPrivateKey(minedPrivateKey.substring(2));
+              toast.error('PrivateKey must not start with 0x. Updated.')
+            }
       try {
         const tx = await contract.bounty(
           bountyToSubmit.id,
