@@ -114,9 +114,10 @@ function App() {
         try {
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           await provider.send('eth_requestAccounts', []);
-          setProvider(provider);
+          setProvider(provider);if (provider.network.chainId!=10 ) {
+         
           alert('Switch to OP')
-
+        }
           const signer = provider.getSigner();
           setSigner(signer);
 
@@ -128,8 +129,7 @@ function App() {
           })
           const scryContract = new ethers.Contract(scryContractAddress, scryContractABI, signer);
           setBalance(Number(ethers.utils.formatUnits((await scryContract.balanceOf(await signer.getAddress()))), 18).toFixed(2));
-          if (provider.network.chainId!=10 ) {
-          }
+          
         } catch (error) {
           console.error('Error initializing Ethers:', error);
         }
