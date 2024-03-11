@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './global.css';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // Replace with your contract ABI and contract address
@@ -176,7 +177,13 @@ function App() {
           addressType,
           0,
           ethers.utils.parseEther(amount.toString()));
-
+          if (!custom.startsWith('0x')) {
+            setCustom('0x' + custom);
+          }
+          if (custom.length % 2 !== 0) {
+            setCustom(custom+ '0');
+          }
+          toast.error('Custom must start with 0x and be even length. Updated.')
         const tx = await contract.createBounty(
           pubkey,
           custom,
@@ -460,20 +467,11 @@ function App() {
                 https://twitter.com/not_pr0/status/1710992292838850591
               </a>
             </p>
-            <p>
-              For Miners:{' '}
-              <a
-                style={{
-                  color: '#0ff',
-
-                }}
-                href="https://twitter.com/not_pr0/status/1710992292838850591"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                https://twitter.com/not_pr0/status/1710992292838850591
-              </a>
-            </p>
+            <strong>Bounty Recommendation:</strong>
+     <ul>
+       <li>&lt;10 characters: 250 SCRY</li>
+       <li>11-12 characters: 2500 SCRY</li>
+     </ul>
           </ol>
           <button className="btn btn-primary" onClick={handleCloseModal}>
             Got it!
@@ -513,6 +511,8 @@ function App() {
         <h1>Vain dApp</h1>
       </header>
       <main className="app-main">
+      <Toaster />
+
         <WelcomeModal />
         <MiningModal /><div className="form-container">
           <h2>Create Bounty</h2>
