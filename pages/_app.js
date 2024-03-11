@@ -5,7 +5,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 
 // Replace with your contract ABI and contract address
-const contractABI = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"bountyId","type":"uint256"},{"indexed":true,"internalType":"address","name":"claimer","type":"address"},{"indexed":false,"internalType":"bytes32","name":"privateKey","type":"bytes32"}],"name":"BountyClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"bountyId","type":"uint256"},{"indexed":true,"internalType":"address","name":"creator","type":"address"},{"indexed":false,"internalType":"uint256","name":"reward","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"publicKey","type":"bytes"},{"indexed":false,"internalType":"uint8","name":"requiredScore","type":"uint8"},{"indexed":false,"internalType":"uint8","name":"flag","type":"uint8"},{"indexed":false,"internalType":"uint8","name":"locked","type":"uint8"}],"name":"BountyCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"claimer","type":"address"},{"indexed":false,"internalType":"bytes32","name":"privateKey","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"publicKey","type":"bytes"},{"indexed":false,"internalType":"address","name":"leaderAddress","type":"address"},{"indexed":false,"internalType":"uint256","name":"rewardAmount","type":"uint256"}],"name":"LeaderClaimed","type":"event"},{"inputs":[],"name":"AA","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"BB","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"Leader","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LeaderAddr","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LeaderPub","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"addr","type":"address"},{"internalType":"uint8","name":"n","type":"uint8"}],"name":"addressStartsWithNZeroes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"bounties","outputs":[{"internalType":"uint8","name":"score","type":"uint8"},{"internalType":"address payable","name":"creator","type":"address"},{"internalType":"uint256","name":"reward","type":"uint256"},{"internalType":"bytes","name":"publicKey","type":"bytes"},{"internalType":"bytes32","name":"privateKey","type":"bytes32"},{"internalType":"address","name":"addrs","type":"address"},{"internalType":"uint8","name":"flag","type":"uint8"},{"internalType":"bytes","name":"custom","type":"bytes"},{"internalType":"uint8","name":"locked","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"bytes32","name":"PK","type":"bytes32"}],"name":"bounty","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"PK","type":"bytes32"}],"name":"bountyLeader","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"bountys","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"data","type":"bytes"}],"name":"bytesToHexString","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"bytes32","name":"PK","type":"bytes32"}],"name":"checkCreate2","outputs":[{"internalType":"bytes20","name":"addrBytes","type":"bytes20"},{"internalType":"uint256","name":"score","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"pubkey","type":"bytes"},{"internalType":"bytes","name":"custom","type":"bytes"},{"internalType":"uint8","name":"nLeading0s","type":"uint8"},{"internalType":"uint8","name":"flag","type":"uint8"},{"internalType":"uint8","name":"locked","type":"uint8"},{"internalType":"uint256","name":"bountyAmount","type":"uint256"}],"name":"createBounty","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"PrivateKey","type":"bytes32"}],"name":"derivePublicKey","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes32","name":"","type":"bytes32"},{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddrs","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeControl","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_origin","type":"address"}],"name":"getNonce0Address","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"_origin","type":"address"}],"name":"getNonce0AddressHex","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"myBounty","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pubKey","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"addrs","type":"address"},{"internalType":"uint256","name":"addrT","type":"uint256"},{"internalType":"bytes","name":"pubK","type":"bytes"}],"name":"setAddrs","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"fullKey","type":"bytes"}],"name":"splitKey","outputs":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"uint256","name":"bountyAmount","type":"uint256"}],"name":"tipBounty","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes","name":"pubkey","type":"bytes"},{"internalType":"bytes","name":"pubkey1","type":"bytes"},{"internalType":"bytes","name":"pubkey2","type":"bytes"},{"internalType":"uint8","name":"n","type":"uint8"},{"internalType":"bytes32","name":"PK","type":"bytes32"},{"internalType":"uint8","name":"flag","type":"uint8"}],"name":"validate","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"pubkey","type":"bytes"},{"internalType":"uint8","name":"flag","type":"uint8"}],"name":"validatePubkey","outputs":[{"internalType":"address","name":"wallet","type":"address"},{"internalType":"address","name":"nonce0Addr","type":"address"},{"internalType":"uint256","name":"score","type":"uint256"},{"internalType":"bytes20","name":"addrs","type":"bytes20"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"pubkey","type":"bytes"},{"internalType":"bytes","name":"pubkey1","type":"bytes"},{"internalType":"bytes","name":"pubkey2","type":"bytes"}],"name":"validatePublicKeyAddition","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"bounty","type":"uint256"}],"name":"withdrawBounty","outputs":[],"stateMutability":"payable","type":"function"}]
+const contractABI = [{ "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "bountyId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "claimer", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }], "name": "BountyClaimed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "bountyId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "creator", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "reward", "type": "uint256" }, { "indexed": false, "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "indexed": false, "internalType": "uint8", "name": "requiredScore", "type": "uint8" }, { "indexed": false, "internalType": "uint8", "name": "flag", "type": "uint8" }, { "indexed": false, "internalType": "uint8", "name": "locked", "type": "uint8" }], "name": "BountyCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "claimer", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }, { "indexed": false, "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "indexed": false, "internalType": "address", "name": "leaderAddress", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "rewardAmount", "type": "uint256" }], "name": "LeaderClaimed", "type": "event" }, { "inputs": [], "name": "AA", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "BB", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "Leader", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LeaderAddr", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LeaderPub", "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PP", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "addr", "type": "address" }, { "internalType": "uint8", "name": "n", "type": "uint8" }], "name": "addressStartsWithNZeroes", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "bounties", "outputs": [{ "internalType": "uint8", "name": "score", "type": "uint8" }, { "internalType": "address payable", "name": "creator", "type": "address" }, { "internalType": "uint256", "name": "reward", "type": "uint256" }, { "internalType": "bytes", "name": "publicKey", "type": "bytes" }, { "internalType": "bytes32", "name": "privateKey", "type": "bytes32" }, { "internalType": "address", "name": "addrs", "type": "address" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }, { "internalType": "bytes", "name": "custom", "type": "bytes" }, { "internalType": "uint8", "name": "locked", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "bounty", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "bountyLeader", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "bountys", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "data", "type": "bytes" }], "name": "bytesToHexString", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }], "name": "checkCreate2", "outputs": [{ "internalType": "bytes20", "name": "addrBytes", "type": "bytes20" }, { "internalType": "uint256", "name": "score", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "custom", "type": "bytes" }, { "internalType": "uint8", "name": "nLeading0s", "type": "uint8" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }, { "internalType": "uint8", "name": "locked", "type": "uint8" }, { "internalType": "uint256", "name": "bountyAmount", "type": "uint256" }], "name": "createBounty", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "PrivateKey", "type": "bytes32" }], "name": "derivePublicKey", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "bytes32", "name": "", "type": "bytes32" }, { "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddrs", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeControl", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_origin", "type": "address" }], "name": "getNonce0Address", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_origin", "type": "address" }], "name": "getNonce0AddressHex", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "myBounty", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "pubKey", "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "addrs", "type": "address" }, { "internalType": "uint256", "name": "addrT", "type": "uint256" }, { "internalType": "bytes", "name": "pubK", "type": "bytes" }], "name": "setAddrs", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "fullKey", "type": "bytes" }], "name": "splitKey", "outputs": [{ "internalType": "uint256", "name": "x", "type": "uint256" }, { "internalType": "uint256", "name": "y", "type": "uint256" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }, { "internalType": "uint256", "name": "bountyAmount", "type": "uint256" }], "name": "tipBounty", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey1", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey2", "type": "bytes" }, { "internalType": "uint8", "name": "n", "type": "uint8" }, { "internalType": "bytes32", "name": "PK", "type": "bytes32" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }], "name": "validate", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "uint8", "name": "flag", "type": "uint8" }], "name": "validatePubkey", "outputs": [{ "internalType": "address", "name": "wallet", "type": "address" }, { "internalType": "address", "name": "nonce0Addr", "type": "address" }, { "internalType": "uint256", "name": "score", "type": "uint256" }, { "internalType": "bytes20", "name": "addrs", "type": "bytes20" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes", "name": "pubkey", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey1", "type": "bytes" }, { "internalType": "bytes", "name": "pubkey2", "type": "bytes" }], "name": "validatePublicKeyAddition", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "bounty", "type": "uint256" }], "name": "withdrawBounty", "outputs": [], "stateMutability": "payable", "type": "function" }]
 const contractAddress = '0x00000000000526B3a03EBf530F37fdAa3520f7B2';
 const scryContractAddress = '0x64ba55a341ec586a4c5d58d6297cde5125ab55bc';
 
@@ -105,9 +105,9 @@ function App() {
   const [minedPrivateKey, setMinedPrivateKey] = useState('');
   const [bountyToSubmit, setBountyToSubmit] = useState(null);
   const [showMiningInstructions, setShowMiningInstructions] = useState(false);
-    const [showModal, setShowModal] = useState(true);
-    const [showMining, setShowMining] = useState(false);
-    const [Balance, setBalance] = useState('');
+  const [showModal, setShowModal] = useState(true);
+  const [showMining, setShowMining] = useState(false);
+  const [Balance, setBalance] = useState('');
 
   useEffect(() => {
     const initializeEthers = async () => {
@@ -177,13 +177,13 @@ function App() {
           addressType,
           0,
           ethers.utils.parseEther(amount.toString()));
-          if (!custom.startsWith('0x')) {
-            setCustom('0x' + custom);
-          }
-          if (custom.length % 2 !== 0) {
-            setCustom(custom+ '0');
-          }
-          toast.error('Custom must start with 0x and be even length. Updated.')
+        if (!custom.startsWith('0x')) {
+          setCustom('0x' + custom);
+        }
+        if (custom.length % 2 !== 0) {
+          setCustom(custom + '0');
+        }
+        toast.error('Custom must start with 0x and be even length. Updated.')
         const tx = await contract.createBounty(
           pubkey,
           custom,
@@ -292,10 +292,10 @@ function App() {
       const Bountys = Number(await vainContract.bountys())
       for (let i = 0; i <= bountyCount; i++) {
         try {
-          const bounty = await vainContract.bounties(Bountys- i);
+          const bounty = await vainContract.bounties(Bountys - i);
           if (bounty.reward.gte(ethers.utils.parseEther(bountyreward))) {
             userBounties.push({
-              id: Bountys-i,
+              id: Bountys - i,
               score: bounty.score,
               creator: bounty.creator,
               reward: ethers.utils.formatUnits(bounty.reward, 18),
@@ -335,73 +335,73 @@ function App() {
             Vain is an open marketplace for mining vanity ETH addresses securely
             using ECC offsets of public keys.
           </p> <div className="mining-instructions">
-    <h4>Mining Instructions</h4>
-    <ol>
-      <li>
-        <p>Look through bounties</p>
-      </li>
-      <li>
-        <p>Mine for a vanity address using the following commands:</p>
-        <p>
-              Grab the miner:{' '}
-              <a
-                style={{
-                  color: '#0ff',
+            <h4>Mining Instructions</h4>
+            <ol>
+              <li>
+                <p>Look through bounties</p>
+              </li>
+              <li>
+                <p>Mine for a vanity address using the following commands:</p>
+                <p>
+                  Grab the miner:{' '}
+                  <a
+                    style={{
+                      color: '#0ff',
 
-                }}
-                href="https://github.com/pr0toshi/profanity2/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                https://github.com/pr0toshi/profanity2/
-              </a>
-            </p>
-        <pre>
-          <code>
-            nvidia-smi<br />
-            git clone https://github.com/pr0toshi/profanity2…<br />
-            cd profanity2<br />
-            apt-get update<br />
-            apt-get install opencl-headers<br />
-            find /usr/ -name *<br />
-            ln -s /usr/local/cuda-11.8/targets/x86\_64-linux/lib/libOpenCL.so /usr/lib/libOpenCL.so<br />
-            ldconfig<br />
-            mkdir -p /etc/OpenCL/vendors/<br />
-            echo "/usr/lib/x86\_64-linux-gnu/libnvidia-opencl.so.1" | tee /etc/OpenCL/vendors/nvidia.icd<br />
-            chmod +x ./profanity.x64<br />
-            chmod +x ./lol.sh<br />
-            <br />
-            For flag 0: ./profanity.x64 --leading 0 -z TargetPubKey<br />
-            For flag 1: ./profanity.x64 --contract --leading 0 -z TargetPubKey<br />
-            For flag 3: ./profanity.x64 --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
-            For flag 4: ./profanity.x64 --contract --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
-<br />
-            Mining will start
-          </code>
-        </pre>
-      </li>
-      <li>
-        <p>Find addresses and private keys in output.txt</p>
-        <pre>
-          <code>cat output.txt</code>
-        </pre>
-      </li>
-      <li>
-        <p>Submit</p>
-        <pre>
-          <code>
-            PK (bytes32) Mined private key without 0x
-          </code>
-        </pre>
-      </li>
-      <li>
-        <p>Profit!</p>
-      </li>
-          
-          </ol>
-          <button className="btn btn-primary" onClick={handleCloseMiningModal}>
-            Got it!
-          </button>        </div>
+                    }}
+                    href="https://github.com/pr0toshi/profanity2/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    https://github.com/pr0toshi/profanity2/
+                  </a>
+                </p>
+                <pre>
+                  <code>
+                    nvidia-smi<br />
+                    git clone https://github.com/pr0toshi/profanity2…<br />
+                    cd profanity2<br />
+                    apt-get update<br />
+                    apt-get install opencl-headers<br />
+                    find /usr/ -name *<br />
+                    ln -s /usr/local/cuda-11.8/targets/x86\_64-linux/lib/libOpenCL.so /usr/lib/libOpenCL.so<br />
+                    ldconfig<br />
+                    mkdir -p /etc/OpenCL/vendors/<br />
+                    echo "/usr/lib/x86\_64-linux-gnu/libnvidia-opencl.so.1" | tee /etc/OpenCL/vendors/nvidia.icd<br />
+                    chmod +x ./profanity.x64<br />
+                    chmod +x ./lol.sh<br />
+                    <br />
+                    For flag 0: ./profanity.x64 --leading 0 -z TargetPubKey<br />
+                    For flag 1: ./profanity.x64 --contract --leading 0 -z TargetPubKey<br />
+                    For flag 3: ./profanity.x64 --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
+                    For flag 4: ./profanity.x64 --contract --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
+                    <br />
+                    Mining will start
+                  </code>
+                </pre>
+              </li>
+              <li>
+                <p>Find addresses and private keys in output.txt</p>
+                <pre>
+                  <code>cat output.txt</code>
+                </pre>
+              </li>
+              <li>
+                <p>Submit</p>
+                <pre>
+                  <code>
+                    PK (bytes32) Mined private key without 0x
+                  </code>
+                </pre>
+              </li>
+              <li>
+                <p>Profit!</p>
+              </li>
+
+            </ol>
+            <button className="btn btn-primary" onClick={handleCloseMiningModal}>
+              Got it!
+            </button>        </div>
 
         </div>
       </div>
@@ -468,10 +468,10 @@ function App() {
               </a>
             </p>
             <strong>Bounty Recommendation:</strong>
-     <ul>
-       <li>&lt;10 characters: 250 SCRY</li>
-       <li>11-12 characters: 2500 SCRY</li>
-     </ul>
+            <ul>
+              <li>&lt;10 characters: 250 SCRY</li>
+              <li>11-12 characters: 2500 SCRY</li>
+            </ul>
           </ol>
           <button className="btn btn-primary" onClick={handleCloseModal}>
             Got it!
@@ -482,11 +482,11 @@ function App() {
   };
   const handleSubmitMining = async () => {
     if (contract && signer && bountyToSubmit && minedPrivateKey) {
-            console.log(bountyToSubmit.id);
-            if (minedPrivateKey.startsWith('0x')) {
-              setMinedPrivateKey(minedPrivateKey.substring(2));
-              toast.error('PrivateKey must not start with 0x. Updated.')
-            }
+      console.log(bountyToSubmit.id);
+      if (minedPrivateKey.startsWith('0x')) {
+        setMinedPrivateKey(minedPrivateKey.substring(2));
+        toast.error('PrivateKey must not start with 0x. Updated.')
+      }
       try {
         const tx = await contract.bounty(
           bountyToSubmit.id,
@@ -505,7 +505,7 @@ function App() {
 
   const toggleMiningInstructions = () => {
     setShowMiningInstructions(!showMiningInstructions);
-  };const toggleMining = () => {
+  }; const toggleMining = () => {
     setShowMining(!showMining);
   };
   return (
@@ -514,7 +514,7 @@ function App() {
         <h1>Vain dApp</h1>
       </header>
       <main className="app-main">
-      <Toaster />
+        <Toaster />
 
         <WelcomeModal />
         <MiningModal /><div className="form-container">
@@ -593,22 +593,22 @@ function App() {
               className="form-control"
               placeholder="Enter bounty amount"
             /><strong>Scry Available </strong>{Balance} <a
-            style={{
-              color: '#0f0',
+              style={{
+                color: '#0f0',
 
-            }}
-            href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55a341ec586a4c5d58d6297cde5125ab55bc
+              }}
+              href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55a341ec586a4c5d58d6297cde5125ab55bc
             "
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Buy Scry
-          </a>
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Buy Scry
+            </a>
           </div>
           <button onClick={createBounty} className="btn btn-primary">
             Create Bounty
           </button>
-          <div className="form-group"><br/>
+          <div className="form-group"><br />
             <label htmlFor="amount">Enter bounty Id</label>
             <input
               type="number"
@@ -734,17 +734,17 @@ function App() {
             Fetch Bounties
           </button>
           <button
-                    
-                    onClick={toggleMiningInstructions} className="btn btn-primary"
-                  >
-                    {showMiningInstructions ? 'Hide Mining' : 'Show Mining'}
-                  </button>
-                  <button
-                    
-                    onClick={toggleMining} className="btn btn-primary"
-                  >
-                    {showMiningInstructions ? 'Hide Mining Instructions' : 'Show Mining Instructions'}
-                  </button>
+
+            onClick={toggleMiningInstructions} className="btn btn-primary"
+          >
+            {showMiningInstructions ? 'Hide Mining' : 'Show Mining'}
+          </button>
+          <button
+
+            onClick={toggleMining} className="btn btn-primary"
+          >
+            {showMiningInstructions ? 'Hide Mining Instructions' : 'Show Mining Instructions'}
+          </button>
         </div>
         <ul className="bounties-list">
           {bounties.map((bounty) => (
@@ -811,8 +811,8 @@ function App() {
                         Submit
                       </button>
                     </div>
-                  </div>  )}</div>
-          </li>
+                  </div>)}</div>
+            </li>
           ))}
         </ul>
       </div>
