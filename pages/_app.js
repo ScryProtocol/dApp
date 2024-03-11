@@ -734,7 +734,7 @@ function App() {
                     
                     onClick={toggleMiningInstructions} className="btn btn-primary"
                   >
-                    {showMiningInstructions ? 'Hide Mining Instructions' : 'Show Mining Instructions'}
+                    {showMiningInstructions ? 'Hide Mining' : 'Show Mining'}
                   </button>
                   <button
                     
