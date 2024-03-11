@@ -178,12 +178,15 @@ function App() {
           0,
           ethers.utils.parseEther(amount.toString()));
         if (!custom.startsWith('0x')) {
+          toast.error('Custom must start with 0x and be even length. Updated.')
+
           setCustom('0x' + custom);
         }
         if (custom.length % 2 !== 0) {
+          toast.error('Custom must start with 0x and be even length. Updated.')
+
           setCustom(custom + '0');
         }
-        toast.error('Custom must start with 0x and be even length. Updated.')
         const tx = await contract.createBounty(
           pubkey,
           custom,
