@@ -82,6 +82,12 @@ function App() {
   const [addedPrivateKey, setAddedPrivateKey] = useState('');
   const [addedAddress, setAddedAddress] = useState('');
   const [addedContractAddress, setAddedContractAddress] = useState('');
+  const [bounties, setBounties] = useState([]);
+  const [minedPrivateKey, setMinedPrivateKey] = useState('');
+  const [bountyToSubmit, setBountyToSubmit] = useState(null);
+  const [showMiningInstructions, setShowMiningInstructions] = useState(false);
+    const [showModal, setShowModal] = useState(true);
+    const [showMining, setShowMining] = useState(false);
 
   useEffect(() => {
     const initializeEthers = async () => {
@@ -141,7 +147,8 @@ function App() {
           console.error('Error approving allowance:', error);
         }
       }
-      try {          console.log( pubkey,
+      try {
+        console.log(pubkey,
           custom,
           nLeading0s,
           addressType,
@@ -239,7 +246,6 @@ function App() {
       console.log('Please install MetaMask!');
     }
   };
-  const [bounties, setBounties] = useState([]);
 
   const fetchUserBounties = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -284,13 +290,207 @@ function App() {
     }
   };
 
+  const MiningModal = () => {
+
+    const handleCloseMiningModal = () => {
+      setShowMining(false);
+    };
+
+    return (
+      <div className={`welcome-modal ${showMining ? 'show' : ''}`}>
+        <div className="modal-content">
+          <span className="close" onClick={handleCloseMiningModal}>
+          </span>
+          <h2>Welcome to Vain!</h2>
+          <p>
+            Vain is an open marketplace for mining vanity ETH addresses securely
+            using ECC offsets of public keys.
+          </p> <div className="mining-instructions">
+    <h4>Mining Instructions</h4>
+    <ol>
+      <li>
+        <p>Look through bounties</p>
+      </li>
+      <li>
+        <p>Mine for a vanity address using the following commands:</p>
+        <p>
+              Grab the miner:{' '}
+              <a
+                style={{
+                  color: '#0ff',
+
+                }}
+                href="https://github.com/pr0toshi/profanity2/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://github.com/pr0toshi/profanity2/
+              </a>
+            </p>
+        <pre>
+          <code>
+            nvidia-smi<br />
+            git clone https://github.com/pr0toshi/profanity2…<br />
+            cd profanity2<br />
+            apt-get update<br />
+            apt-get install opencl-headers<br />
+            find /usr/ -name *<br />
+            ln -s /usr/local/cuda-11.8/targets/x86\_64-linux/lib/libOpenCL.so /usr/lib/libOpenCL.so<br />
+            ldconfig<br />
+            mkdir -p /etc/OpenCL/vendors/<br />
+            echo "/usr/lib/x86\_64-linux-gnu/libnvidia-opencl.so.1" | tee /etc/OpenCL/vendors/nvidia.icd<br />
+            chmod +x ./profanity.x64<br />
+            chmod +x ./lol.sh<br />
+            <br />
+            For flag 0: ./profanity.x64 --leading 0 -z TargetPubKey<br />
+            For flag 1: ./profanity.x64 --contract --leading 0 -z TargetPubKey<br />
+            For flag 3: ./profanity.x64 --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
+            For flag 4: ./profanity.x64 --contract --matching BOUNTYCUSTOMNO0x -z TargetPubKey<br />
+<br />
+            Mining will start
+          </code>
+        </pre>
+      </li>
+      <li>
+        <p>Find addresses and private keys in output.txt</p>
+        <pre>
+          <code>cat output.txt</code>
+        </pre>
+      </li>
+      <li>
+        <p>Submit</p>
+        <pre>
+          <code>
+            PK (bytes32) Mined private key without 0x
+          </code>
+        </pre>
+      </li>
+      <li>
+        <p>Profit!</p>
+      </li>
+          
+          </ol>
+          <button className="btn btn-primary" onClick={handleCloseMiningModal}>
+            Got it!
+          </button>        </div>
+
+        </div>
+      </div>
+    );
+  };
+  const WelcomeModal = () => {
+
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
+
+    return (
+      <div className={`welcome-modal ${showModal ? 'show' : ''}`}>
+        <div className="modal-content">
+          <span className="close" onClick={handleCloseModal}>
+          </span>
+          <h2>Welcome to Vain!</h2>
+          <p>
+            Vain is an open marketplace for mining vanity ETH addresses securely
+            using ECC offsets of public keys.
+          </p>
+          <h3>How to Use Vain:</h3>
+          <ol>
+            <li>
+              <strong>Recover Public Key</strong>: Click "Sign Message" to recover
+              your public key from a signed message from your own address.
+              <br /><strong>Generate Keys and Addresses</strong>: Click the "Generate
+              Address" button to generate a new private key, public key, and
+              Ethereum address.
+            </li>
+            <li>
+              <strong>Create Bounty</strong>: Enter your public key, select the
+              desired address type (EOA, contract, or create2) and the number of
+              leading zeros or custom prefix you want for your vanity address.
+              Specify the bounty amount in SCRY tokens and click "Create Bounty".
+            </li>
+            <li>
+              <strong>Check Bounty Status</strong>: Enter the bounty ID and click
+              "Check Bounty" to view the details of the bounty, including its
+              status (filled or not filled). <strong>Keep this ID.</strong>
+            </li>
+            <li>
+              <strong>Private Key Adder</strong>: Add your private key and the
+              Vain private key to generate a new private key and corresponding
+              address and contract address.
+            </li>
+            <li>
+              <strong>Bounties</strong>: View a list of bounties filtered by
+              minimum bounty reward and bounty count.
+            </li>
+            <p>
+              For a deeper dive into secure vanity address generation using ECC
+              offsets, check out this tweet:{' '}
+              <a
+                style={{
+                  color: '#0ff',
+
+                }}
+                href="https://twitter.com/not\_pr0/status/1710992292838850591"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://twitter.com/not\_pr0/status/1710992292838850591
+              </a>
+            </p>
+            <p>
+              For Miners:{' '}
+              <a
+                style={{
+                  color: '#0ff',
+
+                }}
+                href="https://twitter.com/not\_pr0/status/1710992292838850591"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://twitter.com/not\_pr0/status/1710992292838850591
+              </a>
+            </p>
+          </ol>
+          <button className="btn btn-primary" onClick={handleCloseModal}>
+            Got it!
+          </button>
+        </div>
+      </div>
+    );
+  };
+  const handleSubmitMining = async () => {
+    if (contract && signer && bountyToSubmit && minedPrivateKey) {
+      try {
+        const tx = await contract.bounty(
+          bountyToSubmit.id,
+          '0x' + minedPrivateKey,
+          { value: 0 }
+        );
+        await tx.wait();
+        console.log('Mined private key submitted successfully');
+      } catch (error) {
+        console.error('Error submitting mined private key:', error);
+      }
+    } else {
+      console.error('Missing required data for submission');
+    }
+  };
+
+  const toggleMiningInstructions = () => {
+    setShowMiningInstructions(!showMiningInstructions);
+  };const toggleMining = () => {
+    setShowMining(!showMining);
+  };
   return (
     <div className="app">
       <header className="app-header">
         <h1>Vain dApp</h1>
       </header>
       <main className="app-main">
-        <div className="form-container">
+        <WelcomeModal />
+        <MiningModal /><div className="form-container">
           <h2>Create Bounty</h2>
           <div className="form-group">
             <label htmlFor="pubkey">Public Key</label>
@@ -463,84 +663,122 @@ function App() {
           <p>Address: {addedAddress}</p>
           <p>Contract Address: {addedContractAddress}</p>
         </div>
-      </main>
+      </main><br />
       <div className="bounties-section">
-      <h2 className="section-title">Bounties</h2>
-      <div className="filters">
-        <div className="filter-group">
-          <label htmlFor="bountyReward" className="filter-label">
-            Min Bounty Reward
-          </label>
-          <input
-            type="number"
-            id="bountyReward"
-            value={bountyreward}
-            onChange={(e) => setbountyreward(e.target.value)}
-            className="filter-input"
-            placeholder="Enter minimum bounty reward"
-          />
+        <h2 className="section-title">Bounties</h2>
+        <div className="filters">
+          <div className="filter-group">
+            <label htmlFor="bountyReward" className="filter-label">
+              Min Bounty Reward
+            </label>
+            <input
+              type="number"
+              id="bountyReward"
+              value={bountyreward}
+              onChange={(e) => setbountyreward(e.target.value)}
+              className="filter-input"
+              placeholder="Enter minimum bounty reward"
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="bountyCount" className="filter-label">
+              Bounty Count
+            </label>
+            <input
+              type="number"
+              id="bountyCount"
+              value={bountyC}
+              onChange={(e) => setbountyC(e.target.value)}
+              className="filter-input"
+              placeholder="Enter bounty count"
+            />
+          </div>
+          <button onClick={() => fetchUserBounties()} className="fetch-button">
+            Fetch Bounties
+          </button>
+          <button
+                    
+                    onClick={toggleMiningInstructions} className="btn btn-primary"
+                  >
+                    {showMiningInstructions ? 'Hide Mining Instructions' : 'Show Mining Instructions'}
+                  </button>
+                  <button
+                    
+                    onClick={toggleMining} className="btn btn-primary"
+                  >
+                    {showMiningInstructions ? 'Hide Mining Instructions' : 'Show Mining Instructions'}
+                  </button>
         </div>
-        <div className="filter-group">
-          <label htmlFor="bountyCount" className="filter-label">
-            Bounty Count
-          </label>
-          <input
-            type="number"
-            id="bountyCount"
-            value={bountyC}
-            onChange={(e) => setbountyC(e.target.value)}
-            className="filter-input"
-            placeholder="Enter bounty count"
-          />
-        </div>
-        <button onClick={() => fetchUserBounties()} className="fetch-button">
-          Fetch Bounties
-        </button>
-      </div>
-      <ul className="bounties-list">
-        {bounties.map((bounty) => (
-          <li key={bounty.id} className="bounty-item">
-            <div className="bounty-header">
-              <h3 className="bounty-title">Bounty ID: {bounty.id}</h3>
-              <span className={`bounty-status ${bounty.filled ? 'filled' : 'open'}`}>
-                {bounty.filled ? 'Filled' : 'Open'}
-              </span>
-            </div>
-            <div className="bounty-details">
-              <div className="detail-column">
-                <p className="detail-item">
-                  <span className="detail-label">Score:</span> {bounty.score}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Creator:</span> {bounty.creator}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Reward:</span> {bounty.reward} SCRY
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Public Key:</span> {bounty.publicKey}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Private Key:</span> {bounty.privateKey}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Filled by:</span> {bounty.addrs}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Flag:</span> {bounty.flag}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Custom:</span> {bounty.custom}
-                </p>
-                <p className="detail-item">
-                  <span className="detail-label">Locked:</span> {bounty.locked}
-                </p>
-            </div>
+        <ul className="bounties-list">
+          {bounties.map((bounty) => (
+            <li key={bounty.id} className="bounty-item">
+              <div className="bounty-header">
+                <h3 className="bounty-title">Bounty ID: {bounty.id}</h3>
+                <span className={`bounty-status ${bounty.filled ? 'filled' : 'open'}`}>
+                  {bounty.filled ? 'Filled' : 'Open'}
+                </span>
               </div>
+              <div className="bounty-details">
+                <div className="detail-column">
+                  <p className="detail-item">
+                    <span className="detail-label">Score:</span> {bounty.score}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Creator:</span> {bounty.creator}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Reward:</span> {bounty.reward} SCRY
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Public Key:</span> {bounty.publicKey}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Private Key:</span> {bounty.privateKey}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Filled by:</span> {bounty.addrs}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Flag:</span> {bounty.flag}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Custom:</span> {bounty.custom}
+                  </p>
+                  <p className="detail-item">
+                    <span className="detail-label">Locked:</span> {bounty.locked}
+                  </p>
+                </div>
+                {showMiningInstructions && (
+                  <div className="mining-instructions">
+                    <h4>Submit Mined Private Key</h4>
+                    {/* ... existing mining instructions ... */}
+                    <div className="mining-submission">
+                      <div className="form-group">
+                        <label htmlFor="minedPrivateKey">Mined Private Key</label>
+                        <input
+                          type="text"
+                          id="minedPrivateKey"
+                          value={minedPrivateKey}
+                          onChange={(e) => setMinedPrivateKey(e.target.value)}
+                          className="form-control"
+                          placeholder="Enter mined private key"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          setBountyToSubmit(bounty);
+                          handleSubmitMining();
+                        }}
+                        className="btn btn-primary"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>  )}</div>
           </li>
-        ))}
-      </ul>
-    </div>
+          ))}
+        </ul>
+      </div>
     </div>
 
   );
