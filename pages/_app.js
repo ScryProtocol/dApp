@@ -455,7 +455,7 @@ function App() {
               <strong>Bounties</strong>: View a list of bounties filtered by
               minimum bounty reward and bounty count.
             </li><li>
-              <strong>Network</strong>: We are on OP and Ethereum.
+              <strong>Network</strong>: We are on OP.
             </li>
             <p>
               For a deeper dive into secure vanity address generation using ECC
