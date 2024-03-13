@@ -362,12 +362,12 @@ function App() {
                 <pre>
                   <code>
                     nvidia-smi<br />
-                    git clone https://github.com/pr0toshi/profanity2…<br />
+                    git clone https://github.com/pr0toshi/profanity2<br />
                     cd profanity2<br />
                     apt-get update<br />
                     apt-get install opencl-headers<br />
-                    find /usr/ -name *<br />
-                    ln -s /usr/local/cuda-11.8/targets/x86\_64-linux/lib/libOpenCL.so /usr/lib/libOpenCL.so<br />
+                    find /usr/ -name libOpenCL.<br />
+                    ln -s /usr/local/cuda-12.0/targets/x86\_64-linux/lib/libOpenCL.so /usr/lib/libOpenCL.so<br />
                     ldconfig<br />
                     mkdir -p /etc/OpenCL/vendors/<br />
                     echo "/usr/lib/x86\_64-linux-gnu/libnvidia-opencl.so.1" | tee /etc/OpenCL/vendors/nvidia.icd<br />
