@@ -373,6 +373,8 @@ function App() {
                     echo "/usr/lib/x86\_64-linux-gnu/libnvidia-opencl.so.1" | tee /etc/OpenCL/vendors/nvidia.icd<br />
                     chmod +x ./profanity.x64<br />
                     chmod +x ./lol.sh<br />
+                    sudo apt install nodejs npm<br />
+                    npm i ethers@5.7
                     <br />
                     For flag 0: ./profanity.x64 --leading 0 -z TargetPubKey<br />
                     For flag 1: ./profanity.x64 --contract --leading 0 -z TargetPubKey<br />
