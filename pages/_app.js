@@ -568,14 +568,14 @@ function App() {
 
           {addressType === 0 || addressType === 1 || addressType === 2 ? (
             <div className="form-group">
-              <label htmlFor="nLeading0s">Number of Leading 0s</label>
+              <label htmlFor="nLeading0s">Number of 0s</label>
               <input
                 type="number"
                 id="nLeading0s"
                 value={nLeading0s}
                 onChange={(e) => setNLeading0s(e.target.value)}
                 className="form-control"
-                placeholder="Enter number of leading 0s"
+                placeholder="Enter number of 0s"
               />
             </div>
           ) : null}
