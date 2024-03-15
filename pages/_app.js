@@ -476,7 +476,7 @@ function App() {
             </p>
             <strong>Bounty Recommendation:</strong>
             <ul>
-            <li>&lt;9 characters: FREE (only temp, while testing infra)</li>
+            <li>&lt;9 characters: FREE or &lt;16 for total 0s (only temp, while testing infra)</li>
               <li>&lt;10 characters: 250 SCRY</li>
               <li>11-12 characters: 2500 SCRY</li>
             </ul>
