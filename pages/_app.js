@@ -561,6 +561,8 @@ function App() {
               <option value={3}>User Wallet EOA with custom prefix</option>
               <option value={4}>Contract with custom prefix</option>
               <option value={5}>Create2 Contract with custom prefix</option>
+              <option value={6}>User Wallet EOA with n total 0s</option>
+              <option value={7}>Contract with n total 0s</option>
             </select>
           </div>
 
