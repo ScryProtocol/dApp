@@ -131,6 +131,8 @@ function App() {
       date = date.toLocaleString()
       setexpiry(date);
       setDelta((Number(await contract.getDelta()) / (10 ** Number(await contract.priceDec()))).toString());
+      setprofit((Number(await contract.getDelta()) / (10 ** Number(await contract.priceDec()))).toString());
+
       setdec((await contract.decimals()).toString());
       setstrike((Number(await contract.strikePrice()) / (10 ** Number(await contract.priceDec()))).toString());
       console.log('LOL', bal, date.toLocaleString())
@@ -349,137 +351,87 @@ function App() {
     };
 
     return (
-      <Modal open={open} onClose={onClose}>
-        <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full min-h-screen">
-          <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '25px',
-          }} className="flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
+     <Modal open={open} onClose={onClose}>
+  <div className="bg-gray-900 h-full min-h-screen">
+    <div className="flex flex-col space-y-6 bg-gray-800 m-auto p-4 max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
+      <h1 className="text-center text-2xl md:text-3xl font-extrabold text-green-500 mb-8">
+        Create your own option
+      </h1>
 
-            <div className="flex justify-center">
-              <h1 className="text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-                Create your own option
-              </h1>
-            </div>
+      {/* Name Field */}
+      <input
+        type="text"
+        placeholder="Name"
+        value={newName}
+        onChange={(e) => setNewName(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* Symbol Field */}
+      <input
+        type="text"
+        placeholder="Symbol"
+        value={newSymbol}
+        onChange={(e) => setNewSymbol(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Symbol"
-                value={newSymbol}
-                onChange={(e) => setNewSymbol(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* API Field */}
+      <input
+        type="text"
+        placeholder="API"
+        value={api}
+        onChange={(e) => setApi(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="API"
-                value={api}
-                onChange={(e) => setApi(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* Path Field */}
+      <input
+        type="text"
+        placeholder="Path"
+        value={path}
+        onChange={(e) => setPath(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Path"
-                value={path}
-                onChange={(e) => setPath(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* Strike Field */}
+      <input
+        type="text"
+        placeholder="Strike"
+        value={strike}
+        onChange={(e) => setStrike(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Strike"
-                value={strike}
-                onChange={(e) => setStrike(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* Date Field */}
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
+      />
 
-            <div className="flex justify-center">
-              <TextField
-                id="outlined"
-                label="Date"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                color='success' style={{ color: 'green', top: '1px' }} className="text-center text-white bg-green-500 w-1/2" focused
-              />
-            </div>
+      {/* Buttons */}
+      <div className="flex justify-center gap-3 mt-6">
+        <button onClick={handleCreateDelta} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">
+          Deploy
+        </button>
+        <button onClick={handleLookup} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">
+          Lookup API
+        </button>
+        <button onClick={closeOptionModal} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">
+          Close
+        </button>
+      </div>
+      
+      {/* Sample Data Display */}
+      <div className="w-1/2 mx-auto  text-white font-semibold">
+        {sampleData}
+      </div>
+    </div>
+  </div>
+</Modal>
 
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'green' }}>Oracle</InputLabel>
-                <Select
-                  value={oracle}
-                  onChange={(e) => setOracle(e.target.value)}
-                  style={{ color: 'green', backgroundColor: '#00ff55' }}
-                >
-                  {/* Add your oracle options here */}
-                  <MenuItem value="0x0000000000071821e8033345a7be174647be0706">Scry</MenuItem>
-                  <MenuItem value="oracle2">Oracle 2</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'green' }}>Collateral Type</InputLabel>
-                <Select
-                  value={collateralT}
-                  onChange={(e) => setcollateralT(e.target.value)}
-                  style={{ color: 'green', backgroundColor: '#00ff55' }}
-                >
-                  {/* Add your collateral options here */}
-                  <MenuItem value="0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0">USDC</MenuItem>
-                  <MenuItem value="collateral2">Collateral 2</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className="flex justify-center">
-              <FormControl className="w-1/2">
-                <InputLabel style={{ color: 'dark-green' }}>Decimals</InputLabel>
-                <TextField
-                  id="outlined"
-                  defaultValue='2'
-                  label="Decimals"
-                  onChange={(e) => setDecimals(e.target.value)}
-                  color='success' style={{ color: 'dark-green', top: '1px' }} className="text-center text-white bg-green-500 w-full" focused
-                />
-              </FormControl>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={handleCreateDelta} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Deploy</Button>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={handleLookup} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Lookup API</Button>
-            </div>
-            <div className="flex justify-center">
-              <Button onClick={closeOptionModal}>close</Button>
-            </div>
-            <div className="flex justify-center w-1/2 m-auto">
-              {sampleData}
-            </div>
-
-          </div>
-        </div>
-      </Modal>
 
     );
   }
@@ -493,76 +445,163 @@ function App() {
         borderRadius: 'small',
         fontStack: 'system',
         overlayBlur: 'small',
-      })}>
-        <div style={{ color: '#00ff55' }} className="bg-gray-900 h-full w-full min-h-screen" >
-          <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '25px',
-          }} className=" flex flex-col bg-gray-800 space-y-6 justify-center m-auto max-w-4xl min-w-80 shadow-md rounded-md border border-solid border-green-500 overflow-hidden">
-            <ConnectButton showBalance={true} accountStatus={{
+      })}><div className="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+      <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full p-6 ">
+         <header className="bg-gradient-to-r from-green-600 to-green-700 py-4 px-6 rounded-xl mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold gradient-text text-center">Hedge</h1>
+            <div className="flex items-center">
+<ConnectButton showBalance={true} accountStatus={{
               smallScreen: 'full',
               largeScreen: 'full',
-            }} chainStatus="icon"
-            /><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              Hedge
-            </h1>
-            <h1 style={{
-              color: 'orange', position: 'relative',
-              top: '25px',
-            }} className="m-auto text-center md:mt-8 color-red-500 text-2xl md:text-3xl font-extrabold w-3/4">
-              ALPHA - YOU MAY LOSE ALL YOUR MONEY.
-            </h1><h1 className="m-auto text-center md:mt-8 color-green-500 text-2xl md:text-1xl font-extrabold w-3/4">
-              <div>{name}</div>
-              <div> {sym}</div>
-              <div>My Hedges: {balance}</div>
-              <div>My Collateral: {collateral}</div>
-              <div>Price: {price}  ||  Strike: {strike}</div>
-              Profit per token: {delta}  || Expiry: {expiry}
-              <div>Total Hedges: {sup}</div>
-              <Button 
+            }} chainStatus="icon"/>              <div id="wallet-info" className="hidden">
+                <span className="text-sm font-semibold mr-1" id="wallet-address"></span>
+                <span className="text-sm font-semibold" id="wallet-balance"></span>
+              </div>
+            </div>
+          </div>
+          <section>
+            <p className=" text-base leading-normal text-center">Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.</p>
+          </section>
+        </header>
+        <OptionModal open={openModal} onClose={closeOptionModal} />
+    
+
+        <section className="mb-6">
+  <div className="flex flex-col items-center">
+    <input
+      id="outlined-address"
+      type="text"
+      defaultValue="0x759348610275cb963304d0128d87526b715247aa"
+      onChange={handleaddrs}
+      className="w-full bg-gray-700 rounded-lg py-2 px-4 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 md:w-1/2"
+      placeholder="Hedge Address"
+    />
+    <button 
+      onClick={() => fetchBalance()}
+      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300"
+    >
+      Fetch Hedge Contract
+    </button>
+  </div>
+</section>
+
+    <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-4 text-center">Hedge Details</h2>
+      <div className="bg-gray-700 rounded-lg p-4 shadow-lg grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+          <h3 className="font-semibold text-lg text-green-300">Price</h3>
+          <p className="text-white text-2xl text-2xl font-bold" id="current-price">{price}</p>
+        </div>
+        
+        <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+          <h3 className="font-semibold text-lg text-green-300">Strike</h3>
+          <p className="text-white text-2xl" id="strike-price">{strike}</p>
+        </div>
+        
+        <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+          <h3 className="font-semibold text-lg text-green-300">Profit per Token</h3>
+          <p className="text-white text-2xl" id="profit-per-token">{profit}</p>
+        </div>
+        
+        <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+          <h3 className="font-semibold text-lg text-green-300">Expiry</h3>
+          <p className="text-white text-2xl" id="expiry-date">{expiry}</p>
+        </div>
+    
+      </div>
+    </section><section className="flex justify-center mb-6">
+            
+            <a href="#" id="uniswap" className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full mr-3 shadow-lg transition-colors duration-300">Uniswap</a>
+            <a href="#" id="lp" className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">Provide LP</a>
+          </section> <h2 className="text-xl font-semibold mb-4 text-center">Enter Address</h2>
+          
+
+    <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-4 text-center">My Hedges</h2>
+      <div className="bg-gray-700 rounded-lg p-4 shadow-lg md:w-1/2 mx-auto">
+        <div id="user-hedges" className="grid grid-cols-1 gap-4 text-xl font-bold">
+        {balance}
+        </div>
+      </div>
+    </section>
+    
+    <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-4 text-center">My Collateral</h2>
+      <div className="bg-gray-700 rounded-lg p-4 shadow-lg md:w-1/2 mx-auto">
+        <div id="user-collateral" className="grid grid-cols-1 gap-4 text-xl font-bold">
+        {collateral}
+        </div>
+      </div>
+    </section>
+    
+    <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-4 text-center">Total Hedges</h2>
+      <div className="bg-gray-700 rounded-lg p-4 shadow-lg md:w-1/2 mx-auto">
+        <div id="total-hedges" className="grid grid-cols-1 gap-4 text-xl font-bold">
+        {price}
+        </div>
+      </div>
+     
+    </section>
+    <section className="mb-6">
+  <div className="bg-gray-600 rounded-lg p-4 shadow-lg md:w-1/2 mx-auto">
+    <h2 className="text-xl font-semibold mb-4 text-center">Amount</h2>
+    <input
+      id="number"
+      type="number"
+      defaultValue="1"
+      onChange={handleChange}
+      className="block w-full bg-gray-700 rounded-lg py-2 px-4 mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+    />
+    <div className="flex justify-center gap-3">
+      <button id="mint" onClick={() => Mint()} className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">MINT</button>
+      <button id="redeem"  onClick={() => handleRedeem()}className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">REDEEM</button>
+      <button id="unlock"  onClick={() => handleUnlock()}className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">UNLOCK COLLATERAL</button>
+    </div>
+  </div>
+</section>
+
+
+          <section className="flex justify-center mb-6">
+            <button id="create-option"onClick={openOptionModal} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full mr-3 shadow-lg transition-colors duration-300">CREATE OPTION</button>
+          
+          </section>
+    
+           {tech === 0 && (
+  <>
+    <div className="bg-gray-700 rounded-lg p-4 shadow-lg grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+        <h1 className="font-semibold text-lg" style={{ color: '#00caff' }}>Hedge Address:</h1>
+        <p className="font-semibold text-white">{addrs}</p>
+      </div>        
+      <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+        <h1 className="font-semibold text-lg" style={{ color: '#00caff' }}>Oracle:</h1>
+        <p className="font-semibold text-white">{oracle}</p>
+      </div>
+      <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+        <h1 className="font-semibold text-lg" style={{ color: '#00caff' }}>Price Source:</h1>
+        <p className="font-semibold text-white">{APIs}</p>
+      </div>
+    </div>
+  </>
+)}
+ 
+        <div className="flex justify-between w-full gap-3">
+   <button 
         style={{ color: '#00caff' }} 
-        variant='outlined' 
-        className="m-auto text-center color-green-500 border-green-500 top-1"
-        onClick={() => {tech==1?settech(0) : settech(1)}}  // Toggle between true and false
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300"        onClick={() => {tech==1?settech(0) : settech(1)}}  // Toggle between true and false
       >
         {tech==0 ? 'Hide Info' : 'Show Technical Info'}
-      </Button> {tech==0 && (<><h1 className="text-base "style={{ color: '#00caff' }}>Hedge Address: {addrs}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Oracle: {oracle}</h1><h1 className="text-base "style={{ color: '#00caff' }}>Price Source: {APIs}</h1></>)}</h1><div style={{ color: '#77ff8b' }} className='mx-6' >
-              Simple protection against your assets value. Hedge any asset, at any price, for any duration. You can put up collateral to sell Hedges, earning a profit if the price at expiry higher than the strike. Holders of the Hedges can redeem them if lower than the strike for the difference in the value. Hedge sellers are able to redeem any remaining collateral after.        </div>
-            <OptionModal open={openModal} onClose={closeOptionModal} /><div className="flex flex-col justify-center m-auto overflow-hidden">
-              <TextField
-                id="number"
-                label=""
-                type="number"
-                defaultValue='1'
-                InputLabelProps={{
-                  shrink: true,
-                }} onChange={handleChange}
-                color='success' style={{ color: 'green' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
-              />
-            </div><div className="flex flex-col justify-center m-auto overflow-hidden"><Button onClick={() => Mint()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Mint</Button>
-              <Button onClick={() => handleRedeem()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Redeem</Button>
-              <Button onClick={() => handleUnlock()} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-green-500 border-green-500">Unlock Collateral</Button></div><Button onClick={openOptionModal}>Create Option</Button>
-            <div className="justify-center m-auto overflow-hidden"> <Button onClick={() => (Feeds())} style={{ color: '#77ff8b', position: 'absolute', right: '140px' }} variant='outlined' className=" text-center color-pink-500 border-pink-500">Oracle Update</Button>
-              <Button onClick={() => (Price())} style={{ color: '#77ff8b', position: 'absolute', right: '0px' }} variant='outlined' className="  text-center color-pink-500 border-pink-500">Update Price</Button>
-              <Button onClick={() => window.location.assign(UniURL)} style={{ color: 'pink' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">Uniswap</Button>
-              <Button onClick={() => window.location.assign(LPURL)} style={{ color: '#77ff8b' }} variant='outlined' className="m-auto text-center color-pink-500 border-pink-500">LP</Button>
-            </div>
-          </div> <div style={{
-            color: '#00ff55', position: 'relative',
-            top: '40px', height: '150px'
-          }} className="space-y-6 justify-center m-auto max-w-xl min-w-80 overflow-hidden">
-            <div className="top-20 flex flex-col justify-center m-auto overflow-hidden">
-              <TextField
-                id="outlined"
-                label=""
-                defaultValue='0x759348610275cb963304d0128d87526b715247aa'
-                InputLabelProps={{
-                  shrink: true,
-                }} onChange={handleaddrs}
-                color='success' style={{ color: 'green', top: '1px' }} className="ml-10 m-auto text-center text-white bg-green-500" focused
-              />
-              <Button onClick={() => fetchBalance()} style={{ color: '#77ff8b', }} variant='outlined' className=" m-auto text-center color-green-500 border-green-500">Fetch Hedge Contract</Button>
-            </div></div>.</div></RainbowKitProvider>
+      </button>
+
+  <div className="flex-grow"></div> {/* This div acts as a spacer */}
+
+  <button id="oracle-update" onClick={() => (Feeds())}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">ORACLE UPDATE</button>
+  <button id="price-update" onClick={() => (Feeds())}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">UPDATE PRICE</button>
+</div>
+</div></div></RainbowKitProvider>
     </WagmiConfig>
   )
 }
