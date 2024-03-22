@@ -309,7 +309,15 @@ function App() {
 
           // Convert date string to UNIX timestamp
           const expiryTimestamp = Math.floor((new Date(date).getTime() - Date.now()) / 1000 / 3600);
-
+          console.log( newName,
+            newSymbol,
+            ['0x0000000000071821e8033345a7be174647be0706'], // Morpheus array - fill as needed
+            collateralT,
+            expiryTimestamp,
+            strike, // Assuming strike is in Ether
+            api,
+            path,
+            decimals)
           // Call the createDelta function
           const tx = await deltaFactory.createDelta(
             newName,
@@ -332,7 +340,7 @@ function App() {
           await tx.wait();
           closeOptionModal()
         }
-      } catch { console.log() }
+      } catch  (error){ console.log(error) }
     };
     const handleLookup = async () => {
       // try {
@@ -403,6 +411,48 @@ function App() {
         className="bg-gray-700 text-white w-1/2 mx-auto p-2 rounded-lg focus:outline-none"
       />
 
+      {/* Oracle Selection */}
+      <div className="flex justify-center">
+        <div className="w-1/2">
+          <div className="text-white mb-2">Oracle</div>
+          <select
+            value={oracle}
+            onChange={(e) => setOracle(e.target.value)}
+            className="bg-gray-700 text-white w-full rounded-lg p-2 focus:outline-none"
+          >
+            <option value="0x0000000000071821e8033345a7be174647be0706">Scry</option>
+            <option value="oracle2">Oracle 2</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Collateral Type Selection */}
+      <div className="flex justify-center">
+        <div className="w-1/2">
+          <div className="text-white mb-2">Collateral Type</div>
+          <select
+            value={collateralT}
+            onChange={(e) => setcollateralT(e.target.value)}
+            className="bg-gray-700 text-white w-full rounded-lg p-2 focus:outline-none"
+          >
+            <option value="0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0">USDC</option>
+            <option value="collateral2">Collateral 2</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Decimals Input */}
+      <div className="flex justify-center">
+        <div className="w-1/2">
+          <input
+            type="number"
+            defaultValue='2'
+            placeholder="Decimals"
+            onChange={(e) => setDecimals(e.target.value)}
+            className="bg-gray-700 text-white w-full rounded-lg p-2 focus:outline-none"
+          />
+        </div>
+      </div>
       {/* Date Field */}
       <input
         type="date"
@@ -514,7 +564,7 @@ function App() {
     </section><section className="flex justify-center mb-6">
             
             <a href="#" id="uniswap" onClick={() => window.location.assign(UniURL)}className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full mr-3 shadow-lg transition-colors duration-300">Uniswap</a>
-            <a href="#" id="lp"onClick={() => window.location.assign(LP)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">Provide LP</a>
+            <a href="#" id="lp"onClick={() => window.location.assign(LPURL)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">Provide LP</a>
           </section> <h2 className="text-xl font-semibold mb-4 text-center">Enter Address</h2>
           
 
