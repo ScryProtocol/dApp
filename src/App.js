@@ -120,7 +120,7 @@ function App() {
       setsym(await contract.symbol()); setAPIs(await contract.API());
       setoracle(await contract.morpheus(0));
       setBalance(bal.toString());
-      setToken(await contract.collateralToken()).toString()
+      setToken(await contract.collateralToken())
       const sup = Number(await contract.totalSupply() / d) / 100;
       setSup(sup.toString());
       setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
