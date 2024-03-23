@@ -654,7 +654,7 @@ function App() {
   <div className="flex-grow"></div> {/* This div acts as a spacer */}
 
   <button id="oracle-update" onClick={() => (Feeds())}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">ORACLE UPDATE</button>
-  <button id="price-update" onClick={() => (Feeds())}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">UPDATE PRICE</button>
+  <button id="price-update" onClick={() => (Price())}className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">UPDATE PRICE</button>
 </div>
 </div></div></RainbowKitProvider>
     </WagmiConfig>
