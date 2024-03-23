@@ -76,7 +76,7 @@ function App() {
   const [APIs, setAPIs] = useState();
   const [oracle, setoracle] = useState();
   const [tech, settech] = useState(1);
-
+  const [tokn, setToken] = useState('');
   const [collateral, setCollateral] = useState(null);
   const [account, setAccount] = useState(null); const [openModal, setOpenModal] = useState(false);
   function openOptionModal() {
@@ -120,6 +120,7 @@ function App() {
       setsym(await contract.symbol()); setAPIs(await contract.API());
       setoracle(await contract.morpheus(0));
       setBalance(bal.toString());
+      setToken(await contract.collateralToken()).toString()
       const sup = Number(await contract.totalSupply() / d) / 100;
       setSup(sup.toString());
       setCollateral((Number(await contract.collateral(ad) / d) / 100).toString());
@@ -633,6 +634,10 @@ function App() {
       <div className="bg-gray-800 p-4 rounded-lg shadow-md">
         <h1 className="font-semibold text-lg" style={{ color: '#00caff' }}>Price Source:</h1>
         <p className="font-semibold text-white">{APIs}</p>
+      </div>
+      <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+        <h1 className="font-semibold text-lg" style={{ color: '#00caff' }}>Collateral:</h1>
+        <p className="font-semibold text-white">{tokn}</p>
       </div>
     </div>
   </>
