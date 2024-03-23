@@ -292,12 +292,12 @@ function App() {
   function OptionModal({ open, onClose }) {
     const [api, setApi] = useState('');
     const [path, setPath] = useState('');
-    const [collateralT, setcollateralT] = useState('');
+    const [collateralT, setcollateralT] = useState('0x53844F9577C2334e541Aec7Df7174ECe5dF1fCf0');
     const [newName, setNewName] = useState('');
     const [newSymbol, setNewSymbol] = useState('');
     const [strike, setStrike] = useState('');
     const [date, setDate] = useState(new Date());
-    const [oracle, setOracle] = useState('');
+    const [oracle, setOracle] = useState('0x0000000000071821e8033345a7be174647be0706');
     const [sampleData, setSampleData] = useState('');
     const [decimals, setDecimals] = useState(0);
     const handleCreateDelta = async () => {
