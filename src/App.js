@@ -565,7 +565,7 @@ function App() {
             
             <a href="#" id="uniswap" onClick={() => window.location.assign(UniURL)}className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full mr-3 shadow-lg transition-colors duration-300">Uniswap</a>
             <a href="#" id="lp"onClick={() => window.location.assign(LPURL)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300">Provide LP</a>
-          </section> <h2 className="text-xl font-semibold mb-4 text-center">Enter Address</h2>
+          </section>
           
 
     <section className="mb-6">
