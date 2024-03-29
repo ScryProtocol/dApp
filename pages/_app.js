@@ -566,7 +566,7 @@ function App() {
             </select>
           </div>
 
-          {addressType === 0 || addressType === 1 || addressType === 2 ? (
+          {addressType === 0 || addressType === 1 || addressType === 2|| addressType === 6|| addressType === 7 ? (
             <div className="form-group">
               <label htmlFor="nLeading0s">Number of 0s</label>
               <input
