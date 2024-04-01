@@ -1,273 +1,280 @@
-/* General Styles */
 body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #1c1c1c;
-  color: #ffffff;
+
+font-family: 'Roboto', sans-serif;
+
+background-color: #f2f2f2;
+
+color: #333;
+
+margin: 0;
+
+padding: 0;
+
 }
 
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+header {
+
+text-align: center;
+
+padding: 40px 0;
+
+color: white;
+
 }
 
-.app-header {
-  text-align: center;
-  margin-bottom: 40px;
+h1 {
+
+font-size: 48px;
+
+font-weight: bold;
+
+text-transform: uppercase;
+
+letter-spacing: 2px;
+
+margin: 0;
+
 }
 
-.app-main {
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
+main {
+
+max-width: 960px;
+
+margin: 40px auto;
+
+padding: 20px;
+
 }
 
-/* Form Styles */
-.form-container {
-  background-color: #2c2c2c;
+form {
+
+display: grid;
+
+grid-template-columns: 1fr;
+
+gap: 20px;
+
+background-color: white;
+
+padding: 20px;
+
+border-radius: 8px;
+
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+}
+form {
+
+display: grid;
+
+grid-template-columns: 1fr;
+
+gap: 20px;
+
+background-color: white;
+
+padding: 20px;
+
+border-radius: 8px;
+
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+}
+label {
+
+font-size: 16px;
+
+font-weight: bold;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+color: #e91e63;
+
+}
+
+input, textarea, select {
+
+padding: 10px;
+
+border: none;
+
+border-radius: 4px;
+
+font-size: 16px;
+
+background-color: #f2f2f2;
+
+color: #333;
+
+}
+
+button {
+
+padding: 15px;
+
+background-color: #4caf50;
+
+color: white;
+
+border: none;
+
+border-radius: 4px;
+
+cursor: pointer;
+
+font-size: 16px;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+transition: background-color 0.3s ease;
+
+}
+
+button:hover {
+
+background-color: #45a049;
+
+}
+
+#commissions {
+
+display: grid;
+
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+gap: 20px;
+
+list-style-type: none;
+
+padding: 0;
+
+}
+
+.commission-item {
+
+background-color: white;
+
+padding: 20px;
+
+border-radius: 8px;
+
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+}
+
+.commission-item p {
+
+margin: 10px 0;
+
+font-size: 16px;
+
+color: white;
+
+}
+
+.commission-item strong {
+
+font-weight: bold;
+
+color: white;
+
+}
+
+.commission-item strong {
+
+font-weight: bold;
+
+}
+
+.commission-item:nth-child(4n+1) {
+
+background-color: #ff4081;
+
+color: white;
+
+}
+
+.commission-item:nth-child(4n+2) {
+
+background-color: #4caf50;
+
+color: white;
+
+}
+
+.commission-item:nth-child(4n+3) {
+
+background-color: #2196f3;
+
+color: white;
+
+}
+
+.commission-item:nth-child(4n+4) {
+
+background-color: #a83bff;
+
+color: white;
+
+}
+#nft-bounty-details {
+  margin-top: 40px;
+}
+
+#nft-bounty-details .card {
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  flex: 1;
-  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #444;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #333;
-  color: #ffffff;
-}
-
-.btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary {
-  background-color: #4caf50;
-  color: #ffffff;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #45a049;
-}
-
-.btn-secondary {
-  background-color: #2196f3;
-  color: #ffffff;
-  border: none;
-}
-
-.btn-secondary:hover {
-  background-color: #1e88e5;
-}
-
-/* Bounty Status Styles */
-.bounty-status {
-  background-color: #424242;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  flex: 1;
-}
-
-.bounty-status p {
-  margin: 10px 0;
-}
-
-.bounties-section {
-  padding: 20px;
-  background-color: #333;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: 'Roboto', sans-serif;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 20px;
-}
-
-.filters {
+.nft-viewer {
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.filter-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #ccc;
-}
-
-.filter-input {
-  padding: 8px 12px;
-  border: 1px solid #444;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #333;
-  color: #ffffff;
-}
-
-.fetch-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  background-color: #4caf50;
-  color: #ffffff;
-  border: none;
-}
-
-.fetch-button:hover {
-  background-color: #45a049;
-}
-
-.bounties-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.bounty-item {
-  background-color: #2c2c2c;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.bounty-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-.bounty-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 0;
+.nft-image {
+  flex: 1;
+  margin-right: 20px;
 }
 
-.bounty-status {
-  font-size: 14px;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
+.nft-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
-.bounty-status.filled {
-  color: #ffc107;
-  background-color: #333;
+.nft-details {
+  flex: 1;
 }
 
-.bounty-status.open {
-  color: #28a745;
-  background-color: #1e4e2e;
+.nft-details h2 {
+  font-size: 36px;
+  margin-top: 0;
+  color: #e91e63;
 }
 
-.bounty-details {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+.nft-details p {
+  margin: 10px 0;
+  color: #333;
 }
 
-.detail-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.bounty-details h2 {
+  font-size: 36px;
+  margin-top: 0;
+  color: #e91e63;
 }
 
-.detail-item {
-  margin: 0;
-  font-size: 14px;
-  color: #ccc;
+.bounty-details p {
+  margin: 10px 0;
+  color: #333;
 }
 
-.detail-label {
-  font-weight: bold;
-  margin-right: 5px;
-  color: #ffffff;
-}.welcome-modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.welcome-modal.show {
-  display: block;
-}
-
-.modal-content {
-  background-color: #2c2c2c;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  border: 1px solid #888;
-  border-radius: 20px;
-
-
-  width: 80%;
-  max-width: 800px;
-  position: relative;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}.mining-submission {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #1d1d1d;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.mining-submission .form-group {
-  margin-bottom: 1rem;
-}
-
-.mining-submission .form-control {
-  width: 100%;
-  padding: 0.2rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.bounty-details button {
+  margin-top: 20px;
 }
