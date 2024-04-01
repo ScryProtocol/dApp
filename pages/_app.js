@@ -318,7 +318,7 @@ const [artist, setArtist] = useState('');
       src={
         selectedCommission.IPFS
           ? `https://ipfs.io/ipfs/${selectedCommission.IPFS}`
-          : 'https://cdn.discordapp.com/attachments/810019961165578294/1223050986457923724/file-4OQEC6aqITCSNilUiBJ1tE3X.png?ex=661871fe&is=6605fcfe&hm=03196d984dfd54ca245546a87fac98cc7007b6e69b30474c8e489836b7760492&'
+          : 'https://cdn.discordapp.com/attachments/810019961165578294/1224486591138107412/DALLE_2024-04-02_00.32.12_-_Sketch_style_anime_drawing_of_a_girl_named_Kaku._She_has_long_flowing_hair_large_expressive_eyes_and_a_gentle_smile._She_is_wearing_a_casual_moder.webp?ex=661dab01&is=660b3601&hm=a057f4e21a54d049b3c7a009e22a83268ec9b14fe29f425f806e2b5319ff6522&'
       }
       alt="NFT Image"
     />
