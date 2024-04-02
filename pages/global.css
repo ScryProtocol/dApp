@@ -224,6 +224,7 @@ color: white;
 }
 #nft-bounty-details {
   margin-top: 40px;
+  overflow:hidden;
 }
 
 #nft-bounty-details .card {
@@ -238,7 +239,16 @@ color: white;
   align-items: center;
   margin-bottom: 20px;
 }
-
+@media (max-width: 600px) {
+  .nft-viewer {
+    flex-direction: column;
+  } 
+  .nft-image, .nft-details {
+    max-width: 80vw;
+    margin-right: 0; /* Reset any right margin on mobile */
+    
+  }
+}
 .nft-image {
   flex: 1;
   margin-right: 20px;

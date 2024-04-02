@@ -377,7 +377,6 @@ console.log('lol')
                   {selectedImage ? (
     <img
       style={{
-        maxWidth: '400px',
         borderRadius: '8px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
       }}
