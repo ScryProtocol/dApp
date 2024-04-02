@@ -270,7 +270,7 @@ console.log('lol')
 </div>
               </h2>
               <h2>Request a Commission</h2>
-              <label htmlFor="artist">Intended Artist:</label>
+              <label htmlFor="artist">Intended Artist Address:</label>
               <input
                 type="text"
                 id="artist"
