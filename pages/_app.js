@@ -59,9 +59,19 @@ const [artist, setArtist] = useState('');
       setCommissions(commission);
     }
   };
-
+  const fetchAllCommissions = async () => {
+  if (contract) {
+      const numCommissions = await contract.nextRequestId();
+      const fetchedCommissions = [];
+      for (let i = 0; i < numCommissions; i++) {
+        const commission = await contract.allCommissions(i);
+        fetchedCommissions.push(commission);
+      }
+      setCommissions(fetchedCommissions);
+    }
+  };
   const fetchMyBounties = async () => {
-    if (contract && account) {  
+    if (contract && account) {
       const bounties = await contract.getArtistCommissions(account);
       setMyBounties(bounties);
     }
@@ -286,6 +296,11 @@ const [artist, setArtist] = useState('');
                         onClick={() => {fetchMyBounties(); fetchCommissions()}}
                       >
                        Check Bounties
+                      </button> <button
+                        className="claim-button"
+                        onClick={() => {fetchAllCommissions()}}
+                      >
+                       Check All Bounties
                       </button>
           </section>
           {selectedCommission && (
