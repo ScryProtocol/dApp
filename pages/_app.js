@@ -195,7 +195,44 @@ const [artist, setArtist] = useState('');
     <div className="app">
       <main className="app-main">
         <h1 style={{ color: '#e91e63', textAlign: 'center', paddingBottom: '40px' }}>
-          Kaku Art Commission
+        <img
+      style={{
+        maxWidth: '64px',
+          position: 'absolute',
+        top:'10px',
+        right:'10px',
+        borderRadius: '8px',
+      
+      }}
+      src={'./lol.png'}
+      alt="Selected NFT Image"
+    /><a href='https://discord.gg/W87Rw6wtk2'>
+ <img
+      style={{
+        maxWidth: '50px',
+          position: 'absolute',
+        top:'16px',
+        right:'80px',
+        borderRadius: '8px',
+      
+      }}
+      src={'./discord.png'}
+      alt="Selected NFT Image"
+    /></a><a href='https://twitter.com/kaku/'><img
+    style={{
+      maxWidth: '50px',
+        position: 'absolute',
+      top:'16px',
+      right:'140px',
+      borderRadius: '8px',
+    
+    }}
+    src={'./twitter.png'}
+    alt="Selected NFT Image"
+  /></a>
+  
+    
+       Kaku Art Commission
         </h1>
         <body>
           <section id="commission-form">
