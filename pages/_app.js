@@ -234,7 +234,7 @@ console.log('lol')
       }}
       src={'./discord.png'}
       alt="Selected NFT Image"
-    /></a><a href='https://twitter.com/kaku/'><img
+    /></a><a href='https://twitter.com/kakudotart/'><img
     style={{
       maxWidth: '50px',
         position: 'absolute',
