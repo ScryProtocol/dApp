@@ -40,8 +40,13 @@ const [artist, setArtist] = useState('');
           );
           setContract(contractInstance);
           setKakuBalance(1000); // Replace with actual KAKU balance fetching
+          async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
+          await wait(5000)
+console.log('lol')
           fetchCommissions();
           fetchMyBounties();
+          fetchAllCommissions();
+
         } catch (error) {
           console.error('Error connecting to Ethereum:', error);
         }
@@ -52,11 +57,20 @@ const [artist, setArtist] = useState('');
 
     initEthers();
   }, []);
-
+  useEffect(() => {
+    if (contract && account) {
+      fetchCommissions();
+      fetchMyBounties();
+    }
+  }, [contract, account]);
   const fetchCommissions = async () => {
+    try {
     if (contract) {
         const commission = await contract.getUserCommissions(account);
       setCommissions(commission);
+    }}
+    catch (error) {
+      console.error('Error fetching commissions:', error);
     }
   };
   const fetchAllCommissions = async () => {
@@ -332,7 +346,7 @@ const [artist, setArtist] = useState('');
                         className="claim-button"
                         onClick={() => {fetchMyBounties(); fetchCommissions()}}
                       >
-                       Check Bounties
+                       My Bounties
                       </button> <button
                         className="claim-button"
                         onClick={() => {fetchAllCommissions()}}
