@@ -55,19 +55,14 @@ const [artist, setArtist] = useState('');
 
   const fetchCommissions = async () => {
     if (contract) {
-      const numCommissions = await contract.nextRequestId();
-      const fetchedCommissions = [];
-      for (let i = 0; i < numCommissions; i++) {
-        const commission = await contract.allCommissions(i);
-        fetchedCommissions.push(commission);
-      }
-      setCommissions(fetchedCommissions);
+        const commission = await contract.getUserCommissions(account);
+      setCommissions(commission);
     }
   };
 
   const fetchMyBounties = async () => {
-    if (contract && account) {
-      const bounties = await contract.getUserCommissions(account);
+    if (contract && account) {  
+      const bounties = await contract.getArtistCommissions(account);
       setMyBounties(bounties);
     }
   };
@@ -233,8 +228,8 @@ const [artist, setArtist] = useState('');
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
               >
-                <option value="eth">ETH</option>
-                <option value="token">Token</option>
+                <option value="eth">ETH (5% fee)</option>
+                <option value="token">KAKU</option>
               </select>
               <button type="submit">Request Commission</button>
             </form>
@@ -318,11 +313,27 @@ const [artist, setArtist] = useState('');
       src={
         selectedCommission.IPFS
           ? `https://ipfs.io/ipfs/${selectedCommission.IPFS}`
-          : 'https://cdn.discordapp.com/attachments/810019961165578294/1224486591138107412/DALLE_2024-04-02_00.32.12_-_Sketch_style_anime_drawing_of_a_girl_named_Kaku._She_has_long_flowing_hair_large_expressive_eyes_and_a_gentle_smile._She_is_wearing_a_casual_moder.webp?ex=661dab01&is=660b3601&hm=a057f4e21a54d049b3c7a009e22a83268ec9b14fe29f425f806e2b5319ff6522&'
+          : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
       }
       alt="NFT Image"
     />
-  )}
+  )}                 {selectedCommission.IPFS && (
+  <button style={{marginTop: '5px'}}
+  className="claim-button"
+  onClick={() => {  if (selectedCommission && selectedCommission.IPFS) {
+    const imageUrl = `https://ipfs.io/ipfs/${selectedCommission.IPFS}`;
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'nft-image'; // You can specify the desired filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    console.log('No image available to save.');
+  }
+}}
+>
+Save</button> )}
                   </div>
                   <div className="nft-details">
                     <h2>Kaku #{selectedCommission.requestId.toString()}</h2>
