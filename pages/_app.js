@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import './global.css';
 const FormData = require('form-data')
 import axios from 'axios';
+import { Toaster,toast } from 'react-hot-toast';
 
 const tokenaddress='0x94373a4919b3240d86ea41593d5eba789fef3848'
 const App = () => {
@@ -40,6 +41,7 @@ const [artist, setArtist] = useState('');
           );
           setContract(contractInstance);
           setKakuBalance(1000); // Replace with actual KAKU balance fetching
+          if(await signer.getChainId()!=11155111){toast.error('Connect to Base Chain and refresh')}
           async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
           await wait(5000)
 console.log('lol')
@@ -249,10 +251,23 @@ console.log('lol')
        Kaku Art Commission
         </h1>
         <body>
-          <section id="commission-form">
+          <section id="commission-form"><Toaster/>
             <form onSubmit={requestCommission}>
               <h2 style={{ color: '#e91e63', textAlign: 'center', margin: '0px' }}>
-                KAKU Balance: {kakuBalance}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <span style={{ color: '#e91e63' }}>
+                KAKU Balance: {kakuBalance}  
+                </span>
+    
+    <a 
+        style={{ color: '#ffb7cf',  alignSelf: 'flex-end',position: 'relative',bottom: '28px',}}
+        href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55A341EC586A4aC5d58d6297CdE5125aB55bC&chain=base" 
+        target="_blank" 
+        rel="noopener noreferrer"
+    >
+        Buy KAKU
+    </a>
+</div>
               </h2>
               <h2>Request a Commission</h2>
               <label htmlFor="artist">Intended Artist:</label>
