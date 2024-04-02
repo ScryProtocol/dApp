@@ -13,7 +13,7 @@ const ContractABI=[{"inputs":[{"internalType":"address","name":"_paymentToken","
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
-  const [kakuBalance, setKakuBalance] = useState(0);
+  const [TamaBalance, setTamaBalance] = useState(0);
   const [commissions, setCommissions] = useState([]);
   const [myBounties, setMyBounties] = useState([]);
   const [selectedCommission, setSelectedCommission] = useState(null);
@@ -39,7 +39,7 @@ const [artist, setArtist] = useState('');
             signer
           );
           setContract(contractInstance);
-          setKakuBalance(1000); // Replace with actual KAKU balance fetching
+          setTamaBalance(1000); // Replace with actual Tama balance fetching
           fetchCommissions();
           fetchMyBounties();
         } catch (error) {
@@ -195,13 +195,13 @@ const [artist, setArtist] = useState('');
     <div className="app">
       <main className="app-main">
         <h1 style={{ color: '#e91e63', textAlign: 'center', paddingBottom: '40px' }}>
-          Kaku Art Commission
+          Tama Art Commission
         </h1>
         <body>
           <section id="commission-form">
             <form onSubmit={requestCommission}>
               <h2 style={{ color: '#e91e63', textAlign: 'center', margin: '0px' }}>
-                KAKU Balance: {kakuBalance}
+                Tama Balance: {TamaBalance}
               </h2>
               <h2>Request a Commission</h2>
               <label htmlFor="artist">Intended Artist:</label>
@@ -239,7 +239,7 @@ const [artist, setArtist] = useState('');
                 onChange={(e) => setPaymentType(e.target.value)}
               >
                 <option value="eth">ETH (5% fee)</option>
-                <option value="token">KAKU</option>
+                <option value="token">TAMA</option>
               </select>
               <button type="submit">Request Commission</button>
             </form>
@@ -351,7 +351,7 @@ const [artist, setArtist] = useState('');
 Save</button> )}
                   </div>
                   <div className="nft-details">
-                    <h2>Kaku #{selectedCommission.requestId.toString()}</h2>
+                    <h2>Tama #{selectedCommission.requestId.toString()}</h2>
                     <p>
                       <strong>Artist:</strong> {selectedCommission.intendedArtist}
                     </p>
@@ -372,7 +372,7 @@ Save</button> )}
                       <p>
                         {selectedCommission.isETH
                           ? `${ethers.utils.formatEther(selectedCommission.bounty)} ETH`
-                          : `${ethers.utils.formatEther(selectedCommission.bounty)} Kaku`}
+                          : `${ethers.utils.formatEther(selectedCommission.bounty)} TAMA`}
                       </p>
                       <p>
                         <strong>Bounty Status:</strong>   {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
