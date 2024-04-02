@@ -11,7 +11,7 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Welcome to Vain!"
+      content="Welcome to Kaku!"
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
