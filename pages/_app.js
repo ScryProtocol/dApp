@@ -5,10 +5,10 @@ const FormData = require('form-data')
 import axios from 'axios';
 import { Toaster,toast } from 'react-hot-toast';
 
-const tokenaddress='0x94373a4919b3240d86ea41593d5eba789fef3848'
+const tokenaddress='0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14'
 const App = () => {
   
-const ContractAddress='0x767c09a3f245F17983eE8126704d96b24fdB9Cb9';
+const ContractAddress='0x6907e99Bc23d59CFa9a9b106217B62b24185A765';
 const ContractABI=[{"inputs":[{"internalType":"address","name":"_paymentToken","type":"address"},{"internalType":"string","name":"_baseTokenURI","type":"string"},{"internalType":"address","name":"_feeAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"requestId","type":"uint256"},{"indexed":true,"internalType":"address","name":"commissioner","type":"address"},{"indexed":true,"internalType":"address","name":"artist","type":"address"},{"indexed":false,"internalType":"uint256","name":"bounty","type":"uint256"},{"indexed":false,"internalType":"string","name":"artworkIPFSHash","type":"string"}],"name":"ArtworkSubmittedAndMinted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"requestId","type":"uint256"},{"indexed":true,"internalType":"address","name":"commissioner","type":"address"}],"name":"BountyWithdrawn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"requestId","type":"uint256"},{"indexed":true,"internalType":"address","name":"commissioner","type":"address"},{"indexed":true,"internalType":"address","name":"intendedArtist","type":"address"},{"indexed":false,"internalType":"string","name":"description","type":"string"},{"indexed":false,"internalType":"uint256","name":"bounty","type":"uint256"},{"indexed":false,"internalType":"bool","name":"isETH","type":"bool"}],"name":"CommissionRequested","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"requestId","type":"uint256"},{"indexed":true,"internalType":"address","name":"artist","type":"address"}],"name":"CommissionStarted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allCommissions","outputs":[{"internalType":"uint256","name":"requestId","type":"uint256"},{"internalType":"address","name":"commissioner","type":"address"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"address","name":"intendedArtist","type":"address"},{"internalType":"bool","name":"isFulfilled","type":"bool"},{"internalType":"bool","name":"isStarted","type":"bool"},{"internalType":"bool","name":"isETH","type":"bool"},{"internalType":"string","name":"IPFS","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"artistCommissions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseTokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feePercentage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"requestId","type":"uint256"},{"internalType":"uint256","name":"bounty","type":"uint256"}],"name":"fundCommission","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"artist","type":"address"}],"name":"getArtistCommissions","outputs":[{"components":[{"internalType":"uint256","name":"requestId","type":"uint256"},{"internalType":"address","name":"commissioner","type":"address"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"address","name":"intendedArtist","type":"address"},{"internalType":"bool","name":"isFulfilled","type":"bool"},{"internalType":"bool","name":"isStarted","type":"bool"},{"internalType":"bool","name":"isETH","type":"bool"},{"internalType":"string","name":"IPFS","type":"string"}],"internalType":"struct ArtCommission.CommissionRequest[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserCommissions","outputs":[{"components":[{"internalType":"uint256","name":"requestId","type":"uint256"},{"internalType":"address","name":"commissioner","type":"address"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"address","name":"intendedArtist","type":"address"},{"internalType":"bool","name":"isFulfilled","type":"bool"},{"internalType":"bool","name":"isStarted","type":"bool"},{"internalType":"bool","name":"isETH","type":"bool"},{"internalType":"string","name":"IPFS","type":"string"}],"internalType":"struct ArtCommission.CommissionRequest[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"IPFS","type":"string"},{"internalType":"string","name":"description","type":"string"}],"name":"mintWithTokenURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"nextRequestId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"paymentToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"intendedArtist","type":"address"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"bounty","type":"uint256"},{"internalType":"bool","name":"isETH","type":"bool"}],"name":"requestCommission","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"requestId","type":"uint256"}],"name":"startCommission","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"requestId","type":"uint256"},{"internalType":"string","name":"artworkIPFSHash","type":"string"}],"name":"submitArtwork","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"userCommissions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"requestId","type":"uint256"}],"name":"withdrawBounty","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
   const [provider, setProvider] = useState(null);
@@ -23,6 +23,7 @@ const [artist, setArtist] = useState('');
   const [bounty, setBounty] = useState('');
   const [paymentType, setPaymentType] = useState('eth');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     const initEthers = async () => {
@@ -40,8 +41,13 @@ const [artist, setArtist] = useState('');
             signer
           );
           setContract(contractInstance);
-          setKakuBalance(1000); // Replace with actual KAKU balance fetching
-          if(await signer.getChainId()!=11155111){toast.error('Connect to Base Chain and refresh')}
+          const contractIn = new ethers.Contract(
+            tokenaddress,
+            ContractABI,
+            signer
+          );
+          await setToken(contractIn);
+         if(await signer.getChainId()!=11155111){toast.error('Connect to Base Chain and refresh')}
           async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
           await wait(5000)
 console.log('lol')
@@ -61,8 +67,13 @@ console.log('lol')
   }, []);
   useEffect(() => {
     if (contract && account) {
+      const init = async () => {
+
       fetchCommissions();
       fetchMyBounties();
+      console.log(await token.balanceOf(account))
+                setKakuBalance(ethers.utils.formatEther(await token.balanceOf(account))); // Replace with actual KAKU balance fetching
+      };   init()
     }
   }, [contract, account]);
   const fetchCommissions = async () => {
@@ -99,12 +110,32 @@ console.log('lol')
     try {
   
       const bountyInWei = ethers.utils.parseEther(bounty);
-  
+      const approvedBalance = await token.allowance(account, ContractAddress);
+      console.log(approvedBalance);
+
+      // Check if the approved balance is sufficient
+      if (approvedBalance.lt(bountyInWei)) {
+        // Approve the allowance if it's insufficient
+        try {
+          // Get the Scry contract instance
+
+          // Calculate the amount to approve (e.g., MAX_UINT256)
+          const approvalAmount = ethers.constants.MaxUint256;
+
+          // Approve the allowance for the Vain contract
+          const tx = await token.approve(ContractAddress, approvalAmount);
+          await tx.wait();
+
+          console.log('Allowance approved successfully');
+        } catch (error) {
+          console.error('Error approving allowance:', error);
+        }
+      }
       const tx = await contract.requestCommission(
         artist,
         description,
-        '10000000000000000',
-        paymentType === 'eth',{value:'10000000000000000'}
+        bountyInWei,
+        paymentType === 'eth',{value:paymentType === 'eth'?bountyInWei:0}
       );
   
       await tx.wait();
@@ -323,7 +354,7 @@ console.log('lol')
                     <strong>Description:</strong> {commission.description}
                   </p>
                   <p>
-                    <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)}
+                    <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
                   </p>
                   <p>
                     <strong>Status:</strong>   {commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
@@ -346,7 +377,7 @@ console.log('lol')
                     <strong>Description:</strong> {bounty.description}
                   </p>
                   <p>
-                    <strong>Bounty:</strong> {ethers.utils.formatEther(bounty.bounty)}
+                    <strong>Bounty:</strong> {ethers.utils.formatEther(bounty.bounty)} {bounty.isETH ? 'ETH' : 'KAKU'}
                   </p>
                   <p>
                     <strong>Status:</strong>   {bounty.isFulfilled ? 'Fulfilled' : (bounty.isStarted ? 'Started' : 'Waiting')}
@@ -424,9 +455,6 @@ Save</button> )}
                       <strong>Description:</strong> {selectedCommission.description}
                     </p>
                     <p>
-                      <strong>Artist Address:</strong> {selectedCommission.intendedArtist}
-                    </p>
-                    <p>
                       <strong>Commissioner Address:</strong> {selectedCommission.commissioner}
                     </p>
                     <h2>Bounty Details</h2>
@@ -437,7 +465,7 @@ Save</button> )}
                       <p>
                         {selectedCommission.isETH
                           ? `${ethers.utils.formatEther(selectedCommission.bounty)} ETH`
-                          : `${ethers.utils.formatEther(selectedCommission.bounty)} Kaku`}
+                          : `${ethers.utils.formatEther(selectedCommission.bounty)} KAKU`}
                       </p>
                       <p>
                         <strong>Bounty Status:</strong>   {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
