@@ -28,7 +28,7 @@ const App = () => {
 
   useEffect(() => {
     function handleaccountsChanged() {
-      if (boop == null) { 
+      if (boop == null) {
         setboop('1');
         console.log('boop');
       } else {
@@ -61,7 +61,7 @@ const App = () => {
             signer
           );
           await setToken(contractIn);
-          if (await signer.getChainId() != 11155111) { toast.error('Connect to Base Chain and refresh') }
+          if (await signer.getChainId() != 11155111) { toast.error('Connect to Sepolia Chain and refresh') }// toast.error('Connect to Base Chain and refresh') }
           async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
           await wait(5000)
           console.log('lol')
