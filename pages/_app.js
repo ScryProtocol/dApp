@@ -81,6 +81,30 @@ const App = () => {
         }
       } else {
         console.error('Ethereum not detected');
+        
+        const providerInstance = new ethers.providers.JsonRpcProvider('https://1rpc.io/sepolia');
+        setProvider(providerInstance);
+      
+          setAccount('0x14B214CA36249b516B59401B3b221CB87483b53C');
+          const contractInstance = new ethers.Contract(
+            ContractAddress,
+            ContractABI,
+            providerInstance
+          );
+          setContract(contractInstance);
+          const contractIn = new ethers.Contract(
+            tokenaddress,
+            ContractABI,
+            providerInstance
+          );
+          await setToken(contractIn);
+          async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
+          await wait(5000)
+          console.log('lol')
+          fetchCommissions();
+          fetchMyBounties();
+          fetchAllCommissions();
+
       }
     };
 
