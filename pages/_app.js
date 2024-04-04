@@ -85,7 +85,28 @@ const App = () => {
     };
 
     initEthers();
+    
   }, []);
+  useEffect(() => {
+    if (contract && account) {
+
+    const { artist } = getQueryParams();
+    
+    if (artist&&contract) {
+      fetchArtistProfile(artist);
+      setShowModal(true);
+    }
+  
+    function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    console.log(params.get('artist'))
+    return {
+      artist: params.get('artist')
+    };
+    }}// Other initialization code...
+  }, [contract]);
+  
+  
   useEffect(() => {
     if (contract && account) {
       const init = async () => {
