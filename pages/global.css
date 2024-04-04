@@ -289,3 +289,45 @@ color: white;
 .bounty-details button {
   margin-top: 20px;
 }
+.artist-profile {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.artist-card {
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.artist-info {
+  text-align: center;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.artist-name {
+  font-size: 24px;
+  margin: 5px 0;
+}
+
+.artist-bio {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.artist-address {
+  font-style: italic;
+  margin-bottom: 20px;
+}
