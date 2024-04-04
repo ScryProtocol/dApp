@@ -505,6 +505,39 @@ const App = () => {
                 <button type="submit">Update Profile</button>
               </form>
             </div>)}
+            
+          <form style={{marginTop:'10px'}} onSubmit={requestCommission}>
+            <h2 style={{ color: '#e91e63' }}>Commission</h2>
+
+            <label htmlFor="description">Description:</label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            ></textarea>
+
+            <label htmlFor="bounty">Bounty:</label>
+            <input
+              type="number"
+              id="bounty"
+              value={bounty}
+              onChange={(e) => setBounty(e.target.value)}
+              required
+            />
+
+            <label htmlFor="payment-type">Payment Type:</label>
+            <select
+              id="payment-type"
+              value={paymentType}
+              onChange={(e) => setPaymentType(e.target.value)}
+            >
+              <option value="eth">ETH</option>
+              <option value="token">Token</option>
+            </select>
+
+            <button type="submit">Request Commission</button>
+          </form>
           <section id="commission-list">
 
             <div className="artist-commissions">
@@ -558,39 +591,7 @@ const App = () => {
                 </section>
               </div>
             </div>
-          </section>
-          <form onSubmit={requestCommission}>
-            <h2 style={{ color: '#e91e63' }}>Commission</h2>
-
-            <label htmlFor="description">Description:</label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            ></textarea>
-
-            <label htmlFor="bounty">Bounty:</label>
-            <input
-              type="number"
-              id="bounty"
-              value={bounty}
-              onChange={(e) => setBounty(e.target.value)}
-              required
-            />
-
-            <label htmlFor="payment-type">Payment Type:</label>
-            <select
-              id="payment-type"
-              value={paymentType}
-              onChange={(e) => setPaymentType(e.target.value)}
-            >
-              <option value="eth">ETH</option>
-              <option value="token">Token</option>
-            </select>
-
-            <button type="submit">Request Commission</button>
-          </form>     </div>
+          </section>     </div>
       </section>)
   };
 
