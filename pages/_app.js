@@ -80,7 +80,7 @@ const App = () => {
           console.error('Error connecting to Ethereum:', error);
         }
       } else {
-        console.error('Ethereum not detected');
+      //  console.error('Ethereum not detected');
         
         const providerInstance = new ethers.providers.JsonRpcProvider('https://1rpc.io/sepolia');
         setProvider(providerInstance);
