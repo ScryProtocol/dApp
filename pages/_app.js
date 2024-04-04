@@ -87,6 +87,19 @@ const App = () => {
     initEthers();
     
   }, []);
+  
+  
+  useEffect(() => {
+    if (contract && account) {
+      const init = async () => {
+
+        fetchCommissions();
+        fetchMyBounties();
+        console.log(await token.balanceOf(account))
+        setKakuBalance(ethers.utils.formatEther(await token.balanceOf(account))); // Replace with actual KAKU balance fetching
+      }; init()
+    }
+  }, [contract, account]);
   useEffect(() => {
     if (contract && account) {
 
@@ -105,19 +118,6 @@ const App = () => {
     };
     }}// Other initialization code...
   }, [contract]);
-  
-  
-  useEffect(() => {
-    if (contract && account) {
-      const init = async () => {
-
-        fetchCommissions();
-        fetchMyBounties();
-        console.log(await token.balanceOf(account))
-        setKakuBalance(ethers.utils.formatEther(await token.balanceOf(account))); // Replace with actual KAKU balance fetching
-      }; init()
-    }
-  }, [contract, account]);
   const fetchCommissions = async () => {
     try {
       if (contract) {
