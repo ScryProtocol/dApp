@@ -43,9 +43,10 @@ const App = () => {
         initEthers();
       }
     }
+    if (window.ethereum) {
 
     window.ethereum.on('accountsChanged', handleaccountsChanged);
-
+    }
     const initEthers = async () => {
       if (window.ethereum) {
         const providerInstance = new ethers.providers.Web3Provider(window.ethereum);
