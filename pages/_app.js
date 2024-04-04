@@ -725,7 +725,7 @@ const App = () => {
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
               >
-                <option value="eth">ETH (5% fee)</option>
+                <option value="eth">ETH (0% fee)</option>
                 <option value="token">KAKU</option>
               </select>
               <button type="submit">Request Commission</button>
