@@ -15,7 +15,7 @@ export default function Home() {
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Vain</title>
+    <title>Kaku</title>
   </head>
         <App />
     </>
