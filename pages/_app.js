@@ -489,7 +489,7 @@ const App = () => {
               }}
             />            <h2 style={{ color: '#e91e63' }}>{artistProfile.name?artistProfile.name:'Artist'}</h2>
 
-            <h3 >{artistProfile.bio}</h3>
+           <pre> <h3 >{artistProfile.bio}</h3></pre>
             <p >Address: {selectedArtist}</p>
           </div> {
                   <div className="artist-info" style={{ alignItems: 'center'}}>
