@@ -848,32 +848,36 @@ Kaku Art Commission
                   <div className="nft-details">
                     <h2>Kaku #{selectedCommission.requestId.toString()}</h2>
                     <p>
-                      <strong>Artist:</strong> {selectedCommission.intendedArtist}
+                      <strong>Artist:</strong> <br/>
+                      <span className="data-display">{selectedCommission.intendedArtist}</span>
                     </p>   <button style={{ marginRight: '6px'}} onClick={() => {
                       fetchArtistProfile(selectedCommission.intendedArtist);
                     }}>View Artist Profile</button><a style={{ color: 'blue' // Move down by 2px // This removes the underline
                   }} href={'https://chat.blockscan.com/index?a='+selectedCommission.commissioner}><button style={{ marginRight: '6px',backgroundColor:'#23acff'}
                               } >Message</button></a>
                     <p>
-                      <strong>Description:</strong> {selectedCommission.description}
+                      <strong>Description:</strong>  <br/><span className="data-display">{selectedCommission.description}</span>
                     </p>
                     <p>
-                      <strong>Commissioner Address:</strong> {selectedCommission.commissioner}
+                      <strong>Commissioner Address:</strong>  <span className="data-display">{selectedCommission.commissioner}</span>
                     </p>
                    
                     <h2>Bounty Details</h2>
                     <div className="bounty-info">
                       <p>
+                        
                         <strong>Bounty Amount:</strong>
                       </p>
-                      <p>
+                      <p> <span className="data-display">
                         {selectedCommission.isETH
                           ? `${ethers.formatEther(selectedCommission.bounty)} ETH`
                           : `${ethers.formatEther(selectedCommission.bounty)} KAKU`}
+                          </span>
                       </p>
                       <p>
-                        <strong>Bounty Status:</strong>   {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
-
+                        <strong>Bounty Status:</strong><br/>   <span className="data-display">
+                        {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
+                        </span>
                       </p>
                     </div>
                     {(selectedCommission.intendedArtist == account) && (
