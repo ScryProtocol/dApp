@@ -331,3 +331,11 @@ color: white;
   font-style: italic;
   margin-bottom: 20px;
 }
+.data-display {
+  /*  background-color: #e91e63;  /* Dark background */
+  color: #e91e63;      
+  font-weight: bold;     /* Light text color for contrast */
+  /*  padding: 4px 8px;       /* Padding for space inside the background */
+ /*   border-radius: 8px;     /* Rounded corners */
+  display: inline-block;  /* To apply the styles effectively */
+}

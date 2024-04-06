@@ -476,7 +476,7 @@ let token = new ethers.Contract(
                   : (
                     artistProfile.profilePictureIPFSHash
                       ? `https://ipfs.io/ipfs/${artistProfile.profilePictureIPFSHash}`
-                      : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
+                      : 'https://cdn.discordapp.com/attachments/810019961165578294/1226145369201573948/image.png?ex=6623b3dc&is=66113edc&hm=8b4e531f34e7aa2f4d65560cbb2b4c57dfe1aa195098177e553d01de890bf585&'
                   )}
               alt="Artist"
               style={{
@@ -675,7 +675,7 @@ let token = new ethers.Contract(
             /></a>
 
 
-          Kaku Art Commission
+Kaku Art Commission 
         </h1>
         <body>
           <section id="commission-form"><Toaster />
@@ -822,7 +822,7 @@ let token = new ethers.Contract(
                         src={
                           selectedCommission.IPFS
                             ? `https://ipfs.io/ipfs/${selectedCommission.IPFS}`
-                            : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
+                            : 'https://cdn.discordapp.com/attachments/810019961165578294/1226145369201573948/image.png?ex=6623b3dc&is=66113edc&hm=8b4e531f34e7aa2f4d65560cbb2b4c57dfe1aa195098177e553d01de890bf585&'
                         }
                         alt="NFT Image"
                       />
@@ -848,32 +848,36 @@ let token = new ethers.Contract(
                   <div className="nft-details">
                     <h2>Kaku #{selectedCommission.requestId.toString()}</h2>
                     <p>
-                      <strong>Artist:</strong> {selectedCommission.intendedArtist}
+                      <strong>Artist:</strong> <br/>
+                      <span className="data-display">{selectedCommission.intendedArtist}</span>
                     </p>   <button style={{ marginRight: '6px'}} onClick={() => {
                       fetchArtistProfile(selectedCommission.intendedArtist);
                     }}>View Artist Profile</button><a style={{ color: 'blue' // Move down by 2px // This removes the underline
                   }} href={'https://chat.blockscan.com/index?a='+selectedCommission.commissioner}><button style={{ marginRight: '6px',backgroundColor:'#23acff'}
                               } >Message</button></a>
                     <p>
-                      <strong>Description:</strong> {selectedCommission.description}
+                      <strong>Description:</strong>  <br/><span className="data-display">{selectedCommission.description}</span>
                     </p>
                     <p>
-                      <strong>Commissioner Address:</strong> {selectedCommission.commissioner}
+                      <strong>Commissioner Address:</strong>  <span className="data-display">{selectedCommission.commissioner}</span>
                     </p>
                    
                     <h2>Bounty Details</h2>
                     <div className="bounty-info">
                       <p>
+                        
                         <strong>Bounty Amount:</strong>
                       </p>
-                      <p>
+                      <p> <span className="data-display">
                         {selectedCommission.isETH
                           ? `${ethers.formatEther(selectedCommission.bounty)} ETH`
                           : `${ethers.formatEther(selectedCommission.bounty)} KAKU`}
+                          </span>
                       </p>
                       <p>
-                        <strong>Bounty Status:</strong>   {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
-
+                        <strong>Bounty Status:</strong><br/>   <span className="data-display">
+                        {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
+                        </span>
                       </p>
                     </div>
                     {(selectedCommission.intendedArtist == account) && (
