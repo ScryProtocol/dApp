@@ -798,7 +798,6 @@ Kaku Art Commission
             </button>
           </section>
           {selectedCommission && (
-            <section id="nft-bounty-details">
 
               <div className="card" style={{ padding: '42px' }}>
                 <div className="nft-viewer">
@@ -903,7 +902,6 @@ Kaku Art Commission
                   </div>
                 </div>
               </div>
-            </section>
           )}
         </body>
       </main>
