@@ -476,7 +476,7 @@ let token = new ethers.Contract(
                   : (
                     artistProfile.profilePictureIPFSHash
                       ? `https://ipfs.io/ipfs/${artistProfile.profilePictureIPFSHash}`
-                      : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
+                      : 'https://cdn.discordapp.com/attachments/810019961165578294/1226145369201573948/image.png?ex=6623b3dc&is=66113edc&hm=8b4e531f34e7aa2f4d65560cbb2b4c57dfe1aa195098177e553d01de890bf585&'
                   )}
               alt="Artist"
               style={{
@@ -675,7 +675,7 @@ let token = new ethers.Contract(
             /></a>
 
 
-          Kaku Art Commission
+Kaku Art Commission 
         </h1>
         <body>
           <section id="commission-form"><Toaster />
@@ -822,7 +822,7 @@ let token = new ethers.Contract(
                         src={
                           selectedCommission.IPFS
                             ? `https://ipfs.io/ipfs/${selectedCommission.IPFS}`
-                            : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
+                            : 'https://cdn.discordapp.com/attachments/810019961165578294/1226145369201573948/image.png?ex=6623b3dc&is=66113edc&hm=8b4e531f34e7aa2f4d65560cbb2b4c57dfe1aa195098177e553d01de890bf585&'
                         }
                         alt="NFT Image"
                       />
