@@ -571,7 +571,7 @@ let token = new ethers.Contract(
               <section id="commission-list">
                 <h2 style={{ color: '#e91e63' }}>Commissions</h2>
                 <ul id="commissions">
-                  {commissions.map((commission) => (
+                  {[...commissions].sort((a, b) => Number(b.requestId) - Number(a.requestId)).map((commission) => (
                     <li key={commission.requestId.toString()} className="commission-item">
                       <h3>Commission {commission.requestId.toString()}</h3>
                       <p>
@@ -613,7 +613,7 @@ let token = new ethers.Contract(
                 <section id="commission-list">
                   <h2 style={{ color: '#e91e63' }}>Commission Requests</h2>
                   <ul id="commissions">
-                    {profileCommissions.map((commission) => (
+                    {[...profileCommissions].sort((a, b) => Number(b.requestId) - Number(a.requestId)).map((commission) => (
                       <li key={commission.requestId.toString()} className="commission-item">
                         <h3>Commission {commission.requestId.toString()}</h3>
                         <p>
@@ -803,7 +803,7 @@ Kaku Art Commission
           <section id="commission-list">
             <h2 style={{ color: '#e91e63' }}>My Bounties</h2>
             <ul id="commissions">
-              {myBounties.map((bounty) => (
+              {[...myBounties].sort((a, b) => Number(b.requestId) - Number(a.requestId)).map((bounty) => (
                 <li key={bounty.requestId.toString()} className="commission-item">
                   <h3>Commission {bounty.requestId.toString()}</h3>
                   <p>
