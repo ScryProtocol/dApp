@@ -950,6 +950,37 @@ Kaku Art Commission
                             </button>          </div>
 
                         )}</>)}
+{(!selectedCommission.isStarted && (selectedCommission.commissioner == account)) && (
+                          <div>
+                             <h3 >My Bounty</h3>
+
+ <label htmlFor="bounty">Tip Amount:</label>
+              <input
+                type="number"
+                id="bounty"
+                name="bounty"
+                step="0.01"
+                value={bounty}
+                onChange={(e) => setBounty(e.target.value)}
+                required
+              /> {selectedCommission.isETH
+                ? ` ETH`
+                : ` KAKU`}<button style={{ marginTop: '5px' }}
+              className="claim-button"
+              onClick={() => { const tx = contract.connect(signer).fundCommission(selectedCommission.requestId,ethers.parseEther(bounty),{value: ethers.parseEther(bounty)});
+}}
+            >
+              Fund Bounty
+            </button> 
+                            <button style={{ marginTop: '5px',marginLeft: '5px'}}
+                              className="claim-button"
+                              onClick={() => { const tx = contract.connect(signer).withdrawBounty(selectedCommission.requestId);
+}}
+                            >
+                              Withdraw Bounty
+                            </button>          </div>
+
+                        )}
                   </div>
                 </div>
               </div>
