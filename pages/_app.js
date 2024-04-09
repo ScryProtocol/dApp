@@ -1,6 +1,8 @@
 //import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import './global.css';
+import React, { useState, useEffect } from 'react';
+
 import {
   getDefaultWallets,
   RainbowKitProvider,
@@ -16,7 +18,7 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 const { chains, publicClient } = configureChains(
-  [base,optimism,sepolia],// optimism, arbitrum, base],
+  [base, optimism, sepolia],// optimism, arbitrum, base],
   [
     //alchemyProvider({ apiKey: 'noFpU53uptypQtmZDodsoYQwqcK2V3AC' }),
     publicProvider()
@@ -33,13 +35,31 @@ const wagmiConfig = createConfig({
   publicClient
 })
 function MyApp({ Component, pageProps }) {
-	return (
-		<WagmiConfig config={wagmiConfig}>
-		<RainbowKitProvider chains={chains}>
-					<Component {...pageProps} />
-					</RainbowKitProvider>
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('isDarkTheme') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // Save theme preference to local storage whenever it changes
+    localStorage.setItem('isDarkTheme', isDarkTheme);
+  }, [isDarkTheme]);
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
+          <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={toggleTheme} className="switch">{isDarkTheme ? '🌞' : '🌚'}
+          </label>
+          <Component {...pageProps} />
+        </div>
+      </RainbowKitProvider>
     </WagmiConfig>
-	);
+  );
 }
 
 export default MyApp;
