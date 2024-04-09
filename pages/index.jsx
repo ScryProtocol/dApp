@@ -11,7 +11,7 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Welcome to Kaku!"
+      content="Welcome to Kaku! An onchain and fully decentralized art commission platform. 0 fees, permissionless."
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
