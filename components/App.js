@@ -316,8 +316,8 @@ const App = () => {
             textAlign: 'center', maxWidth: '100%'
           }}>
             <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Spot a Friend</h2>
-            </strong><p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
-            </p>            <div style={{ display: 'grid', gap: '20px' }}>
+            <p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
+            </p></strong>            <div style={{ display: 'grid', gap: '20px' }}>
               <div>
                 <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
                   Token Address:
