@@ -33,7 +33,7 @@ const App = () => {
   provider = ethersProvider
   signer = ethersSigner
   let account = useAccount();
-  let userAddress = useAccount().address;
+  let userAddress = '0x14B214CA36249b516B59401B3b221CB87483b53C'//useAccount().address;
 
   account = account.address
   let contract = new ethers.Contract(
