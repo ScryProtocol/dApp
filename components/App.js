@@ -453,13 +453,13 @@ const App = () => {
                         />
                         <button
                           style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => handleBorrow('0x94373a4919b3240d86ea41593d5eba789fef3848', allowance.lender, 1)}
+                          onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
                         >
                           Borrow
                         </button>
                         <button
                           style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => handleRepay(allowance.token, allowance.lender, allowance.allowable)}
+                          onClick={() => handleRepay(borrow.token, borrow.lender, borrow.allowable)}
                         >
                           Repay
                         </button>
