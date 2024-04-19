@@ -104,7 +104,7 @@ const App = () => {
   }, [contract, userAddress]);
 
   const maps = []
-  maps['0x94373a4919B3240D86eA41593D5eBa789FEF3848'] = 'SEPOLIA'
+  maps['0x94373a4919B3240D86eA41593D5eBa789FEF3848'] = 'wETH'
   maps['0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'] = 'PR0'
 
   const map = (lol) => {
