@@ -240,7 +240,7 @@ const App = () => {
             right: '10px',
             borderRadius: '8px',
           }}
-          src={'./lol.png'}
+          src={'./favicon.ico'}
           alt="Selected NFT Image"
         />
         <a href="https://discord.gg/W87Rw6wtk2">
@@ -256,7 +256,7 @@ const App = () => {
             alt="Selected NFT Image"
           />
         </a>
-        <a href="https://twitter.com/kakudotart/">
+        <a href="https://twitter.com/not_pr0/">
           <img
             style={{
               maxWidth: '50px',
