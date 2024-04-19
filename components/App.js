@@ -134,7 +134,7 @@ const App = () => {
           let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
           const getAddressENS = async (address) => {
             const ensName = await pr.lookupAddress(address);
-            ensName?addMapping(address,ensName):{}
+            ensName ? addMapping(address, ensName) : {}
             return ensName || address; // Return ENS name if exists, otherwise return the address
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
@@ -164,7 +164,7 @@ const App = () => {
           let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
           const getAddressENS = async (address) => {
             const ensName = await pr.lookupAddress(address);
-            ensName?addMapping(address,ensName):{}
+            ensName ? addMapping(address, ensName) : {}
 
             return ensName || address; // Return ENS name if exists, otherwise return the address
           }; const ENS = await getAddressENS(details.friend);
@@ -208,7 +208,7 @@ const App = () => {
     if (contract) {
       try {
         let am = await token.allowance(userAddress, ContractAddress)
-        console.log('lol', await token.balanceOf(userAddress),'lol',am)
+        console.log('lol', await token.balanceOf(userAddress), 'lol', am)
         if (am < (ethers.parseEther(amount))) {
           let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
           tx.wait()
@@ -303,8 +303,8 @@ const App = () => {
           <div className='card' style={{
             textAlign: 'center', maxWidth: '100%'
           }}>
-            <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Spot a Friend</h2>
-            <p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
+            <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Spot a Friend</h2>
+            </strong><p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
             </p>            <div style={{ display: 'grid', gap: '20px' }}>
               <div>
                 <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
