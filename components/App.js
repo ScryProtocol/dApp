@@ -33,7 +33,7 @@ const App = () => {
   provider = ethersProvider
   signer = ethersSigner
   let account = useAccount();
-  let userAddress = '0x14B214CA36249b516B59401B3b221CB87483b53C'//useAccount().address;
+  let userAddress = useAccount().address;
 
   account = account.address
   let contract = new ethers.Contract(
@@ -208,7 +208,7 @@ const App = () => {
     if (contract) {
       try {
         let am = await token.allowance(userAddress, ContractAddress)
-        console.log('lol', await token.balanceOf(userAddress))
+        console.log('lol', await token.balanceOf(userAddress),'lol',am)
         if (am < (ethers.parseEther(amount))) {
           let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
           tx.wait()
