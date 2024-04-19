@@ -11,11 +11,12 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Welcome to Kaku! An onchain and fully decentralized art commission platform. 0 fees, permissionless."
+      content="Spot a Friend. Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
+      "
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Kaku</title>
+    <title>Spot</title>
   </head>
         <App />
     </>
