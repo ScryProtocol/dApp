@@ -274,14 +274,15 @@ const App = () => {
         <section id="borrow-form">
 
           <Toaster />
-          <div className='card' style={{ textAlign: 'center' }}>
+          <div className='card' style={{ textAlign: 'center',    maxWidth: '100%'
+ }}>
             <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Spot a Friend</h2>
 <p style={{ color: '#42aaff', marginTop: '0px',marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
 </p>            <div style={{ display: 'grid', gap: '20px' }}>
 <div>
   <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
     Token Address:
-  </label>
+  </label>{stoken}
   <select
     id="token"
     name="token"
@@ -290,9 +291,9 @@ const App = () => {
     required
     style={{ width: '100%', padding: '10px', fontSize: '18px' }}
   >
-    <option value="">Select a token</option>
-    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">Token 1</option>
-    <option value="0x0987654321098765432109876543210987654321">Token 2</option>
+    <option value="">{stoken?stoken:'Select a token'}</option>
+    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
+    <option value="0x0987654321098765432109876543210987654321">USDC</option>
     <option value="custom">Custom</option>
   </select>
   {stoken === 'custom' && (
@@ -300,7 +301,6 @@ const App = () => {
       type="text"
       id="customToken"
       name="customToken"
-      value={stoken}
       onChange={(e) => setToken(e.target.value)}
       required
       style={{ width: '100%', padding: '10px', fontSize: '18px', marginTop: '10px' }}
@@ -331,8 +331,8 @@ const App = () => {
                   required
                   style={{ width: '100%', padding: '10px', fontSize: '18px' }}
                 />
-              </div>
-              <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '800px', justifySelf: 'center' }} >
+              </div>{stoken}
+              <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '100%', justifySelf: 'center' }} >
                 Set allowance     </button>
               <ConnectButton />
             </div>
