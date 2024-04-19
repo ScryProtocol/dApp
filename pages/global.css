@@ -1,630 +1,336 @@
 body {
-
   font-family: 'Roboto', sans-serif;
-  
-  background-color: #fffcf7;
-  
-  color: #333;
-  
+  background-color: #f0f8ff;
+  color: #fff;
   margin: 0;
-  
   padding: 0;
-  
-  }
-  
-  header {
-  
+}
+
+header {
   text-align: center;
-  
   padding: 40px 0;
-  
+  background-color: #1e88e5;
   color: white;
-  
-  }
-  
-  h1 {
-  
+}
+
+h1 {
   font-size: 48px;
-  
   font-weight: bold;
-  
   text-transform: uppercase;
-  
   letter-spacing: 2px;
-  
   margin: 0;
-  
-  }
-  
-  main {
-  
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+main {
   max-width: 960px;
-  
   margin: 40px auto;
-  
   padding: 20px;
-  
-  }
-  
-  form {
-  
+}
+
+form {
   display: grid;
-  
   grid-template-columns: 1fr;
-  
   gap: 20px;
-  
   background-color: white;
-  
-  padding: 20px;
-  
-  border-radius: 8px;
-  
+  padding: 30px;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  
-  }
-  form {
-  
-  display: grid;
-  
-  grid-template-columns: 1fr;
-  
-  gap: 20px;
-  
-  background-color: white;
-  
-  padding: 20px;
-  
-  border-radius: 8px;
-  
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  
-  }
-  label {
-  
-  font-size: 16px;
-  
+}
+
+label {
+  font-size: 18px;
   font-weight: bold;
-  
   text-transform: uppercase;
-  
   letter-spacing: 1px;
-  
-  color: #e91e63;
-  
-  }
-  
-  input, textarea, select {
-  
-  padding: 10px;
-  
-  border: none;
-  
-  border-radius: 4px;
-  
-  font-size: 16px;
-  
-  background-color: #f2f2f2;
-  
-  color: #333;
-  
-  }
-  
-  button {
-  
+  color: #1e88e5;
+}
+
+input, textarea, select {
   padding: 15px;
-  
-  background-color: #4caf50;
-  
-  color: white;
-  
   border: none;
-  
-  border-radius: 4px;
-  
-  cursor: pointer;
-  
-  font-size: 16px;
-  
-  text-transform: uppercase;
-  
-  letter-spacing: 1px;
-  
-  transition: background-color 0.3s ease;
-  
-  }
-  
-  button:hover {
-  
-  background-color: #45a049;
-  
-  }
-  
-  #commissions {
-  
-  display: grid;
-  
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  
-  gap: 20px;
-  
-  list-style-type: none;
-  
-  padding: 0;
-  
-  }
-  
-  .commission-item {
-  
-  background-color: white;
-  
-  padding: 20px;
-  
   border-radius: 8px;
-  
+  font-size: 18px;
+  background-color: #e3f2fd;
+  color: #333;
+}
+
+button {
+  padding: 15px;
+  background-color: #1e88e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+#commissions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.commission-item {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  
-  }
-  
-  .commission-item p {
-  
-  margin: 10px 0;
-  
-  font-size: 16px;
-  
-  color: white;
-  
-  }
-  
-  .commission-item strong {
-  
-  font-weight: bold;
-  
-  color: white;
-  
-  }
-  
-  .commission-item strong {
-  
-  font-weight: bold;
-  
-  }
-  
-  .commission-item:nth-child(4n+1) {
-  
-  background-color: #ff4081;
-  
-  color: white;
-  
-  }
-  
-  .commission-item:nth-child(4n+2) {
-  
-  background-color: #4caf9c;
-  
-  color: white;
-  
-  }
-  
-  .commission-item:nth-child(4n+3) {
-  
-  background-color: #2196f3;
-  
-  color: white;
-  
-  }
-  
-  .commission-item:nth-child(4n+4) {
-  
-  background-color: #a83bff;
-  
-  color: white;
-  
-  }
-  #nft-bounty-details {
-    margin-top: 40px;
-    overflow:hidden;
-  }
-  
-  #nft-bounty-details .card {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  }
-  
-  .nft-viewer {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  @media (max-width: 600px) {
-    .nft-viewer {
-      flex-direction: column;
-    } 
-    .nft-image, .nft-details {
-      max-width: 80vw;
-      margin-right: 0; /* Reset any right margin on mobile */
-      
-    }
-  }
-  .nft-image {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .nft-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .nft-details {
-    flex: 1;
-  }
-  
-  .nft-details h2 {
-    font-size: 36px;
-    margin-top: 0;
-    color: #e91e63;
-  }
-  
-  .nft-details p {
-    margin: 10px 0;
-    color: #333;
-  }
-  
-  .bounty-details h2 {
-    font-size: 36px;
-    margin-top: 0;
-    color: #e91e63;
-  }
-  
-  .bounty-details p {
-    margin: 10px 0;
-    color: #333;
-  }
-  
-  .bounty-details button {
-    margin-top: 20px;
-  }
-  .artist-profile {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .artist-card {
-    background-color: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 20px;
-    max-width: 800px;
-    width: 100%;
-  }
-  
-  .artist-info {
-    text-align: center;
-  }
-  
-  .profile-picture {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 15px;
-  }
-  
-  .artist-name {
-    font-size: 24px;
-    margin: 5px 0;
-  }
-  
-  .artist-bio {
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .artist-address {
-    font-style: italic;
-    margin-bottom: 20px;
-  }
-  .data-display {
-    /*  background-color: #e91e63;  /* Dark background */
-    color: #e91e63;      
-    font-weight: bold;     /*
-     Light text color for contrast */
-    /*  padding: 4px 8px;       /* Padding for space inside the background */
-   /*   border-radius: 8px;     /* Rounded corners */
-    display: inline-block;  /* To apply the styles effectively */
-  }.card {
-    position: relative;
-    top: 20px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  }
-  .dark-theme {
-    background-color: #1a1a1a;
+  transition: transform 0.3s ease;
+}
 
-    body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #1a1a1a;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-  }
-  
-  header {
-    text-align: center;
-    padding: 40px 0;
-    background-color: #000;
-  }
-  
-  h1 {
-    font-size: 48px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0;
-    color: #fff;
-  }
-  
-  main {
-    max-width: 960px;
-    margin: 40px auto;
-    padding: 20px;
-  }
-  
-  form {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    background-color: #222;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-  
-  label {
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #ff4081;
-  }
-  
-  input, textarea, select {
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    background-color: #333;
-    color: #fff;
-  }
-  
-  button {
-    padding: 15px;
-    background-color: #ff4081;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #ff1a61;
-  }
-  
-  #commissions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .commission-item {
-    background-color: #222;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-  }
-  
-  .commission-item p {
-    margin: 15px 0;
-    font-size: 18px;
-    color: #fff;
-  }
-  
-  .commission-item strong {
-    font-weight: bold;
-    color: #ff4081;
-  }
-  
-  #nft-bounty-details {
-    margin-top: 60px;
-    overflow: hidden;
-  }
-  
-  #nft-bounty-details .card {
-    background-color: #222;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-  
+.commission-item:hover {
+  transform: translateY(-5px);
+}
+
+.commission-item p {
+  margin: 15px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.commission-item strong {
+  font-weight: bold;
+  color: #1e88e5;
+}
+
+.commission-item:nth-child(4n+1) {
+  background-color: #bbdefb;
+}
+
+.commission-item:nth-child(4n+2) {
+  background-color: #90caf9;
+}
+
+.commission-item:nth-child(4n+3) {
+  background-color: #64b5f6;
+}
+
+.commission-item:nth-child(4n+4) {
+  background-color: #42a5f5;
+}
+
+#nft-bounty-details {
+  margin-top: 60px;
+  overflow: hidden;
+}
+
+#nft-bounty-details .card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.nft-viewer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 600px) {
   .nft-viewer {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  
-  @media (max-width: 600px) {
-    .nft-viewer {
-      flex-direction: column;
-    }
-    
-    .nft-image, .nft-details {
-      max-width: 80vw;
-      margin-right: 0;
-    }
-  }
-  
-  .nft-image {
-    flex: 1;
-    margin-right: 30px;
-  }
-  
-  .nft-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-  }
-  
-  .nft-details {
-    flex: 1;
-  }
-  
-  .nft-details h2 {
-    font-size: 36px;
-    margin-top: 0;
-    color: #ff4081;
-  }
-  
-  .nft-details p {
-    margin: 15px 0;
-    color: #fff;
-  }
-  
-  .bounty-details h2 {
-    font-size: 36px;
-    margin-top: 0;
-    color: #ff4081;
-  }
-  
-  .bounty-details p {
-    margin: 15px 0;
-    color: #fff;
-  }
-  
-  .bounty-details button {
-    margin-top: 30px;
-  }
-  
-  .artist-profile {
-    padding: 30px;
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    color: #fff;
   }
   
-  .artist-card {
-    background-color: #222;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 30px;
-    max-width: 800px;
-    width: 100%;
+  .nft-image, .nft-details {
+    max-width: 80vw;
+    margin-right: 0;
   }
+}
+
+.nft-image {
+  flex: 1;
+  margin-right: 30px;
+}
+
+.nft-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.nft-details {
+  flex: 1;
+}
+
+.nft-details h2 {
+  font-size: 36px;
+  margin-top: 0;
+  color: #1e88e5;
+}
+
+.nft-details p {
+  margin: 15px 0;
+  color: #333;
+}
+
+.bounty-details h2 {
+  font-size: 36px;
+  margin-top: 0;
+  color: #1e88e5;
+}
+
+.bounty-details p {
+  margin: 15px 0;
+  color: #333;
+}
+
+.bounty-details button {
+  margin-top: 30px;
+}
+
+.artist-profile {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.artist-card {
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.artist-info {
+  text-align: center;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.artist-name {
+  font-size: 24px;
+  margin: 5px 0;
+  color: #1e88e5;
+}
+
+.artist-bio {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.artist-address {
+  font-style: italic;
+  margin-bottom: 20px;
+  color: #1e88e5;
+}
+
+.data-display {
+  color: #1e88e5;
+  font-weight: bold;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: #e3f2fd;
+}
+
+.card {
+  position: relative;
+  top: 20px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  align-items: center;
+  justify-content: center;
   
-  .artist-info {
-    text-align: center;
-  }
-  
-  .profile-picture {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 15px;
-  }
-  
-  .artist-name {
-    font-size: 24px;
-    margin: 5px 0;
-    color: #ff4081;
-  }
-  
-  .artist-bio {
-    color: #ccc;
-    margin-bottom: 15px;
-  }
-  
-  .artist-address {
-    font-style: italic;
-    margin-bottom: 20px;
-    color: #999;
-  }
-  
-  .data-display {
-    color: #ff4081;
-    font-weight: bold;
-    display: inline-block;
-  }
-  
-  .card {
-    position: relative;
-    top: 20px;
-    background-color: #222;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }}
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-  }
-  
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-  
-  input:checked + .slider {
-    background-color: #ff2a6d;
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px #ff2a6d;
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(26px);
-  }
+
+}
+.token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 20px;
+}
+
+.token-card {
+  padding: 20px;
+  overflow: hidden;
+  color: aliceblue;
+}
+
+.token-card:nth-child(4n+1) {
+  background-color: #008cff;
+}
+
+.token-card:nth-child(4n+2) {
+  background-color: #00db42;
+}
+
+.token-card:nth-child(4n+3) {
+  background-color: #ff00ff;
+}
+
+.token-card:nth-child(4n+4) {
+  background-color: #ff9900;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #1e88e5;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #1e88e5;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
