@@ -33,7 +33,7 @@ const App = () => {
   provider = ethersProvider
   signer = ethersSigner
   let account = useAccount();
-  let userAddress = useAccount().address;
+  let userAddress = '0x14B214CA36249b516B59401B3b221CB87483b53C'//useAccount().address;
 
   account = account.address
   let contract = new ethers.Contract(
@@ -103,13 +103,21 @@ const App = () => {
     }
   }, [contract, userAddress]);
 
-  const maps = []
-  maps['0x94373a4919B3240D86eA41593D5eBa789FEF3848'] = 'wETH'
-  maps['0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'] = 'PR0'
+  const [maps, setmaps] = useState({
+    '0x94373a4919B3240D86eA41593D5eBa789FEF3848': 'wETH',
+    '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0'
+  });
 
+  // Function to add a new mapping
+  const addMapping = (address, name) => {
+    setmaps(prevMaps => ({
+      ...prevMaps,
+      [address]: name
+    }));
+  };
   const map = (lol) => {
-    if (maps[lol]!=null) {return maps[lol]}
-    else {return lol}
+    if (maps[lol] != null) { return maps[lol] }
+    else { return lol }
 
   };
   const fetchData = async () => {
@@ -123,12 +131,20 @@ const App = () => {
       const borrowDetails = await Promise.all(
         lenderAllowances.map(async (hash) => {
           const details = await contract.borrowDetails(hash);
+          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
+          const getAddressENS = async (address) => {
+            const ensName = await pr.lookupAddress(address);
+            ensName?addMapping(address,ensName):{}
+            return ensName || address; // Return ENS name if exists, otherwise return the address
+          }; const ENS = await getAddressENS(details.friend);
+          console.log('lol', ENS)
+
           return {
             hash: hash,
             lender: details.lender,
             friend: details.friend,
             token: details.token,
-
+            show: ENS,
             totalBorrowed: Number(ethers.formatUnits(details.totalBorrowed, 18)),
             outstanding: Number(ethers.formatUnits(details.outstanding, 18)),
             allowable: Number(ethers.formatUnits(details.allowable, 18)),
@@ -145,11 +161,21 @@ const App = () => {
       const borrowDetails = await Promise.all(
         friendAllowances.map(async (hash) => {
           const details = await contract.borrowDetails(hash);
+          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
+          const getAddressENS = async (address) => {
+            const ensName = await pr.lookupAddress(address);
+            ensName?addMapping(address,ensName):{}
+
+            return ensName || address; // Return ENS name if exists, otherwise return the address
+          }; const ENS = await getAddressENS(details.friend);
+          console.log('lol', ENS)
+
           return {
             hash: hash,
             lender: details.lender,
             friend: details.friend,
             token: details.token,
+            show: ENS,
             totalBorrowed: Number(ethers.formatUnits(details.totalBorrowed, 18)),
             outstanding: Number(ethers.formatUnits(details.outstanding, 18)),
             allowable: Number(ethers.formatUnits(details.allowable, 18)),
@@ -274,40 +300,41 @@ const App = () => {
         <section id="borrow-form">
 
           <Toaster />
-          <div className='card' style={{ textAlign: 'center',    maxWidth: '100%'
- }}>
+          <div className='card' style={{
+            textAlign: 'center', maxWidth: '100%'
+          }}>
             <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Spot a Friend</h2>
-<p style={{ color: '#42aaff', marginTop: '0px',marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
-</p>            <div style={{ display: 'grid', gap: '20px' }}>
-<div>
-  <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
-    Token Address:
-  </label>{stoken}
-  <select
-    id="token"
-    name="token"
-    value={stoken}
-    onChange={(e) => setToken(e.target.value)}
-    required
-    style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-  >
-    <option value="">{stoken?stoken:'Select a token'}</option>
-    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-    <option value="0x0987654321098765432109876543210987654321">USDC</option>
-    <option value="custom">Custom</option>
-  </select>
-  {stoken === 'custom' && (
-    <input
-      type="text"
-      id="customToken"
-      name="customToken"
-      onChange={(e) => setToken(e.target.value)}
-      required
-      style={{ width: '100%', padding: '10px', fontSize: '18px', marginTop: '10px' }}
-      placeholder="Enter custom token address"
-    />
-  )}
-</div>
+            <p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
+            </p>            <div style={{ display: 'grid', gap: '20px' }}>
+              <div>
+                <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
+                  Token Address:
+                </label>{stoken}
+                <select
+                  id="token"
+                  name="token"
+                  value={stoken}
+                  onChange={(e) => setToken(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
+                >
+                  <option value="">{stoken ? stoken : 'Select a token'}</option>
+                  <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
+                  <option value="0x0987654321098765432109876543210987654321">USDC</option>
+                  <option value="custom">Custom</option>
+                </select>
+                {stoken === 'custom' && (
+                  <input
+                    type="text"
+                    id="customToken"
+                    name="customToken"
+                    onChange={(e) => setToken(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '10px', fontSize: '18px', marginTop: '10px' }}
+                    placeholder="Enter custom token address"
+                  />
+                )}
+              </div>
               <div>
                 <label htmlFor="friend" style={{ display: 'block', marginBottom: '5px' }}>Borrower Address:</label>
                 <input
@@ -353,7 +380,7 @@ const App = () => {
                   }, {})
               ).map(([friend, friendAllowances]) => (
                 <div key={friend} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(friend)}</h3>
+                  <h3>{map(friend)}{friend.show}</h3>
                   <div className="token-grid">
                     {friendAllowances.map((allowance) => (
                       <div key={allowance.hash} className='card token-card'>
@@ -418,7 +445,7 @@ const App = () => {
                   }, {})
               ).map(([lender, lenderBorrows]) => (
                 <div key={lender} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(lender)}</h3>
+                  <h3>{map(lender)}{lender.ENS}</h3>
                   <div className="token-grid">
                     {lenderBorrows.map((borrow) => (
                       <div key={borrow.hash} className='card token-card'>
@@ -445,7 +472,7 @@ const App = () => {
                         <input
                           type="text"
                           id="token"
-                          name="token"               placeholder='amount'
+                          name="token" placeholder='amount'
 
                           onChange={(e) => setAmount(e.target.value)} style={{ marginTop: '16px' }}
 
