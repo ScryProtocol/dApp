@@ -260,7 +260,7 @@ const App = () => {
         const tx = await contract.repay(token, lender, amount);
         await tx.wait();
         toast.success('Repayment successful');
-        fetchRepayments();
+        fetchFriendAllowances();
       } catch (error) {
         console.error('Error repaying:', error);
         toast.error('Error repaying');
