@@ -371,7 +371,7 @@ const App = () => {
                 )}
               </div>
               <div>
-                <label htmlFor="friend" style={{ display: 'block', marginBottom: '5px' }}>Borrower Address:</label>
+                <label htmlFor="friend" style={{ display: 'block', marginBottom: '5px' }}>Borrower Address/ENS:</label>
                 <input
                   type="text"
                   id="friend"
