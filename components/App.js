@@ -114,7 +114,10 @@ const App = () => {
     '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'USDC',
     '0x5300000000000000000000000000000000000004': 'wETH',
     '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4': 'USDC',
-  });
+
+    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'wETH',
+    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
+    '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',  });
 
   // Function to add a new mapping
   const addMapping = (address, name) => {
@@ -354,7 +357,12 @@ const App = () => {
                   {ChainId == 17000 && (<><option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
                     <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
                     <option value="0x0987654321098765432109876543210987654321">USDC</option>
-                  </>)}
+                  </>)}{ChainId == 1 && (
+  <>
+    <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
+    <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+    <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+  </>)}
                   {ChainId == 10 && (<>
                     <option value="0x4200000000000000000000000000000000000006">wETH</option>
                     <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
@@ -369,6 +377,7 @@ const App = () => {
                     <option value="0x5300000000000000000000000000000000000004">wETH</option>
                     <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
                   </>)}
+                  
                   <option value="custom">Custom</option>
                 </select>
                 {stoken === 'custom' && (
