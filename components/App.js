@@ -279,7 +279,7 @@ const App = () => {
             top: '15px',
             right: '15px',
             borderRadius: '8px',
-          }}
+          }} 
           src={'https://addrs.to/a.png'}
           alt="Selected NFT Image"
         /></a>
