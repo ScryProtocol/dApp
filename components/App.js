@@ -272,17 +272,17 @@ const App = () => {
   return (<div className="app">
     <main className="app-main">
       <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
-        <img
+       <a href="https://addrs.to/"> <img
           style={{
-            maxWidth: '64px',
+            maxWidth: '50px',
             position: 'absolute',
-            top: '10px',
-            right: '10px',
+            top: '15px',
+            right: '15px',
             borderRadius: '8px',
           }}
-          src={'./favicon.ico'}
+          src={'https://addrs.to/a.png'}
           alt="Selected NFT Image"
-        />
+        /></a>
         <a href="https://discord.gg/W87Rw6wtk2">
           <img
             style={{
