@@ -105,7 +105,15 @@ const App = () => {
 
   const [maps, setmaps] = useState({
     '0x94373a4919B3240D86eA41593D5eBa789FEF3848': 'wETH',
-    '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0'
+    '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
+     '0x0987654321098765432109876543210987654321': 'USDC',
+    '0x4200000000000000000000000000000000000006': 'wETH',
+    '0x0b2c639c533813f4aa9d7837caf62653d097ff85': 'USDC',
+    '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58': 'USDT',
+    '0x4200000000000000000000000000000000000042': 'OP',
+    '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'USDC',
+    '0x5300000000000000000000000000000000000004': 'wETH',
+    '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4': 'USDC',
   });
 
   // Function to add a new mapping
@@ -356,7 +364,7 @@ const App = () => {
                     <option value="0x4200000000000000000000000000000000000006">wETH</option>
                     <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
                   </>)}
-                  {ChainId == 534352  && (<>
+                  {ChainId == 534352 && (<>
                     <option value="0x5300000000000000000000000000000000000004">wETH</option>
                     <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
                   </>)}
