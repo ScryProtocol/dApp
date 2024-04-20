@@ -6,7 +6,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import { chainId } from 'wagmi'; import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
-import { useAccount, useConnect, useEnsName,useChainId} from 'wagmi'
+import { useAccount, useConnect, useEnsName, useChainId } from 'wagmi'
 
 const tokenaddress = '0x0000000000000000000000000000000000000000'
 let signer
@@ -215,6 +215,15 @@ const App = () => {
           let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
           tx.wait()
         }
+        if (!ethers.isAddress(friend)) {
+          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
+          const getAddressENS = async (address) => {
+            const ensName = await pr.resolveName(address);
+            ensName ? friend = ensName : toast.error('ENS not found');
+            return ensName
+          }; const ENS = await getAddressENS(friend);
+          if (!ENS) { return }
+        }
         const tx = await contract.allowBorrow(stoken, friend, ethers.parseEther(amount));
         await tx.wait();
         toast.success('Allowance successful');
@@ -246,13 +255,13 @@ const App = () => {
 
   const handleRepay = async (token, lender) => {
     if (contract) {
-    let token = new ethers.Contract(
-      token,
-      tokenABI,
-      signer
-    );
+      let token = new ethers.Contract(
+        token,
+        tokenABI,
+        signer
+      );
       try {
-        
+
         let am = await token.allowance(userAddress, ContractAddress)
         console.log('lol', await token.balanceOf(userAddress), 'lol', am)
         if (am < (ethers.parseEther(amount))) {
@@ -272,14 +281,14 @@ const App = () => {
   return (<div className="app">
     <main className="app-main">
       <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
-       <a href="https://addrs.to/"> <img
+        <a href="https://addrs.to/"> <img
           style={{
             maxWidth: '50px',
             position: 'absolute',
             top: '15px',
             right: '15px',
             borderRadius: '8px',
-          }} 
+          }}
           src={'https://addrs.to/a.png'}
           alt="Selected NFT Image"
         /></a>
@@ -334,18 +343,18 @@ const App = () => {
                 >
                   <option value="">{stoken ? stoken : 'Select a token'}</option>
                   {ChainId == 17000 && (<><option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                  <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                  <option value="0x0987654321098765432109876543210987654321">USDC</option>
+                    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
+                    <option value="0x0987654321098765432109876543210987654321">USDC</option>
                   </>)}
                   {ChainId == 10 && (<>
-                  <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                  <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
-                  <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
-                  <option value="0x4200000000000000000000000000000000000042">OP</option>   
-                    </>)}
+                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                    <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
+                    <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
+                    <option value="0x4200000000000000000000000000000000000042">OP</option>
+                  </>)}
                   {ChainId == 8453 && (<>
-                  <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                    <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
                   </>)}
                   <option value="custom">Custom</option>
                 </select>
