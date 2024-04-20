@@ -124,7 +124,8 @@ const App = () => {
     }));
   };
   const map = (lol) => {
-    if (maps[lol.toLowerCase()] != null) { return maps[lol] }
+    lol = lol.toLowerCase()
+    if (maps[lol] != null) { return maps[lol] }
     else { return lol }
 
   };
