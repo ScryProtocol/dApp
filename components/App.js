@@ -175,7 +175,7 @@ const App = () => {
           };
         })
       ); console.log(borrowDetails)
-      setAllowances([borrowDetails[0],borrowDetails[0],borrowDetails[0],borrowDetails[0]]);
+      setAllowances(borrowDetails);
     }
   };
 
@@ -579,7 +579,30 @@ const App = () => {
                           <p><strong>Limit:</strong> {allowance.allowable}</p>
                           <p><strong>Available:</strong>                           {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
                           </p>
-                          <p><strong>Volume streamed:</strong> {allowance.totalStreamed}</p>
+                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: 'orange' }}> {allowance.once && ('Unlimited  ')}</label> Stream <label style={{ color: '#00ff00' }}>{!allowance.once && ('Once only')}</label>
+                          </strong></p>
+                          <p style={{ marginTop: '0px' }}>
+              <strong>
+                {allowance.once && (
+                  <label style={{ color: '#FF0' }}>
+              @ {allowance.allowable} tokens<br />
+                    per {Math.floor(allowance.window / (3600 * 24))}d:
+                    {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
+                    {Math.floor((allowance.window % 3600) / 60)}m:
+                    {Math.floor(allowance.window % 60)}s
+                  </label>
+                )}
+              </strong>
+              {!allowance.once && (
+                <label style={{ color: '#00ff00' }}>
+              ends in {
+                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
+                    `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
+                  }
+                </label>
+              )}
+            </p><p><strong>Volume streamed:</strong> {allowance.totalStreamed}</p>
                           <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
                             <div
                               style={{
@@ -675,7 +698,31 @@ const App = () => {
                           <p><strong>Token:</strong> {map(borrow.token)}</p>
                           <p><strong>Amount:</strong> {borrow.allowable}</p>
                           <p><strong>Available:</strong>                           {(displayedAvailableAmounts[borrow.hash] || 0).toFixed(6)}</p>
-                          <p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
+                          <p><strong>Amount:</strong> {borrow.once}</p>
+                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: 'orange' }}> {!borrow.once && ('Unlimited ')}</label> Stream <label style={{ color: '#00ff00' }}>{borrow.once && ('Once only')}</label>
+                          </strong></p><p  style={{ marginTop: '0px' }}>
+  <strong>
+    {!borrow.once && (
+      <label style={{ color: '#FF0' }}>
+     @ {borrow.allowable} tokens<br />
+        per {Math.floor(borrow.window / (3600 * 24))}d:
+        {Math.floor((borrow.window % (3600 * 24)) / 3600)}h:
+        {Math.floor((borrow.window % 3600) / 60)}m:
+        {Math.floor(borrow.window % 60)}s
+      </label>
+    )}
+  </strong>
+  {borrow.once && (
+    <label style={{ color: '#00ff00' }}>
+     ends in {
+        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
+        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
+      }
+    </label>
+  )}
+</p>
+  <p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
                         </div>                  <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
 
                           <div
