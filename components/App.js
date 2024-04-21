@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ethers } from 'ethers';
 const FormData = require('form-data')
 import axios from 'axios';
@@ -14,7 +14,7 @@ let provider
 const App = () => {
 
   const ContractAddress = '0x100324A74d05e61e4B3a5EF8FcD04826f8d6CbAE';
-  const ContractABI = [{"inputs":[{"internalType":"address payable","name":"feeAddrs","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"lender","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Repaid","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"lender","type":"address"},{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"friend","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"StreamAllowed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"lender","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Streamed","type":"event"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"name":"allowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddress","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"me","type":"address"}],"name":"getAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"},{"internalType":"address","name":"newfeeAddress","type":"address"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"me","type":"address"}],"name":"stream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"streamDetails","outputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"friend","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByFriend","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByLender","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"friend","type":"address"}],"name":"viewFriendAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"}],"name":"viewLenderAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"}]
+  const ContractABI = [{ "inputs": [{ "internalType": "address payable", "name": "feeAddrs", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Repaid", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "friend", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "StreamAllowed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Streamed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "name": "allowStream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "fee", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "getAvailable", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }, { "internalType": "address", "name": "newfeeAddress", "type": "address" }], "name": "setFee", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "stream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "streamDetails", "outputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "totalStreamed", "type": "uint256" }, { "internalType": "uint256", "name": "outstanding", "type": "uint256" }, { "internalType": "uint256", "name": "allowable", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByFriend", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByLender", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "friend", "type": "address" }], "name": "viewFriendAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }], "name": "viewLenderAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }]
   const tokenABI = [{ "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "minter_", "type": "address" }, { "internalType": "uint256", "name": "mintingAllowedAfter_", "type": "uint256" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegator", "type": "address" }, { "indexed": true, "internalType": "address", "name": "fromDelegate", "type": "address" }, { "indexed": true, "internalType": "address", "name": "toDelegate", "type": "address" }], "name": "DelegateChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegate", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "previousBalance", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "newBalance", "type": "uint256" }], "name": "DelegateVotesChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "minter", "type": "address" }, { "indexed": false, "internalType": "address", "name": "newMinter", "type": "address" }], "name": "MinterChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "inputs": [], "name": "DELEGATION_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "DOMAIN_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PERMIT_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint32", "name": "", "type": "uint32" }], "name": "checkpoints", "outputs": [{ "internalType": "uint32", "name": "fromBlock", "type": "uint32" }, { "internalType": "uint96", "name": "votes", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }], "name": "delegate", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }, { "internalType": "uint256", "name": "nonce", "type": "uint256" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "delegateBySig", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "delegates", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "getCurrentVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "blockNumber", "type": "uint256" }], "name": "getPriorVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minimumTimeBetweenMints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "mintCap", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minter", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "mintingAllowedAfter", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "nonceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "nonces", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "numCheckpoints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "permit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "minter_", "type": "address" }], "name": "setMinter", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }]
 
   //const [token, setToken] = useState(null);
@@ -112,7 +112,7 @@ const App = () => {
   const [maps, setmaps] = useState({
     '0x94373a4919B3240D86eA41593D5eBa789FEF3848': 'wETH',
     '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
-     '0x0987654321098765432109876543210987654321': 'USDC',
+    '0x0987654321098765432109876543210987654321': 'USDC',
     '0x4200000000000000000000000000000000000006': 'wETH',
     '0x0b2c639c533813f4aa9d7837caf62653d097ff85': 'USDC',
     '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58': 'USDT',
@@ -120,16 +120,17 @@ const App = () => {
     '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'USDC',
     '0x5300000000000000000000000000000000000004': 'wETH',
     '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4': 'USDC',
-
     '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'wETH',
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-    '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',  });
+    '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
+  });
 
   // Function to add a new mapping
   const addMapping = (address, name) => {
+    console.log('Adding mapping:', address, name);
     setmaps(prevMaps => ({
       ...prevMaps,
-      [address]: name
+      [address.toLowerCase()]: name
     }));
   };
   const map = (lol) => {
@@ -248,7 +249,8 @@ const App = () => {
           }; const ENS = await getAddressENS(friend);
           if (!ENS) { return }
         }
-        const tx = await contract.allowBorrow(stoken, friend, ethers.parseEther(amount), window, once);
+        console.log('borrowing', stoken, friend, ethers.parseEther(amount), window, once);
+        const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount), window, once);
         await tx.wait();
         toast.success('Allowance successful');
         fetchAllowances();
@@ -300,11 +302,11 @@ const App = () => {
         console.error('Error repaying:', error);
         toast.error('Error repaying');
       }
-    }function calculateAllowableAmount(allowance) {
+    } function calculateAllowableAmount(allowance) {
       const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
       const elapsedTime = currentTime - allowance.timestamp;
       const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
-    
+
       if (allowableAmount > allowance.outstanding) {
         return allowance.outstanding;
       } else {
@@ -317,14 +319,14 @@ const App = () => {
     const currentTime = Math.floor(Date.now() / 1000);
     const elapsedTime = currentTime - allowance.timestamp;
     const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
-  
+
     if (allowableAmount > allowance.outstanding) {
       return allowance.outstanding;
     } else {
       return allowableAmount;
     }
   };
-  
+
   const updateAvailableAmounts = () => {
     const newAvailableAmounts = {};
     for (const allowance of allowances) {
@@ -332,41 +334,41 @@ const App = () => {
     }
     setAvailableAmounts(newAvailableAmounts);
   };
-  
+
   useEffect(() => {
     const timer = setInterval(updateAvailableAmounts, 100);
     return () => {
       clearInterval(timer);
     };
   }, [allowances]);
-  
-const smoothUpdateAvailableAmounts = () => {
-  for (const allowance of allowances) {
-    const currentDisplayedAmount = displayedAvailableAmounts[allowance.hash] || 0;
-    const targetAmount = availableAmounts[allowance.hash] || 0;
-    const diff = targetAmount - currentDisplayedAmount;
-    const step = diff / 10;
 
-    if (Math.abs(diff) > 0.0000000001) {
-      setDisplayedAvailableAmounts((prevAmounts) => ({
-        ...prevAmounts,
-        [allowance.hash]: currentDisplayedAmount + step,
-      }));
+  const smoothUpdateAvailableAmounts = () => {
+    for (const allowance of allowances) {
+      const currentDisplayedAmount = displayedAvailableAmounts[allowance.hash] || 0;
+      const targetAmount = availableAmounts[allowance.hash] || 0;
+      const diff = targetAmount - currentDisplayedAmount;
+      const step = diff / 10;
+
+      if (Math.abs(diff) > 0.0000000001) {
+        setDisplayedAvailableAmounts((prevAmounts) => ({
+          ...prevAmounts,
+          [allowance.hash]: currentDisplayedAmount + step,
+        }));
+      }
     }
-  }
 
-  rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
-};
-
-useEffect(() => {
-  const timer = setInterval(updateAvailableAmounts, 100);
-  rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
-
-  return () => {
-    clearInterval(timer);
-    cancelAnimationFrame(rafIdRef.current);
+    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
   };
-}, [allowances, availableAmounts]);
+
+  useEffect(() => {
+    const timer = setInterval(updateAvailableAmounts, 100);
+    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
+
+    return () => {
+      clearInterval(timer);
+      cancelAnimationFrame(rafIdRef.current);
+    };
+  }, [allowances, availableAmounts]);
   return (<div className="app">
     <main className="app-main">
       <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
@@ -435,11 +437,11 @@ useEffect(() => {
                     <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
                     <option value="0x0987654321098765432109876543210987654321">USDC</option>
                   </>)}{ChainId == 1 && (
-  <>
-    <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
-    <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-    <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-  </>)}
+                    <>
+                      <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
+                      <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+                      <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+                    </>)}
                   {ChainId == 10 && (<>
                     <option value="0x4200000000000000000000000000000000000006">wETH</option>
                     <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
@@ -454,7 +456,7 @@ useEffect(() => {
                     <option value="0x5300000000000000000000000000000000000004">wETH</option>
                     <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
                   </>)}
-                  
+
                   <option value="custom">Custom</option>
                 </select>
                 {stoken === 'custom' && (
@@ -492,7 +494,7 @@ useEffect(() => {
                   required
                   style={{ width: '100%', padding: '10px', fontSize: '18px' }}
                 />
-              </div>
+              </div>{!once&&(
               <div>
                 <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Days to Stream Amount:</label>
                 <input
@@ -505,25 +507,41 @@ useEffect(() => {
                   style={{ width: '100%', padding: '10px', fontSize: '18px' }}
                 />
               </div>
-              
-              <div >
-  <label htmlFor="once" style={{}}>
-  <label style={{ color:'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color:'#00ff00' }}>{once && ('Once only')}</label>
-  </label>
-</div>
-<div>
-  <label className="switch">
+)}
+{once&&(  <div>
+                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>   End Date:
+    </label>
     <input
-      type="checkbox"
-      id="once"
-      name="once"
-      checked={once}
-      onChange={(e) => setOnce(e.target.checked)}
-      
-    />
-    <span className="slider round"></span>
-  </label>
-</div>
+      type="datetime-local"
+      id="endDate"
+      name="endDate"
+      onChange={(e) => {
+        const selectedDate = new Date(e.target.value);
+        const currentDate = new Date();
+        const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
+        setWindow(windowInSeconds);
+      }}         required
+                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
+                />
+              </div>)}
+              <div >
+                <label htmlFor="once" style={{}}>
+                  <label style={{ color: 'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
+                </label>
+              </div>
+              <div>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    id="once"
+                    name="once"
+                    checked={once}
+                    onChange={(e) => setOnce(e.target.checked)}
+
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
 
               <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '100%', justifySelf: 'center' }} >
                 Set allowance     </button>
@@ -554,7 +572,7 @@ useEffect(() => {
                           <p><strong>Token:</strong> {map(allowance.token)}</p>
                           <p><strong>Limit:</strong> {allowance.allowable}</p>
                           <p><strong>Available:</strong>                           {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-</p>
+                          </p>
                           <p><strong>Volume streamed:</strong> {allowance.totalStreamed}</p>
                           <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
                             <div
@@ -566,7 +584,7 @@ useEffect(() => {
                                 transition: 'width 0.5s ease-in-out',
                                 marginTop: '0px'
                               }}
-                            >    <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0,5)}%</strong>
+                            >    <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
 
                             </div>
                           </div>
@@ -583,8 +601,8 @@ useEffect(() => {
 
                           required
                         />
-                        <div style={{marginTop:'10px'}}>
-                          <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px',color:'#fff'}}>Days to Stream Amount:</label>
+                        <div style={{ marginTop: '10px' }}>
+                          <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px', color: '#fff' }}>Days to Stream Amount:</label>
                           <input
                             type="number"
                             id="amount"
@@ -595,25 +613,25 @@ useEffect(() => {
                             style={{ width: '20%', padding: '10px', fontSize: '18px' }}
                           />
                         </div>
-                        
-                        <div style={{marginTop:'10px'}}>
-            <label htmlFor="once" style={{color:'#fff'}}>
-            <label style={{ color:'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color:'#00ff00' }}>{once && ('Once only')}</label>
-            </label>
-          </div>
-          <div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                id="once"
-                name="once"
-                checked={once}
-                onChange={(e) => setOnce(e.target.checked)}
-                
-              />
-              <span className="slider round"></span>
-            </label>
-          </div>
+
+                        <div style={{ marginTop: '10px' }}>
+                          <label htmlFor="once" style={{ color: '#fff' }}>
+                            <label style={{ color: 'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
+                          </label>
+                        </div>
+                        <div>
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              id="once"
+                              name="once"
+                              checked={once}
+                              onChange={(e) => setOnce(e.target.checked)}
+
+                            />
+                            <span className="slider round"></span>
+                          </label>
+                        </div>
                         <button
                           style={{ marginLeft: '6px', marginTop: '6px' }}
                           onClick={() => requestBorrow(allowance.token, friend, amount)}
@@ -663,7 +681,7 @@ useEffect(() => {
                               transition: 'width 0.5s ease-in-out',
                               marginTop: '0px'
                             }}
-                          >    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0,5)}%</strong>
+                          >    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
 
                           </div>
                         </div>
