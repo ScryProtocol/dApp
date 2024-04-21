@@ -552,7 +552,8 @@ const App = () => {
               <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '100%', justifySelf: 'center' }} >
                 Set allowance     </button>
 
-                
+                <button onClick={() => location.assign('https://spot.pizza/')} style={{ backgroundColor: '#', width: '50%', justifySelf: 'center' }} >
+                Check out Spot🍕     </button>
               <ConnectButton />
             </div>
           </div>
