@@ -57,7 +57,7 @@ input, textarea, select {
 
 button {
   padding: 15px;
-  background-color: #1e88e5;
+  background-color: #42a7ff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -67,9 +67,6 @@ button {
   letter-spacing: 1px;
   transition: background-color 0.3s ease, transform 0.3s ease;
   
-  border: #ffffff;
-  border-style: solid;
-  border-width: 1px;
 }
 
 button:hover {

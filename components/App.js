@@ -175,7 +175,7 @@ const App = () => {
           };
         })
       ); console.log(borrowDetails)
-      setAllowances(borrowDetails);
+      setAllowances([borrowDetails[0],borrowDetails[0],borrowDetails[0],borrowDetails[0]]);
     }
   };
 
@@ -236,16 +236,22 @@ const App = () => {
       try {
         let am = await token.allowance(userAddress, ContractAddress)
         console.log('lol', await token.balanceOf(userAddress), 'lol', am)
-        if (am < (ethers.parseEther(amount))) {
-          let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
+        if (!once) {
+          let tx = await token.approve(ContractAddress, ethers.MaxUint256())
           tx.wait()
+        }
+        else {
+          if (am < (ethers.parseEther(amount))) {
+            let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
+            tx.wait()
+          }
         }
         if (!ethers.isAddress(friend)) {
           let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
           const getAddressENS = async (address) => {
             const ensName = await pr.resolveName(address);
             ensName ? friend = ensName : toast.error('ENS not found');
-            return ensName
+            return ensNamex``
           }; const ENS = await getAddressENS(friend);
           if (!ENS) { return }
         }
@@ -494,33 +500,33 @@ const App = () => {
                   required
                   style={{ width: '100%', padding: '10px', fontSize: '18px' }}
                 />
-              </div>{!once&&(
-              <div>
-                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Days to Stream Amount:</label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  step="0.01"
-                  onChange={(e) => setWindow(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>
-)}
-{once&&(  <div>
+              </div>{!once && (
+                <div>
+                  <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Days to Stream Amount:</label>
+                  <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    step="0.01"
+                    onChange={(e) => setWindow(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '10px', fontSize: '18px' }}
+                  />
+                </div>
+              )}
+              {once && (<div>
                 <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>   End Date:
-    </label>
-    <input
-      type="datetime-local"
-      id="endDate"
-      name="endDate"
-      onChange={(e) => {
-        const selectedDate = new Date(e.target.value);
-        const currentDate = new Date();
-        const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-        setWindow(windowInSeconds);
-      }}         required
+                </label>
+                <input
+                  type="datetime-local"
+                  id="endDate"
+                  name="endDate"
+                  onChange={(e) => {
+                    const selectedDate = new Date(e.target.value);
+                    const currentDate = new Date();
+                    const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
+                    setWindow(windowInSeconds);
+                  }} required
                   style={{ width: '100%', padding: '10px', fontSize: '18px' }}
                 />
               </div>)}
