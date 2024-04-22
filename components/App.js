@@ -13,7 +13,7 @@ let signer
 let provider
 const App = () => {
 
-  let ContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';//const ContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
+  let ContractAddress = '0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b'//'0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';//const ContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
   const ContractABI = [{ "inputs": [{ "internalType": "address payable", "name": "feeAddrs", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Repaid", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "friend", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "StreamAllowed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Streamed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "name": "allowStream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "fee", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "getAvailable", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }, { "internalType": "address", "name": "newfeeAddress", "type": "address" }], "name": "setFee", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "stream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "streamDetails", "outputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "totalStreamed", "type": "uint256" }, { "internalType": "uint256", "name": "outstanding", "type": "uint256" }, { "internalType": "uint256", "name": "allowable", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByFriend", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByLender", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "friend", "type": "address" }], "name": "viewFriendAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }], "name": "viewLenderAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }]
   const tokenABI = [{ "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "minter_", "type": "address" }, { "internalType": "uint256", "name": "mintingAllowedAfter_", "type": "uint256" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegator", "type": "address" }, { "indexed": true, "internalType": "address", "name": "fromDelegate", "type": "address" }, { "indexed": true, "internalType": "address", "name": "toDelegate", "type": "address" }], "name": "DelegateChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegate", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "previousBalance", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "newBalance", "type": "uint256" }], "name": "DelegateVotesChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "minter", "type": "address" }, { "indexed": false, "internalType": "address", "name": "newMinter", "type": "address" }], "name": "MinterChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "inputs": [], "name": "DELEGATION_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "DOMAIN_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PERMIT_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint32", "name": "", "type": "uint32" }], "name": "checkpoints", "outputs": [{ "internalType": "uint32", "name": "fromBlock", "type": "uint32" }, { "internalType": "uint96", "name": "votes", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }], "name": "delegate", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }, { "internalType": "uint256", "name": "nonce", "type": "uint256" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "delegateBySig", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "delegates", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "getCurrentVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "blockNumber", "type": "uint256" }], "name": "getPriorVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minimumTimeBetweenMints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "mintCap", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minter", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "mintingAllowedAfter", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "nonceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "nonces", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "numCheckpoints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "permit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "minter_", "type": "address" }], "name": "setMinter", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }]
 
@@ -29,8 +29,12 @@ const App = () => {
   const ethersProvider = useEthersProvider();
   const [stoken, setToken] = useState(null);
   const [availableAmounts, setAvailableAmounts] = useState({});
+  const [availableBorrowAmounts, setAvailableBorrowAmounts] = useState({});
+
   const rafIdRef = useRef(null);
+  const rafBorrowIdRef = useRef(null);
   const [displayedAvailableAmounts, setDisplayedAvailableAmounts] = useState({});
+  const [displayedAvailableBorrowAmounts, setDisplayedAvailableBorrowAmounts] = useState({});
 
   const [window, setWindow] = useState('');
   const [once, setOnce] = useState(false);
@@ -261,7 +265,7 @@ const App = () => {
         const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount), window, once);
         await tx.wait();
         toast.success('Allowance successful');
-        fetchAllowances();
+        fetchLenderAllowances();
       } catch (error) {
         console.error('Error requesting borrow:', error);
         toast.error('Error requesting borrow');
@@ -324,10 +328,10 @@ const App = () => {
   }
 
   const calculateAvailableAmount = (allowance) => {
+
     const currentTime = Math.floor(Date.now() / 1000);
     const elapsedTime = currentTime - allowance.timestamp;
     const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
-
     if (allowableAmount > allowance.outstanding) {
       return allowance.outstanding;
     } else {
@@ -337,7 +341,9 @@ const App = () => {
 
   const updateAvailableAmounts = () => {
     const newAvailableAmounts = {};
+
     for (const allowance of allowances) {
+
       newAvailableAmounts[allowance.hash] = calculateAvailableAmount(allowance);
     }
     setAvailableAmounts(newAvailableAmounts);
@@ -356,7 +362,6 @@ const App = () => {
       const targetAmount = availableAmounts[allowance.hash] || 0;
       const diff = targetAmount - currentDisplayedAmount;
       const step = diff / 10;
-
       if (Math.abs(diff) > 0.0000000001) {
         setDisplayedAvailableAmounts((prevAmounts) => ({
           ...prevAmounts,
@@ -376,7 +381,57 @@ const App = () => {
       clearInterval(timer);
       cancelAnimationFrame(rafIdRef.current);
     };
-  }, [allowances, availableAmounts]);
+  }, [allowances, availableAmounts]);const calculateAvailableBorrowAmount = (borrow) => {
+    const currentTime = Math.floor(Date.now() / 1000);
+    const elapsedTime = currentTime - borrow.timestamp;
+    const allowableAmount = (borrow.allowable * elapsedTime) / borrow.window;
+    if (allowableAmount > borrow.outstanding) {
+      return borrow.outstanding;
+    } else {
+      return allowableAmount;
+    }
+  };
+  
+  const updateAvailableBorrowAmounts = () => {
+    const newAvailableBorrowAmounts = {};
+    for (const borrow of borrows) {
+      newAvailableBorrowAmounts[borrow.hash] = calculateAvailableBorrowAmount(borrow);
+    }
+    setAvailableBorrowAmounts(newAvailableBorrowAmounts);
+  };
+  
+  useEffect(() => {
+    const timer = setInterval(updateAvailableBorrowAmounts, 100);
+    console.log('borrows', borrows);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [borrows]);
+  
+  const smoothUpdateAvailableBorrowAmounts = () => {
+    for (const borrow of borrows) {
+      const currentDisplayedAmount = displayedAvailableBorrowAmounts[borrow.hash] || 0;
+      const targetAmount = availableBorrowAmounts[borrow.hash] || 0;
+      const diff = targetAmount - currentDisplayedAmount;
+      const step = diff / 10;
+      if (Math.abs(diff) > 0.0000000001) {
+        setDisplayedAvailableBorrowAmounts((prevAmounts) => ({
+          ...prevAmounts,
+          [borrow.hash]: currentDisplayedAmount + step,
+        }));
+      }
+    }
+    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
+  };
+  
+  useEffect(() => {
+    const timer = setInterval(updateAvailableBorrowAmounts, 100);
+    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
+    return () => {
+      clearInterval(timer);
+      cancelAnimationFrame(rafBorrowIdRef.current);
+    };
+  }, [borrows, availableBorrowAmounts]);
   return (<div className="app">
     <main className="app-main">
       <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
@@ -588,7 +643,7 @@ const App = () => {
                           </strong></p>
                           <p style={{ marginTop: '0px' }}>
               <strong>
-                {allowance.once && (
+                {!allowance.once && (
                   <label style={{ color: '#ffdbaa' }}>
               @ {allowance.allowable} tokens<br />
                     per {Math.floor(allowance.window / (3600 * 24))}d:
@@ -598,7 +653,7 @@ const App = () => {
                   </label>
                 )}
               </strong>
-              {!allowance.once && (
+              {allowance.once && (
                 <label style={{ color: '#caffcc' }}>
               ends in {
                     `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
@@ -702,8 +757,7 @@ const App = () => {
                         <div className="borrow-item">
                           <p><strong>Token:</strong> {map(borrow.token)}</p>
                           <p><strong>Amount:</strong> {borrow.allowable}</p>
-                          <p><strong>Available:</strong>                           {(displayedAvailableAmounts[borrow.hash] || 0).toFixed(6)}</p>
-                          <p><strong>Amount:</strong> {borrow.once}</p>
+                          <p><strong>Available:</strong>                           {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</p>
                           <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {!borrow.once && ('Unlimited ')}</label> Stream <label style={{ color: '#caffcc' }}>{borrow.once && ('Once only')}</label>
                           </strong></p><p  style={{ marginTop: '0px' }}>
   <strong>
@@ -727,7 +781,7 @@ const App = () => {
     </label>
   )}
 </p>
-  <p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
+  
                         </div>                  <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
 
                           <div
