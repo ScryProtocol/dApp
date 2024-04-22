@@ -781,7 +781,8 @@ const App = () => {
     </label>
   )}
 </p>
-  
+<p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
+
                         </div>                  <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
 
                           <div
