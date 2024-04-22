@@ -480,7 +480,7 @@ const App = () => {
           <div className='card' style={{
             textAlign: 'center', maxWidth: '100%'
           }}>
-            <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Stream</h2>
+            <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Stream - in Alpha</h2>
             </strong><p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Stream tokens from your wallet, no locking tokens, no interest, no fees.
             </p>            <div style={{ display: 'grid', gap: '20px' }}>
               <div>
