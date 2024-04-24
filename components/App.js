@@ -950,8 +950,8 @@ const App = () => {
                       <Typography variant="body2" color="textSecondary">
                         <p style={{ marginBottom: '0px' }}>
                           <strong>
-                            <label style={{ color: '#ffdbaa' }}> {allowance.once && ('Unlimited  ')}</label>
-                            <label style={{ color: '#caffcc' }}>{!allowance.once && ('Once only')}</label>
+                            <label style={{ color: '#ffdbaa' }}> {!allowance.once && ('Unlimited  ')}</label>
+                            <label style={{ color: '#caffcc' }}>{allowance.once && ('Once only')}</label>
                           </strong>
                         </p>
                         <p style={{ marginTop: '0px' }}>
