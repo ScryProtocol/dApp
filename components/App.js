@@ -7,7 +7,20 @@ import { chainId } from 'wagmi'; import { ConnectButton } from '@rainbow-me/rain
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
 import { useAccount, useConnect, useEnsName, useChainId } from 'wagmi'
-
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  IconButton,
+  Paper,ListItemText 
+} from '@mui/material';
 const tokenaddress = '0x0000000000000000000000000000000000000000'
 let signer
 let provider
@@ -30,6 +43,7 @@ const App = () => {
   const [stoken, setToken] = useState(null);
   const [availableAmounts, setAvailableAmounts] = useState({});
   const [availableBorrowAmounts, setAvailableBorrowAmounts] = useState({});
+  const [pro, setpro] = useState(0);
 
   const rafIdRef = useRef(null);
   const rafBorrowIdRef = useRef(null);
@@ -79,6 +93,8 @@ const App = () => {
           async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
           await wait(5000)
           console.log('lol');
+          setpro(localStorage.getItem('pro'))
+            
           fetchData();
         } catch (error) {
           console.error('Error connecting to Ethereum:', error);
@@ -326,7 +342,10 @@ const App = () => {
       }
     }
   }
-
+  useEffect(() => {
+    // Save theme preference to local storage whenever it changes
+    localStorage.setItem('pro', pro);
+  }, [pro]);
   const calculateAvailableAmount = (allowance) => {
 
     const currentTime = Math.floor(Date.now() / 1000);
@@ -469,6 +488,31 @@ const App = () => {
           src={'https://addrs.to/a.png'}
           alt="Selected NFT Image"
         /></a>
+        
+        <label className="switch"   style={{
+            maxWidth: '50px',
+            position: 'absolute',
+            top: '15px',
+            left: '80px',
+            borderRadius: '8px',
+          }}> <Typography style={{
+            maxWidth: '50px',
+            position: 'absolute',
+            top: '6px',
+            left: '60px',
+            borderRadius: '8px',
+          }}>{!pro?'Pro':'Fun'}</Typography >
+                            <input
+                              type="checkbox"
+                              id="once"
+                              name="once"
+                              checked={pro}
+                              onChange={(e) => setpro(e.target.checked)}
+
+                            />
+                                                        <span className="slider round"></span>
+</label>
+                            
         <a href="https://discord.gg/W87Rw6wtk2">
           <img
             style={{
@@ -637,7 +681,7 @@ const App = () => {
               <ConnectButton />
             </div>
           </div>
-        </section><section id="allowance-list">
+        </section>{pro &&(<><section id="allowance-list">
           <div className='card' style={{ marginTop: '20px' }}>
             <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
             <ul id="allowances">
@@ -834,7 +878,271 @@ const App = () => {
               ))}
             </div>
           </div>
-        </section>
+        </section></>)}{!pro &&(<><section id="allowance-list">
+  <div className='card' style={{ marginTop: '20px' }}>
+    <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
+    <div id="allowances">
+      {Object.entries(
+        allowances
+          .filter((allowance) => allowance.lender === userAddress)
+          .reduce((acc, allowance) => {
+            if (!acc[allowance.friend]) {
+              acc[allowance.friend] = [];
+            }
+            acc[allowance.friend].push(allowance);
+            return acc;
+          }, {})
+      ).map(([friend, friendAllowances]) => (
+        <TableContainer key={friend} component={Paper} elevation={1}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell colSpan={5} style={{ backgroundColor: '#5a5fff', color: '#fff' }}>
+                  <Typography variant="h5">{map(friend)}</Typography>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell width="200">Asset</TableCell>
+                <TableCell>Limit</TableCell>
+                <TableCell width="300">Available</TableCell>
+                <TableCell width="300">Time</TableCell>
+
+                <TableCell width="120"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {friendAllowances.map((allowance) => (<>
+                <TableRow key={allowance.hash} hover>
+                  <TableCell>
+                    <ListItem>
+                      <ListItemText primary={map(allowance.token).toString().substring(0, 10)} />
+                    </ListItem>
+                  </TableCell>
+                  <TableCell>
+                    <ListItem>
+                      <ListItemText primary={allowance.allowable.toFixed(6)} />
+                    </ListItem>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Typography color="#000">
+                        {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+                        
+                      </Typography>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
+                      <div
+                        style={{
+                          width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
+                          height: '20px',
+                          backgroundColor: '#42aaff',
+                          borderRadius: '10px',
+                          transition: 'width 0.5s ease-in-out',
+                          marginTop: '0px'
+                        }}
+                      >
+                        <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Typography variant="body2" color="textSecondary">
+                        <p style={{ marginBottom: '0px' }}>
+                          <strong>
+                            <label style={{ color: '#ffdbaa' }}> {allowance.once && ('Unlimited  ')}</label>
+                            <label style={{ color: '#caffcc' }}>{!allowance.once && ('Once only')}</label>
+                          </strong>
+                        </p>
+                        <p style={{ marginTop: '0px' }}>
+                          <strong>
+                            {!allowance.once && (
+                              <label style={{ color: '#ffdbaa' }}>
+                                @ {allowance.allowable} tokens<br />
+                                per {Math.floor(allowance.window / (3600 * 24))}d:
+                                {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
+                                {Math.floor((allowance.window % 3600) / 60)}m:
+                                {Math.floor(allowance.window % 60)}s
+                              </label>
+                            )}
+                          </strong>
+                          {allowance.once && (
+                            <label style={{ color: '#caffcc' }}>
+                              ends in {
+                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
+                                `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
+                              }
+                            </label>
+                          )}
+                        </p>
+                      </Typography>
+                    </div>
+                  </TableCell>
+               
+                  <TableRow>
+                </TableRow>
+
+                </TableRow>
+                  <TableRow>
+                <TableCell>
+                  <input
+                          type="text"
+                          id="token"
+                          name="token"
+                          placeholder='amount'
+
+                          onChange={(e) => setAmount(e.target.value)}
+                          style={{ marginTop: '16px',width:'50%' }}
+
+                          required
+                        />
+                                          </TableCell><TableCell>
+
+                        <label htmlFor="once" style={{ color: '#000' }}>
+                            <label style={{ color: '#ffdbaa' }}> {!once && ('Unlimited')}</label>  <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
+                          </label>
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              id="once"
+                              name="once"
+                              checked={once}
+                              onChange={(e) => setOnce(e.target.checked)}
+
+                            />
+                            <span className="slider round"></span>
+                          </label></TableCell><TableCell>  <input
+                            type="number"
+                            id="amount"
+                            name="amount" placeholder='Days'
+                            step="0.01"
+                            onChange={(e) => setWindow(e.target.value)}
+                            required
+                            style={{ width: '50%', padding: '10px',margin:'10px', fontSize: '18px' }}
+                          />
+                        </TableCell><TableCell>
+                    <button onClick={() => requestBorrow(allowance.token, friend, amount)}>
+                      Set allowance
+                    </button></TableCell>
+
+                </TableRow></>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ))}
+    </div>
+  </div>
+</section><section id="borrow-list">
+  <div className='card' style={{ marginTop: '20px' }}>
+    <h2 style={{ color: '#1e88e5' }}>Friends That Have Spotted Me</h2>
+    <div id="borrows">
+      {Object.entries(
+        borrows
+          .filter((borrow) => borrow.friend === userAddress)
+          .reduce((acc, borrow) => {
+            if (!acc[borrow.lender]) {
+              acc[borrow.lender] = [];
+            }
+            acc[borrow.lender].push(borrow);
+            return acc;
+          }, {})
+      ).map(([lender, lenderBorrows]) => (
+        <TableContainer key={lender} component={Paper} elevation={1}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell colSpan={5} style={{backgroundColor:'#5a5fff',color:'#fff'}}>
+                  <Typography variant="h5" >{map(lender)}</Typography>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell width="200">Asset</TableCell>
+                <TableCell>Limit</TableCell>
+                <TableCell width="300">Available</TableCell>
+                <TableCell width="300">Ends in</TableCell>
+                <TableCell width="120"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {lenderBorrows.map((borrow) => (
+                <TableRow key={borrow.hash} hover>
+                  <TableCell>
+                    <ListItem>
+                 
+                      <ListItemText primary={map(borrow.token).toString().substring(0,10)} />
+                    </ListItem>
+                  </TableCell>
+                  <TableCell>
+                    <ListItem>
+                      <ListItemText primary={borrow.allowable.toFixed(6)} />
+                    </ListItem>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Typography  color="#000">
+                        {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
+                      </Typography>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
+
+                          <div
+                            style={{
+                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
+                              height: '20px',
+                              backgroundColor: '#42aaff',
+                              borderRadius: '10px',
+                              transition: 'width 0.5s ease-in-out',
+                              marginTop: '0px'
+                            }}
+>    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
+
+                          </div>    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Typography variant="body2" color="textSecondary">
+                      <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {!borrow.once && ('Unlimited ')}</label>  <label style={{ color: '#caffcc' }}>{borrow.once && ('Once only')}</label>
+                          </strong></p><p  style={{ marginTop: '0px' }}>
+  <strong>
+    {!borrow.once && (
+      <label style={{ color: '#ffdbaa' }}>
+     @ {borrow.allowable} tokens<br />
+        per {Math.floor(borrow.window / (3600 * 24))}d:
+        {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
+        {Math.floor((borrow.window % 3600) / 60)}m:
+        {Math.floor(borrow.window % 60)}s
+      </label>
+    )}
+  </strong>
+  {borrow.once && (
+    <label style={{ color: '#00ff00' }}>
+     ends in {
+        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
+        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
+      }
+    </label>
+  )}
+</p>
+
+                      </Typography>
+                    </div>
+                  </TableCell>
+                  <TableCell align="center">
+                    <button onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}>
+                    Claim</button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ))}
+    </div>
+  </div>
+</section></>)}
       </body>
     </main>
   </div>
