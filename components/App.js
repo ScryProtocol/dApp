@@ -331,12 +331,24 @@ const App = () => {
 
     const currentTime = Math.floor(Date.now() / 1000);
     const elapsedTime = currentTime - allowance.timestamp;
+    if (allowance.once) {
+
     const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
     if (allowableAmount > allowance.outstanding) {
       return allowance.outstanding;
     } else {
       return allowableAmount;
     }
+    }
+    else {
+   
+      const progress = elapsedTime / allowance.window;
+  
+      return progress;
+  
+    }
+  
+  
   };
 
   const updateAvailableAmounts = () => {
@@ -384,12 +396,23 @@ const App = () => {
   }, [allowances, availableAmounts]);const calculateAvailableBorrowAmount = (borrow) => {
     const currentTime = Math.floor(Date.now() / 1000);
     const elapsedTime = currentTime - borrow.timestamp;
+    if (borrow.once) {
+
     const allowableAmount = (borrow.allowable * elapsedTime) / borrow.window;
     if (allowableAmount > borrow.outstanding) {
       return borrow.outstanding;
     } else {
       return allowableAmount;
     }
+  }
+    else {
+   
+      const progress = elapsedTime / borrow.window;
+  
+      return progress;
+  
+    }
+  
   };
   
   const updateAvailableBorrowAmounts = () => {
