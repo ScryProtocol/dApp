@@ -907,7 +907,6 @@ const App = () => {
                 <TableCell width="300">Available</TableCell>
                 <TableCell width="300">Time</TableCell>
 
-                <TableCell width="120"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -950,41 +949,39 @@ const App = () => {
                       <Typography variant="body2" color="textSecondary">
                         <p style={{ marginBottom: '0px' }}>
                           <strong>
-                            <label style={{ color: '#ffdbaa' }}> {!allowance.once && ('Unlimited  ')}</label>
-                            <label style={{ color: '#caffcc' }}>{allowance.once && ('Once only')}</label>
+                            <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff' }}> {!allowance.once && ('Unlimited  ')}</Typography>
+                            <Typography style={{borderRadius:'20px',backgroundColor:'#00cb00', textAlign: 'center',width:'70%', color: '#fff' }}>{allowance.once && ('Once only')}</Typography>
                           </strong>
                         </p>
                         <p style={{ marginTop: '0px' }}>
                           <strong>
                             {!allowance.once && (
-                              <label style={{ color: '#ffdbaa' }}>
+                              <Typography >
                                 @ {allowance.allowable} tokens<br />
                                 per {Math.floor(allowance.window / (3600 * 24))}d:
                                 {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
                                 {Math.floor((allowance.window % 3600) / 60)}m:
                                 {Math.floor(allowance.window % 60)}s
-                              </label>
+                              </Typography>
                             )}
                           </strong>
                           {allowance.once && (
-                            <label style={{ color: '#caffcc' }}>
+                            <Typography >
                               ends in {
                                 `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
                                 `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
                                 `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
                               }
-                            </label>
+                            </Typography>
                           )}
                         </p>
                       </Typography>
                     </div>
                   </TableCell>
                
-                  <TableRow>
-                </TableRow>
 
                 </TableRow>
-                  <TableRow>
+                  <TableRow style={{maxHeight:'10px'}}>
                 <TableCell>
                   <input
                           type="text"
@@ -993,7 +990,7 @@ const App = () => {
                           placeholder='amount'
 
                           onChange={(e) => setAmount(e.target.value)}
-                          style={{ marginTop: '16px',width:'50%' }}
+                          style={{ marginTop: '1px',width:'50%' }}
 
                           required
                         />
@@ -1019,7 +1016,7 @@ const App = () => {
                             step="0.01"
                             onChange={(e) => setWindow(e.target.value)}
                             required
-                            style={{ width: '50%', padding: '10px',margin:'10px', fontSize: '18px' }}
+                            style={{ width: '50%', padding: '10px',margin:'1px', fontSize: '18px' }}
                           />
                         </TableCell><TableCell>
                     <button onClick={() => requestBorrow(allowance.token, friend, amount)}>
@@ -1103,27 +1100,27 @@ const App = () => {
                   <TableCell>
                     <div>
                       <Typography variant="body2" color="textSecondary">
-                      <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {!borrow.once && ('Unlimited ')}</label>  <label style={{ color: '#caffcc' }}>{borrow.once && ('Once only')}</label>
+                      <p style={{ marginBottom: '0px' }}><strong>   <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}> {!borrow.once && ('Unlimited ')}</Typography>  <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}>{borrow.once && ('Once only')}</Typography>
                           </strong></p><p  style={{ marginTop: '0px' }}>
   <strong>
     {!borrow.once && (
-      <label style={{ color: '#ffdbaa' }}>
+      <Typography >
      @ {borrow.allowable} tokens<br />
         per {Math.floor(borrow.window / (3600 * 24))}d:
         {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
         {Math.floor((borrow.window % 3600) / 60)}m:
         {Math.floor(borrow.window % 60)}s
-      </label>
+      </Typography>
     )}
   </strong>
   {borrow.once && (
-    <label style={{ color: '#00ff00' }}>
+    <Typography >
      ends in {
         `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
         `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
         `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
       }
-    </label>
+    </Typography>
   )}
 </p>
 
