@@ -981,7 +981,7 @@ const App = () => {
                
 
                 </TableRow>
-                  <TableRow style={{maxHeight:'10px'}}>
+                  <TableRow style={{padding:'1px',backgroundColor:'#5a5fff'}}>
                 <TableCell>
                   <input
                           type="text"
@@ -996,9 +996,8 @@ const App = () => {
                         />
                                           </TableCell><TableCell>
 
-                        <label htmlFor="once" style={{ color: '#000' }}>
-                            <label style={{ color: '#ffdbaa' }}> {!once && ('Unlimited')}</label>  <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
-                          </label>
+                           <strong> <Typography style={{ color: 'orange' }}> {!once && ('Unlimited')}</Typography>  <Typography style={{ color: '#00ff00' }}>{once && ('Once only')}</Typography>
+                           </strong>
                           <label className="switch">
                             <input
                               type="checkbox"
