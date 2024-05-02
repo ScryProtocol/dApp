@@ -361,9 +361,9 @@ const App = () => {
     }
     else {
    
-      const progress = elapsedTime / allowance.window;
+      const allowableAmount = allowance.outstanding*elapsedTime / allowance.window;
   
-      return progress;
+      return allowableAmount;
   
     }
   
