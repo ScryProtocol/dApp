@@ -182,15 +182,17 @@ const App = () => {
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
 
+          const token = new ethers.Contract(details.token, tokenABI, signer);
+          const decimals = await token.decimals();
           return {
             hash: hash,
             lender: details.lender,
             friend: details.friend,
             token: details.token,
             show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, 18)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, 18)),
-            allowable: Number(ethers.formatUnits(details.allowable, 18)),
+            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
+            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
+            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
             window: Number(details.window),
             timestamp: Number(details.timestamp),
             once: details.once,
@@ -215,6 +217,8 @@ const App = () => {
             return ensName || address; // Return ENS name if exists, otherwise return the address
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
+          const token = new ethers.Contract(details.token, tokenABI, signer);
+          const decimals = await token.decimals();
 
           return {
             hash: hash,
@@ -222,12 +226,13 @@ const App = () => {
             friend: details.friend,
             token: details.token,
             show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, 18)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, 18)),
-            allowable: Number(ethers.formatUnits(details.allowable, 18)),
+            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
+            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
+            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
             window: Number(details.window),
             timestamp: Number(details.timestamp),
             once: details.once,
+            decimals: decimals,
           };
         })
       );
@@ -257,14 +262,16 @@ const App = () => {
     if (contract) {
       try {
         let am = await token.allowance(userAddress, ContractAddress)
+        let decimals = await token.decimals()
+
         console.log('lol', await token.balanceOf(userAddress), 'lol', am)
         if (!once) {
-          let tx = await token.approve(ContractAddress, ethers.MaxUint256())
+          let tx = await token.approve(ContractAddress, ethers.MaxUint256)
           tx.wait()
         }
         else {
-          if (am < (ethers.parseEther(amount))) {
-            let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
+          if (am < (ethers.parseEther(amount)/10n**18n-decimals)) {
+            let tx = await token.approve(ContractAddress, ethers.parseEther(amount)/10n**18n-decimals)
             tx.wait()
           }
         }
@@ -277,8 +284,8 @@ const App = () => {
           }; const ENS = await getAddressENS(friend);
           if (!ENS) { return }
         }
-        console.log('borrowing', stoken, friend, ethers.parseEther(amount), window, once);
-        const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount), window, once);
+        console.log('borrowing', stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
+        const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
         await tx.wait();
         toast.success('Allowance successful');
         fetchLenderAllowances();
