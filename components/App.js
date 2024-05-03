@@ -307,7 +307,7 @@ const App = () => {
       const tx = await contract.stream(token, lender, account);
       await tx.wait();
       toast.success('Stream successful');
-      fetchBorrows();
+      fetchFriendAllowances();
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error');
