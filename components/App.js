@@ -217,7 +217,7 @@ const App = () => {
             return ensName || address; // Return ENS name if exists, otherwise return the address
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
-          const token = new ethers.Contract(details.token, tokenABI, signer);
+          const token = new ethers.Contract(details.token, tokenABI, provider);
           const decimals = await token.decimals();
 
           return {
