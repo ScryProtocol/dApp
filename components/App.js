@@ -432,10 +432,10 @@ const App = () => {
     }
   }
     else {
-   
-      const progress = elapsedTime / borrow.window;
+ 
+      const allowableAmount = borrow.outstanding*elapsedTime / borrow.window;
   
-      return progress;
+      return allowableAmount;
   
     }
   
