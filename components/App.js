@@ -60,6 +60,7 @@ const App = () => {
   let userAddress = useAccount().address;
   let ChainId = useChainId()
     ChainId==1?ContractAddress='0x90076e40A74F33cC2C673eCBf2fBa4068Af77892':{}
+    ChainId==17000 ?ContractAddress='0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b':{}
 
   account = account.address
   let contract = new ethers.Contract(
