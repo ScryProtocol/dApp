@@ -182,7 +182,7 @@ const App = () => {
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
 
-          const token = new ethers.Contract(details.token, tokenABI, signer);
+          const token = new ethers.Contract(details.token, tokenABI, provider);
           const decimals = await token.decimals();
           return {
             hash: hash,
