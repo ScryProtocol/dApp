@@ -154,7 +154,7 @@ console.log('lol')
   }, [contract, userAddress]);
 
   const [maps, setmaps] = useState({
-    '0x94373a4919B3240D86eA41593D5eBa789FEF3848': 'wETH',
+    '0x94373a4919b3240d86ea41593d5eba789fef3848': 'wETH',
     '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
     '0x0987654321098765432109876543210987654321': 'USDC',
     '0x4200000000000000000000000000000000000006': 'wETH',
@@ -942,7 +942,7 @@ console.log('lol')
                 <TableRow key={allowance.hash} hover>
                   <TableCell>
                     <ListItem>
-                      <ListItemText primary={map(allowance.token).toString().substring(0, 10)} />
+                      <ListItemText primary={map(allowance.token).toString()} />
                     </ListItem>
                   </TableCell>
                   <TableCell>
@@ -1095,7 +1095,7 @@ console.log('lol')
                   <TableCell>
                     <ListItem>
                  
-                      <ListItemText primary={map(borrow.token).toString().substring(0,10)} />
+                      <ListItemText primary={map(borrow.token).toString()} />
                     </ListItem>
                   </TableCell>
                   <TableCell>
