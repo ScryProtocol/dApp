@@ -55,7 +55,7 @@ function MyApp({ Component, pageProps }) {
       <RainbowKitProvider chains={chains}>
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={toggleTheme} 
-         ><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/> </label>
+         ><img style={{position: 'absolute', left: '10px', top: '10px', width: '100px' }}src='./favicon.ico'/> </label>
           <Component {...pageProps} />
         </div>
       </RainbowKitProvider>

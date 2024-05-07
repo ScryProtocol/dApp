@@ -188,7 +188,7 @@ console.log('1',token, subscribe, amount, window, once)
         ? `Pay every ${Math.floor(Number(window) / 86400)}d:${Math.floor((Number(window) % 86400) / 3600)}h:${Math.floor((Number(window) % 3600) / 60)}m:${Number(window) % 60}s`
         : `Sub until ${new Date(Date.now() + Number(window) * 1000).toLocaleString()}`,
       timestamp: '',
-      once: once ? 'One-time' : 'Recurring',
+      once: once =='false'? 'One-time' : 'Recurring',
     });
         setShowSubscribeForm(true);
         console.log('no subscription found');
@@ -251,7 +251,6 @@ console.log('1',token, subscribe, amount, window, once)
   };
 
   return (<body><div className='container'>
-    <ConnectButton />
     {/* Render the subscription form */}
     {!showSubscribeForm && (
       <div>
@@ -355,7 +354,7 @@ console.log('1',token, subscribe, amount, window, once)
             </div>
           </div>
         </div>
-        {showSubscribeForm && (
+        {(showSubscribeForm&&subscriptionDetails.outstanding==0) && (
           <div className="card">
             <button onClick={handleSubscribe} className="btn">Subscribe</button>
           </div>
@@ -382,7 +381,8 @@ console.log('1',token, subscribe, amount, window, once)
           </div>
         )}
       </div>
-    )}
+    )}    <ConnectButton />
+
   </div></body>
   );
 };
