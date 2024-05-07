@@ -19,7 +19,7 @@ import {
   ListItemAvatar,
   Avatar,
   IconButton,
-  Paper,ListItemText 
+  Paper, ListItemText
 } from '@mui/material';
 const tokenaddress = '0x0000000000000000000000000000000000000000'
 let signer
@@ -50,18 +50,22 @@ const App = () => {
   const [displayedAvailableAmounts, setDisplayedAvailableAmounts] = useState({});
   const [displayedAvailableBorrowAmounts, setDisplayedAvailableBorrowAmounts] = useState({});
 
+  const [subscriptionDetails, setSubscriptionDetails] = useState(null);
+  const [subscriptionLink, setSubscriptionLink] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [streamContract, setStreamContract] = useState(null);
   const [window, setWindow] = useState('');
   const [once, setOnce] = useState(false);
   const [streams, setStreams] = useState([]);
   const ethersSigner = useEthersSigner();
   provider = ethersProvider
   signer = ethersSigner
-  
+  let location
   let account = useAccount();
   let userAddress = useAccount().address;
   let ChainId = useChainId()
-    ChainId==1?ContractAddress='0x90076e40A74F33cC2C673eCBf2fBa4068Af77892':{}
-    ChainId==17000 ?ContractAddress='0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b':{}
+  ChainId == 1 ? ContractAddress = '0x90076e40A74F33cC2C673eCBf2fBa4068Af77892' : {}
+  ChainId == 17000 ? ContractAddress = '0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b' : {}
 
   account = account.address
   let contract = new ethers.Contract(
@@ -70,30 +74,45 @@ const App = () => {
     ethersProvider
   );
   let token
-  
-provider.addListener('network', (newNetwork, oldNetwork) => {console.log('newNetwork',newNetwork,'oldNetwork',oldNetwork)
-try {
-  
-ChainId==1?ContractAddress='0x90076e40A74F33cC2C673eCBf2fBa4068Af77892':{}
-ChainId==17000 ?ContractAddress='0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b':{}
-console.log('ContractAddress',ContractAddress)
-account = account.address
-contract = new ethers.Contract(
-ContractAddress,
-ContractABI,
-ethersProvider
-);
-fetchData();
-console.log('lol')
+  provider.addListener('network', (newNetwork, oldNetwork) => {
+    console.log('newNetwork', newNetwork, 'oldNetwork', oldNetwork)
+    try {
 
-} catch (error) {
-  console.error('Error connecting to Ethereum:', error);
-}
-})
+      ChainId == 1 ? ContractAddress = '0x90076e40A74F33cC2C673eCBf2fBa4068Af77892' : {}
+      ChainId == 17000 ? ContractAddress = '0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b' : {}
+      console.log('ContractAddress', ContractAddress)
+      account = account.address
+      contract = new ethers.Contract(
+        ContractAddress,
+        ContractABI,
+        ethersProvider
+      );
+      console.log('lol')
+
+    } catch (error) {
+      console.error('Error connecting to Ethereum:', error);
+    }
+  })
   const toggleModal = () => {
     setShowModal(!showModal);
-  };
+  };useEffect(() => {
+    async function w(ms) {
+    async function wait(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    }
+    await wait(5000);
+    if (typeof window !== 'undefined' && window.location) {
+      location = window.location.href;
+      console.log('location', location, window.location)
+    }
+    console.log(window, window.location)
+  check()}
+   w()
+  }, []);
   useEffect(() => {
+
     function handleaccountsChanged() {
       if (boop == null) {
         setboop('1');
@@ -116,13 +135,12 @@ console.log('lol')
           await wait(5000)
           console.log('lol');
           setpro(localStorage.getItem('pro'))
-            
-          fetchData();
+
         } catch (error) {
           console.error('Error connecting to Ethereum:', error);
         }
       } else {
-        const providerInstance = new ethers.providers.JsonRpcProvider('https://1rpc.io/sepolia');
+//        const providerInstance = new ethers.providers.JsonRpcProvider('https://1rpc.io/sepolia');
 
         async function wait(ms) {
           return new Promise((resolve) => {
@@ -132,7 +150,6 @@ console.log('lol')
 
         await wait(5000);
         console.log('lol');
-        fetchData();
       }
     };
 
@@ -145,7 +162,6 @@ console.log('lol')
         if (boop == null) {
 
           setboop('1');
-          fetchData();
         }
       };
 
@@ -153,1023 +169,228 @@ console.log('lol')
     }
   }, [contract, userAddress]);
 
-  const [maps, setmaps] = useState({
-    '0x94373a4919b3240d86ea41593d5eba789fef3848': 'wETH',
-    '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
-    '0x0987654321098765432109876543210987654321': 'USDC',
-    '0x4200000000000000000000000000000000000006': 'wETH',
-    '0x0b2c639c533813f4aa9d7837caf62653d097ff85': 'USDC',
-    '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58': 'USDT',
-    '0x4200000000000000000000000000000000000042': 'OP',
-    '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'USDC',
-    '0x5300000000000000000000000000000000000004': 'wETH',
-    '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4': 'USDC',
-    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'wETH',
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-    '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
-  });
+  useEffect(() => {
+    const initializeContract = async () => {
 
-  // Function to add a new mapping
-  const addMapping = (address, name) => {
-    console.log('Adding mapping:', address, name);
-    setmaps(prevMaps => ({
-      ...prevMaps,
-      [address.toLowerCase()]: name
-    }));
-  };
-  const map = (lol) => {
-    lol = lol.toLowerCase()
-    if (maps[lol] != null) { return maps[lol] }
-    else { return lol }
+      const { token, subscribe, amount, window, once, network } = getQueryParams();
 
-  };
-  const fetchData = async () => {
-    fetchLenderAllowances();
-    fetchFriendAllowances();
-    console.log(ChainId)
-
-  };
-
-  const fetchLenderAllowances = async () => {
-    if (contract && userAddress) {
-      const lenderAllowances = await contract.viewLenderAllowances(userAddress);
-      const borrowDetails = await Promise.all(
-        lenderAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.lookupAddress(address);
-            ensName ? addMapping(address, ensName) : {}
-            return ensName || address; // Return ENS name if exists, otherwise return the address
-          }; const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS)
-
-          const token = new ethers.Contract(details.token, tokenABI, provider);
-          const decimals = await token.decimals();
-          return {
-            hash: hash,
-            lender: details.lender,
-            friend: details.friend,
-            token: details.token,
-            show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
-            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
-            window: Number(details.window),
-            timestamp: Number(details.timestamp),
-            once: details.once,
-          };
-        })
-      ); console.log(borrowDetails)
-      setAllowances(borrowDetails);
-    }
-  };
-
-  const fetchFriendAllowances = async () => {
-    if (contract && userAddress) {
-      const friendAllowances = await contract.viewFriendAllowances(userAddress);
-      const borrowDetails = await Promise.all(
-        friendAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.lookupAddress(address);
-            ensName ? addMapping(address, ensName) : {}
-
-            return ensName || address; // Return ENS name if exists, otherwise return the address
-          }; const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS)
-          const token = new ethers.Contract(details.token, tokenABI, provider);
-          const decimals = await token.decimals();
-
-          return {
-            hash: hash,
-            lender: details.lender,
-            friend: details.friend,
-            token: details.token,
-            show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
-            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
-            window: Number(details.window),
-            timestamp: Number(details.timestamp),
-            once: details.once,
-            decimals: decimals,
-          };
-        })
-      );
-      setBorrows(borrowDetails);
-    }
-  };
-
-  const fetchAllowances = async () => {
-    if (contract && userAddress) {
-      const allowances = await contract.viewLenderAllowances(userAddress);
-      setAllowances(allowances);
-    }
-  };
-
-  const requestBorrow = async (stoken, friend, amount) => {
-
-    let contract = new ethers.Contract(
-      ContractAddress,
-      ContractABI,
-      signer
-    );
-    let token = new ethers.Contract(
-      stoken,
-      tokenABI,
-      signer
-    );
-    if (contract) {
-      try {
-        let am = await token.allowance(userAddress, ContractAddress)
-        let decimals = await token.decimals()
-
-        console.log('lol', await token.balanceOf(userAddress), 'lol', am)
-        if (!once) {
-          let tx = await token.approve(ContractAddress, ethers.MaxUint256)
-          tx.wait()
-        }
-        else {
-          if (am < (ethers.parseEther(amount)/10n**18n-decimals)) {
-            let tx = await token.approve(ContractAddress, ethers.parseEther(amount)/10n**18n-decimals)
-            tx.wait()
-          }
-        }
-        if (!ethers.isAddress(friend)) {
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.resolveName(address);
-            ensName ? friend = ensName : toast.error('ENS not found');
-            return ensNamex``
-          }; const ENS = await getAddressENS(friend);
-          if (!ENS) { return }
-        }
-        console.log('borrowing', stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
-        const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
-        await tx.wait();
-        toast.success('Allowance successful');
-        fetchLenderAllowances();
-      } catch (error) {
-        console.error('Error requesting borrow:', error);
-        toast.error('Error requesting borrow');
+      if (network && (await provider.getNetwork()).chainId !== network) {
+        toast.error('Check network. Must be chainId', network)
       }
-    }
-  };
-  const handleBorrow = async (token, lender) => {
-    console.log('borrowing', token, lender, amount);
-    let contract = new ethers.Contract(
-      ContractAddress,
-      ContractABI,
-      signer
-    ); try {
-      const tx = await contract.stream(token, lender, account);
-      await tx.wait();
-      toast.success('Stream successful');
-      fetchFriendAllowances();
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error');
-    }
 
+
+      await check();
+    };
+
+    initializeContract();
+  }, []);
+
+  const getQueryParams = () => {
+    const params = new URLSearchParams(location);
+    return {
+      token: params.get('token'),
+      subscribe: params.get('subscribe'),
+      amount: params.get('amount'),
+      window: params.get('window'),
+      once: params.get('once'),
+      network: params.get('network'),
+    };
   };
 
-  const handleRepay = async (token, lender) => {
-    if (contract) {
-      let token = new ethers.Contract(
-        token,
-        tokenABI,
-        signer
-      );
+  const displaySubscriptionLink = (link) => {
+    setSubscriptionLink(link);
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        toast.success('Subscription link copied to clipboard!');
+
+      })
+      .catch((error) => {
+        console.error('Failed to copy subscription link:', error);
+      });
+  };
+
+  const displaySubscriptionDetails = (details) => {
+    setSubscriptionDetails(details);
+  };
+
+  const handleCreateSubscription = async (event) => {
+    event.preventDefault();
+    const tokenAddress = event.target.tokenAddress.value;
+    const subscriber = event.target.subscriber.value;
+    const amount = ethers.parseUnits(event.target.amount.value, 18);
+    const window = event.target.window.value * 24 * 60 * 60;
+    const once = event.target.once.value === 'true';
+    const selectedNetwork = event.target.networkSelect.value;
+
+    const subscriptionLink = `https://sub.spot.pizza/?token=${tokenAddress}&subscribe=${subscriber}&amount=${amount}&window=${window}&once=${once}&network=${selectedNetwork}`;
+    displaySubscriptionLink(subscriptionLink);
+  };
+
+  const check = async () => {
+    console.log('check')
+    const { token, subscribe, amount, window, once } = getQueryParams();
+    console.log('token', token, 'subscribe', subscribe, 'amount', amount, 'window', window, 'once', once) 
+    if (token && subscribe && amount && window && once !== null) {
+      let subscriptionHash;
+      let details = { lender: 1 };
       try {
-
-        let am = await token.allowance(userAddress, ContractAddress)
-        console.log('lol', await token.balanceOf(userAddress), 'lol', am)
-        if (am < (ethers.parseEther(amount))) {
-          let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
-          tx.wait()
-        }
-        const tx = await contract.repay(token, lender, amount);
-        await tx.wait();
-        toast.success('Repayment successful');
-        fetchFriendAllowances();
+        subscriptionHash = await contract.computeHash(userAddress, token, subscribe);
+        details = await contract.streamDetails(subscriptionHash);
       } catch (error) {
-        console.error('Error repaying:', error);
-        toast.error('Error repaying');
+        console.log(error);
       }
-    } function calculateAllowableAmount(allowance) {
-      const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
-      const elapsedTime = currentTime - allowance.timestamp;
-      const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
 
-      if (allowableAmount > allowance.outstanding) {
-        return allowance.outstanding;
+      if (details.lender !== ethers.constants.AddressZero && details.lender !== 1) {
+        displaySubscriptionDetails(details);
+        setIsSubscribed(true);
       } else {
-        return allowableAmount;
+        // Display subscription details for new subscription
+        // ...
       }
     }
-  }
-  useEffect(() => {
-    // Save theme preference to local storage whenever it changes
-    localStorage.setItem('pro', pro);
-  }, [pro]);
-  const calculateAvailableAmount = (allowance) => {
-
-    const currentTime = Math.floor(Date.now() / 1000);
-    const elapsedTime = currentTime - allowance.timestamp;
-    if (allowance.once) {
-
-    const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
-    if (allowableAmount > allowance.outstanding) {
-      return allowance.outstanding;
-    } else {
-      return allowableAmount;
-    }
-    }
-    else {
-   
-      const allowableAmount = allowance.outstanding*elapsedTime / allowance.window;
-  
-      return allowableAmount;
-  
-    }
-  
-  
   };
 
-  const updateAvailableAmounts = () => {
-    const newAvailableAmounts = {};
+  const handleSubscribe = async () => {
+    const { token, subscribe, amount, window, once, network } = getQueryParams();
 
-    for (const allowance of allowances) {
+    if ((await provider.getNetwork()).chainId !== network) {
+      toast.error('Check network. Must be chainId', network)
 
-      newAvailableAmounts[allowance.hash] = calculateAvailableAmount(allowance);
+      return;
     }
-    setAvailableAmounts(newAvailableAmounts);
+
+    const tx = await contract.allowStream(token, subscribe, amount, window, once);
+    await tx.wait();
+    await check();
+    setIsSubscribed(true);
   };
 
-  useEffect(() => {
-    const timer = setInterval(updateAvailableAmounts, 100);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [allowances]);
-
-  const smoothUpdateAvailableAmounts = () => {
-    for (const allowance of allowances) {
-      const currentDisplayedAmount = displayedAvailableAmounts[allowance.hash] || 0;
-      const targetAmount = availableAmounts[allowance.hash] || 0;
-      const diff = targetAmount - currentDisplayedAmount;
-      const step = diff / 10;
-      if (Math.abs(diff) > 0.0000000001) {
-        setDisplayedAvailableAmounts((prevAmounts) => ({
-          ...prevAmounts,
-          [allowance.hash]: currentDisplayedAmount + step,
-        }));
-      }
-    }
-
-    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(updateAvailableAmounts, 100);
-    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
-
-    return () => {
-      clearInterval(timer);
-      cancelAnimationFrame(rafIdRef.current);
-    };
-  }, [allowances, availableAmounts]);const calculateAvailableBorrowAmount = (borrow) => {
-    const currentTime = Math.floor(Date.now() / 1000);
-    const elapsedTime = currentTime - borrow.timestamp;
-    if (borrow.once) {
-
-    const allowableAmount = (borrow.allowable * elapsedTime) / borrow.window;
-    if (allowableAmount > borrow.outstanding) {
-      return borrow.outstanding;
-    } else {
-      return allowableAmount;
-    }
-  }
-    else {
- 
-      const allowableAmount = borrow.outstanding*elapsedTime / borrow.window;
-  
-      return allowableAmount;
-  
-    }
-  
-  };
-  
-  const updateAvailableBorrowAmounts = () => {
-    const newAvailableBorrowAmounts = {};
-    for (const borrow of borrows) {
-      newAvailableBorrowAmounts[borrow.hash] = calculateAvailableBorrowAmount(borrow);
-    }
-    setAvailableBorrowAmounts(newAvailableBorrowAmounts);
-  };
-  
-  useEffect(() => {
-    const timer = setInterval(updateAvailableBorrowAmounts, 100);
-    console.log('borrows', borrows);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [borrows]);
-  
-  const smoothUpdateAvailableBorrowAmounts = () => {
-    for (const borrow of borrows) {
-      const currentDisplayedAmount = displayedAvailableBorrowAmounts[borrow.hash] || 0;
-      const targetAmount = availableBorrowAmounts[borrow.hash] || 0;
-      const diff = targetAmount - currentDisplayedAmount;
-      const step = diff / 10;
-      if (Math.abs(diff) > 0.0000000001) {
-        setDisplayedAvailableBorrowAmounts((prevAmounts) => ({
-          ...prevAmounts,
-          [borrow.hash]: currentDisplayedAmount + step,
-        }));
-      }
-    }
-    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
-  };
-  
-  useEffect(() => {
-    const timer = setInterval(updateAvailableBorrowAmounts, 100);
-    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
-    return () => {
-      clearInterval(timer);
-      cancelAnimationFrame(rafBorrowIdRef.current);
-    };
-  }, [borrows, availableBorrowAmounts]);
-  return (<div className="app">
-    <main className="app-main">
-      <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
-        <a href="https://addrs.to/"> <img
-          style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '15px',
-            right: '15px',
-            borderRadius: '8px',
-          }}
-          src={'https://addrs.to/a.png'}
-          alt="Selected NFT Image"
-        /></a>
-        
-        <label className="switch"   style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '15px',
-            left: '80px',
-            borderRadius: '8px',
-          }}> <Typography style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '6px',
-            left: '60px',
-            borderRadius: '8px',
-          }}>{!pro?'Pro':'Fun'}</Typography >
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={pro}
-                              onChange={(e) => setpro(e.target.checked)}
-
-                            />
-                                                        <span className="slider round"></span>
-</label>
-                            
-        <a href="https://discord.gg/W87Rw6wtk2">
-          <img
-            style={{
-              maxWidth: '50px',
-              position: 'absolute',
-              top: '16px',
-              right: '80px',
-              borderRadius: '8px',
-            }}
-            src={'./discord.png'}
-            alt="Selected NFT Image"
-          />
-        </a>
-        <a href="https://twitter.com/not_pr0/">
-          <img
-            style={{
-              maxWidth: '50px',
-              position: 'absolute',
-              top: '16px',
-              right: '140px',
-              borderRadius: '8px',
-            }}
-            src={'./twitter.png'}
-            alt="Selected NFT Image"
-          />
-        </a>
-      </h1>
-      <body>
-        <section id="borrow-form">
-
-          <Toaster />
-          <div className='card' style={{
-            textAlign: 'center', maxWidth: '100%'
-          }}>
-            <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Stream - in Alpha</h2>
-            </strong><p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Stream tokens from your wallet, no locking tokens, no interest, no fees.
-            </p>            <div style={{ display: 'grid', gap: '20px' }}>
+  return (
+    <>
+      <div className="container" id="createForm">
+        <h1>Create Subscription</h1>
+        <div className="emoji">🍕🎉</div>
+        <div className="card">
+          <form onSubmit={handleCreateSubscription}>
+            <div className="form-group">
+              <label htmlFor="tokenAddress">Token Address:</label>
+              <input type="text" id="tokenAddress" placeholder="Enter ERC20 token address" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="subscriber">Subscriber Address:</label>
+              <input type="text" id="subscriber" placeholder="Enter subscriber address" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="amount">Amount:</label>
+              <input type="number" id="amount" placeholder="Enter amount of tokens" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="window">Duration (in days):</label>
+              <input type="number" id="window" placeholder="Enter duration in days" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="once">Subscription Type:</label>
+              <select id="once">
+                <option value="false">Recurring</option>
+                <option value="true">One-time</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Network:</label>
               <div>
-                <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
-                  Token Address:
-                </label>{stoken}
-                <select
-                  id="token"
-                  name="token"
-                  value={stoken}
-                  onChange={(e) => setToken(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                >
-                  <option value="">{stoken ? stoken : 'Select a token'}</option>
-                  {ChainId == 17000 && (<><option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                    <option value="0x0987654321098765432109876543210987654321">USDC</option>
-                  </>)}{ChainId == 1 && (
-                    <>
-                      <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
-                      <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-                      <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-                    </>)}
-                  {ChainId == 10 && (<>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
-                    <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
-                    <option value="0x4200000000000000000000000000000000000042">OP</option>
-                  </>)}
-                  {ChainId == 8453 && (<>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  </>)}
-                  {ChainId == 534352 && (<>
-                    <option value="0x5300000000000000000000000000000000000004">wETH</option>
-                    <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
-                  </>)}
-
-                  <option value="custom">Custom</option>
+                <select id="networkSelect">
+                  <option value="1">Mainnet</option>
+                  <option value="10">Holesky</option>
+                  <option value="10">Optimism</option>
+                  <option value="8453">Base</option>
+                  <option value="gnosis">Gnosis</option>
                 </select>
-                {stoken === 'custom' && (
-                  <input
-                    type="text"
-                    id="customToken"
-                    name="customToken"
-                    onChange={(e) => setToken(e.target.value)}
-                    required
-                    style={{ width: '100%', padding: '10px', fontSize: '18px', marginTop: '10px' }}
-                    placeholder="Enter custom token address"
-                  />
-                )}
               </div>
-              <div>
-                <label htmlFor="friend" style={{ display: 'block', marginBottom: '5px' }}>To Address/ENS:</label>
-                <input
-                  type="text"
-                  id="friend"
-                  name="friend"
-                  value={friend}
-                  onChange={(e) => setFriend(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Stream Amount:</label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  step="0.01"
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>{!once && (
-                <div>
-                  <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Days to Stream Amount:</label>
-                  <input
-                    type="number"
-                    id="amount"
-                    name="amount"
-                    step="0.01"
-                    onChange={(e) => setWindow(e.target.value)}
-                    required
-                    style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                  />
-                </div>
-              )}
-              {once && (<div>
-                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>   End Date:
-                </label>
-                <input
-                  type="datetime-local"
-                  id="endDate"
-                  name="endDate"
-                  onChange={(e) => {
-                    const selectedDate = new Date(e.target.value);
-                    const currentDate = new Date();
-                    const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-                    setWindow(windowInSeconds);
-                  }} required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>)}
-              <div >
-                <label htmlFor="once" style={{}}>
-                  <label style={{ color: 'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
-                </label>
-              </div>
-              <div>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    id="once"
-                    name="once"
-                    checked={once}
-                    onChange={(e) => setOnce(e.target.checked)}
+            </div>
+            <button type="submit" className="btn">Create</button>
+          </form>
+        </div>
+        <div id="linkContainer" className="card">
+          <p>Subscription Link:</p>
+          <a href={subscriptionLink} id="subLink">
+            <p id="subscriptionLink" style={{ wordBreak: 'break-all' }}>{subscriptionLink}</p>
+          </a>
+        </div>
+      </div>
 
-                  />
-                  <span className="slider round"></span>
-                </label>
+      <div className="container" id="subscriptionDetails">
+        <h1>Subscribe🍕😋</h1>
+        <div className="card">
+          <h2>Subscription Details</h2>
+          {subscriptionDetails && (
+            <div className="details-container">
+              <div className="detail-item">
+                <div className="detail-label">Subscribe To:</div>
+                <div className="detail-value">{subscriptionDetails.lender}</div>
               </div>
-
-              <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '100%', justifySelf: 'center' }} >
-                Set allowance     </button>
-
-                <button onClick={() => location.assign('https://spot.pizza/')} style={{ backgroundColor: '#', width: '50%', justifySelf: 'center' }} >
-                Check out Spot🍕     </button>
-              <ConnectButton />
+              <div className="detail-item">
+                <div className="detail-label">My Address:</div>
+                <div className="detail-value">{subscriptionDetails.friend}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label">Token:</div>
+                <div className="detail-value">{subscriptionDetails.token}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label" id="totalStreamed2">Total Streamed:</div>
+                <div className="detail-value">{ethers.utils.formatUnits(subscriptionDetails.totalStreamed, 18)}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label" id="outstanding2">Outstanding:</div>
+                <div className="detail-value">{ethers.utils.formatUnits(subscriptionDetails.outstanding, 18)}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label">Amount:</div>
+                <div className="detail-value">{ethers.utils.formatUnits(subscriptionDetails.allowable, 18)}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label">Window:</div>
+                <div className="detail-value">{subscriptionDetails.window.toString()}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label" id="timestamp2">Timestamp:</div>
+                <div className="detail-value">{new Date(subscriptionDetails.timestamp.toNumber() * 1000).toLocaleString()}</div>
+              </div>
+              <div className="detail-item">
+                <div className="detail-label">Once:</div>
+                <div className="detail-value">{subscriptionDetails.once ? 'One-time' : 'Recurring'}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        {!isSubscribed && (
+          <div id="subscribeForm" className="card">
+            <button className="btn" onClick={handleSubscribe}>Subscribe</button>
+          </div>
+        )}
+        {isSubscribed && (
+          <div id="subscribedMessage" className="card">
+            <div className="subscribed-content">
+              <div className="emoji">🎉🍕</div>
+              <h2>Congratulations!</h2>
+              <p>Your subscription is cooking!</p>
+              <div className="subscribed-animation">
+                <div className="cheese"></div>
+                <div className="cheese" style={{ top: '5%', left: '5%', width: '90%', height: '90%', backgroundColor: '#e74c3c' }}></div>
+                <div className="grated-cheese" style={{ top: '5%', left: '5%', width: '90%', height: '90%', backgroundColor: '#e74c3c' }}></div>
+                <div className="pepperoni" style={{ top: '20%', left: '15%' }}></div>
+                <div className="pepperoni" style={{ top: '30%', right: '20%' }}></div>
+                <div className="pepperoni" style={{ top: '60%', left: '30%' }}></div>
+                <div className="pepperoni" style={{ top: '60%', right: '10%' }}></div>
+                <div className="mushroom" style={{ top: '30%', left: '40%' }}></div>
+                <div className="mushroom" style={{ top: '50%', right: '30%' }}></div>
+                <div className="mushroom" style={{ top: '70%', left: '20%' }}></div>
+              </div>
             </div>
           </div>
-        </section>{pro &&(<><section id="allowance-list">
-          <div className='card' style={{ marginTop: '20px' }}>
-            <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
-            <ul id="allowances">
-              {Object.entries(
-                allowances
-                  .filter((allowance) => allowance.lender === userAddress)
-                  .reduce((acc, allowance) => {
-                    if (!acc[allowance.friend]) {
-                      acc[allowance.friend] = [];
-                    }
-                    acc[allowance.friend].push(allowance);
-                    return acc;
-                  }, {})
-              ).map(([friend, friendAllowances]) => (
-                <div key={friend} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(friend)}{friend.show}</h3>
-                  <div className="token-grid">
-                    {friendAllowances.map((allowance) => (
-                      <div key={allowance.hash} className='card token-card'>
-                        <div className="allowance-item">
-                          <p><strong>Token:</strong> {map(allowance.token)}</p>
-                          <p><strong>Limit:</strong> {allowance.allowable}</p>
-                          <p><strong>Available:</strong>                           {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-                          </p>
-                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {allowance.once && ('Unlimited  ')}</label> Stream <label style={{ color: '#caffcc' }}>{!allowance.once && ('Once only')}</label>
-                          </strong></p>
-                          <p style={{ marginTop: '0px' }}>
-              <strong>
-                {!allowance.once && (
-                  <label style={{ color: '#ffdbaa' }}>
-              @ {allowance.allowable} tokens<br />
-                    per {Math.floor(allowance.window / (3600 * 24))}d:
-                    {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                    {Math.floor((allowance.window % 3600) / 60)}m:
-                    {Math.floor(allowance.window % 60)}s
-                  </label>
-                )}
-              </strong>
-              {allowance.once && (
-                <label style={{ color: '#caffcc' }}>
-              ends in {
-                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                    `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
-                  }
-                </label>
-              )}
-            </p><p><strong>Volume streamed:</strong> {allowance.totalStreamed}</p>
-                          <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-                            <div
-                              style={{
-                                width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
-                                height: '20px',
-                                backgroundColor: '#42aaff',
-                                borderRadius: '10px',
-                                transition: 'width 0.5s ease-in-out',
-                                marginTop: '0px'
-                              }}
-                            >    <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
-
-                            </div>
-                          </div>
-                        </div>
-
-                        <input
-                          type="text"
-                          id="token"
-                          name="token"
-                          placeholder='amount'
-
-                          onChange={(e) => setAmount(e.target.value)}
-                          style={{ marginTop: '16px' }}
-
-                          required
-                        />
-                        <div style={{ marginTop: '10px' }}>
-                          <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px', color: '#fff' }}>Days to Stream Amount:</label>
-                          <input
-                            type="number"
-                            id="amount"
-                            name="amount"
-                            step="0.01"
-                            onChange={(e) => setWindow(e.target.value)}
-                            required
-                            style={{ width: '20%', padding: '10px', fontSize: '18px' }}
-                          />
-                        </div>
-
-                        <div style={{ marginTop: '10px' }}>
-                          <label htmlFor="once" style={{ color: '#fff' }}>
-                            <label style={{ color: '#ffdbaa' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
-                          </label>
-                        </div>
-                        <div>
-                          <label className="switch">
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
-                              onChange={(e) => setOnce(e.target.checked)}
-
-                            />
-                            <span className="slider round"></span>
-                          </label>
-                        </div>
-                        <button
-                          style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => requestBorrow(allowance.token, friend, amount)}
-                        >
-                          Set allowance
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </ul>
-          </div>
-        </section><section id="borrow-list">
-          <div className='card' style={{ marginTop: '20px' }}>
-            <h2 style={{ color: '#1e88e5' }}>Friends That Have Spotted Me</h2>
-            <div id="borrows">
-              {Object.entries(
-                borrows
-                  .filter((borrow) => borrow.friend === userAddress)
-                  .reduce((acc, borrow) => {
-                    if (!acc[borrow.lender]) {
-                      acc[borrow.lender] = [];
-                    }
-                    acc[borrow.lender].push(borrow);
-                    return acc;
-                  }, {})
-              ).map(([lender, lenderBorrows]) => (
-                <div key={lender} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(lender)}{lender.show}</h3>
-                  <div className="token-grid">
-                    {lenderBorrows.map((borrow) => (
-                      <div key={borrow.hash} className='card token-card'>
-                        <div className="borrow-item">
-                          <p><strong>Token:</strong> {map(borrow.token)}</p>
-                          <p><strong>Amount:</strong> {borrow.allowable}</p>
-                          <p><strong>Available:</strong>                           {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</p>
-                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {!borrow.once && ('Unlimited ')}</label> Stream <label style={{ color: '#caffcc' }}>{borrow.once && ('Once only')}</label>
-                          </strong></p><p  style={{ marginTop: '0px' }}>
-  <strong>
-    {!borrow.once && (
-      <label style={{ color: '#ffdbaa' }}>
-     @ {borrow.allowable} tokens<br />
-        per {Math.floor(borrow.window / (3600 * 24))}d:
-        {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
-        {Math.floor((borrow.window % 3600) / 60)}m:
-        {Math.floor(borrow.window % 60)}s
-      </label>
-    )}
-  </strong>
-  {borrow.once && (
-    <label style={{ color: '#00ff00' }}>
-     ends in {
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
-      }
-    </label>
-  )}
-</p>
-<p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
-
-                        </div>                  <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-
-                          <div
-                            style={{
-                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
-                              height: '20px',
-                              backgroundColor: '#42aaff',
-                              borderRadius: '10px',
-                              transition: 'width 0.5s ease-in-out',
-                              marginTop: '0px'
-                            }}
-                          >    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
-
-                          </div>
-                        </div>
-                        <button
-                          style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
-                        >
-                          Claim
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section></>)}{!pro &&(<><section id="allowance-list">
-  <div className='card' style={{ marginTop: '20px' }}>
-    <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
-    <div id="allowances">
-      {Object.entries(
-        allowances
-          .filter((allowance) => allowance.lender === userAddress)
-          .reduce((acc, allowance) => {
-            if (!acc[allowance.friend]) {
-              acc[allowance.friend] = [];
-            }
-            acc[allowance.friend].push(allowance);
-            return acc;
-          }, {})
-      ).map(([friend, friendAllowances]) => (
-        <TableContainer key={friend} component={Paper} elevation={1}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={5} style={{ backgroundColor: '#5a5fff', color: '#fff' }}>
-                  <Typography variant="h5">{map(friend)}</Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell width="200">Asset</TableCell>
-                <TableCell>Limit</TableCell>
-                <TableCell width="300">Available</TableCell>
-                <TableCell width="300">Time</TableCell>
-
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {friendAllowances.map((allowance) => (<>
-                <TableRow key={allowance.hash} hover>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={map(allowance.token).toString()} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={allowance.allowable.toFixed(6)} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography color="#000">
-                        {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-                        
-                      </Typography>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-                      <div
-                        style={{
-                          width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
-                          height: '20px',
-                          backgroundColor: '#42aaff',
-                          borderRadius: '10px',
-                          transition: 'width 0.5s ease-in-out',
-                          marginTop: '0px'
-                        }}
-                      >
-                        <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography variant="body2" color="textSecondary">
-                        <p style={{ marginBottom: '0px' }}>
-                          <strong>
-                            <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff' }}> {!allowance.once && ('Unlimited  ')}</Typography>
-                            <Typography style={{borderRadius:'20px',backgroundColor:'#00cb00', textAlign: 'center',width:'70%', color: '#fff' }}>{allowance.once && ('Once only')}</Typography>
-                          </strong>
-                        </p>
-                        <p style={{ marginTop: '0px' }}>
-                          <strong>
-                            {!allowance.once && (
-                              <Typography >
-                                @ {allowance.allowable} tokens<br />
-                                per {Math.floor(allowance.window / (3600 * 24))}d:
-                                {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                                {Math.floor((allowance.window % 3600) / 60)}m:
-                                {Math.floor(allowance.window % 60)}s
-                              </Typography>
-                            )}
-                          </strong>
-                          {allowance.once && (
-                            <Typography >
-                              ends in {
-                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                                `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
-                              }
-                            </Typography>
-                          )}
-                        </p>
-                      </Typography>
-                    </div>
-                  </TableCell>
-               
-
-                </TableRow>
-                  <TableRow style={{padding:'1px',backgroundColor:'#5a5fff'}}>
-                <TableCell>
-                  <input
-                          type="text"
-                          id="token"
-                          name="token"
-                          placeholder='amount'
-
-                          onChange={(e) => setAmount(e.target.value)}
-                          style={{ marginTop: '1px',width:'50%' }}
-
-                          required
-                        />
-                                          </TableCell><TableCell>
-
-                           <strong> <Typography style={{ color: 'orange' }}> {!once && ('Unlimited')}</Typography>  <Typography style={{ color: '#00ff00' }}>{once && ('Once only')}</Typography>
-                           </strong>
-                          <label className="switch">
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
-                              onChange={(e) => setOnce(e.target.checked)}
-
-                            />
-                            <span className="slider round"></span>
-                          </label></TableCell><TableCell>  <input
-                            type="number"
-                            id="amount"
-                            name="amount" placeholder='Days'
-                            step="0.01"
-                            onChange={(e) => setWindow(e.target.value)}
-                            required
-                            style={{ width: '50%', padding: '10px',margin:'1px', fontSize: '18px' }}
-                          />
-                        </TableCell><TableCell>
-                    <button onClick={() => requestBorrow(allowance.token, friend, amount)}>
-                      Set allowance
-                    </button></TableCell>
-
-                </TableRow></>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ))}
-    </div>
-  </div>
-</section><section id="borrow-list">
-  <div className='card' style={{ marginTop: '20px' }}>
-    <h2 style={{ color: '#1e88e5' }}>Friends That Have Spotted Me</h2>
-    <div id="borrows">
-      {Object.entries(
-        borrows
-          .filter((borrow) => borrow.friend === userAddress)
-          .reduce((acc, borrow) => {
-            if (!acc[borrow.lender]) {
-              acc[borrow.lender] = [];
-            }
-            acc[borrow.lender].push(borrow);
-            return acc;
-          }, {})
-      ).map(([lender, lenderBorrows]) => (
-        <TableContainer key={lender} component={Paper} elevation={1}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={5} style={{backgroundColor:'#5a5fff',color:'#fff'}}>
-                  <Typography variant="h5" >{map(lender)}</Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell width="200">Asset</TableCell>
-                <TableCell>Limit</TableCell>
-                <TableCell width="300">Available</TableCell>
-                <TableCell width="300">Ends in</TableCell>
-                <TableCell width="120"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {lenderBorrows.map((borrow) => (
-                <TableRow key={borrow.hash} hover>
-                  <TableCell>
-                    <ListItem>
-                 
-                      <ListItemText primary={map(borrow.token).toString()} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={borrow.allowable.toFixed(6)} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography  color="#000">
-                        {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
-                      </Typography>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-
-                          <div
-                            style={{
-                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
-                              height: '20px',
-                              backgroundColor: '#42aaff',
-                              borderRadius: '10px',
-                              transition: 'width 0.5s ease-in-out',
-                              marginTop: '0px'
-                            }}
->    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
-
-                          </div>    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography variant="body2" color="textSecondary">
-                      <p style={{ marginBottom: '0px' }}><strong>   <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}> {!borrow.once && ('Unlimited ')}</Typography>  <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}>{borrow.once && ('Once only')}</Typography>
-                          </strong></p><p  style={{ marginTop: '0px' }}>
-  <strong>
-    {!borrow.once && (
-      <Typography >
-     @ {borrow.allowable} tokens<br />
-        per {Math.floor(borrow.window / (3600 * 24))}d:
-        {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
-        {Math.floor((borrow.window % 3600) / 60)}m:
-        {Math.floor(borrow.window % 60)}s
-      </Typography>
-    )}
-  </strong>
-  {borrow.once && (
-    <Typography >
-     ends in {
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
-      }
-    </Typography>
-  )}
-</p>
-
-                      </Typography>
-                    </div>
-                  </TableCell>
-                  <TableCell align="center">
-                    <button onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}>
-                    Claim</button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ))}
-    </div>
-  </div>
-</section></>)}
-      </body>
-    </main>
-  </div>
+        )}<ConnectButton />
+      </div>
+    </>
   );
 };
 export default App;
