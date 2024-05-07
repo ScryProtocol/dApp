@@ -257,7 +257,7 @@ const App = () => {
   const fetchSubscriptions = async () => {
     const lenderAddress = userAddress
     let contract = new ethers.Contract(streamContractAddress, streamContractABI, provider);
-    const allowances = await contract.viewLenderAllowances('0x14B214CA36249b516B59401B3b221CB87483b53C');
+    const allowances = await contract.viewLenderAllowances(lenderAddress);
 
     const subscriptionsData = await Promise.all(
       allowances.map(async (allowance) => {
