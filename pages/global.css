@@ -1,4 +1,3 @@
-
 body {
   font-family: 'Comic Sans MS', cursive;
   background-color: #f7d488;
@@ -211,7 +210,7 @@ select {
   height: 100%;
   border-radius: 50%;
   background-image: radial-gradient(#fff 20%, transparent 20%),
-      radial-gradient(#fff 20%, transparent 20%);
+    radial-gradient(#fff 20%, transparent 20%);
   background-position: 0 0, 10px 10px;
   background-size: 20px 20px;
   animation: cheese-animation 2s infinite;
@@ -219,42 +218,115 @@ select {
 
 @keyframes cheese-animation {
   0% {
-      transform: scale(1);
+    transform: scale(1);
   }
 
   50% {
-      transform: scale(1.1);
+    transform: scale(1.1);
   }
 
   100% {
-      transform: scale(1);
+    transform: scale(1);
   }
 }
 
 @keyframes pepperoni-animation {
   0% {
-      transform: translateY(0);
+    transform: translateY(0);
   }
 
   50% {
-      transform: translateY(-10px);
+    transform: translateY(-10px);
   }
 
   100% {
-      transform: translateY(0);
+    transform: translateY(0);
   }
 }
 
 @keyframes mushroom-animation {
   0% {
-      transform: translateY(0);
+    transform: translateY(0);
   }
 
   50% {
-      transform: translateY(-10px) rotate(180deg);
+    transform: translateY(-10px) rotate(180deg);
   }
 
   100% {
-      transform: translateY(0) rotate(360deg);
+    transform: translateY(0) rotate(360deg);
   }
+}
+
+
+#subscriptionsContainer {
+  margin-top: 40px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#subscriptionsContainer h1 {
+  color: #ff5722;
+  font-size: 36px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.subscription-item {
+  background-color: #ffeee0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.subscription-item:hover {
+  transform: translateY(-5px);
+}
+
+.subscription-item div {
+  margin-bottom: 16px;
+}
+
+.subscription-item div:last-child {
+  margin-bottom: 0;
+}
+
+.subscription-label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 16px;
+
+}
+
+.subscription-value {
+  color: #ff5722;
+  background-color: #fff;
+  position: relative;
+  top: 6px;
+  border-radius: 12px;
+  margin-top: 2px;
+
+  padding: 4px;
+
+  font-weight: bold;
+}
+
+.emoji {
+  font-size: 1px;
+  margin-right: 10px;
+}
+.cbtn {
+  margin-bottom: 10px;
+} body {
+  display: flex;
+  flex-direction: column; /* Stacks children vertically */
+}
+
+.container {
+  margin-top: 10%;
 }

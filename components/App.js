@@ -42,22 +42,25 @@ let tokenABI = [
 const App = () => {
   const [streamContract, setStreamContract] = useState(null);
   const [subscriptionLink, setSubscriptionLink] = useState('');
-  const [subscriptionDetails, setSubscriptionDetails] = useState(  {lender: "",
-  friend: "",
-  token: "",
-  totalStreamed: 0,
-  outstanding: 0,
-  allowable: 0,
-  window: "",
-  timestamp: '',
-  once: ''});
+  const [subscriptionDetails, setSubscriptionDetails] = useState({
+    lender: "",
+    friend: "",
+    token: "",
+    totalStreamed: 0,
+    outstanding: 0,
+    allowable: 0,
+    window: "",
+    timestamp: '',
+    once: ''
+  });
   const [showSubscribedMessage, setShowSubscribedMessage] = useState(false);
   const [showSubscribeForm, setShowSubscribeForm] = useState(false);
+  const [subscriptions, setSubscriptions] = useState([]);
 
   const ethersSigner = useEthersSigner();
   let provider = useEthersProvider()
   let signer = ethersSigner
-let tok
+  let tok
   let account = useAccount();
   let userAddress = useAccount().address;
   let ChainId = useChainId()
@@ -141,9 +144,9 @@ let tok
 
   const checkSubscription = async () => {
     const { token, subscribe, amount, window, once, network } = getQueryParams();
-    console.log( getQueryParams())
-console.log('1',token, subscribe, amount, window, once)
-    if (token && subscribe && amount && window && once ) {
+    console.log(getQueryParams())
+    console.log('1', token, subscribe, amount, window, once)
+    if (token && subscribe && amount && window && once) {
       tok = token;
       let subscriptionHash;
       let details = { lender: 1 };
@@ -167,35 +170,36 @@ console.log('1',token, subscribe, amount, window, once)
 
         const resolvedLender = await resolveENS(details.lender);
         const resolvedFriend = await resolveENS(details.friend);
-        const resolvedToken = await resolveENS(details.token,1);
-      console.log('2',resolvedLender, resolvedFriend, resolvedToken)
+        const resolvedToken = await resolveENS(details.token, 1);
+        console.log('2', resolvedLender, resolvedFriend, resolvedToken)
         // Update the state with the new values, preserving existing ones
         setSubscriptionDetails(prevDetails => ({
           ...prevDetails,  // Spread the previous state to retain existing data
           lender: resolvedLender,
           friend: resolvedFriend,
           token: resolvedToken
-      }))}else {
-        
-    setSubscriptionDetails({ 
-      lender: subscribe,
-      friend: userAddress,
-      token: token,
-      totalStreamed: '',
-      outstanding: '',
-      allowable: amount,
-      window: once=='false'
-        ? `Pay every ${Math.floor(Number(window) / 86400)}d:${Math.floor((Number(window) % 86400) / 3600)}h:${Math.floor((Number(window) % 3600) / 60)}m:${Number(window) % 60}s`
-        : `Sub until ${new Date(Date.now() + Number(window) * 1000).toLocaleString()}`,
-      timestamp: '',
-      once: once !=='false'? 'One-time' : 'Recurring',
-    });
+        }))
+      } else {
+
+        setSubscriptionDetails({
+          lender: subscribe,
+          friend: userAddress,
+          token: token,
+          totalStreamed: '',
+          outstanding: '',
+          allowable: amount,
+          window: once == 'false'
+            ? `Pay every ${Math.floor(Number(window) / 86400)}d:${Math.floor((Number(window) % 86400) / 3600)}h:${Math.floor((Number(window) % 3600) / 60)}m:${Number(window) % 60}s`
+            : `Sub until ${new Date(Date.now() + Number(window) * 1000).toLocaleString()}`,
+          timestamp: '',
+          once: once !== 'false' ? 'One-time' : 'Recurring',
+        });
         setShowSubscribeForm(true);
         console.log('no subscription found');
         const resolvedLender = await resolveENS(subscribe);
         const resolvedFriend = await resolveENS(userAddress);
-        const resolvedToken = await resolveENS(token,1);
-      console.log('2',resolvedLender, resolvedFriend, resolvedToken)
+        const resolvedToken = await resolveENS(token, 1);
+        console.log('2', resolvedLender, resolvedFriend, resolvedToken)
         // Update the state with the new values, preserving existing ones
         setSubscriptionDetails(prevDetails => ({
           ...prevDetails,  // Spread the previous state to retain existing data
@@ -204,7 +208,7 @@ console.log('1',token, subscribe, amount, window, once)
           token: resolvedToken
         }));
       }
-    } 
+    }
   };
 
   const handleSubscribe = async () => {
@@ -222,7 +226,7 @@ console.log('1',token, subscribe, amount, window, once)
       }, 3000);
       return;
     }
-    const contract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+    const streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
     const tokenContract = new ethers.Contract(token, tokenABI, signer);
     const dec = await tokenContract.decimals();
     const tx = await streamContract.allowStream(token, subscribe, (amount * 10 ** Number(dec)).toString(), window, once);
@@ -233,10 +237,10 @@ console.log('1',token, subscribe, amount, window, once)
   };
 
   const resolveENS = async (address, isToken) => {
-        let pro = new ethers.JsonRpcProvider('https://eth.meowrpc.com');
+    let pro = new ethers.JsonRpcProvider('https://eth.meowrpc.com');
 
     try {
-      if (isToken==1) {
+      if (isToken == 1) {
         const tokenContract = new ethers.Contract(tok, tokenABI, provider);
         const tokenName = await tokenContract.name();
         return tokenName || address;
@@ -250,6 +254,68 @@ console.log('1',token, subscribe, amount, window, once)
     }
   };
 
+  const fetchSubscriptions = async () => {
+    const lenderAddress = await signer.getAddress();
+    let contract = new ethers.Contract(streamContractAddress, streamContractABI, provider);
+    const allowances = await contract.viewLenderAllowances('0x14B214CA36249b516B59401B3b221CB87483b53C');
+
+    const subscriptionsData = await Promise.all(
+      allowances.map(async (allowance) => {
+        const details = await contract.streamDetails(allowance);
+        const tokenContract = new ethers.Contract(
+          details.token,
+          [
+            {
+              constant: true,
+              inputs: [],
+              name: 'decimals',
+              outputs: [{ name: '', type: 'uint8' }],
+              payable: false,
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          provider
+        );
+        let dec
+        try {
+          dec = await tokenContract.decimals();
+        } catch (error) {
+          dec = 18
+        }
+        return {
+          friend: details.friend,
+          token: details.token,
+          allowable: ethers.formatUnits(details.allowable, dec),
+          window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
+            : `Sub until ${new Date(Date.now() + Number(details.window) * 1000).toLocaleString()}`,
+          timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
+          totalStreamed: ethers.formatUnits(details.totalStreamed, dec),
+          outstanding: ethers.formatUnits(details.outstanding, dec),
+          once: details.once ? 'One-time' : 'Recurring',
+        };
+      })
+    );
+
+    setSubscriptions(subscriptionsData);
+  }; const handleCancelSubscription = async (token, friend) => {
+    try {
+      let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+      // Call the smart contract function to cancel the subscription
+      const tx = await streamContract.allowStream(token, friend, 0, 0, false);
+     await tx.wait();
+
+      // Update the subscriptions state by filtering out the canceled subscription
+     fetchSubscriptions();
+
+      // Optionally, you can display a success message or perform any other necessary actions
+      console.log('Subscription canceled successfully');
+      toast.success('Subscription canceled successfully');
+    } catch (error) {
+      // Handle any errors that occur during the cancellation process
+      console.error('Error canceling subscription:', error);
+    }
+  };
   return (<body><div className='container'>
     {/* Render the subscription form */}
     {!showSubscribeForm && (
@@ -327,15 +393,15 @@ console.log('1',token, subscribe, amount, window, once)
               <div className="detail-label">Token:</div>
               <div className="detail-value" >{subscriptionDetails.token}</div>
             </div>
-            {subscriptionDetails.totalStreamed!=''&&(<>
-            <div className="detail-item">
-              <div className={`detail-label ${subscriptionDetails.totalStreamed === '0' ? 'hidden' : ''}`}>Total Streamed:</div>
-              <div className={`detail-value ${subscriptionDetails.totalStreamed === '0' ? 'hidden' : ''}`}>{subscriptionDetails.totalStreamed}</div>
-            </div>
-            <div className="detail-item">
-              <div className={`detail-label ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>Available:</div>
-              <div className={`detail-value ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>{subscriptionDetails.outstanding}</div>
-            </div></>)}
+            {subscriptionDetails.totalStreamed != '' && (<>
+              <div className="detail-item">
+                <div className={`detail-label ${subscriptionDetails.totalStreamed === '0' ? 'hidden' : ''}`}>Total Streamed:</div>
+                <div className={`detail-value ${subscriptionDetails.totalStreamed === '0' ? 'hidden' : ''}`}>{subscriptionDetails.totalStreamed}</div>
+              </div>
+              <div className="detail-item">
+                <div className={`detail-label ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>Available:</div>
+                <div className={`detail-value ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>{subscriptionDetails.outstanding}</div>
+              </div></>)}
             <div className="detail-item">
               <div className="detail-label">Amount:</div>
               <div className="detail-value">{subscriptionDetails.allowable}</div>
@@ -354,14 +420,14 @@ console.log('1',token, subscribe, amount, window, once)
             </div>
           </div>
         </div>
-        {(showSubscribeForm&&subscriptionDetails.outstanding==0) && (
+        {(showSubscribeForm && subscriptionDetails.outstanding == 0) && (
           <div className="card">
             <button onClick={handleSubscribe} className="btn">Subscribe</button>
           </div>
-        )} {(showSubscribeForm&&subscriptionDetails.outstanding!=0) && (
+        )} {(showSubscribeForm && subscriptionDetails.outstanding != 0) && (
           <div className="card">
             <a href='https://stream.spot.pizza/'>
-            <button  className="btn">Manage my subs</button></a>
+              <button className="btn">Manage my subs</button></a>
           </div>
         )}
         {showSubscribedMessage && (
@@ -388,7 +454,65 @@ console.log('1',token, subscribe, amount, window, once)
       </div>
     )}    <ConnectButton />
 
-  </div></body>
+  </div><br/>
+    <div className="container" id="subscriptionsContainer" style={{marginTop:'0px'} }>
+      <h1>My Subscriptions</h1>
+      <button onClick={fetchSubscriptions} className="btn cbtn">Check Subscriptions</button>
+      <div id="subscriptionsList">
+        {subscriptions.map((subscription, index) => (
+          <div key={index} className="subscription-item">
+            <div>
+              🍕 <span className="subscription-label">Subscription to:</span>
+              <br />
+              <span className="subscription-value">{subscription.friend}</span>
+            </div>
+            <div>
+              💰 <span className="subscription-label">Token:</span>
+              <br />
+              <span className="subscription-value">{subscription.token}</span>
+            </div>
+            <div>
+              🎉 <span className="subscription-label">Amount:</span>
+              <br />
+              <span className="subscription-value">{subscription.allowable}</span>
+            </div>
+            <div>
+              ⏰ <span className="subscription-label">Window:</span>
+              <br />
+              <span className="subscription-value">{subscription.window}</span>
+            </div>
+            <div className="subscription-details">
+              <div>
+                💸 <span className="subscription-label">Total Streamed:</span>
+                <br />
+                <span className="subscription-value">{subscription.totalStreamed}</span>
+              </div>
+              <div>
+                📈 <span className="subscription-label">Outstanding:</span>
+                <br />
+                <span className="subscription-value">{subscription.outstanding}</span>
+              </div>
+              <div>
+                📅 <span className="subscription-label">Timestamp:</span>
+                <br />
+                <span className="subscription-value">{subscription.timestamp}</span>
+              </div>
+              <div>
+                🔄 <span className="subscription-label">Type:</span>
+                <br />
+                <span className="subscription-value">{subscription.once}</span>
+              </div>
+              <button
+                className="btn"
+                onClick={() => handleCancelSubscription(subscription.token, subscription.friend)}
+              >
+                Cancel Subscription
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div></body>
   );
 };
 
