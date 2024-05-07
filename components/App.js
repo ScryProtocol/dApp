@@ -333,7 +333,7 @@ console.log('1',token, subscribe, amount, window, once)
               <div className={`detail-value ${subscriptionDetails.totalStreamed === '0' ? 'hidden' : ''}`}>{subscriptionDetails.totalStreamed}</div>
             </div>
             <div className="detail-item">
-              <div className={`detail-label ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>Outstanding:</div>
+              <div className={`detail-label ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>Available:</div>
               <div className={`detail-value ${subscriptionDetails.outstanding === '0' ? 'hidden' : ''}`}>{subscriptionDetails.outstanding}</div>
             </div></>)}
             <div className="detail-item">
@@ -357,6 +357,11 @@ console.log('1',token, subscribe, amount, window, once)
         {(showSubscribeForm&&subscriptionDetails.outstanding==0) && (
           <div className="card">
             <button onClick={handleSubscribe} className="btn">Subscribe</button>
+          </div>
+        )} {(showSubscribeForm&&subscriptionDetails.outstanding!=0) && (
+          <div className="card">
+            <a href='https://stream.spot.pizza/'>
+            <button  className="btn">Manage my subs</button></a>
           </div>
         )}
         {showSubscribedMessage && (
