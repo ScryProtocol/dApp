@@ -162,7 +162,12 @@ const App = () => {
 
       if (details.lender !== '0x0000000000000000000000000000000000000000' && details.lender !== 1) {
         const tokenContract = new ethers.Contract(token, tokenABI, provider);
-        const dec = await tokenContract.decimals();
+        let dec 
+        try {
+         dec = await tokenContract.decimals();} catch (error) {
+          toast.error('Could not find token. Check network! Must be chainId:',ChainId);
+          dec = 18
+        }
         displaySubscriptionDetails(details, dec);
         console.log(details, dec);
         setShowSubscribedMessage(true);
@@ -241,9 +246,14 @@ const App = () => {
 
     try {
       if (isToken == 1) {
+        try {
         const tokenContract = new ethers.Contract(tok, tokenABI, provider);
         const tokenName = await tokenContract.name();
         return tokenName || address;
+      } catch (error) {
+        return address;
+
+      }
       }
       const ensName = await pro.lookupAddress(address);
       console.log(ensName)
