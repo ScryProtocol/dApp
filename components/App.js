@@ -348,6 +348,19 @@ const App = () => {
         } catch (error) {
           dec = 18
         }
+        const currentTime = Math.floor(Date.now() / 1000);
+        const elapsedTime = BigInt(currentTime) - details.timestamp;
+        
+        let allowableAmount = (details.allowable * elapsedTime) / details.window;
+        if (details.once) {
+    
+        allowableAmount = (details.allowable * elapsedTime) / details.window;
+        if (allowableAmount > details.outstanding) {
+          allowableAmount= details.outstanding;
+        } else {
+        }
+      }
+      allowableAmount=Number(allowableAmount)/10**Number(dec)
         return {
           friend: details.friend,
           token: details.token,
@@ -356,7 +369,7 @@ const App = () => {
             : `Sub until ${new Date(Date.now() + Number(details.window) * 1000).toLocaleString()}`,
           timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
           totalStreamed: ethers.formatUnits(details.totalStreamed, dec),
-          outstanding: ethers.formatUnits(details.outstanding, dec),
+          outstanding: Number(allowableAmount),//ethers.formatUnits(details.outstanding, dec),
           once: details.once ? 'One-time' : 'Recurring',
         };
       })
@@ -391,6 +404,18 @@ const App = () => {
         } catch (error) {
           dec = 18
         }
+        const currentTime = Math.floor(Date.now() / 1000);
+        const elapsedTime = BigInt(currentTime) - details.timestamp;
+         let allowableAmount = (details.allowable * elapsedTime) / details.window;
+        if (details.once) {
+    
+         allowableAmount = (details.allowable * elapsedTime) / details.window;
+        if (allowableAmount > details.outstanding) {
+          allowableAmount= details.outstanding;
+        } else {
+        }
+      }
+      allowableAmount=Number(allowableAmount)/10**Number(dec)
         return {
           friend: details.friend,
           lender: details.lender,
@@ -400,7 +425,7 @@ const App = () => {
             : `Sub until ${new Date(Date.now() + Number(details.window) * 1000).toLocaleString()}`,
           timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
           totalStreamed: ethers.formatUnits(details.totalStreamed, dec),
-          outstanding: ethers.formatUnits(details.outstanding, dec),
+          outstanding: Number(allowableAmount),//ethers.formatUnits(details.outstanding, dec)*(Date.now()/1000 + Number(details.window) * 1000),
           once: details.once ? 'One-time' : 'Recurring',
         };
       })
