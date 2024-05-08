@@ -205,7 +205,14 @@ console.log('lol')
           console.log('lol', ENS)
 
           const token = new ethers.Contract(details.token, tokenABI, provider);
-          const decimals = await token.decimals();
+          
+          
+          let decimals
+          try {
+            decimals = await token.decimals();
+        } catch (error) {
+            decimals = 18;
+        }
           return {
             hash: hash,
             lender: details.lender,
@@ -240,8 +247,12 @@ console.log('lol')
           }; const ENS = await getAddressENS(details.friend);
           console.log('lol', ENS)
           const token = new ethers.Contract(details.token, tokenABI, provider);
-          const decimals = await token.decimals();
-
+          let decimals
+          try {
+            decimals = await token.decimals();
+        } catch (error) {
+            decimals = 18;
+        }
           return {
             hash: hash,
             lender: details.lender,
