@@ -422,7 +422,7 @@ const App = () => {
           token: details.token,
           allowable: ethers.formatUnits(details.allowable, dec),
           window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
-            : `Sub until ${new Date(Number(details.timestamp) + Number(details.window) * 1000).toLocaleString()}`,
+            : `Sub until ${new Date(Number(details.timestamp) * 1000 + Number(details.window) * 1000).toLocaleString()}`,
           timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
           totalStreamed: ethers.formatUnits(details.totalStreamed, dec),
           outstanding: Number(allowableAmount),//ethers.formatUnits(details.outstanding, dec)*(Date.now()/1000 + Number(details.window) * 1000),
