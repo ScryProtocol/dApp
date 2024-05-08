@@ -38,6 +38,52 @@ let tokenABI = [
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_spender",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "name": "_spender",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   }]
 const App = () => {
   const [streamContract, setStreamContract] = useState(null);
@@ -165,7 +211,7 @@ const App = () => {
         let dec 
         try {
          dec = await tokenContract.decimals();} catch (error) {
-          toast.error('Could not find token. Check network! Must be chainId:',ChainId);
+          toast.error(`Could not find token. Check network! Must be chainId: ${ChainId}`);
           dec = 18
         }
         displaySubscriptionDetails(details, dec);
@@ -233,7 +279,15 @@ const App = () => {
     }
     const streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
     const tokenContract = new ethers.Contract(token, tokenABI, signer);
-    const dec = await tokenContract.decimals();
+    const dec = await tokenContract.decimals()
+    console.log(tokenContract.allowance(userAddress, streamContractAddress))
+    if (await tokenContract.allowance(userAddress, streamContractAddress) < (amount * 10 ** Number(dec))) {
+     toast('Approving token for subscription')
+      const tx = await tokenContract.approve(streamContractAddress, ethers.MaxUint256);
+      await tx.wait();
+    }
+    toast('Subscribing')
+
     const tx = await streamContract.allowStream(token, subscribe, (amount * 10 ** Number(dec)).toString(), window, once);
     await tx.wait();
 
