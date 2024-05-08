@@ -659,7 +659,9 @@ const App = () => {
         ))}
       </div>
       <div id="subsList">
-        {   subs.length>0&&   (<h1>Subscribed To Me </h1>)
+        {   subs.length>0&&   (<><h1 style={{marginBottom:'16px'}}>Subscribed To Me </h1>
+        <p className="subscription-value" style={{position:'relative',bottom:'1px',backgroundColor:'#ff5722',color:'#fff',width:'120px',margin:'auto',marginBottom:'20px'}}>{subs.length} Subs</p>
+</>)
 }
         {subs.map((subscription, index) => (
           <div key={index} className="subscription-item">
