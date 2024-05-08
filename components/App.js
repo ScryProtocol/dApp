@@ -393,6 +393,7 @@ const App = () => {
         }
         return {
           friend: details.friend,
+          lender: details.lender,
           token: details.token,
           allowable: ethers.formatUnits(details.allowable, dec),
           window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
