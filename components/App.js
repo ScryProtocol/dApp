@@ -328,6 +328,7 @@ const App = () => {
   };
   return (<body><div className='container'>
     {/* Render the subscription form */}
+    <Toaster/>
     {!showSubscribeForm && (
       <div>
         {/* Render the create subscription form */}
