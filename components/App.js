@@ -708,7 +708,7 @@ const App = () => {
               </div>
               <button
                 className="btn"
-                onClick={() => handleClaimSubscription(subscription.token, subscription.friend)}
+                onClick={() => handleClaimSubscription(subscription.token, subscription.lender)}
               >
                 Claim Subscription
               </button>
