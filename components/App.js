@@ -489,12 +489,7 @@ const App = () => {
           <div className="card">
             <button onClick={handleSubscribe} className="btn">Subscribe</button>
           </div>
-        )} {(showSubscribeForm && subscriptionDetails.outstanding != 0) && (
-          <div className="card">
-            <a href='https://stream.spot.pizza/'>
-              <button className="btn">Manage my subs</button></a>
-          </div>
-        )}
+        )} 
         {showSubscribedMessage && (
           <div className="card">
             <div className="subscribed-content">
