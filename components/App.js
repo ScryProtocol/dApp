@@ -102,6 +102,7 @@ const App = () => {
   const [showSubscribedMessage, setShowSubscribedMessage] = useState(false);
   const [showSubscribeForm, setShowSubscribeForm] = useState(false);
   const [subscriptions, setSubscriptions] = useState([]);
+  const [subs, setSubs] = useState([]);
 
   const ethersSigner = useEthersSigner();
   let provider = useEthersProvider()
@@ -362,6 +363,49 @@ const App = () => {
     );
 
     setSubscriptions(subscriptionsData);
+
+    
+    const allows = await contract.viewFriendAllowances(lenderAddress);
+
+    const subsData = await Promise.all(
+      allows.map(async (allowance) => {
+        const details = await contract.streamDetails(allowance);
+        const tokenContract = new ethers.Contract(
+          details.token,
+          [
+            {
+              constant: true,
+              inputs: [],
+              name: 'decimals',
+              outputs: [{ name: '', type: 'uint8' }],
+              payable: false,
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          provider
+        );
+        let dec
+        try {
+          dec = await tokenContract.decimals();
+        } catch (error) {
+          dec = 18
+        }
+        return {
+          friend: details.friend,
+          token: details.token,
+          allowable: ethers.formatUnits(details.allowable, dec),
+          window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
+            : `Sub until ${new Date(Date.now() + Number(details.window) * 1000).toLocaleString()}`,
+          timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
+          totalStreamed: ethers.formatUnits(details.totalStreamed, dec),
+          outstanding: ethers.formatUnits(details.outstanding, dec),
+          once: details.once ? 'One-time' : 'Recurring',
+        };
+      })
+    );
+
+    setSubs(subsData);
   }; const handleCancelSubscription = async (token, friend) => {
     try {
       let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
@@ -375,6 +419,22 @@ const App = () => {
       // Optionally, you can display a success message or perform any other necessary actions
       console.log('Subscription canceled successfully');
       toast.success('Subscription canceled successfully');
+    } catch (error) {
+      // Handle any errors that occur during the cancellation process
+      console.error('Error canceling subscription:', error);
+    }
+  };const handleClaimSubscription = async (token, friend) => {
+    try {
+      let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+      // Call the smart contract function to cancel the subscription
+      const tx = await streamContract.stream(token,friend, userAddress);
+     await tx.wait();
+
+      // Update the subscriptions state by filtering out the canceled subscription
+     fetchSubscriptions();
+
+      // Optionally, you can display a success message or perform any other necessary actions
+     toast.success('Subscription claim successful');
     } catch (error) {
       // Handle any errors that occur during the cancellation process
       console.error('Error canceling subscription:', error);
@@ -567,6 +627,62 @@ const App = () => {
                 onClick={() => handleCancelSubscription(subscription.token, subscription.friend)}
               >
                 Cancel Subscription
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div id="subsList">
+        {   subs.length>0&&   (<h1>Subscribed To Me </h1>)
+}
+        {subs.map((subscription, index) => (
+          <div key={index} className="subscription-item">
+            <div>
+              🍕 <span className="subscription-label">Subscription to:</span>
+              <br />
+              <span className="subscription-value">{subscription.friend}</span>
+            </div>
+            <div>
+              💰 <span className="subscription-label">Token:</span>
+              <br />
+              <span className="subscription-value">{subscription.token}</span>
+            </div>
+            <div>
+              🎉 <span className="subscription-label">Amount:</span>
+              <br />
+              <span className="subscription-value">{subscription.allowable}</span>
+            </div>
+            <div>
+              ⏰ <span className="subscription-label">Window:</span>
+              <br />
+              <span className="subscription-value">{subscription.window}</span>
+            </div>
+            <div className="subscription-details">
+              <div>
+                💸 <span className="subscription-label">Total Streamed:</span>
+                <br />
+                <span className="subscription-value">{subscription.totalStreamed}</span>
+              </div>
+              <div>
+                📈 <span className="subscription-label">Available:</span>
+                <br />
+                <span className="subscription-value">{subscription.outstanding}</span>
+              </div>
+              <div>
+                📅 <span className="subscription-label">Timestamp:</span>
+                <br />
+                <span className="subscription-value">{subscription.timestamp}</span>
+              </div>
+              <div>
+                🔄 <span className="subscription-label">Type:</span>
+                <br />
+                <span className="subscription-value">{subscription.once}</span>
+              </div>
+              <button
+                className="btn"
+                onClick={() => handleClaimSubscription(subscription.token, subscription.friend)}
+              >
+                Claim Subscription
               </button>
             </div>
           </div>
