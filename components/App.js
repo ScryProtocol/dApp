@@ -638,9 +638,9 @@ const App = () => {
         {subs.map((subscription, index) => (
           <div key={index} className="subscription-item">
             <div>
-              🍕 <span className="subscription-label">Subscription to:</span>
+              🍕 <span className="subscription-label">Subscription:</span>
               <br />
-              <span className="subscription-value">{subscription.friend}</span>
+              <span className="subscription-value">{subscription.lender}</span>
             </div>
             <div>
               💰 <span className="subscription-label">Token:</span>
