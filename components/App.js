@@ -468,27 +468,27 @@ const App = () => {
       console.error('Error canceling subscription:', error);
     }
   }; const tokenOptions = {
-   
-  1: [
-    { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI' },
-    { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', symbol: 'USDC' },
-    { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT' },
-    { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC' },
-    { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', symbol: 'WETH' },
-  ],
-  10: [
-    { address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', symbol: 'DAI' },
-    { address: '0x4200000000000000000000000000000000000042', symbol: 'OP' },
-    { address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85', symbol: 'USDC' },
-    { address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', symbol: 'USDT' },
-    { address: '0x68f180fcCe6836688e9084f035309E29Bf0A2095', symbol: 'WBTC' },
-    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
-  ],
-  8453: [
-    { address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', symbol: 'DAI' },
-    { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC' },
-    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
-  ],
+
+    1: [
+      { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI' },
+      { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', symbol: 'USDC' },
+      { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT' },
+      { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC' },
+      { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', symbol: 'WETH' },
+    ],
+    10: [
+      { address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', symbol: 'DAI' },
+      { address: '0x4200000000000000000000000000000000000042', symbol: 'OP' },
+      { address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85', symbol: 'USDC' },
+      { address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', symbol: 'USDT' },
+      { address: '0x68f180fcCe6836688e9084f035309E29Bf0A2095', symbol: 'WBTC' },
+      { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
+    ],
+    8453: [
+      { address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', symbol: 'DAI' },
+      { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC' },
+      { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
+    ],
   };
   return (<body><div className='container'>
     {/* Render the subscription form */}
@@ -516,7 +516,7 @@ const App = () => {
                 <option value="custom">Custom Token</option>
               </select>
               {selectedToken === 'custom' && (
-                <input 
+                <input
                   type="text"
                   id="customTokenAddress"
                   onChange={(e) => { setselectedToken(e.target.value); toast.success('Custom token set') }}
@@ -658,7 +658,8 @@ const App = () => {
             <div>
               💰 <span className="subscription-label">Token:</span>
               <br />
-              <span className="subscription-value">{subscription.token}</span>
+              <span className="subscription-value">        {tokenOptions[ChainId]?.find((token) => token.address.toLowerCase() === subscription.token.toString().toLowerCase())?.symbol || subscription.token}
+              </span>
             </div>
             <div>
               🎉 <span className="subscription-label">Amount:</span>
@@ -716,7 +717,8 @@ const App = () => {
             <div>
               💰 <span className="subscription-label">Token:</span>
               <br />
-              <span className="subscription-value">{subscription.token}</span>
+              <span className="subscription-value">        {tokenOptions[ChainId]?.find((token) => token.address.toLowerCase() === subscription.token.toString().toLowerCase())?.symbol || subscription.token}
+              </span>
             </div>
             <div>
               🎉 <span className="subscription-label">Amount:</span>
