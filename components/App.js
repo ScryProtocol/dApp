@@ -103,6 +103,7 @@ const App = () => {
   const [showSubscribeForm, setShowSubscribeForm] = useState(false);
   const [subscriptions, setSubscriptions] = useState([]);
   const [subs, setSubs] = useState([]);
+  const [selectedToken, setselectedToken] = useState(null);
 
   const ethersSigner = useEthersSigner();
   let provider = useEthersProvider()
@@ -178,7 +179,7 @@ const App = () => {
 
   const handleCreateSubscription = async (event) => {
     event.preventDefault();
-    const tokenAddress = document.getElementById('tokenAddress').value;
+    const tokenAddress = selectedToken//document.getElementById('tokenAddress').value;
     const subscriber = document.getElementById('subscriber').value;
     const amount = document.getElementById('amount').value;
     const window = document.getElementById('window').value * 24 * 60 * 60; // Convert days to seconds
@@ -209,9 +210,10 @@ const App = () => {
 
       if (details.lender !== '0x0000000000000000000000000000000000000000' && details.lender !== 1) {
         const tokenContract = new ethers.Contract(token, tokenABI, provider);
-        let dec 
+        let dec
         try {
-         dec = await tokenContract.decimals();} catch (error) {
+          dec = await tokenContract.decimals();
+        } catch (error) {
           toast.error(`Could not find token. Check network! Must be chainId: ${ChainId}`);
           dec = 18
         }
@@ -283,7 +285,7 @@ const App = () => {
     const dec = await tokenContract.decimals()
     console.log(tokenContract.allowance(userAddress, streamContractAddress))
     if (await tokenContract.allowance(userAddress, streamContractAddress) < (amount * 10 ** Number(dec))) {
-     toast('Approving token for subscription')
+      toast('Approving token for subscription')
       const tx = await tokenContract.approve(streamContractAddress, ethers.MaxUint256);
       await tx.wait();
     }
@@ -302,13 +304,13 @@ const App = () => {
     try {
       if (isToken == 1) {
         try {
-        const tokenContract = new ethers.Contract(tok, tokenABI, provider);
-        const tokenName = await tokenContract.name();
-        return tokenName || address;
-      } catch (error) {
-        return address;
+          const tokenContract = new ethers.Contract(tok, tokenABI, provider);
+          const tokenName = await tokenContract.name();
+          return tokenName || address;
+        } catch (error) {
+          return address;
 
-      }
+        }
       }
       const ensName = await pro.lookupAddress(address);
       console.log(ensName)
@@ -350,17 +352,17 @@ const App = () => {
         }
         const currentTime = Math.floor(Date.now() / 1000);
         const elapsedTime = BigInt(currentTime) - details.timestamp;
-        
+
         let allowableAmount = (details.allowable * elapsedTime) / details.window;
         if (details.once) {
-    
-        allowableAmount = (details.allowable * elapsedTime) / details.window;
-        if (allowableAmount > details.outstanding) {
-          allowableAmount= details.outstanding;
-        } else {
+
+          allowableAmount = (details.allowable * elapsedTime) / details.window;
+          if (allowableAmount > details.outstanding) {
+            allowableAmount = details.outstanding;
+          } else {
+          }
         }
-      }
-      allowableAmount=Number(allowableAmount)/10**Number(dec)
+        allowableAmount = Number(allowableAmount) / 10 ** Number(dec)
         return {
           friend: details.friend,
           token: details.token,
@@ -377,7 +379,7 @@ const App = () => {
 
     setSubscriptions(subscriptionsData);
 
-    
+
     const allows = await contract.viewFriendAllowances(lenderAddress);
 
     const subsData = await Promise.all(
@@ -406,16 +408,16 @@ const App = () => {
         }
         const currentTime = Math.floor(Date.now() / 1000);
         const elapsedTime = BigInt(currentTime) - details.timestamp;
-         let allowableAmount = (details.allowable * elapsedTime) / details.window;
+        let allowableAmount = (details.allowable * elapsedTime) / details.window;
         if (details.once) {
-    
-         allowableAmount = (details.allowable * elapsedTime) / details.window;
-        if (allowableAmount > details.outstanding) {
-          allowableAmount= details.outstanding;
-        } else {
+
+          allowableAmount = (details.allowable * elapsedTime) / details.window;
+          if (allowableAmount > details.outstanding) {
+            allowableAmount = details.outstanding;
+          } else {
+          }
         }
-      }
-      allowableAmount=Number(allowableAmount)/10**Number(dec)
+        allowableAmount = Number(allowableAmount) / 10 ** Number(dec)
         return {
           friend: details.friend,
           lender: details.lender,
@@ -437,10 +439,10 @@ const App = () => {
       let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
       // Call the smart contract function to cancel the subscription
       const tx = await streamContract.allowStream(token, friend, 0, 0, false);
-     await tx.wait();
+      await tx.wait();
 
       // Update the subscriptions state by filtering out the canceled subscription
-     fetchSubscriptions();
+      fetchSubscriptions();
 
       // Optionally, you can display a success message or perform any other necessary actions
       console.log('Subscription canceled successfully');
@@ -449,26 +451,48 @@ const App = () => {
       // Handle any errors that occur during the cancellation process
       console.error('Error canceling subscription:', error);
     }
-  };const handleClaimSubscription = async (token, friend) => {
+  }; const handleClaimSubscription = async (token, friend) => {
     try {
       let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
       // Call the smart contract function to cancel the subscription
-      const tx = await streamContract.stream(token,friend, userAddress);
-     await tx.wait();
+      const tx = await streamContract.stream(token, friend, userAddress);
+      await tx.wait();
 
       // Update the subscriptions state by filtering out the canceled subscription
-     fetchSubscriptions();
+      fetchSubscriptions();
 
       // Optionally, you can display a success message or perform any other necessary actions
-     toast.success('Subscription claim successful');
+      toast.success('Subscription claim successful');
     } catch (error) {
       // Handle any errors that occur during the cancellation process
       console.error('Error canceling subscription:', error);
     }
+  }; const tokenOptions = {
+   
+  1: [
+    { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI' },
+    { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', symbol: 'USDC' },
+    { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT' },
+    { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC' },
+    { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', symbol: 'WETH' },
+  ],
+  10: [
+    { address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', symbol: 'DAI' },
+    { address: '0x4200000000000000000000000000000000000042', symbol: 'OP' },
+    { address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85', symbol: 'USDC' },
+    { address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', symbol: 'USDT' },
+    { address: '0x68f180fcCe6836688e9084f035309E29Bf0A2095', symbol: 'WBTC' },
+    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
+  ],
+  8453: [
+    { address: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb', symbol: 'DAI' },
+    { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC' },
+    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
+  ],
   };
   return (<body><div className='container'>
     {/* Render the subscription form */}
-    <Toaster/>
+    <Toaster />
     {!showSubscribeForm && (
       <div>
         {/* Render the create subscription form */}
@@ -478,8 +502,27 @@ const App = () => {
           <div className="card">
             <div className="form-group">
               <label htmlFor="tokenAddress">Token Address:</label>
-              <input type="text" id="tokenAddress" placeholder="Enter ERC20 token address" />
-            </div>
+
+              <select
+                id="tokenAddress"
+                onChange={(e) => setselectedToken(e.target.value)}
+              >
+                <option value="">{ }Select a token</option>
+                {tokenOptions[ChainId]?.map((token) => (
+                  <option key={token.address} value={token.address}>
+                    {token.symbol}
+                  </option>
+                ))}
+                <option value="custom">Custom Token</option>
+              </select>
+              {selectedToken === 'custom' && (
+                <input 
+                  type="text"
+                  id="customTokenAddress"
+                  onChange={(e) => { setselectedToken(e.target.value); toast.success('Custom token set') }}
+                  placeholder="Enter custom token address"
+                />
+              )}            </div>
             <div className="form-group">
               <label htmlFor="subscriber">Subscribe To Address:</label>
               <input type="text" id="subscriber" placeholder="Enter subscribe address" />
@@ -575,7 +618,7 @@ const App = () => {
           <div className="card">
             <button onClick={handleSubscribe} className="btn">Subscribe</button>
           </div>
-        )} 
+        )}
         {showSubscribedMessage && (
           <div className="card">
             <div className="subscribed-content">
@@ -600,8 +643,8 @@ const App = () => {
       </div>
     )}    <ConnectButton />
 
-  </div><br/>
-    <div className="container" id="subscriptionsContainer" style={{marginTop:'0px'} }>
+  </div><br />
+    <div className="container" id="subscriptionsContainer" style={{ marginTop: '0px' }}>
       <h1>My Subscriptions</h1>
       <button onClick={fetchSubscriptions} className="btn cbtn">Check Subscriptions</button>
       <div id="subscriptionsList">
@@ -659,10 +702,10 @@ const App = () => {
         ))}
       </div>
       <div id="subsList">
-        {   subs.length>0&&   (<><h1 style={{marginBottom:'16px'}}>Subscribed To Me </h1>
-        <p className="subscription-value" style={{position:'relative',bottom:'1px',backgroundColor:'#ff5722',color:'#fff',width:'120px',margin:'auto',marginBottom:'20px'}}>{subs.length} Subs</p>
-</>)
-}
+        {subs.length > 0 && (<><h1 style={{ marginBottom: '16px' }}>Subscribed To Me </h1>
+          <p className="subscription-value" style={{ position: 'relative', bottom: '1px', backgroundColor: '#ff5722', color: '#fff', width: '120px', margin: 'auto', marginBottom: '20px' }}>{subs.length} Subs</p>
+        </>)
+        }
         {subs.map((subscription, index) => (
           <div key={index} className="subscription-item">
             <div>
