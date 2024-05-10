@@ -122,6 +122,9 @@ const App = () => {
         setStreamContract(streamContract);
 
         await checkSubscription();
+      } else {
+        console.log('l')
+        await checkSubscription();
       }
     };
 
