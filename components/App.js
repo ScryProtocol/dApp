@@ -123,7 +123,6 @@ const App = () => {
 
         await checkSubscription();
       } else {
-        console.log('l')
         await checkSubscription();
       }
     };
