@@ -214,7 +214,7 @@ const App = () => {
         try {
           dec = await tokenContract.decimals();
         } catch (error) {
-          toast.error(`Could not find token. Check network! Must be chainId: ${ChainId}`);
+          toast.error(`Could not find token. Check network! Must be chainId: ${network}`);
           dec = 18
         }
         displaySubscriptionDetails(details, dec);
