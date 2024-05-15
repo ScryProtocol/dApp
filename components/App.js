@@ -325,6 +325,7 @@ const App = () => {
 
   const fetchSubscriptions = async () => {
     const lenderAddress = userAddress
+    let    streamContractAddress = ChainId === 1 ? '0x90076e40a74f33cc2c673ecbf2fba4068af77892' : '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
     let contract = new ethers.Contract(streamContractAddress, streamContractABI, provider);
     const allowances = await contract.viewLenderAllowances(lenderAddress);
 
