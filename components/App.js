@@ -582,11 +582,11 @@ const App = () => {
           <div className="details-container">
             <div className="detail-item">
               <div className="detail-label">Subscribe To:</div>
-              <div className="detail-value">{subscriptionDetails.lender}</div>
+              <div className="detail-value">{subscriptionDetails.friend}</div>
             </div>
             <div className="detail-item">
               <div className="detail-label">My Address:</div>
-              <div className="detail-value">{subscriptionDetails.friend}</div>
+              <div className="detail-value">{subscriptionDetails.lender}</div>
             </div>
             <div className="detail-item">
               <div className="detail-label">Token:</div>
