@@ -11,7 +11,7 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 
 const queryClient = new QueryClient()
 
-const config = createConfig({
+const config = getDefaultConfig({
   chains: [mainnet, sepolia, holesky, base, optimism],
   projectId: '97d417268e5bd5a42151f0329e544898',
 
