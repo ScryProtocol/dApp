@@ -182,6 +182,7 @@ const App = () => {
   };
 
   const handleCreateSubscription = async (event) => {
+    if(document.getElementById('subscriber').value == ''){document.getElementById('subscriber').value =userAddress}
     event.preventDefault();
     const tokenAddress = selectedToken//document.getElementById('tokenAddress').value;
     const subscriber = document.getElementById('subscriber').value;
@@ -532,7 +533,7 @@ const App = () => {
               )}            </div>
             <div className="form-group">
               <label htmlFor="subscriber">Subscribe To Address:</label>
-              <input type="text" id="subscriber" placeholder="Enter subscribe address" />
+              <input type="text" id="subscriber" placeholder="Enter subscribe address (blank for own address) " />
             </div>
             <div className="form-group">
               <label htmlFor="amount">Amount:</label>
