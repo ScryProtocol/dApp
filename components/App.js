@@ -689,7 +689,7 @@ console.log('lol')
       </div>
     </section>
     <section id="allowance-list" className="mt-8">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
         <h2 className="text-xl text-blue-400 mb-4">Allowances to Friends</h2>
         <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
           <thead className="bg-gray-800 text-gray-300">
@@ -725,8 +725,8 @@ console.log('lol')
                   <td className="py-2 px-4">{allowance.allowable}</td>
                   <td className="py-2 px-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
                   <td className="py-2 px-4">
-                    <span className="text-orange-400">{allowance.once && 'Unlimited'}</span>
-                    <span className="text-green-400">{!allowance.once && 'Once only'}</span>
+                    <span className="text-orange-400">{!allowance.once && 'Unlimited'}</span>
+                    <span className="text-green-400">{allowance.once && 'Once only'}</span>
                   </td>
                   <td className="py-2 px-4">
                     {!allowance.once ? (
@@ -805,7 +805,7 @@ console.log('lol')
       </div>
     </section>
     <section id="borrow-list" className="mt-8">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
         <h2 className="text-xl text-blue-400 mb-4">Friends That Have Spotted Me</h2>
         <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
           <thead className="bg-gray-800 text-gray-300">
