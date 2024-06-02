@@ -1,10 +1,17 @@
+// tailwind.config.js
 module.exports = {
-  mode: 'jit',
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: false, // or 'media' or 'class'
+  purge: [
+    './pages/**/*.{js,jsx,ts,tsx}', 
+    './components/**/*.{js,jsx,ts,tsx}', 
+    './layout/**/*.{js,jsx,ts,tsx}', 
+    './public/**/*.{js,jsx,ts,tsx}', 
+    './styles/**/*.{js,jsx,ts,tsx,css}'
+  ],  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
   },
-  variants: {},
+  variants: {
+    extend: {},
+  },
   plugins: [],
-}
+};

@@ -122,7 +122,7 @@ console.log('lol')
           console.error('Error connecting to Ethereum:', error);
         }
       } else {
-        const providerInstance = new ethers.providers.JsonRpcProvider('https://1rpc.io/sepolia');
+        const providerInstance = new ethers.JsonRpcProvider('https://1rpc.io/sepolia');
 
         async function wait(ms) {
           return new Promise((resolve) => {
@@ -513,674 +513,370 @@ console.log('lol')
       cancelAnimationFrame(rafBorrowIdRef.current);
     };
   }, [borrows, availableBorrowAmounts]);
-  return (<div className="app">
-    <main className="app-main">
-      <h1 style={{ color: '#1e88e5', textAlign: 'center', paddingBottom: '40px' }}>
-        <a href="https://addrs.to/"> <img
-          style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '15px',
-            right: '15px',
-            borderRadius: '8px',
-          }}
+  return (<div className="min-h-screen bg-gray-900 text-white">
+      <a href="https://addrs.to/">
+        <img
+          className="absolute top-4 right-4 rounded-full"
+          style={{ maxWidth: '50px' }}
           src={'https://addrs.to/a.png'}
           alt="Selected NFT Image"
-        /></a>
-        
-        <label className="switch"   style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '15px',
-            left: '80px',
-            borderRadius: '8px',
-          }}> <Typography style={{
-            maxWidth: '50px',
-            position: 'absolute',
-            top: '6px',
-            left: '60px',
-            borderRadius: '8px',
-          }}>{!pro?'Pro':'Fun'}</Typography >
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={pro}
-                              onChange={(e) => setpro(e.target.checked)}
-
-                            />
-                                                        <span className="slider round"></span>
-</label>
-                            
-        <a href="https://discord.gg/W87Rw6wtk2">
-          <img
-            style={{
-              maxWidth: '50px',
-              position: 'absolute',
-              top: '16px',
-              right: '80px',
-              borderRadius: '8px',
-            }}
-            src={'./discord.png'}
-            alt="Selected NFT Image"
-          />
-        </a>
-        <a href="https://twitter.com/not_pr0/">
-          <img
-            style={{
-              maxWidth: '50px',
-              position: 'absolute',
-              top: '16px',
-              right: '140px',
-              borderRadius: '8px',
-            }}
-            src={'./twitter.png'}
-            alt="Selected NFT Image"
-          />
-        </a>
-      </h1>
-      <body>
-        <section id="borrow-form">
-
-          <Toaster />
-          <div className='card' style={{
-            textAlign: 'center', maxWidth: '100%'
-          }}>
-            <strong>   <h2 style={{ color: '#42aaff', fontSize: '36px', marginTop: '0px' }}>Stream - in Alpha</h2>
-            </strong><p style={{ color: '#42aaff', marginTop: '0px', marginBottom: '40px' }}>            Stream tokens from your wallet, no locking tokens, no interest, no fees.
-            </p>            <div style={{ display: 'grid', gap: '20px' }}>
-              <div>
-                <label htmlFor="token" style={{ display: 'block', marginBottom: '5px' }}>
-                  Token Address:
-                </label>{stoken}
-                <select
-                  id="token"
-                  name="token"
-                  value={stoken}
-                  onChange={(e) => setToken(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                >
-                  <option value="">{stoken ? stoken : 'Select a token'}</option>
-                  {ChainId == 17000 && (<><option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                    <option value="0x0987654321098765432109876543210987654321">USDC</option>
-                  </>)}{ChainId == 1 && (
-                    <>
-                      <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
-                      <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-                      <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-                    </>)}
-                  {ChainId == 10 && (<>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
-                    <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
-                    <option value="0x4200000000000000000000000000000000000042">OP</option>
-                  </>)}
-                  {ChainId == 8453 && (<>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  </>)}
-                  {ChainId == 534352 && (<>
-                    <option value="0x5300000000000000000000000000000000000004">wETH</option>
-                    <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
-                  </>)}
-
-                  <option value="custom">Custom</option>
-                </select>
-                {stoken === 'custom' && (
-                  <input
-                    type="text"
-                    id="customToken"
-                    name="customToken"
-                    onChange={(e) => setToken(e.target.value)}
-                    required
-                    style={{ width: '100%', padding: '10px', fontSize: '18px', marginTop: '10px' }}
-                    placeholder="Enter custom token address"
-                  />
-                )}
-              </div>
-              <div>
-                <label htmlFor="friend" style={{ display: 'block', marginBottom: '5px' }}>To Address/ENS:</label>
-                <input
-                  type="text"
-                  id="friend"
-                  name="friend"
-                  value={friend}
-                  onChange={(e) => setFriend(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Stream Amount:</label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  step="0.01"
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>{!once && (
-                <div>
-                  <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>Days to Stream Amount:</label>
-                  <input
-                    type="number"
-                    id="amount"
-                    name="amount"
-                    step="0.01"
-                    onChange={(e) => setWindow(e.target.value)}
-                    required
-                    style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                  />
-                </div>
-              )}
-              {once && (<div>
-                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>   End Date:
-                </label>
-                <input
-                  type="datetime-local"
-                  id="endDate"
-                  name="endDate"
-                  onChange={(e) => {
-                    const selectedDate = new Date(e.target.value);
-                    const currentDate = new Date();
-                    const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-                    setWindow(windowInSeconds);
-                  }} required
-                  style={{ width: '100%', padding: '10px', fontSize: '18px' }}
-                />
-              </div>)}
-              <div >
-                <label htmlFor="once" style={{}}>
-                  <label style={{ color: 'orange' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
-                </label>
-              </div>
-              <div>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    id="once"
-                    name="once"
-                    checked={once}
-                    onChange={(e) => setOnce(e.target.checked)}
-
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-
-              <button onClick={() => requestBorrow(stoken, friend, amount)} style={{ backgroundColor: '#4caf50', width: '100%', justifySelf: 'center' }} >
-                Set allowance     </button>
-
-                <button onClick={() => location.assign('https://spot.pizza/')} style={{ backgroundColor: '#', width: '50%', justifySelf: 'center' }} >
-                Check out Spot🍕     </button>
-              <ConnectButton />
-            </div>
+        />
+      </a>
+  <main className="container mx-auto py-8">
+    <h1 className="text-center text-4xl mb-8 relative">
+    
+      Stream - in Alpha
+    </h1>
+    <Toaster />
+    <section id="borrow-form" className="bg-gray-800 p-8 rounded-lg shadow-lg mb-8">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl text-blue-400">Stream tokens from your wallet, no locking tokens, no interest, no fees.</h2>
+      </div>
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="token" className="block mb-2 font-semibold text-gray-300">Token Address:</label>
+          
+          <select
+            id="token"
+            name="token"
+            value={stoken}
+            onChange={(e) => setToken(e.target.value)}
+            required
+            className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+          >
+            <option value="">{stoken ? stoken : 'Select a token'}</option>
+            {ChainId == 17000 && (
+              <>
+                <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
+                <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
+                <option value="0x0987654321098765432109876543210987654321">USDC</option>
+              </>
+            )}
+            {ChainId == 1 && (
+              <>
+                <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
+                <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+                <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+              </>
+            )}
+            {ChainId == 10 && (
+              <>
+                <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
+                <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
+                <option value="0x4200000000000000000000000000000000000042">OP</option>
+              </>
+            )}
+            {ChainId == 8453 && (
+              <>
+                <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+              </>
+            )}
+            {ChainId == 534352 && (
+              <>
+                <option value="0x5300000000000000000000000000000000000004">wETH</option>
+                <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
+              </>
+            )}
+            <option value="custom">Custom</option>
+          </select>
+          {stoken === 'custom' && (
+            <input
+              type="text"
+              id="customToken"
+              name="customToken"
+              onChange={(e) => setToken(e.target.value)}
+              required
+              className="w-full p-3 mt-2 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+              placeholder="Enter custom token address"
+            />
+          )}
+        </div>
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <label htmlFor="friend" className="block mb-2 font-semibold text-gray-300">To Address/ENS:</label>
+            <input
+              type="text"
+              id="friend"
+              name="friend"
+              value={friend}
+              onChange={(e) => setFriend(e.target.value)}
+              required
+              className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            />
           </div>
-        </section>{pro &&(<><section id="allowance-list">
-          <div className='card' style={{ marginTop: '20px' }}>
-            <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
-            <ul id="allowances">
-              {Object.entries(
-                allowances
-                  .filter((allowance) => allowance.lender === userAddress)
-                  .reduce((acc, allowance) => {
-                    if (!acc[allowance.friend]) {
-                      acc[allowance.friend] = [];
-                    }
-                    acc[allowance.friend].push(allowance);
-                    return acc;
-                  }, {})
-              ).map(([friend, friendAllowances]) => (
-                <div key={friend} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(friend)}{friend.show}</h3>
-                  <div className="token-grid">
-                    {friendAllowances.map((allowance) => (
-                      <div key={allowance.hash} className='card token-card'>
-                        <div className="allowance-item">
-                          <p><strong>Token:</strong> {map(allowance.token)}</p>
-                          <p><strong>Limit:</strong> {allowance.allowable}</p>
-                          <p><strong>Available:</strong>                           {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-                          </p>
-                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {allowance.once && ('Unlimited  ')}</label> Stream <label style={{ color: '#caffcc' }}>{!allowance.once && ('Once only')}</label>
-                          </strong></p>
-                          <p style={{ marginTop: '0px' }}>
-              <strong>
-                {!allowance.once && (
-                  <label style={{ color: '#ffdbaa' }}>
-              @ {allowance.allowable} tokens<br />
-                    per {Math.floor(allowance.window / (3600 * 24))}d:
-                    {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                    {Math.floor((allowance.window % 3600) / 60)}m:
-                    {Math.floor(allowance.window % 60)}s
-                  </label>
-                )}
-              </strong>
-              {allowance.once && (
-                <label style={{ color: '#caffcc' }}>
-              ends in {
-                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                    `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                    `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
-                  }
-                </label>
-              )}
-            </p><p><strong>Volume streamed:</strong> {allowance.totalStreamed}</p>
-                          <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-                            <div
-                              style={{
-                                width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
-                                height: '20px',
-                                backgroundColor: '#42aaff',
-                                borderRadius: '10px',
-                                transition: 'width 0.5s ease-in-out',
-                                marginTop: '0px'
-                              }}
-                            >    <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
+          <div className="flex-1">
+            <label htmlFor="amount" className="block mb-2 font-semibold text-gray-300">Stream Amount:</label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              step="0.01"
+              onChange={(e) => setAmount(e.target.value)}
+              required
+              className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            />
+          </div>
+        </div>
+        <div className="flex space-x-4">
+          {!once && (
+            <div className="flex-1">
+              <label htmlFor="days" className="block mb-2 font-semibold text-gray-300">Days to Stream Amount:</label>
+              <input
+                type="number"
+                id="days"
+                name="days"
+                step="0.01"
+                onChange={(e) => setWindow(e.target.value)}
+                required
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
+          )}
+          {once && (
+            <div className="flex-1">
+              <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-300">End Date:</label>
+              <input
+                type="datetime-local"
+                id="endDate"
+                name="endDate"
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const currentDate = new Date();
+                  const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
+                  setWindow(windowInSeconds);
+                }}
+                required
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
+          )}
+        </div>
+        <div className="items-center">
+          <div className="items-center space-x-2">
+            <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
+            <span className="text-gray-300">Stream</span>
+            <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
+          </div>
+          <div className="">
+            <label className="switch">
+              <input
+                type="checkbox"
+                id="once"
+                name="once"
+                checked={once}
+                onChange={(e) => setOnce(e.target.checked)}
+                className="toggle-checkbox"
+              />
+              <span className="toggle-slider round"></span>
+            </label>
+          </div>
+        </div>
+        <button
+          onClick={() => requestBorrow(stoken, friend, amount)}
+          className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+        >
+          Set Allowance
+        </button>
+        <button
+          onClick={() => location.assign('https://spot.pizza/')}
+          className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out"
+        >
+          Check out Spot🍕
+        </button>
+        <ConnectButton />
+      </div>
+    </section>
+    <section id="allowance-list" className="mt-8">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 className="text-xl text-blue-400 mb-4">Allowances to Friends</h2>
+        <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
+          <thead className="bg-gray-800 text-gray-300">
+            <tr>
+              <th className="py-2 px-4">Friend</th>
+              <th className="py-2 px-4">Token</th>
+              <th className="py-2 px-4">Limit</th>
+              <th className="py-2 px-4">Available</th>
+              <th className="py-2 px-4">Stream Type</th>
+              <th className="py-2 px-4">Time</th>
+              <th className="py-2 px-4">Volume Streamed</th>
+              <th className="py-2 px-4">Amount</th>
+              <th className="py-2 px-4">Ends In</th>
+              <th className="py-2 px-4">Duration</th>
+              <th className="py-2 px-4"></th>
 
-                            </div>
-                          </div>
-                        </div>
+            </tr>
+          </thead>
+          <tbody className="text-gray-300">
+            {Object.entries(
+              allowances.reduce((acc, allowance) => {
+                if (!acc[allowance.friend]) {
+                  acc[allowance.friend] = [];
+                }
+                acc[allowance.friend].push(allowance);
+                return acc;
+              }, {})
+            ).map(([friend, friendAllowances]) => (
+              friendAllowances.map((allowance) => (
+                <tr key={allowance.hash} className="border-b border-gray-600">
+                  <td className="py-2 px-4">{map(friend)}</td>
+                  <td className="py-2 px-4">{map(allowance.token)}</td>
+                  <td className="py-2 px-4">{allowance.allowable}</td>
+                  <td className="py-2 px-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
+                  <td className="py-2 px-4">
+                    <span className="text-orange-400">{allowance.once && 'Unlimited'}</span>
+                    <span className="text-green-400">{!allowance.once && 'Once only'}</span>
+                  </td>
+                  <td className="py-2 px-4">
+                    {!allowance.once ? (
+                      <span>
+                        @ {allowance.allowable} tokens per {Math.floor(allowance.window / (3600 * 24))}d:
+                        {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
+                        {Math.floor((allowance.window % 3600) / 60)}m:
+                        {Math.floor(allowance.window % 60)}s
+                      </span>
+                    ) : (
+                      <span>
+                        ends in {
+                          `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
+                          `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+                          `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
+                        }
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-2 px-4">{allowance.totalStreamed}</td>
+                  <td className="py-2 px-4">
+                      <input
+                        type="text"
+                        id="token"
+                        name="token"
+                        placeholder="amount"
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="p-2 w-20 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+                        required
+                      />
+                                        </td>
+                                        <td className="py-2 px-4">
 
-                        <input
-                          type="text"
-                          id="token"
-                          name="token"
-                          placeholder='amount'
+                      <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        step="0.01"
+                        placeholder='days'
+                        onChange={(e) => setWindow(e.target.value)}
+                        required
+                        className="p-2 w-20 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+                      />                  </td>
+                  <td className="py-2 px-4">
 
-                          onChange={(e) => setAmount(e.target.value)}
-                          style={{ marginTop: '16px' }}
-
-                          required
-                        />
-                        <div style={{ marginTop: '10px' }}>
-                          <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px', color: '#fff' }}>Days to Stream Amount:</label>
+                      <label className="flex items-center space-x-2">
+                        <span>{once==true&&('Once') }{once!=true&&('Unlimited') }</span>
+                        <label className="switch">
                           <input
-                            type="number"
-                            id="amount"
-                            name="amount"
-                            step="0.01"
-                            onChange={(e) => setWindow(e.target.value)}
-                            required
-                            style={{ width: '20%', padding: '10px', fontSize: '18px' }}
+                            type="checkbox"
+                            id="once"
+                            name="once"
+                            checked={once}
+                            onChange={(e) => setOnce(e.target.checked)}
+                            className="toggle-checkbox"
                           />
-                        </div>
+                          <span className="toggle-slider round"></span>
+                        </label>
+                      </label>                 
+                      </td>
+                      <td className="py-2 px-2">
 
-                        <div style={{ marginTop: '10px' }}>
-                          <label htmlFor="once" style={{ color: '#fff' }}>
-                            <label style={{ color: '#ffdbaa' }}> {!once && ('Unlimited')}</label> Stream <label style={{ color: '#00ff00' }}>{once && ('Once only')}</label>
-                          </label>
-                        </div>
-                        <div>
-                          <label className="switch">
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
-                              onChange={(e) => setOnce(e.target.checked)}
-
-                            />
-                            <span className="slider round"></span>
-                          </label>
-                        </div>
-                        <button
-                          style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => requestBorrow(allowance.token, friend, amount)}
-                        >
-                          Set allowance
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </ul>
-          </div>
-        </section><section id="borrow-list">
-          <div className='card' style={{ marginTop: '20px' }}>
-            <h2 style={{ color: '#1e88e5' }}>Friends That Have Spotted Me</h2>
-            <div id="borrows">
-              {Object.entries(
-                borrows
-                  .filter((borrow) => borrow.friend === userAddress)
-                  .reduce((acc, borrow) => {
-                    if (!acc[borrow.lender]) {
-                      acc[borrow.lender] = [];
-                    }
-                    acc[borrow.lender].push(borrow);
-                    return acc;
-                  }, {})
-              ).map(([lender, lenderBorrows]) => (
-                <div key={lender} className='card' style={{ backgroundColor: '#5a5fff', textAlign: 'center', marginTop: '20px', fontSize: '20px' }}>
-                  <h3>{map(lender)}{lender.show}</h3>
-                  <div className="token-grid">
-                    {lenderBorrows.map((borrow) => (
-                      <div key={borrow.hash} className='card token-card'>
-                        <div className="borrow-item">
-                          <p><strong>Token:</strong> {map(borrow.token)}</p>
-                          <p><strong>Amount:</strong> {borrow.allowable}</p>
-                          <p><strong>Available:</strong>                           {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</p>
-                          <p style={{ marginBottom: '0px' }}><strong>   <label style={{ color: '#ffdbaa' }}> {!borrow.once && ('Unlimited ')}</label> Stream <label style={{ color: '#caffcc' }}>{borrow.once && ('Once only')}</label>
-                          </strong></p><p  style={{ marginTop: '0px' }}>
-  <strong>
-    {!borrow.once && (
-      <label style={{ color: '#ffdbaa' }}>
-     @ {borrow.allowable} tokens<br />
-        per {Math.floor(borrow.window / (3600 * 24))}d:
-        {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
-        {Math.floor((borrow.window % 3600) / 60)}m:
-        {Math.floor(borrow.window % 60)}s
-      </label>
-    )}
-  </strong>
-  {borrow.once && (
-    <label style={{ color: '#00ff00' }}>
-     ends in {
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
-      }
-    </label>
-  )}
-</p>
-<p><strong>Volume streamed:</strong> {borrow.totalStreamed}</p>
-
-                        </div>                  <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-
-                          <div
-                            style={{
-                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
-                              height: '20px',
-                              backgroundColor: '#42aaff',
-                              borderRadius: '10px',
-                              transition: 'width 0.5s ease-in-out',
-                              marginTop: '0px'
-                            }}
-                          >    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
-
-                          </div>
-                        </div>
-                        <button
-                          style={{ marginLeft: '6px', marginTop: '6px' }}
-                          onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
-                        >
-                          Claim
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section></>)}{!pro &&(<><section id="allowance-list">
-  <div className='card' style={{ marginTop: '20px' }}>
-    <h2 style={{ color: '#1e88e5' }}>Allowances to Friends</h2>
-    <div id="allowances">
-      {Object.entries(
-        allowances
-          .filter((allowance) => allowance.lender === userAddress)
-          .reduce((acc, allowance) => {
-            if (!acc[allowance.friend]) {
-              acc[allowance.friend] = [];
-            }
-            acc[allowance.friend].push(allowance);
-            return acc;
-          }, {})
-      ).map(([friend, friendAllowances]) => (
-        <TableContainer key={friend} component={Paper} elevation={1}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={5} style={{ backgroundColor: '#5a5fff', color: '#fff' }}>
-                  <Typography variant="h5">{map(friend)}</Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell width="200">Asset</TableCell>
-                <TableCell>Limit</TableCell>
-                <TableCell width="300">Available</TableCell>
-                <TableCell width="300">Time</TableCell>
-
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {friendAllowances.map((allowance) => (<>
-                <TableRow key={allowance.hash} hover>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={map(allowance.token).toString()} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={allowance.allowable.toFixed(6)} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography color="#000">
-                        {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-                        
-                      </Typography>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-                      <div
-                        style={{
-                          width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
-                          height: '20px',
-                          backgroundColor: '#42aaff',
-                          borderRadius: '10px',
-                          transition: 'width 0.5s ease-in-out',
-                          marginTop: '0px'
-                        }}
+                      <button
+                        onClick={() => requestBorrow(allowance.token, friend, amount)}
+                        className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
                       >
-                        <strong>{((allowance.outstanding / allowance.allowable) * 100).toString().slice(0, 5)}%</strong>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography variant="body2" color="textSecondary">
-                        <p style={{ marginBottom: '0px' }}>
-                          <strong>
-                            <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff' }}> {!allowance.once && ('Unlimited  ')}</Typography>
-                            <Typography style={{borderRadius:'20px',backgroundColor:'#00cb00', textAlign: 'center',width:'70%', color: '#fff' }}>{allowance.once && ('Once only')}</Typography>
-                          </strong>
-                        </p>
-                        <p style={{ marginTop: '0px' }}>
-                          <strong>
-                            {!allowance.once && (
-                              <Typography >
-                                @ {allowance.allowable} tokens<br />
-                                per {Math.floor(allowance.window / (3600 * 24))}d:
-                                {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                                {Math.floor((allowance.window % 3600) / 60)}m:
-                                {Math.floor(allowance.window % 60)}s
-                              </Typography>
-                            )}
-                          </strong>
-                          {allowance.once && (
-                            <Typography >
-                              ends in {
-                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                                `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                                `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
-                              }
-                            </Typography>
-                          )}
-                        </p>
-                      </Typography>
-                    </div>
-                  </TableCell>
-               
+                        Set Allowance
+                      </button>
+                                </td>
 
-                </TableRow>
-                  <TableRow style={{padding:'1px',backgroundColor:'#5a5fff'}}>
-                <TableCell>
-                  <input
-                          type="text"
-                          id="token"
-                          name="token"
-                          placeholder='amount'
+                </tr>
+              ))
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="borrow-list" className="mt-8">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 className="text-xl text-blue-400 mb-4">Friends That Have Spotted Me</h2>
+        <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
+          <thead className="bg-gray-800 text-gray-300">
+            <tr>
+              <th className="py-2 px-4">Streamer</th>
+              <th className="py-2 px-4">Token</th>
+              <th className="py-2 px-4">Amount</th>
+              <th className="py-2 px-4">Available</th>
+              <th className="py-2 px-4">Stream Type</th>
+              <th className="py-2 px-4">Time</th>
+              <th className="py-2 px-4">Volume Streamed</th>
+              <th className="py-2 px-4"></th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-300">
+            {Object.entries(
+              borrows.reduce((acc, borrow) => {
+                if (!acc[borrow.lender]) {
+                  acc[borrow.lender] = [];
+                }
+                acc[borrow.lender].push(borrow);
+                return acc;
+              }, {})
+            ).map(([lender, lenderBorrows]) => (
+              lenderBorrows.map((borrow) => (
+                <tr key={borrow.hash} className="border-b border-gray-600">
+                  <td className="py-2 px-4">{map(lender)}</td>
+                  <td className="py-2 px-4">{map(borrow.token)}</td>
+                  <td className="py-2 px-4">{borrow.allowable}</td>
+                  <td className="py-2 px-4">{(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</td>
+                  <td className="py-2 px-4">
+                    <span className="text-orange-400">{!borrow.once && 'Unlimited'}</span>
+                    <span className="text-green-400">{borrow.once && 'Once only'}</span>
+                  </td>
+                  <td className="py-2 px-4">
+                    {!borrow.once ? (
+                      <span>
+                        @ {borrow.allowable} tokens per {Math.floor(borrow.window / (3600 * 24))}d:
+                        {Math.floor((borrow.window % (3600 * 24)) / 3600)}h:
+                        {Math.floor((borrow.window % 3600) / 60)}m:
+                        {Math.floor(borrow.window % 60)}s
+                      </span>
+                    ) : (
+                      <span>
+                        ends in {
+                          `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
+                          `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
+                          `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
+                        }
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-2 px-4">{borrow.totalStreamed}</td>
+                  <td className="py-2 px-4">
+                    <button
+                      onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
+                      className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+                    >
+                      Claim
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
 
-                          onChange={(e) => setAmount(e.target.value)}
-                          style={{ marginTop: '1px',width:'50%' }}
-
-                          required
-                        />
-                                          </TableCell><TableCell>
-
-                           <strong> <Typography style={{ color: 'orange' }}> {!once && ('Unlimited')}</Typography>  <Typography style={{ color: '#00ff00' }}>{once && ('Once only')}</Typography>
-                           </strong>
-                          <label className="switch">
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
-                              onChange={(e) => setOnce(e.target.checked)}
-
-                            />
-                            <span className="slider round"></span>
-                          </label></TableCell><TableCell>  <input
-                            type="number"
-                            id="amount"
-                            name="amount" placeholder='Days'
-                            step="0.01"
-                            onChange={(e) => setWindow(e.target.value)}
-                            required
-                            style={{ width: '50%', padding: '10px',margin:'1px', fontSize: '18px' }}
-                          />
-                        </TableCell><TableCell>
-                    <button onClick={() => requestBorrow(allowance.token, friend, amount)}>
-                      Set allowance
-                    </button></TableCell>
-
-                </TableRow></>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ))}
-    </div>
-  </div>
-</section><section id="borrow-list">
-  <div className='card' style={{ marginTop: '20px' }}>
-    <h2 style={{ color: '#1e88e5' }}>Friends That Have Spotted Me</h2>
-    <div id="borrows">
-      {Object.entries(
-        borrows
-          .filter((borrow) => borrow.friend === userAddress)
-          .reduce((acc, borrow) => {
-            if (!acc[borrow.lender]) {
-              acc[borrow.lender] = [];
-            }
-            acc[borrow.lender].push(borrow);
-            return acc;
-          }, {})
-      ).map(([lender, lenderBorrows]) => (
-        <TableContainer key={lender} component={Paper} elevation={1}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={5} style={{backgroundColor:'#5a5fff',color:'#fff'}}>
-                  <Typography variant="h5" >{map(lender)}</Typography>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell width="200">Asset</TableCell>
-                <TableCell>Limit</TableCell>
-                <TableCell width="300">Available</TableCell>
-                <TableCell width="300">Ends in</TableCell>
-                <TableCell width="120"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {lenderBorrows.map((borrow) => (
-                <TableRow key={borrow.hash} hover>
-                  <TableCell>
-                    <ListItem>
-                 
-                      <ListItemText primary={map(borrow.token).toString()} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <ListItem>
-                      <ListItemText primary={borrow.allowable.toFixed(6)} />
-                    </ListItem>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography  color="#000">
-                        {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
-                      </Typography>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: '#e0e0e0', borderRadius: '10px', marginTop: '10px' }}>
-
-                          <div
-                            style={{
-                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
-                              height: '20px',
-                              backgroundColor: '#42aaff',
-                              borderRadius: '10px',
-                              transition: 'width 0.5s ease-in-out',
-                              marginTop: '0px'
-                            }}
->    <strong>{((borrow.outstanding / borrow.allowable) * 100).toString().slice(0, 5)}%</strong>
-
-                          </div>    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Typography variant="body2" color="textSecondary">
-                      <p style={{ marginBottom: '0px' }}><strong>   <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}> {!borrow.once && ('Unlimited ')}</Typography>  <Typography style={{borderRadius:'20px',backgroundColor:'orange', textAlign: 'center',width:'70%', color: '#fff'}}>{borrow.once && ('Once only')}</Typography>
-                          </strong></p><p  style={{ marginTop: '0px' }}>
-  <strong>
-    {!borrow.once && (
-      <Typography >
-     @ {borrow.allowable} tokens<br />
-        per {Math.floor(borrow.window / (3600 * 24))}d:
-        {Math.floor((borrow.window % (3600 * 24)) / 36000)}h:
-        {Math.floor((borrow.window % 3600) / 60)}m:
-        {Math.floor(borrow.window % 60)}s
-      </Typography>
-    )}
-  </strong>
-  {borrow.once && (
-    <Typography >
-     ends in {
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-        `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-        `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
-      }
-    </Typography>
-  )}
-</p>
-
-                      </Typography>
-                    </div>
-                  </TableCell>
-                  <TableCell align="center">
-                    <button onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}>
-                    Claim</button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ))}
-    </div>
-  </div>
-</section></>)}
-      </body>
-    </main>
-  </div>
   );
 };
 export default App;
