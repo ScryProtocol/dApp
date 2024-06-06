@@ -1,882 +1,409 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-const FormData = require('form-data')
-import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
-import { chainId } from 'wagmi'; import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useEthersProvider } from './tl'
-import { useEthersSigner } from './tl'
-import { useAccount, useConnect, useEnsName, useChainId } from 'wagmi'
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Paper,ListItemText 
-} from '@mui/material';
-const tokenaddress = '0x0000000000000000000000000000000000000000'
-let signer
-let provider
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useEthersProvider, useEthersSigner } from './tl';
+import { useAccount, useChainId } from 'wagmi';
+import 'tailwindcss/tailwind.css';
+import { Remarkable } from 'remarkable';
+import DOMPurify from 'dompurify';
+import 'tailwindcss/tailwind.css';
+
+// Contract ABI and Address
+const ContractABI = [{"inputs":[{"internalType":"contract IStreamContract","name":"_streamContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":false,"internalType":"string","name":"content","type":"string"}],"name":"PostCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"}],"name":"PostDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newContent","type":"string"}],"name":"PostEdited","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"authorPostCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorPosts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"blogNameToAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"blogs","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"address","name":"blogOwner","type":"address"}],"name":"checkSubd","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"createBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"content","type":"string"}],"name":"createPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"deletePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"string","name":"newContent","type":"string"}],"name":"editPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"getPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"postIds","type":"uint256[]"}],"name":"getPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"postCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newURI","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"streamContract","outputs":[{"internalType":"contract IStreamContract","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newName","type":"string"},{"internalType":"string","name":"newBio","type":"string"},{"internalType":"address","name":"newToken","type":"address"},{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"updateBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"limit","type":"uint256"}],"name":"viewLatestPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"viewPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+
+
+const ContractAddress = '0xd517f696ba3d8D1809257cF734239F5Aa35DAE46';
+
 const App = () => {
-
-  let ContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';//const ContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
-  const ContractABI = [{ "inputs": [{ "internalType": "address payable", "name": "feeAddrs", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Repaid", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "friend", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "StreamAllowed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Streamed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "name": "allowStream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "fee", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "getAvailable", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }, { "internalType": "address", "name": "newfeeAddress", "type": "address" }], "name": "setFee", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "stream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "streamDetails", "outputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "totalStreamed", "type": "uint256" }, { "internalType": "uint256", "name": "outstanding", "type": "uint256" }, { "internalType": "uint256", "name": "allowable", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByFriend", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByLender", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "friend", "type": "address" }], "name": "viewFriendAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }], "name": "viewLenderAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }]
-  const tokenABI = [{ "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "minter_", "type": "address" }, { "internalType": "uint256", "name": "mintingAllowedAfter_", "type": "uint256" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegator", "type": "address" }, { "indexed": true, "internalType": "address", "name": "fromDelegate", "type": "address" }, { "indexed": true, "internalType": "address", "name": "toDelegate", "type": "address" }], "name": "DelegateChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "delegate", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "previousBalance", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "newBalance", "type": "uint256" }], "name": "DelegateVotesChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "minter", "type": "address" }, { "indexed": false, "internalType": "address", "name": "newMinter", "type": "address" }], "name": "MinterChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "inputs": [], "name": "DELEGATION_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "DOMAIN_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PERMIT_TYPEHASH", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint32", "name": "", "type": "uint32" }], "name": "checkpoints", "outputs": [{ "internalType": "uint32", "name": "fromBlock", "type": "uint32" }, { "internalType": "uint96", "name": "votes", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }], "name": "delegate", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "delegatee", "type": "address" }, { "internalType": "uint256", "name": "nonce", "type": "uint256" }, { "internalType": "uint256", "name": "expiry", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "delegateBySig", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "delegates", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "getCurrentVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "blockNumber", "type": "uint256" }], "name": "getPriorVotes", "outputs": [{ "internalType": "uint96", "name": "", "type": "uint96" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minimumTimeBetweenMints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "mintCap", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "minter", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "mintingAllowedAfter", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "nonceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "nonces", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "numCheckpoints", "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "permit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "minter_", "type": "address" }], "name": "setMinter", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "rawAmount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }]
-
-  //const [token, setToken] = useState(null);
-  const [boop, setboop] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [tokenBalance, setTokenBalance] = useState(0);
-  const [borrows, setBorrows] = useState([]);
-  const [repayments, setRepayments] = useState([]);
-  const [allowances, setAllowances] = useState([]);
-  const [friend, setFriend] = useState('');
-  const [amount, setAmount] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [content, setContent] = useState('');
+  const [blogName, setBlogName] = useState('');
+  const [blogBio, setBlogBio] = useState('');
+  const [blogToken, setBlogToken] = useState('');
+  const [blogAmount, setBlogAmount] = useState('');
   const ethersProvider = useEthersProvider();
-  const [stoken, setToken] = useState(null);
-  const [availableAmounts, setAvailableAmounts] = useState({});
-  const [availableBorrowAmounts, setAvailableBorrowAmounts] = useState({});
-  const [pro, setpro] = useState(0);
-
-  const rafIdRef = useRef(null);
-  const rafBorrowIdRef = useRef(null);
-  const [displayedAvailableAmounts, setDisplayedAvailableAmounts] = useState({});
-  const [displayedAvailableBorrowAmounts, setDisplayedAvailableBorrowAmounts] = useState({});
-
-  const [window, setWindow] = useState('');
-  const [once, setOnce] = useState(false);
-  const [streams, setStreams] = useState([]);
   const ethersSigner = useEthersSigner();
-  provider = ethersProvider
-  signer = ethersSigner
-  
-  let account = useAccount();
-  let userAddress = useAccount().address;
-  let ChainId = useChainId()
-    ChainId==1?ContractAddress='0x90076e40A74F33cC2C673eCBf2fBa4068Af77892':{}
-    ChainId==17000 ?ContractAddress='0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b':{}
+  const account = useAccount();
+  const userAddress = account.address;
 
-  account = account.address
-  let contract = new ethers.Contract(
-    ContractAddress,
-    ContractABI,
-    ethersProvider
-  );
-  let token
-  
-provider.addListener('network', (newNetwork, oldNetwork) => {console.log('newNetwork',newNetwork,'oldNetwork',oldNetwork)
-try {
-  
-ChainId==1?ContractAddress='0x90076e40A74F33cC2C673eCBf2fBa4068Af77892':{}
-ChainId==17000 ?ContractAddress='0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b':{}
-console.log('ContractAddress',ContractAddress)
-account = account.address
-contract = new ethers.Contract(
-ContractAddress,
-ContractABI,
-ethersProvider
-);
-fetchData();
-console.log('lol')
-
-} catch (error) {
-  console.error('Error connecting to Ethereum:', error);
-}
-})
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-  useEffect(() => {
-    function handleaccountsChanged() {
-      if (boop == null) {
-        setboop('1');
-        console.log('boop');
-      } else {
-        console.log('boop2');
-        initEthers();
-      }
-    }
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleaccountsChanged);
-    }
-    const initEthers = async () => {
-      if (window.ethereum) {
-        //try { window.ethereum.request({ method: 'eth_requestAccounts' }); } catch { }
-
-        try {
-          //  if (await signer.getChainId() != 11155111) { toast.error('Connect to Sepolia Chain and refresh') }// toast.error('Connect to Base Chain and refresh') }
-          async function wait(ms) { return new Promise(resolve => { setTimeout(resolve, ms); }); }
-          await wait(5000)
-          console.log('lol');
-          setpro(localStorage.getItem('pro'))
-            
-          fetchData();
-        } catch (error) {
-          console.error('Error connecting to Ethereum:', error);
-        }
-      } else {
-        const providerInstance = new ethers.JsonRpcProvider('https://1rpc.io/sepolia');
-
-        async function wait(ms) {
-          return new Promise((resolve) => {
-            setTimeout(resolve, ms);
-          });
-        }
-
-        await wait(5000);
-        console.log('lol');
-        fetchData();
-      }
-    };
-
-    initEthers();
-  }, []);
+  const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
 
   useEffect(() => {
-    if (contract && userAddress) {
-      const init = async () => {
-        if (boop == null) {
-
-          setboop('1');
-          fetchData();
-        }
-      };
-
-      init();
+    if (userAddress) {
+      fetchPosts();
     }
-  }, [contract, userAddress]);
+  }, [userAddress]);
 
-  const [maps, setmaps] = useState({
-    '0x94373a4919b3240d86ea41593d5eba789fef3848': 'wETH',
-    '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
-    '0x0987654321098765432109876543210987654321': 'USDC',
-    '0x4200000000000000000000000000000000000006': 'wETH',
-    '0x0b2c639c533813f4aa9d7837caf62653d097ff85': 'USDC',
-    '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58': 'USDT',
-    '0x4200000000000000000000000000000000000042': 'OP',
-    '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'USDC',
-    '0x5300000000000000000000000000000000000004': 'wETH',
-    '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4': 'USDC',
-    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'wETH',
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-    '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
-  });
+  const fetchBl = async () => {
+    try {
+      const postCount = await contract.authorPostCount(userAddress);
+      const postsFromContract = [];
 
-  // Function to add a new mapping
-  const addMapping = (address, name) => {
-    console.log('Adding mapping:', address, name);
-    setmaps(prevMaps => ({
-      ...prevMaps,
-      [address.toLowerCase()]: name
-    }));
-  };
-  const map = (lol) => {
-    lol = lol.toLowerCase()
-    if (maps[lol] != null) { return maps[lol] }
-    else { return lol }
-
-  };
-  const fetchData = async () => {
-    fetchLenderAllowances();
-    fetchFriendAllowances();
-    console.log(ChainId)
-
-  };
-
-  const fetchLenderAllowances = async () => {
-    if (contract && userAddress) {
-      const lenderAllowances = await contract.viewLenderAllowances(userAddress);
-      const borrowDetails = await Promise.all(
-        lenderAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.lookupAddress(address);
-            ensName ? addMapping(address, ensName) : {}
-            return ensName || address; // Return ENS name if exists, otherwise return the address
-          }; const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS)
-
-          const token = new ethers.Contract(details.token, tokenABI, provider);
+      for (let i = Number(postCount)-1; i > 0; i--) {
+        const postId = await contract.authorPosts(userAddress, i);
+        const post = await contract.posts(postId);
+        const lines = post.content.split('\n');
+        const title = lines[0];
+        const content = lines.slice(1).join('\n');
+        postsFromContract.push({
+          title: title,
+          content: content,
+          author: post.author,
+          timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
           
-          
-          let decimals
-          try {
-            decimals = await token.decimals();
-        } catch (error) {
-            decimals = 18;
-        }
-          return {
-            hash: hash,
-            lender: details.lender,
-            friend: details.friend,
-            token: details.token,
-            show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
-            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
-            window: Number(details.window),
-            timestamp: Number(details.timestamp),
-            once: details.once,
-          };
-        })
-      ); console.log(borrowDetails)
-      setAllowances(borrowDetails);
-    }
-  };
-
-  const fetchFriendAllowances = async () => {
-    if (contract && userAddress) {
-      const friendAllowances = await contract.viewFriendAllowances(userAddress);
-      const borrowDetails = await Promise.all(
-        friendAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.lookupAddress(address);
-            ensName ? addMapping(address, ensName) : {}
-
-            return ensName || address; // Return ENS name if exists, otherwise return the address
-          }; const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS)
-          const token = new ethers.Contract(details.token, tokenABI, provider);
-          let decimals
-          try {
-            decimals = await token.decimals();
-        } catch (error) {
-            decimals = 18;
-        }
-          return {
-            hash: hash,
-            lender: details.lender,
-            friend: details.friend,
-            token: details.token,
-            show: ENS,
-            totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
-            outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
-            allowable: Number(ethers.formatUnits(details.allowable, decimals)),
-            window: Number(details.window),
-            timestamp: Number(details.timestamp),
-            once: details.once,
-            decimals: decimals,
-          };
-        })
-      );
-      setBorrows(borrowDetails);
-    }
-  };
-
-  const fetchAllowances = async () => {
-    if (contract && userAddress) {
-      const allowances = await contract.viewLenderAllowances(userAddress);
-      setAllowances(allowances);
-    }
-  };
-
-  const requestBorrow = async (stoken, friend, amount) => {
-
-    let contract = new ethers.Contract(
-      ContractAddress,
-      ContractABI,
-      signer
-    );
-    let token = new ethers.Contract(
-      stoken,
-      tokenABI,
-      signer
-    );
-    if (contract) {
-      try {
-        let am = await token.allowance(userAddress, ContractAddress)
-        let decimals = await token.decimals()
-
-        console.log('lol', await token.balanceOf(userAddress), 'lol', am)
-        if (!once) {
-          let tx = await token.approve(ContractAddress, ethers.MaxUint256)
-          tx.wait()
-        }
-        else {
-          if (am < (ethers.parseEther(amount)/10n**18n-decimals)) {
-            let tx = await token.approve(ContractAddress, ethers.parseEther(amount)/10n**18n-decimals)
-            tx.wait()
-          }
-        }
-        if (!ethers.isAddress(friend)) {
-          let pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.resolveName(address);
-            ensName ? friend = ensName : toast.error('ENS not found');
-            return ensNamex``
-          }; const ENS = await getAddressENS(friend);
-          if (!ENS) { return }
-        }
-        console.log('borrowing', stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
-        const tx = await contract.allowStream(stoken, friend, ethers.parseEther(amount)/10n**18n-decimals, window, once);
-        await tx.wait();
-        toast.success('Allowance successful');
-        fetchLenderAllowances();
-      } catch (error) {
-        console.error('Error requesting borrow:', error);
-        toast.error('Error requesting borrow');
+        });
       }
-    }
-  };
-  const handleBorrow = async (token, lender) => {
-    console.log('borrowing', token, lender, amount);
-    let contract = new ethers.Contract(
-      ContractAddress,
-      ContractABI,
-      signer
-    ); try {
-      const tx = await contract.stream(token, lender, account);
-      await tx.wait();
-      toast.success('Stream successful');
-      fetchFriendAllowances();
+
+      setPosts([...postsFromContract]); 
+      console.log('Posts:', postsFromContract);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error');
+      console.error('Error fetching posts:', error);
     }
-
   };
+  
+  const fetchPosts = async () => {
+    try {
+      const postCount = await contract.postCount();
+      const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
+      const postsFromContract = await contract.getPosts(postIds);
+      
+      const formattedPosts = postsFromContract.map(post => ({
+        title: post.content.split('\n')[0],
+        content: post.content.split('\n').slice(1).join('\n'),
+        author: post.author,
+        timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
+        blog: post.blog,
+        blogAddress: post.blogAddress,
+      }));
 
-  const handleRepay = async (token, lender) => {
-    if (contract) {
-      let token = new ethers.Contract(
-        token,
-        tokenABI,
-        signer
-      );
-      try {
+      setPosts(formattedPosts);
+      console.log('Posts:', formattedPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+  const fetchPosts1 = async () => {
+    window.location.search.split('&').forEach((item) => {
+      if (item.includes('blog')) {
+        setBlogName(item.split('=')[1]);
+console.log('Blog:', item.split('=')[1]);     }
+    })
+    try {
+      //const postsFromContract = await contract.viewLatestPosts(userAddress, 10);
+      //setPosts(postsFromContract);
+      
+      const postCount = await contract.postCount();
+      const postsFromContract = [];
 
-        let am = await token.allowance(userAddress, ContractAddress)
-        console.log('lol', await token.balanceOf(userAddress), 'lol', am)
-        if (am < (ethers.parseEther(amount))) {
-          let tx = await token.approve(ContractAddress, ethers.parseEther(amount))
-          tx.wait()
-        }
-        const tx = await contract.repay(token, lender, amount);
-        await tx.wait();
-        toast.success('Repayment successful');
-        fetchFriendAllowances();
-      } catch (error) {
-        console.error('Error repaying:', error);
-        toast.error('Error repaying');
+      for (let i = Number(postCount)-1; i > 0; i--) {
+        const post = await contract.getPost(i);
+        console.log('Post:', post);
+        const lines = post.content.split('\n');
+        const title = lines[0];
+        const content = lines.slice(1).join('\n');
+        postsFromContract.push({
+          title: title,
+          content: content,
+          author: post.author,
+          timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
+        });
       }
-    } function calculateAllowableAmount(allowance) {
-      const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
-      const elapsedTime = currentTime - allowance.timestamp;
-      const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
 
-      if (allowableAmount > allowance.outstanding) {
-        return allowance.outstanding;
-      } else {
-        return allowableAmount;
-      }
+      setPosts([...postsFromContract]); 
+      console.log('Posts:', postsFromContract);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
     }
-  }
-  useEffect(() => {
-    // Save theme preference to local storage whenever it changes
-    localStorage.setItem('pro', pro);
-  }, [pro]);
-  const calculateAvailableAmount = (allowance) => {
-
-    const currentTime = Math.floor(Date.now() / 1000);
-    const elapsedTime = currentTime - allowance.timestamp;
-    if (allowance.once) {
-
-    const allowableAmount = (allowance.allowable * elapsedTime) / allowance.window;
-    if (allowableAmount > allowance.outstanding) {
-      return allowance.outstanding;
-    } else {
-      return allowableAmount;
-    }
-    }
-    else {
-   
-      const allowableAmount = allowance.outstanding*elapsedTime / allowance.window;
-  
-      return allowableAmount;
-  
-    }
-  
-  
   };
 
-  const updateAvailableAmounts = () => {
-    const newAvailableAmounts = {};
-
-    for (const allowance of allowances) {
-
-      newAvailableAmounts[allowance.hash] = calculateAvailableAmount(allowance);
+  const handleCreatePost = async () => {
+    if (!content) return;
+    try {
+      const tx = await contract.createPost(content);
+      await tx.wait();
+      toast.success('Post created successfully');
+      fetchPosts();
+      setContent('');
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast.error('Error creating post');
     }
-    setAvailableAmounts(newAvailableAmounts);
   };
 
-  useEffect(() => {
-    const timer = setInterval(updateAvailableAmounts, 100);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [allowances]);
+  const handleCreateBlog = async () => {
+    if (!blogName || !blogBio || !blogAmount) {
+    toast.error('All fields are required')
+    return;}
+    try {
+      let token = new ethers.Contract(blogToken, ['function decimals() view returns (uint)'], ethersProvider);
 
-  const smoothUpdateAvailableAmounts = () => {
-    for (const allowance of allowances) {
-      const currentDisplayedAmount = displayedAvailableAmounts[allowance.hash] || 0;
-      const targetAmount = availableAmounts[allowance.hash] || 0;
-      const diff = targetAmount - currentDisplayedAmount;
-      const step = diff / 10;
-      if (Math.abs(diff) > 0.0000000001) {
-        setDisplayedAvailableAmounts((prevAmounts) => ({
-          ...prevAmounts,
-          [allowance.hash]: currentDisplayedAmount + step,
-        }));
-      }
+      ;
+      if(await contract.blogNameToAddress(blogName)!='0x0000000000000000000000000000000000000000'){toast.error('Blog name already taken');return;}
+      const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken, ethers.parseUnits(blogAmount/3600/24/30,await token.decimals()));
+      await tx.wait();
+      toast.success('Blog created successfully');
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      toast.error('Error creating blog', error.reason);
     }
-
-    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
   };
 
-  useEffect(() => {
-    const timer = setInterval(updateAvailableAmounts, 100);
-    rafIdRef.current = requestAnimationFrame(smoothUpdateAvailableAmounts);
-
-    return () => {
-      clearInterval(timer);
-      cancelAnimationFrame(rafIdRef.current);
-    };
-  }, [allowances, availableAmounts]);const calculateAvailableBorrowAmount = (borrow) => {
-    const currentTime = Math.floor(Date.now() / 1000);
-    const elapsedTime = currentTime - borrow.timestamp;
-    if (borrow.once) {
-
-    const allowableAmount = (borrow.allowable * elapsedTime) / borrow.window;
-    if (allowableAmount > borrow.outstanding) {
-      return borrow.outstanding;
-    } else {
-      return allowableAmount;
-    }
-  }
-    else {
- 
-      const allowableAmount = borrow.outstanding*elapsedTime / borrow.window;
-  
-      return allowableAmount;
-  
-    }
-  
+  const renderMarkdown = (markdown) => {
+    const md = new Remarkable();
+    const html = md.render(markdown);
+    return { __html: DOMPurify.sanitize(html) };
   };
-  
-  const updateAvailableBorrowAmounts = () => {
-    const newAvailableBorrowAmounts = {};
-    for (const borrow of borrows) {
-      newAvailableBorrowAmounts[borrow.hash] = calculateAvailableBorrowAmount(borrow);
-    }
-    setAvailableBorrowAmounts(newAvailableBorrowAmounts);
-  };
-  
-  useEffect(() => {
-    const timer = setInterval(updateAvailableBorrowAmounts, 100);
-    console.log('borrows', borrows);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [borrows]);
-  
-  const smoothUpdateAvailableBorrowAmounts = () => {
-    for (const borrow of borrows) {
-      const currentDisplayedAmount = displayedAvailableBorrowAmounts[borrow.hash] || 0;
-      const targetAmount = availableBorrowAmounts[borrow.hash] || 0;
-      const diff = targetAmount - currentDisplayedAmount;
-      const step = diff / 10;
-      if (Math.abs(diff) > 0.0000000001) {
-        setDisplayedAvailableBorrowAmounts((prevAmounts) => ({
-          ...prevAmounts,
-          [borrow.hash]: currentDisplayedAmount + step,
-        }));
-      }
-    }
-    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
-  };
-  
-  useEffect(() => {
-    const timer = setInterval(updateAvailableBorrowAmounts, 100);
-    rafBorrowIdRef.current = requestAnimationFrame(smoothUpdateAvailableBorrowAmounts);
-    return () => {
-      clearInterval(timer);
-      cancelAnimationFrame(rafBorrowIdRef.current);
-    };
-  }, [borrows, availableBorrowAmounts]);
-  return (<div className="min-h-screen bg-gray-900 text-white">
-      <a href="https://addrs.to/">
-        <img
-          className="absolute top-4 right-4 rounded-full"
-          style={{ maxWidth: '50px' }}
-          src={'https://addrs.to/a.png'}
-          alt="Selected NFT Image"
-        />
-      </a>
-  <main className="container mx-auto py-8">
-    <h1 className="text-center text-4xl mb-8 relative">
-    
-      Stream - in Alpha
-    </h1>
-    <Toaster />
-    <section id="borrow-form" className="bg-gray-800 p-8 rounded-lg shadow-lg mb-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl text-blue-400">Stream tokens from your wallet, no locking tokens, no interest, no fees.</h2>
-      </div>
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="token" className="block mb-2 font-semibold text-gray-300">Token Address:</label>
-          
-          <select
-            id="token"
-            name="token"
-            value={stoken}
-            onChange={(e) => setToken(e.target.value)}
-            required
-            className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-          >
-            <option value="">{stoken ? stoken : 'Select a token'}</option>
-            {ChainId == 17000 && (
-              <>
-                <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                <option value="0x0987654321098765432109876543210987654321">USDC</option>
-              </>
-            )}
-            {ChainId == 1 && (
-              <>
-                <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
-                <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-                <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-              </>
-            )}
-            {ChainId == 10 && (
-              <>
-                <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
-                <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
-                <option value="0x4200000000000000000000000000000000000042">OP</option>
-              </>
-            )}
-            {ChainId == 8453 && (
-              <>
-                <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-              </>
-            )}
-            {ChainId == 534352 && (
-              <>
-                <option value="0x5300000000000000000000000000000000000004">wETH</option>
-                <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
-              </>
-            )}
-            <option value="custom">Custom</option>
-          </select>
-          {stoken === 'custom' && (
-            <input
-              type="text"
-              id="customToken"
-              name="customToken"
-              onChange={(e) => setToken(e.target.value)}
-              required
-              className="w-full p-3 mt-2 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-              placeholder="Enter custom token address"
-            />
-          )}
-        </div>
-        <div className="flex space-x-4">
-          <div className="flex-1">
-            <label htmlFor="friend" className="block mb-2 font-semibold text-gray-300">To Address/ENS:</label>
-            <input
-              type="text"
-              id="friend"
-              name="friend"
-              value={friend}
-              onChange={(e) => setFriend(e.target.value)}
-              required
-              className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-            />
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <main className="container mx-auto py-8">
+        <h1 className="text-center text-4xl mb-8">Blog dApp</h1>
+        <Toaster />
+        <section className="bg-gray-800 p-8 rounded-lg shadow-lg mb-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl text-blue-400">Create a new blog</h2>
           </div>
-          <div className="flex-1">
-            <label htmlFor="amount" className="block mb-2 font-semibold text-gray-300">Stream Amount:</label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              step="0.01"
-              onChange={(e) => setAmount(e.target.value)}
-              required
-              className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-            />
-          </div>
-        </div>
-        <div className="flex space-x-4">
-          {!once && (
-            <div className="flex-1">
-              <label htmlFor="days" className="block mb-2 font-semibold text-gray-300">Days to Stream Amount:</label>
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="blogName" className="block mb-2 font-semibold text-gray-300">Blog Name:</label>
+              <input
+                type="text"
+                id="blogName"
+                value={blogName}
+                onChange={(e) => setBlogName(e.target.value)}
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
+            <div>
+              <label htmlFor="blogBio" className="block mb-2 font-semibold text-gray-300">Blog Bio:</label>
+              <textarea
+                id="blogBio"
+                value={blogBio}
+                onChange={(e) => setBlogBio(e.target.value)}
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out h-20"
+              ></textarea>
+            </div>
+            <div>
+              <label htmlFor="blogToken" className="block mb-2 font-semibold text-gray-300">Blog Subscription Token Address:</label>
+              <input
+                type="text"
+                id="blogToken"
+                value={blogToken}
+                placeholder='empty for no subscription needed'
+                onChange={(e) => setBlogToken(e.target.value)}
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
+            <div>
+              <label htmlFor="blogAmount" className="block mb-2 font-semibold text-gray-300">Subscription Cost per 30d:</label>
               <input
                 type="number"
-                id="days"
-                name="days"
-                step="0.01"
-                onChange={(e) => setWindow(e.target.value)}
-                required
+                id="blogAmount"
+                value={blogAmount}
+                onChange={(e) => setBlogAmount(e.target.value)}
                 className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
               />
             </div>
-          )}
-          {once && (
-            <div className="flex-1">
-              <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-300">End Date:</label>
-              <input
-                type="datetime-local"
-                id="endDate"
-                name="endDate"
-                onChange={(e) => {
-                  const selectedDate = new Date(e.target.value);
-                  const currentDate = new Date();
-                  const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-                  setWindow(windowInSeconds);
-                }}
-                required
-                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-              />
+            <button
+              onClick={handleCreateBlog}
+              className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+            >
+              Create Blog
+            </button>
+          </div>
+        </section>
+        <section className="bg-gray-800 p-8 rounded-lg shadow-lg mb-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl text-blue-400">Create a new post</h2>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="content" className="block mb-2 font-semibold text-gray-300">Content:</label>
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out h-40"
+              ></textarea>
             </div>
-          )}
-        </div>
-        <div className="items-center">
-          <div className="items-center space-x-2">
-            <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
-            <span className="text-gray-300">Stream</span>
-            <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
+            <button
+              onClick={handleCreatePost}
+              className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+            >
+              Create Post
+            </button>
+            <ConnectButton />
           </div>
-          <div className="">
-            <label className="switch">
-              <input
-                type="checkbox"
-                id="once"
-                name="once"
-                checked={once}
-                onChange={(e) => setOnce(e.target.checked)}
-                className="toggle-checkbox"
-              />
-              <span className="toggle-slider round"></span>
-            </label>
+        </section>
+        <section className="mt-8">
+          <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
+            <h2 className="text-xl text-blue-400 mb-4">Posts</h2>
+            <div className="space-y-4">
+              {posts.length === 0 ? (
+                <p className="text-gray-300">No posts yet.</p>
+              ) : (
+                posts.map((post, index) => (
+                  
+                  <div key={index} className="bg-gray-700 p-4 rounded-md">
+                    <h3 className="text-xl font-bold text-white">{post.title}<a href={window.location+'@'+post.blog} className="text-gray-400 text-sm mt-2"> @ {post.blog}</a></h3>
+                    <p className="text-gray-300 mt-2">{post.content}</p>
+                     <div
+                      className="text-gray-300 mt-2"
+                      dangerouslySetInnerHTML={renderMarkdown(post.content)}
+                    />
+                                        
+
+                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
-        <button
-          onClick={() => requestBorrow(stoken, friend, amount)}
-          className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
-        >
-          Set Allowance
-        </button>
-        <button
-          onClick={() => location.assign('https://spot.pizza/')}
-          className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out"
-        >
-          Check out Spot🍕
-        </button>
-        <ConnectButton />
-      </div>
-    </section>
-    <section id="allowance-list" className="mt-8">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
-        <h2 className="text-xl text-blue-400 mb-4">Allowances to Friends</h2>
-        <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
-          <thead className="bg-gray-800 text-gray-300">
-            <tr>
-              <th className="py-2 px-4">Friend</th>
-              <th className="py-2 px-4">Token</th>
-              <th className="py-2 px-4">Limit</th>
-              <th className="py-2 px-4">Available</th>
-              <th className="py-2 px-4">Stream Type</th>
-              <th className="py-2 px-4">Time</th>
-              <th className="py-2 px-4">Volume Streamed</th>
-              <th className="py-2 px-4">Amount</th>
-              <th className="py-2 px-4">Ends In</th>
-              <th className="py-2 px-4">Duration</th>
-              <th className="py-2 px-4"></th>
+        </section>  <section className="mt-8">
+          <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
+            <h2 className="text-xl text-blue-400 mb-4">Posts</h2>
+            <div className="space-y-4">
+              {(
+                posts.map((post, index) => (
+                  <div key={index} className="bg-gray-700 p-4 rounded-md">
+                                        <p className="text-gray-200 text-m">- {post.title}</p>
 
-            </tr>
-          </thead>
-          <tbody className="text-gray-300">
-            {Object.entries(
-              allowances.reduce((acc, allowance) => {
-                if (!acc[allowance.friend]) {
-                  acc[allowance.friend] = [];
-                }
-                acc[allowance.friend].push(allowance);
-                return acc;
-              }, {})
-            ).map(([friend, friendAllowances]) => (
-              friendAllowances.map((allowance) => (
-                <tr key={allowance.hash} className="border-b border-gray-600">
-                  <td className="py-2 px-4">{map(friend)}</td>
-                  <td className="py-2 px-4">{map(allowance.token)}</td>
-                  <td className="py-2 px-4">{allowance.allowable}</td>
-                  <td className="py-2 px-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
-                  <td className="py-2 px-4">
-                    <span className="text-orange-400">{!allowance.once && 'Unlimited'}</span>
-                    <span className="text-green-400">{allowance.once && 'Once only'}</span>
-                  </td>
-                  <td className="py-2 px-4">
-                    {!allowance.once ? (
-                      <span>
-                        @ {allowance.allowable} tokens per {Math.floor(allowance.window / (3600 * 24))}d:
-                        {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                        {Math.floor((allowance.window % 3600) / 60)}m:
-                        {Math.floor(allowance.window % 60)}s
-                      </span>
-                    ) : (
-                      <span>
-                        ends in {
-                          `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                          `${Math.floor(((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                          `${Math.floor((allowance.timestamp + allowance.outstanding * allowance.window / allowance.allowable - Date.now() / 1000) % 60)}s`
-                        }
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">{allowance.totalStreamed}</td>
-                  <td className="py-2 px-4">
-                      <input
-                        type="text"
-                        id="token"
-                        name="token"
-                        placeholder="amount"
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="p-2 w-20 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-                        required
-                      />
-                                        </td>
-                                        <td className="py-2 px-4">
-
-                      <input
-                        type="number"
-                        id="amount"
-                        name="amount"
-                        step="0.01"
-                        placeholder='days'
-                        onChange={(e) => setWindow(e.target.value)}
-                        required
-                        className="p-2 w-20 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-                      />                  </td>
-                  <td className="py-2 px-4">
-
-                      <label className="flex items-center space-x-2">
-                        <span>{once==true&&('Once') }{once!=true&&('Unlimited') }</span>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            id="once"
-                            name="once"
-                            checked={once}
-                            onChange={(e) => setOnce(e.target.checked)}
-                            className="toggle-checkbox"
-                          />
-                          <span className="toggle-slider round"></span>
-                        </label>
-                      </label>                 
-                      </td>
-                      <td className="py-2 px-2">
-
-                      <button
-                        onClick={() => requestBorrow(allowance.token, friend, amount)}
-                        className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
-                      >
-                        Set Allowance
-                      </button>
-                                </td>
-
-                </tr>
-              ))
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <section id="borrow-list" className="mt-8">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
-        <h2 className="text-xl text-blue-400 mb-4">Friends That Have Spotted Me</h2>
-        <table className="min-w-full bg-gray-700 rounded-lg overflow-hidden">
-          <thead className="bg-gray-800 text-gray-300">
-            <tr>
-              <th className="py-2 px-4">Streamer</th>
-              <th className="py-2 px-4">Token</th>
-              <th className="py-2 px-4">Amount</th>
-              <th className="py-2 px-4">Available</th>
-              <th className="py-2 px-4">Stream Type</th>
-              <th className="py-2 px-4">Time</th>
-              <th className="py-2 px-4">Volume Streamed</th>
-              <th className="py-2 px-4"></th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-300">
-            {Object.entries(
-              borrows.reduce((acc, borrow) => {
-                if (!acc[borrow.lender]) {
-                  acc[borrow.lender] = [];
-                }
-                acc[borrow.lender].push(borrow);
-                return acc;
-              }, {})
-            ).map(([lender, lenderBorrows]) => (
-              lenderBorrows.map((borrow) => (
-                <tr key={borrow.hash} className="border-b border-gray-600">
-                  <td className="py-2 px-4">{map(lender)}</td>
-                  <td className="py-2 px-4">{map(borrow.token)}</td>
-                  <td className="py-2 px-4">{borrow.allowable}</td>
-                  <td className="py-2 px-4">{(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</td>
-                  <td className="py-2 px-4">
-                    <span className="text-orange-400">{!borrow.once && 'Unlimited'}</span>
-                    <span className="text-green-400">{borrow.once && 'Once only'}</span>
-                  </td>
-                  <td className="py-2 px-4">
-                    {!borrow.once ? (
-                      <span>
-                        @ {borrow.allowable} tokens per {Math.floor(borrow.window / (3600 * 24))}d:
-                        {Math.floor((borrow.window % (3600 * 24)) / 3600)}h:
-                        {Math.floor((borrow.window % 3600) / 60)}m:
-                        {Math.floor(borrow.window % 60)}s
-                      </span>
-                    ) : (
-                      <span>
-                        ends in {
-                          `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-                          `${Math.floor(((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                          `${Math.floor((borrow.timestamp + borrow.outstanding * borrow.window / borrow.allowable - Date.now() / 1000) % 60)}s`
-                        }
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">{borrow.totalStreamed}</td>
-                  <td className="py-2 px-4">
-                    <button
-                      onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
-                      className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
-                    >
-                      Claim
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-</div>
-
+                    <div
+                      className="text-gray-300 mt-2"
+                      dangerouslySetInnerHTML={renderMarkdown(post.content)}
+                    />
+                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      </main>
+      <BlogView/>
+    </div>
   );
 };
+
 export default App;
+
+const BlogView = () => {
+  const [blogName, setblogName] = useState('My Awesome Blog');
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const ethersProvider = useEthersProvider();
+  const ethersSigner = useEthersSigner();
+  const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
+
+  useEffect(() => {
+    fetchBl();
+  }, [blogName]);
+
+  const fetchBl = async () => {
+    try {
+      setLoading(true);
+      let userAddress = await contract.blogNameToAddress(blogName);
+      console.log('User:', userAddress);
+
+      const postCount = await contract.authorPostCount(userAddress);
+      const postIds = Array.from({ length:Number(postCount) }, (v, k) => k);
+      const postsFromContract = await contract.getPosts(postIds);
+      
+      const formattedPosts = postsFromContract.map(post => ({
+        title: post.content.split('\n')[0],
+        content: post.content.split('\n').slice(1).join('\n'),
+        author: post.author,
+        timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
+        blog: post.blog,
+        blogAddress: post.blogAddress,
+      }));
+
+      setPosts(formattedPosts);
+      console.log('Posts:', formattedPosts);
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      toast.error('Error fetching blog posts');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBl1 = async () => {
+    try {
+      let userAddress = await contract.blogNameToAddress(blogName);
+      console.log('User:', userAddress);
+      const postCount = await contract.authorPostCount( userAddress);
+      const postsFromContract = [];
+
+      for (let i = Number(postCount)-1; i > 0; i--) {
+        const postId = await contract.authorPosts(userAddress, i);
+        const post = await contract.getPost(postId);
+        const lines = post.content.split('\n');
+        const title = lines[0];
+        const content = lines.slice(1).join('\n');
+        postsFromContract.push({
+          title: title,
+          content: content,
+          author: post.author,
+          timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
+        });
+      }
+
+      setPosts([...postsFromContract]); 
+      console.log('Posts:', postsFromContract);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+  const renderMarkdown = (markdown) => {
+    const md = new Remarkable();
+    const html = md.render(markdown);
+    return { __html: DOMPurify.sanitize(html) };
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <main className="container mx-auto py-8">
+        <h1 className="text-center text-4xl mb-8">{blogName}'s Blog</h1>
+        <Toaster />
+        <section className="mt-8">
+          
+        <div className="mb-4">
+          <input
+            type="text"
+            onChange={(e) => setblogName(e.target.value)}
+            placeholder="Search Blog Name..."
+            className="w-1/2 mx-auto p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
+          <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
+            <h2 className="text-xl text-blue-400 mb-4">Posts</h2>
+            <div className="space-y-4">
+              {loading ? (
+                <p className="text-gray-300">Loading...</p>
+              ) : posts.length === 0 ? (
+                <p className="text-gray-300">No posts yet.</p>
+              ) : (
+                posts.map((post, index) => (
+                  <div key={index} className="bg-gray-700 p-4 rounded-md">
+                    <h3 className="text-xl font-bold text-white">{post.title}</h3>
+                    <div
+                      className="text-gray-300 mt-2"
+                      dangerouslySetInnerHTML={renderMarkdown(post.content)}
+                    />
+                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+};
