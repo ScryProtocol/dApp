@@ -10,10 +10,10 @@ import DOMPurify from 'dompurify';
 import 'tailwindcss/tailwind.css';
 
 // Contract ABI and Address
-const ContractABI = [{"inputs":[{"internalType":"contract IStreamContract","name":"_streamContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":false,"internalType":"string","name":"content","type":"string"}],"name":"PostCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"}],"name":"PostDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newContent","type":"string"}],"name":"PostEdited","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"authorPostCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorPosts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"blogNameToAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"blogs","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"address","name":"blogOwner","type":"address"}],"name":"checkSubd","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"createBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"content","type":"string"}],"name":"createPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"deletePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"string","name":"newContent","type":"string"}],"name":"editPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"getPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"postIds","type":"uint256[]"}],"name":"getPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"postCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newURI","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"streamContract","outputs":[{"internalType":"contract IStreamContract","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newName","type":"string"},{"internalType":"string","name":"newBio","type":"string"},{"internalType":"address","name":"newToken","type":"address"},{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"updateBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"limit","type":"uint256"}],"name":"viewLatestPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"viewPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+const ContractABI = [{ "inputs": [{ "internalType": "contract IStreamContract", "name": "_streamContract", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "bio", "type": "string" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BlogCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "bio", "type": "string" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BlogUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "author", "type": "address" }, { "indexed": false, "internalType": "string", "name": "content", "type": "string" }], "name": "PostCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "PostDeleted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newContent", "type": "string" }], "name": "PostEdited", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "authorPostCount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "authorPosts", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "baseURI", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "", "type": "string" }], "name": "blogNameToAddress", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "blogs", "outputs": [{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }, { "internalType": "address", "name": "blogOwner", "type": "address" }], "name": "checkSubd", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "createBlog", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "content", "type": "string" }], "name": "createPost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "deletePost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }, { "internalType": "string", "name": "newContent", "type": "string" }], "name": "editPost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "getPost", "outputs": [{ "internalType": "string", "name": "", "type": "string" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "postIds", "type": "uint256[]" }], "name": "getPosts", "outputs": [{ "components": [{ "internalType": "string", "name": "content", "type": "string" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "blog", "type": "string" }, { "internalType": "address", "name": "blogAddress", "type": "address" }], "internalType": "struct blog.Post[]", "name": "", "type": "tuple[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "postCount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "newURI", "type": "string" }], "name": "setBaseURI", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "streamContract", "outputs": [{ "internalType": "contract IStreamContract", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "newName", "type": "string" }, { "internalType": "string", "name": "newBio", "type": "string" }, { "internalType": "address", "name": "newToken", "type": "address" }, { "internalType": "uint256", "name": "newAmount", "type": "uint256" }], "name": "updateBlog", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "limit", "type": "uint256" }], "name": "viewLatestPosts", "outputs": [{ "components": [{ "internalType": "string", "name": "content", "type": "string" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "blog", "type": "string" }, { "internalType": "address", "name": "blogAddress", "type": "address" }], "internalType": "struct blog.Post[]", "name": "", "type": "tuple[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "viewPost", "outputs": [{ "internalType": "string", "name": "", "type": "string" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
 
 
-const ContractAddress = '0xd517f696ba3d8D1809257cF734239F5Aa35DAE46';
+const ContractAddress = '0xAc197B552465C2E2821A4025085840e904556731';
 
 const App = () => {
   const [posts, setPosts] = useState([]);
@@ -31,7 +31,13 @@ const App = () => {
 
   useEffect(() => {
     if (userAddress) {
-      fetchPosts();
+      const queryParams = new URLSearchParams(window.location.search);
+      const extractedBlogName = queryParams.get('blog');
+      console.log('Extracted Blog:', extractedBlogName);
+      if (extractedBlogName) {
+      setBlogName(extractedBlogName)
+    }
+    fetchPosts();
     }
   }, [userAddress]);
 
@@ -40,7 +46,7 @@ const App = () => {
       const postCount = await contract.authorPostCount(userAddress);
       const postsFromContract = [];
 
-      for (let i = Number(postCount)-1; i > 0; i--) {
+      for (let i = Number(postCount) - 1; i > 0; i--) {
         const postId = await contract.authorPosts(userAddress, i);
         const post = await contract.posts(postId);
         const lines = post.content.split('\n');
@@ -51,23 +57,23 @@ const App = () => {
           content: content,
           author: post.author,
           timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
-          
+
         });
       }
 
-      setPosts([...postsFromContract]); 
+      setPosts([...postsFromContract]);
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
-  
+
   const fetchPosts = async () => {
     try {
       const postCount = await contract.postCount();
       const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-      const postsFromContract = await contract.getPosts(postIds);
-      
+      const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
+
       const formattedPosts = postsFromContract.map(post => ({
         title: post.content.split('\n')[0],
         content: post.content.split('\n').slice(1).join('\n'),
@@ -87,16 +93,17 @@ const App = () => {
     window.location.search.split('&').forEach((item) => {
       if (item.includes('blog')) {
         setBlogName(item.split('=')[1]);
-console.log('Blog:', item.split('=')[1]);     }
+        console.log('Blog:', item.split('=')[1]);
+      }
     })
     try {
       //const postsFromContract = await contract.viewLatestPosts(userAddress, 10);
       //setPosts(postsFromContract);
-      
+
       const postCount = await contract.postCount();
       const postsFromContract = [];
 
-      for (let i = Number(postCount)-1; i > 0; i--) {
+      for (let i = Number(postCount) - 1; i > 0; i--) {
         const post = await contract.getPost(i);
         console.log('Post:', post);
         const lines = post.content.split('\n');
@@ -110,7 +117,7 @@ console.log('Blog:', item.split('=')[1]);     }
         });
       }
 
-      setPosts([...postsFromContract]); 
+      setPosts([...postsFromContract]);
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -133,14 +140,16 @@ console.log('Blog:', item.split('=')[1]);     }
 
   const handleCreateBlog = async () => {
     if (!blogName || !blogBio || !blogAmount) {
-    toast.error('All fields are required')
-    return;}
+      toast.error('All fields are required')
+      return;
+    }
     try {
-      let token = new ethers.Contract(blogToken, ['function decimals() view returns (uint)'], ethersProvider);
-
+      let token = new ethers.Contract(blogToken==''?'0x94373a4919b3240d86ea41593d5eba789fef3848':blogToken, ['function decimals() view returns (uint)'], ethersProvider);
       ;
-      if(await contract.blogNameToAddress(blogName)!='0x0000000000000000000000000000000000000000'){toast.error('Blog name already taken');return;}
-      const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken, ethers.parseUnits(blogAmount/3600/24/30,await token.decimals()));
+      if (await contract.blogNameToAddress(blogName) != '0x0000000000000000000000000000000000000000') { toast.error('Blog name already taken'); return; }
+      let blogT
+      blogToken==null?blogT='0x94373a4919b3240d86ea41593d5eba789fef3848':blogT=blogToken
+      const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken==''?'0x94373a4919b3240d86ea41593d5eba789fef3848':blogToken, ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals()));
       await tx.wait();
       toast.success('Blog created successfully');
     } catch (error) {
@@ -242,20 +251,29 @@ console.log('Blog:', item.split('=')[1]);     }
               {posts.length === 0 ? (
                 <p className="text-gray-300">No posts yet.</p>
               ) : (
-                posts.map((post, index) => (
-                  
-                  <div key={index} className="bg-gray-700 p-4 rounded-md">
-                    <h3 className="text-xl font-bold text-white">{post.title}<a href={window.location+'@'+post.blog} className="text-gray-400 text-sm mt-2"> @ {post.blog}</a></h3>
-                    <p className="text-gray-300 mt-2">{post.content}</p>
-                     <div
-                      className="text-gray-300 mt-2"
-                      dangerouslySetInnerHTML={renderMarkdown(post.content)}
-                    />
-                                        
+                posts.slice().reverse().map((post, index) => (
+                  post.title != 'subscribe to view post' ? (
+                    <div key={index} className="bg-gray-700 p-4 rounded-md">
+                      <h3 className="text-xl font-bold text-white">{post.title}<a href={window.location + '?blog=' + post.blog} className="text-gray-400 text-sm mt-2"> @ {post.blog}</a></h3>
+                      <p className="text-gray-300 mt-2">{post.content}</p>
+                      <div
+                        className="text-gray-300 mt-2"
+                        dangerouslySetInnerHTML={renderMarkdown(post.content)}
+                      />
 
-                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
-                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
-                  </div>
+
+                      <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                      <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                    </div>) : (
+                    <div key={index} className="bg-gray-700 p-4 rounded-md">
+                      <h3 className="text-xl font-bold text-white"><a href={window.location + '@' + post.blog}>Subscribe to view post
+                        @ {post.blog}</a></h3>
+
+                      <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                      <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                      <a href={window.location + '@' + post.blog}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+                      >Subscribe to blog</button>
+                      </a></div>)
                 ))
               )}
             </div>
@@ -267,7 +285,7 @@ console.log('Blog:', item.split('=')[1]);     }
               {(
                 posts.map((post, index) => (
                   <div key={index} className="bg-gray-700 p-4 rounded-md">
-                                        <p className="text-gray-200 text-m">- {post.title}</p>
+                    <p className="text-gray-200 text-m">- {post.title}</p>
 
                     <div
                       className="text-gray-300 mt-2"
@@ -282,7 +300,7 @@ console.log('Blog:', item.split('=')[1]);     }
           </div>
         </section>
       </main>
-      <BlogView/>
+      <BlogView />
     </div>
   );
 };
@@ -293,12 +311,19 @@ const BlogView = () => {
   const [blogName, setblogName] = useState('My Awesome Blog');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [blog, setblog] = useState(false);
+  let dec
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const extractedBlogName = queryParams.get('blog');
+    console.log('Extracted Blog:', extractedBlogName);
+    if (extractedBlogName) {
+    setblogName(extractedBlogName)
+  }
     fetchBl();
   }, [blogName]);
 
@@ -307,11 +332,16 @@ const BlogView = () => {
       setLoading(true);
       let userAddress = await contract.blogNameToAddress(blogName);
       console.log('User:', userAddress);
-
+      setblog(await contract.blogs(userAddress));
+      let token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
+      dec = await token.decimals();
       const postCount = await contract.authorPostCount(userAddress);
-      const postIds = Array.from({ length:Number(postCount) }, (v, k) => k);
-      const postsFromContract = await contract.getPosts(postIds);
-      
+      const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
+    //  const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
+   let wallet = new ethers.Wallet('0x' + window.location.search.split('wallet=')[1]);
+console.log('Wallet:', wallet);
+   const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
+
       const formattedPosts = postsFromContract.map(post => ({
         title: post.content.split('\n')[0],
         content: post.content.split('\n').slice(1).join('\n'),
@@ -335,10 +365,10 @@ const BlogView = () => {
     try {
       let userAddress = await contract.blogNameToAddress(blogName);
       console.log('User:', userAddress);
-      const postCount = await contract.authorPostCount( userAddress);
+      const postCount = await contract.authorPostCount(userAddress);
       const postsFromContract = [];
 
-      for (let i = Number(postCount)-1; i > 0; i--) {
+      for (let i = Number(postCount) - 1; i > 0; i--) {
         const postId = await contract.authorPosts(userAddress, i);
         const post = await contract.getPost(postId);
         const lines = post.content.split('\n');
@@ -352,7 +382,7 @@ const BlogView = () => {
         });
       }
 
-      setPosts([...postsFromContract]); 
+      setPosts([...postsFromContract]);
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -367,19 +397,22 @@ const BlogView = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-8">{blogName}'s Blog</h1>
+        <h1 className="text-center text-4xl mb-4">{blogName}'s Blog</h1>
         <Toaster />
-        <section className="mt-8">
-          
-        <div className="mb-4">
-          <input
-            type="text"
-            onChange={(e) => setblogName(e.target.value)}
-            placeholder="Search Blog Name..."
-            className="w-1/2 mx-auto p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-          />
-        </div>
-
+        <section className="mt-4">
+          <div className="mb-4 flex centered ">
+            <input
+              type="text"
+              onChange={(e) => setblogName(e.target.value)}
+              placeholder="Search Blog Name..."
+              style={{ borderRadius: '20px' }}
+              className="w-1/2 mt-0 mx-auto p-3 bg-gray-800 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            />
+          </div>
+          {posts[0] && blog && posts[0].title == 'subscribe to view post' && (
+            <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), dec)}&window=604800&once=false&network=8453`}><button style={{position:'relative ', left:'25%',borderRadius:'20px' }} className="w-1/2 mx-auto centered text-center mt-0 mb-4 py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+            >Subscribe to blog</button>
+            </a>)}
           <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
             <h2 className="text-xl text-blue-400 mb-4">Posts</h2>
             <div className="space-y-4">
@@ -388,7 +421,8 @@ const BlogView = () => {
               ) : posts.length === 0 ? (
                 <p className="text-gray-300">No posts yet.</p>
               ) : (
-                posts.map((post, index) => (
+                posts.slice().reverse().map((post, index) => (post.title !== 'subscribe to view post' ? (
+
                   <div key={index} className="bg-gray-700 p-4 rounded-md">
                     <h3 className="text-xl font-bold text-white">{post.title}</h3>
                     <div
@@ -397,7 +431,15 @@ const BlogView = () => {
                     />
                     <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
                     <p className="text-gray-400 text-sm">{post.timestamp}</p>
+                  </div>) : (
+                  <div key={index} className="bg-gray-700 p-4 rounded-md">
+                    <h3 className="text-xl font-bold text-white"><a href={window.location + '@' + post.blog} >Subscribe to view</a></h3>
+
+                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
+
                   </div>
+                )
                 ))
               )}
             </div>
