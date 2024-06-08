@@ -8,12 +8,13 @@ import 'tailwindcss/tailwind.css';
 import { Remarkable } from 'remarkable';
 import DOMPurify from 'dompurify';
 import 'tailwindcss/tailwind.css';
+import { boolToBytes } from 'viem';
 
 // Contract ABI and Address
-const ContractABI = [{ "inputs": [{ "internalType": "contract IStreamContract", "name": "_streamContract", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "bio", "type": "string" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BlogCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "name", "type": "string" }, { "indexed": false, "internalType": "string", "name": "bio", "type": "string" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BlogUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "author", "type": "address" }, { "indexed": false, "internalType": "string", "name": "content", "type": "string" }], "name": "PostCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "PostDeleted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }, { "indexed": false, "internalType": "string", "name": "newContent", "type": "string" }], "name": "PostEdited", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "authorPostCount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "authorPosts", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "baseURI", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "", "type": "string" }], "name": "blogNameToAddress", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "blogs", "outputs": [{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }, { "internalType": "address", "name": "blogOwner", "type": "address" }], "name": "checkSubd", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "createBlog", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "content", "type": "string" }], "name": "createPost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "deletePost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }, { "internalType": "string", "name": "newContent", "type": "string" }], "name": "editPost", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "getPost", "outputs": [{ "internalType": "string", "name": "", "type": "string" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256[]", "name": "postIds", "type": "uint256[]" }], "name": "getPosts", "outputs": [{ "components": [{ "internalType": "string", "name": "content", "type": "string" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "blog", "type": "string" }, { "internalType": "address", "name": "blogAddress", "type": "address" }], "internalType": "struct blog.Post[]", "name": "", "type": "tuple[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "postCount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "newURI", "type": "string" }], "name": "setBaseURI", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "streamContract", "outputs": [{ "internalType": "contract IStreamContract", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "newName", "type": "string" }, { "internalType": "string", "name": "newBio", "type": "string" }, { "internalType": "address", "name": "newToken", "type": "address" }, { "internalType": "uint256", "name": "newAmount", "type": "uint256" }], "name": "updateBlog", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "limit", "type": "uint256" }], "name": "viewLatestPosts", "outputs": [{ "components": [{ "internalType": "string", "name": "content", "type": "string" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "string", "name": "blog", "type": "string" }, { "internalType": "address", "name": "blogAddress", "type": "address" }], "internalType": "struct blog.Post[]", "name": "", "type": "tuple[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "postId", "type": "uint256" }], "name": "viewPost", "outputs": [{ "internalType": "string", "name": "", "type": "string" }, { "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
+const ContractABI = [{"inputs":[{"internalType":"contract IStreamContract","name":"_streamContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":false,"internalType":"string","name":"content","type":"string"}],"name":"PostCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"}],"name":"PostDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newContent","type":"string"}],"name":"PostEdited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"blog","type":"address"}],"name":"likedPost","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"blog","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"token","type":"address"}],"name":"tippedPost","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"authorPostCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorPosts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"blogNameToAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"blogs","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"address","name":"blogOwner","type":"address"}],"name":"checkSubd","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"createBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"content","type":"string"}],"name":"createPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"deletePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"string","name":"newContent","type":"string"}],"name":"editPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"getPost","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post","name":"","type":"tuple"},{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"postIds","type":"uint256[]"}],"name":"getPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"},{"internalType":"bool[]","name":"","type":"bool[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"likePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"liked","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"postCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newURI","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"streamContract","outputs":[{"internalType":"contract IStreamContract","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"tipPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"newName","type":"string"},{"internalType":"string","name":"newBio","type":"string"},{"internalType":"address","name":"newToken","type":"address"},{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"updateBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"limit","type":"uint256"}],"name":"viewLatestPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"viewPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
 
 
-const ContractAddress = '0xAc197B552465C2E2821A4025085840e904556731';
+const ContractAddress = '0x0Ecba58726ad8959cf2004725DA08c94848A4129';
 
 const App = () => {
   const [posts, setPosts] = useState([]);
@@ -22,6 +23,7 @@ const App = () => {
   const [blogBio, setBlogBio] = useState('');
   const [blogToken, setBlogToken] = useState('');
   const [blogAmount, setBlogAmount] = useState('');
+  const [tipping, setTipping] = useState();
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const account = useAccount();
@@ -31,13 +33,7 @@ const App = () => {
 
   useEffect(() => {
     if (userAddress) {
-      const queryParams = new URLSearchParams(window.location.search);
-      const extractedBlogName = queryParams.get('blog');
-      console.log('Extracted Blog:', extractedBlogName);
-      if (extractedBlogName) {
-      setBlogName(extractedBlogName)
-    }
-    fetchPosts();
+      fetchPosts();
     }
   }, [userAddress]);
 
@@ -46,7 +42,7 @@ const App = () => {
       const postCount = await contract.authorPostCount(userAddress);
       const postsFromContract = [];
 
-      for (let i = Number(postCount) - 1; i > 0; i--) {
+      for (let i = Number(postCount)-1; i > 0; i--) {
         const postId = await contract.authorPosts(userAddress, i);
         const post = await contract.posts(postId);
         const lines = post.content.split('\n');
@@ -57,32 +53,36 @@ const App = () => {
           content: content,
           author: post.author,
           timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
-
+          
         });
       }
 
-      setPosts([...postsFromContract]);
+      setPosts([...postsFromContract]); 
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
-
+  
   const fetchPosts = async () => {
     try {
       const postCount = await contract.postCount();
       const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-      const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
+   //   const postsFromContract = await contract.getPosts(postIds);
+    //  console.log( await contract.getPosts(postIds));
+    const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
 
-      const formattedPosts = postsFromContract.map(post => ({
+      const formattedPosts = postsFromContract.map((post,index) => ({
         title: post.content.split('\n')[0],
         content: post.content.split('\n').slice(1).join('\n'),
         author: post.author,
         timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
         blog: post.blog,
         blogAddress: post.blogAddress,
+        likes: post.likes,
+        liked: likedStatuses[index],
       }));
-
+console.log('Posts:', formattedPosts);
       setPosts(formattedPosts);
       console.log('Posts:', formattedPosts);
     } catch (error) {
@@ -93,17 +93,16 @@ const App = () => {
     window.location.search.split('&').forEach((item) => {
       if (item.includes('blog')) {
         setBlogName(item.split('=')[1]);
-        console.log('Blog:', item.split('=')[1]);
-      }
+console.log('Blog:', item.split('=')[1]);     }
     })
     try {
       //const postsFromContract = await contract.viewLatestPosts(userAddress, 10);
       //setPosts(postsFromContract);
-
+      
       const postCount = await contract.postCount();
       const postsFromContract = [];
 
-      for (let i = Number(postCount) - 1; i > 0; i--) {
+      for (let i = Number(postCount)-1; i > 0; i--) {
         const post = await contract.getPost(i);
         console.log('Post:', post);
         const lines = post.content.split('\n');
@@ -117,7 +116,7 @@ const App = () => {
         });
       }
 
-      setPosts([...postsFromContract]);
+      setPosts([...postsFromContract]); 
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -140,16 +139,14 @@ const App = () => {
 
   const handleCreateBlog = async () => {
     if (!blogName || !blogBio || !blogAmount) {
-      toast.error('All fields are required')
-      return;
-    }
+    toast.error('All fields are required')
+    return;}
     try {
-      let token = new ethers.Contract(blogToken==''?'0x94373a4919b3240d86ea41593d5eba789fef3848':blogToken, ['function decimals() view returns (uint)'], ethersProvider);
+      let token = new ethers.Contract(blogToken, ['function decimals() view returns (uint)'], ethersProvider);
+
       ;
-      if (await contract.blogNameToAddress(blogName) != '0x0000000000000000000000000000000000000000') { toast.error('Blog name already taken'); return; }
-      let blogT
-      blogToken==null?blogT='0x94373a4919b3240d86ea41593d5eba789fef3848':blogT=blogToken
-      const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken==''?'0x94373a4919b3240d86ea41593d5eba789fef3848':blogToken, ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals()));
+      if(await contract.blogNameToAddress(blogName)!='0x0000000000000000000000000000000000000000'){toast.error('Blog name already taken');return;}
+      const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken, ethers.parseUnits(blogAmount/3600/24/30,await token.decimals()));
       await tx.wait();
       toast.success('Blog created successfully');
     } catch (error) {
@@ -157,7 +154,72 @@ const App = () => {
       toast.error('Error creating blog', error.reason);
     }
   };
+async function tip(postId, blogAddress) {
+  if (!tipping){
+    return
+  }
+  const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) external returns (bool)",
+    "function allowance(address owner, address spender) view returns (uint256)",
+    "function decimals() view returns (uint8)",
+  ];
+  if(!tipping){ setTipping(true)}
+  let amount =blogAddress
 
+  blogAddress = tipping[1]
+  postId = tipping[0]
+    if (amount <= 0) {
+      toast.error("Tip amount must be greater than zero.");
+      return;
+    }
+  
+    try {
+      let blogToken = await contract.blogs(await contract.blogNameToAddress(blogAddress));
+      console.log('Blog:', blogToken);
+      blogToken = blogToken.token;
+      console.log('Blog:', blogToken);
+      const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
+      
+      // Get the token decimals
+      const decimals = await token.decimals();
+      const tipAmount = ethers.parseUnits(amount.toString(), decimals);
+  
+      // Check allowance
+      const allowance = await token.allowance(userAddress, ContractAddress);
+      if (allowance<(tipAmount)) {
+        // Approve the contract to spend tokens
+        const approveTx = await token.approve(ContractAddress, tipAmount);
+        await approveTx.wait();
+      }
+  
+      // Tip the post
+      const tx = await contract.connect(ethersSigner).tipPost(postId, tipAmount);
+      await tx.wait();
+  
+      toast.success("Post tipped successfully!");
+      fetchPosts();
+    } catch (error) {
+      console.error("Error tipping post:", error);
+      toast.error("Error tipping post");
+    }
+  };
+  async function like(postId) {
+    console.log('Liked:', postId);  
+    try {
+      const tx = await contract.connect(ethersSigner).likePost(postId);
+      await tx.wait();
+      toast.success('Post liked successfully');
+      fetchPosts();
+    }catch (error) {console.error('Error liking post:', error);toast.error('Error liking post');}}
+  
+
+    const openTipModal = (postId) => {
+      setTipping(true);
+    };
+  
+    const closeTipModal = () => {
+      setTipping(false);
+    };
   const renderMarkdown = (markdown) => {
     const md = new Remarkable();
     const html = md.render(markdown);
@@ -251,29 +313,29 @@ const App = () => {
               {posts.length === 0 ? (
                 <p className="text-gray-300">No posts yet.</p>
               ) : (
-                posts.slice().reverse().map((post, index) => (
-                  post.title != 'subscribe to view post' ? (
-                    <div key={index} className="bg-gray-700 p-4 rounded-md">
-                      <h3 className="text-xl font-bold text-white">{post.title}<a href={window.location + '?blog=' + post.blog} className="text-gray-400 text-sm mt-2"> @ {post.blog}</a></h3>
-                      <p className="text-gray-300 mt-2">{post.content}</p>
-                      <div
-                        className="text-gray-300 mt-2"
-                        dangerouslySetInnerHTML={renderMarkdown(post.content)}
-                      />
+                posts.map((post, index) => (
+                  
+                  <div key={index} className="bg-gray-700 p-4 rounded-md">
+                    <h3 className="text-xl font-bold text-white">{post.title}<a href={window.location+'@'+post.blog} className="text-gray-400 text-sm mt-2"> @ {post.blog}</a></h3>
+                     <div
+                      className="text-gray-300 mt-2"
+                      dangerouslySetInnerHTML={renderMarkdown(post.content)}
+                    />
+                                        
 
+                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
+                    <div class="flex justify-between items-center">
+                    <p className="text-gray-400 text-sm">{post.timestamp} 
+                   </p>
+                   <div class="flex space-x-4">
 
-                      <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
-                      <p className="text-gray-400 text-sm">{post.timestamp}</p>
-                    </div>) : (
-                    <div key={index} className="bg-gray-700 p-4 rounded-md">
-                      <h3 className="text-xl font-bold text-white"><a href={window.location + '@' + post.blog}>Subscribe to view post
-                        @ {post.blog}</a></h3>
+           {!post.liked?(<button style={{position:'relative',right:'100px',color:'red'}}class="text-sm text-gray-400" onClick={() =>like(index)}>♡ 0</button>
+            ):(<button style={{position:'relative',right:'100px',color:'red'}}class="text-sm text-gray-400"onClick={() =>like(index)}>❤ 0</button>)}<button style={{position:'relative',right:'100px'}}class="text-sm text-blue-400" onClick={() =>setTipping([index,post.blog])}>$0 tips</button>
+        </div>
+    <div class="flex-shrink-0"></div>
 
-                      <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
-                      <p className="text-gray-400 text-sm">{post.timestamp}</p>
-                      <a href={window.location + '@' + post.blog}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
-                      >Subscribe to blog</button>
-                      </a></div>)
+</div>
+                  </div>
                 ))
               )}
             </div>
@@ -285,7 +347,7 @@ const App = () => {
               {(
                 posts.map((post, index) => (
                   <div key={index} className="bg-gray-700 p-4 rounded-md">
-                    <p className="text-gray-200 text-m">- {post.title}</p>
+                                        <p className="text-gray-200 text-m">- {post.title}</p>
 
                     <div
                       className="text-gray-300 mt-2"
@@ -300,8 +362,14 @@ const App = () => {
           </div>
         </section>
       </main>
-      <BlogView />
-    </div>
+      <BlogView/>
+      {tipping && (
+        <TipModal
+          isOpen={tipping}
+          onClose={closeTipModal}
+          onTip={(amount) => tip(tipping, amount)}
+        />
+      )}    </div>
   );
 };
 
@@ -311,19 +379,12 @@ const BlogView = () => {
   const [blogName, setblogName] = useState('My Awesome Blog');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [blog, setblog] = useState(false);
-  let dec
+
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const extractedBlogName = queryParams.get('blog');
-    console.log('Extracted Blog:', extractedBlogName);
-    if (extractedBlogName) {
-    setblogName(extractedBlogName)
-  }
     fetchBl();
   }, [blogName]);
 
@@ -332,17 +393,12 @@ const BlogView = () => {
       setLoading(true);
       let userAddress = await contract.blogNameToAddress(blogName);
       console.log('User:', userAddress);
-      setblog(await contract.blogs(userAddress));
-      let token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
-      dec = await token.decimals();
+console.log('User:', userAddress);
       const postCount = await contract.authorPostCount(userAddress);
-      const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-    //  const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
-   let wallet = new ethers.Wallet('0x' + window.location.search.split('wallet=')[1]);
-console.log('Wallet:', wallet);
-   const postsFromContract = await contract.connect(ethersSigner).getPosts(postIds);
-
-      const formattedPosts = postsFromContract.map(post => ({
+      const postIds = Array.from({ length:Number(postCount) }, (v, k) => k);
+      const postsFromContract = await contract.getPosts(postIds);
+      
+      const formattedPosts = postsFromContract[0].map(post => ({
         title: post.content.split('\n')[0],
         content: post.content.split('\n').slice(1).join('\n'),
         author: post.author,
@@ -365,10 +421,10 @@ console.log('Wallet:', wallet);
     try {
       let userAddress = await contract.blogNameToAddress(blogName);
       console.log('User:', userAddress);
-      const postCount = await contract.authorPostCount(userAddress);
+      const postCount = await contract.authorPostCount( userAddress);
       const postsFromContract = [];
 
-      for (let i = Number(postCount) - 1; i > 0; i--) {
+      for (let i = Number(postCount)-1; i > 0; i--) {
         const postId = await contract.authorPosts(userAddress, i);
         const post = await contract.getPost(postId);
         const lines = post.content.split('\n');
@@ -382,12 +438,59 @@ console.log('Wallet:', wallet);
         });
       }
 
-      setPosts([...postsFromContract]);
+      setPosts([...postsFromContract]); 
       console.log('Posts:', postsFromContract);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
+  async function tip(postId, blogAddress) {
+    const ERC20_ABI = [
+      "function approve(address spender, uint256 amount) external returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)",
+      "function decimals() view returns (uint8)",
+    ];
+    let amount = blogAmount
+      if (amount <= 0) {
+        toast.error("Tip amount must be greater than zero.");
+        return;
+      }
+    
+      try {
+        let blogToken = await contract.blog(blogAddress);
+        blogToken = blogToken.token;
+        const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
+        
+        // Get the token decimals
+        const decimals = await token.decimals();
+        const tipAmount = ethers.parseUnits(amount.toString(), decimals);
+    
+        // Check allowance
+        const allowance = await token.allowance(userAddress, ContractAddress);
+        if (allowance.lt(tipAmount)) {
+          // Approve the contract to spend tokens
+          const approveTx = await token.approve(ContractAddress, tipAmount);
+          await approveTx.wait();
+        }
+    
+        // Tip the post
+        const tx = await contract.connect(ethersSigner).tipPost(postId, tipAmount);
+        await tx.wait();
+    
+        toast.success("Post tipped successfully!");
+        fetchPosts();
+      } catch (error) {
+        console.error("Error tipping post:", error);
+        toast.error("Error tipping post");
+      }
+    };
+    async function like(postId) {
+      try {
+        const tx = await contract.connect(ethersSigner).likePost(postId);
+        await tx.wait();
+        toast.success('Post liked successfully');
+        fetchPosts();
+      }catch (error) {}}
   const renderMarkdown = (markdown) => {
     const md = new Remarkable();
     const html = md.render(markdown);
@@ -397,22 +500,19 @@ console.log('Wallet:', wallet);
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-4">{blogName}'s Blog</h1>
+        <h1 className="text-center text-4xl mb-8">{blogName}'s Blog</h1>
         <Toaster />
-        <section className="mt-4">
-          <div className="mb-4 flex centered ">
-            <input
-              type="text"
-              onChange={(e) => setblogName(e.target.value)}
-              placeholder="Search Blog Name..."
-              style={{ borderRadius: '20px' }}
-              className="w-1/2 mt-0 mx-auto p-3 bg-gray-800 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-            />
-          </div>
-          {posts[0] && blog && posts[0].title == 'subscribe to view post' && (
-            <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), dec)}&window=604800&once=false&network=8453`}><button style={{position:'relative ', left:'25%',borderRadius:'20px' }} className="w-1/2 mx-auto centered text-center mt-0 mb-4 py-3 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
-            >Subscribe to blog</button>
-            </a>)}
+        <section className="mt-8">
+          
+        <div className="mb-4">
+          <input
+            type="text"
+            onChange={(e) => setblogName(e.target.value)}
+            placeholder="Search Blog Name..."
+            className="w-1/2 mx-auto p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
           <div className="bg-gray-800 p-8 rounded-lg shadow-lg overflow-scroll">
             <h2 className="text-xl text-blue-400 mb-4">Posts</h2>
             <div className="space-y-4">
@@ -421,8 +521,7 @@ console.log('Wallet:', wallet);
               ) : posts.length === 0 ? (
                 <p className="text-gray-300">No posts yet.</p>
               ) : (
-                posts.slice().reverse().map((post, index) => (post.title !== 'subscribe to view post' ? (
-
+                posts.map((post, index) => (
                   <div key={index} className="bg-gray-700 p-4 rounded-md">
                     <h3 className="text-xl font-bold text-white">{post.title}</h3>
                     <div
@@ -431,15 +530,7 @@ console.log('Wallet:', wallet);
                     />
                     <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
                     <p className="text-gray-400 text-sm">{post.timestamp}</p>
-                  </div>) : (
-                  <div key={index} className="bg-gray-700 p-4 rounded-md">
-                    <h3 className="text-xl font-bold text-white"><a href={window.location + '@' + post.blog} >Subscribe to view</a></h3>
-
-                    <p className="text-gray-400 text-sm mt-2">- {post.author}</p>
-                    <p className="text-gray-400 text-sm">{post.timestamp}</p>
-
                   </div>
-                )
                 ))
               )}
             </div>
@@ -449,3 +540,49 @@ console.log('Wallet:', wallet);
     </div>
   );
 };
+const TipModal = ({ isOpen, onClose, onTip }) => {
+  const [amount, setAmount] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleTip = () => {
+    onTip(amount);
+    setAmount('');
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl text-blue-400 mb-4">Tip Post</h2>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="tipAmount" className="block mb-2 font-semibold text-gray-300">Tip Amount:</label>
+            <input
+              type="number"
+              id="tipAmount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full p-3 bg-gray-700 border-none rounded-md focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+            />
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={onClose}
+              className="py-2 px-4 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-300 ease-in-out"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleTip}
+              className="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
+            >
+              Tip
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
