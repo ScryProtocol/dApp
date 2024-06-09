@@ -334,7 +334,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   let useAddress = useAccount().address
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
-    const extractedBlogName = queryParams.get('blog');
+    let extractedBlogName = queryParams.get('blog');
     if (!blogName) {
       setBlogName(extractedBlogName);
       console.log('Extracted Blog:', extractedBlogName);
@@ -344,17 +344,17 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       console.log('Blog:', useAddress);
     }
     console.log('Blog:', blog);
-    fetchBlogPosts();
+    fetchBlogPosts(extractedBlogName);
   }, [blogName]);
 
-  const fetchBlogPosts = async () => {
+  const fetchBlogPosts = async (extractedBlogName) => {
     try {
       setLoading(true);
       let userAddress
       let blogN = (await contract.blogs(useAddress)).name
-      
-       userAddress = await contract.blogNameToAddress(!blogName?blogN:blogName);
-       if(!blogName){
+      console.log('Blog:', blogN,'t',blogName);
+       userAddress = await contract.blogNameToAddress(!extractedBlogName?blogN:extractedBlogName);
+       if(!extractedBlogName){
           setBlogName(blogN)}
     console.log('User Address:', userAddress);
       setBlog(await contract.blogs(userAddress));
