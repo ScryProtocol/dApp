@@ -439,7 +439,7 @@ console.log('Posts:', postsFromContract[0]);
             <h2 className="text-xl text-pink-600 mb-4 font-bold">Posts</h2>
             <div className="space-y-4">
               {loading ? (
-                <p className="text-gray-800">Loading...</p>
+                <p className="text-gray-800 bg-pink-200 p-6 rounded-3xl border-l-8 border-green-500 shadow-md">Loading...</p>
               ) : posts.length === 0 ? (
                 <div  className="bg-white p-6 rounded-3xl border-l-8 shadow-md">
 
