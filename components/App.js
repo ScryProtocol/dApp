@@ -378,7 +378,7 @@ console.log('Posts:', postsFromContract[0]);
 
       setPosts(formattedPosts);
     } catch (error) {
-      toast.error('Error fetching blog posts');
+    //  toast.error('Error fetching blog posts');
       console.error('Error fetching blog posts:', error);
     } finally {
       setLoading(false);
