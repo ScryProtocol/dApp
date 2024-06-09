@@ -282,7 +282,7 @@ const App = () => {
                   posts.slice().reverse().map((post, index) => (
                     post.title !== 'subscribe to view post' ? (
                       <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
-                        <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`https://feed.spot.pizza/?${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
+                        <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`https://feed.spot.pizza/?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
                         {//<div className="text-gray-600 mt-2" dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
                         }
                                                                   <div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
