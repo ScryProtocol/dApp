@@ -356,7 +356,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
        userAddress = await contract.blogNameToAddress(!extractedBlogName?blogN:extractedBlogName);
        if(!extractedBlogName){
           setBlogName(blogN)}
-    console.log('User Address:', userAddress);
+    console.log('User Address: ', userAddress);
       setBlog(await contract.blogs(userAddress));
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
       const decimals = await token.decimals();
