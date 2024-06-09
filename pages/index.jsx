@@ -11,12 +11,12 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Spot a Friend. Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees.
+      content="Feed connects you to the onchain world.
       "
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Spot</title>
+    <title>Feed</title>
   </head>
         <App />
     </>
