@@ -282,7 +282,7 @@ const App = () => {
                   posts.slice().reverse().map((post, index) => (
                     post.title !== 'subscribe to view post' ? (
                       <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
-                        <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
+                        <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`https://feed.spot.pizza/?${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
                         {//<div className="text-gray-600 mt-2" dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
                         }
                                                                   <div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
@@ -467,7 +467,7 @@ console.log('Posts:', postsFromContract[0]);
                       <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://feed.spot.pizza/?blog='}@${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), decimals)}&window=604800&once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                     </div>
                   )
                 ))
