@@ -291,7 +291,7 @@ const App = () => {
                         <div className="flex justify-between items-center mt-4">
                           <p className="text-gray-500 text-sm">{post.timestamp}</p>
                           <div className="flex space-x-4">
-                            {!post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                            {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
                             )
                             :(<button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
                             )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
@@ -451,7 +451,7 @@ console.log('Posts:', postsFromContract[0]);
                       <div className="flex justify-between items-center mt-4">
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
                         <div className="flex space-x-4">
-                        {!post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                        {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
                             )
                             :(
                           <button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
