@@ -178,8 +178,10 @@ const App = () => {
         <main className="container mx-auto py-8">
           <h1 className="text-center text-4xl mb-8 text-gray-700 font-extrabold">Blog dApp</h1>
           <Toaster />
-          <div className="flex flex-wrap -mx-2 mb-8">
-            <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-1/5 mx-2">
+          <BlogView likePost={likePost} tipPost={tipPost} setTipping={setTipping} />
+
+          <div className="flex flex-wrap -mx-2 mb-8">z
+            <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/5 mx-2">
               <div className="text-center mb-8">
                 <h2 className="text-2xl text-pink-600 font-bold">Create a new blog</h2>
               </div>
@@ -232,7 +234,7 @@ const App = () => {
                 </button>
               </div>
             </section>
-            <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-3/4 mx-2">
+            <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-3/4 mx-2">
               <div className="text-center mb-8">
                 <h2 className="text-2xl text-pink-600 font-bold">Create a new post</h2>
               </div>
@@ -275,8 +277,10 @@ const App = () => {
                         <div className="flex justify-between items-center mt-4">
                           <p className="text-gray-500 text-sm">{post.timestamp}</p>
                           <div className="flex space-x-4">
-                            <button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
-                            <button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
+                            {!post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                            )
+                            :(<button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                            )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
                           </div>
                         </div>
                       </div>
@@ -294,7 +298,6 @@ const App = () => {
             </div>
           </section>
         </main>
-        <BlogView likePost={likePost} tipPost={tipPost} setTipping={setTipping} />
         {tipping && (
           <TipModal
             isOpen={tipping}
@@ -313,12 +316,16 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   const [blog, setBlog] = useState(false);
   const ethersProvider = useEthersProvider();
   const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
-
+  let useAddress = useAccount().address
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const extractedBlogName = queryParams.get('blog');
     if (extractedBlogName) {
       setBlogName(extractedBlogName);
+    }
+    else {
+      setBlog(useAddress);
+      console.log('Blog:', useAddress);
     }
     fetchBlogPosts();
   }, [blogName]);
@@ -326,7 +333,12 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   const fetchBlogPosts = async () => {
     try {
       setLoading(true);
-      const userAddress = await contract.blogNameToAddress(blogName);
+      let userAddress = useAddress
+      let blogN = (await contract.blogs(useAddress)).name
+      setBlogName(blogN);
+      if (!blog) {
+       userAddress = await contract.blogNameToAddress(blogName);
+    }
       setBlog(await contract.blogs(userAddress));
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
       const decimals = await token.decimals();
@@ -361,7 +373,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800">
+    <div className="">
       <main className="container mx-auto py-8">
         <h1 className="text-center text-4xl mb-4 text-gray-700 font-extrabold">{blogName ? `${blogName}'s Blog` : 'Blog View'}</h1>
         <Toaster />
@@ -388,7 +400,10 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
               {loading ? (
                 <p className="text-gray-800">Loading...</p>
               ) : posts.length === 0 ? (
+                <div  className="bg-white p-6 rounded-3xl border-l-8 shadow-md">
+
                 <p className="text-gray-800">No posts yet.</p>
+                </div>
               ) : (
                 posts.slice().reverse().map((post, index) => (
                   post.title !== 'subscribe to view post' ? (
@@ -402,8 +417,11 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
                       <div className="flex justify-between items-center mt-4">
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
                         <div className="flex space-x-4">
+                        {!post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                            )
+                            :(
                           <button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
-                          <button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
+                        )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
                         </div>
                       </div>
                     </div>
@@ -438,7 +456,7 @@ const TipModal = ({ isOpen, onClose, onTip }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className=" p-8 rounded-3xl shadow-2xl">
+      <div className=" bg-white p-8 rounded-3xl shadow-2xl">
         <h2 className="text-2xl text-pink-600 font-bold mb-4">Tip Post</h2>
         <div className="space-y-6">
           <div>
