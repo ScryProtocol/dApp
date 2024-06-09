@@ -365,10 +365,16 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
       const decimals = await token.decimals();
       const postCount = await contract.authorPostCount(userAddress);
-      const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-      for (let i = 0; i < postIds.length; i++) {
-        postIds[i] = await contract.authorPosts(userAddress, i);
-      }
+      let postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
+      let multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], ethersProvider);
+      const calls = postIds.map(id => ({
+        target: ContractAddress,
+        callData: contract.interface.encodeFunctionData('authorPosts', [userAddress, id]),
+      }));
+
+      const { returnData } = await multicallContract.aggregate(calls);
+      postIds = returnData.map(data => contract.interface.decodeFunctionResult('authorPosts', data)[0]);
+
       const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
 console.log('Posts:', postsFromContract[0]);
       const formattedPosts = postsFromContract.map((post, index) => ({
