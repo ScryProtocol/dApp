@@ -345,6 +345,10 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
     }
     console.log('Blog:', blog);
     fetchBlogPosts(extractedBlogName);
+  }, []);
+  useEffect(() => {
+    if(blogName){
+    fetchBlogPosts(blogName);}
   }, [blogName]);
 
   const fetchBlogPosts = async (extractedBlogName) => {
@@ -418,7 +422,6 @@ console.log('Posts:', postsFromContract[0]);
           <div className="mb-4 flex justify-center">
             <input
               type="text"
-              value={blogName}
               onChange={(e) => setBlogName(e.target.value)}
               placeholder="Search Blog Name..."
               className="w-1/2 p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
