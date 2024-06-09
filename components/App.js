@@ -274,7 +274,7 @@ const App = () => {
           </div>
           <section className="w-full">
             <div>
-              <h2 className="text-xl text-pink-600 mb-4 font-bold">Posts</h2>
+              <h2 className="text-xl text-pink-600 mb-4 font-bold">Latest Posts</h2>
               <div className="space-y-4">
                 {posts.length === 0 ? (
                   <p className="text-gray-800">No posts yet.</p>
