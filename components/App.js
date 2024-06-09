@@ -381,6 +381,7 @@ console.log('Posts:', postsFromContract[0]);
         likes: Number(post.likes),
         liked: likedStatuses[index],
         tips: Number(ethers.formatUnits(post.tips.toString(), decimals)),
+        decimals: decimals,
       }));
 
       setPosts(formattedPosts);
@@ -428,7 +429,7 @@ console.log('Posts:', postsFromContract[0]);
             />
           </div>
           {posts[0] && blog && posts[0].title === 'subscribe to view post' && (
-            <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), decimals)}&window=604800&once=false&network=8453`}>
+            <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(),posts[0].decimals)}&window=604800&once=false&network=8453`}>
               <button className="w-1/2 mx-auto block py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out">
                 Subscribe to blog
               </button>
@@ -470,7 +471,7 @@ console.log('Posts:', postsFromContract[0]);
                       <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), decimals)}&window=604800&once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals )}&window=604800&once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                     </div>
                   )
                 ))
