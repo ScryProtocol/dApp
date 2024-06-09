@@ -84,7 +84,7 @@ const App = () => {
   const handleCreatePost = async () => {
     if (!content) return;
     try {
-      const tx = await contract.createPost(content);
+      const tx = await contract.connect(ethersSigner).createPost(content);
       await tx.wait();
       toast.success('Post created successfully');
       fetchPosts();
@@ -172,13 +172,15 @@ const App = () => {
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
   };
+  const borderColors = ['blue', 'green', 'red', '#f0f', 'orange'];
+
   const renderContentWithImages = (content) => {
     const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
     const parts = content.split(urlRegex);
     
     return parts.map((part, index) => {
       if (urlRegex.test(part)) {
-        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto" />;
+        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto mx-auto" />;
       } else {
         return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
       }
@@ -279,7 +281,7 @@ const App = () => {
                 ) : (
                   posts.slice().reverse().map((post, index) => (
                     post.title !== 'subscribe to view post' ? (
-                      <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md">
+                      <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
                         <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
                         {//<div className="text-gray-600 mt-2" dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
                         }
@@ -377,6 +379,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       setLoading(false);
     }
   };
+  const borderColors = ['blue', 'green', 'red', '#f0f', 'orange'];
 
   const renderContentWithImages = (content) => {
     const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
@@ -384,7 +387,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
     
     return parts.map((part, index) => {
       if (urlRegex.test(part)) {
-        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto" />;
+        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto  mx-auto" />;
       } else {
         return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
       }
@@ -433,7 +436,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
               ) : (
                 posts.slice().reverse().map((post, index) => (
                   post.title !== 'subscribe to view post' ? (
-                    <div key={index} className="bg-white p-6 rounded-3xl border-l-8 shadow-md" style={{ borderColor: index % 2 === 0 ? 'blue' : 'green' }}>
+                    <div key={index} className="bg-white p-6 rounded-3xl border-l-8 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
                       <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
                       {//<div className="text-gray-600 mt-2"dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
 }
