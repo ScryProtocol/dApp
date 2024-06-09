@@ -303,7 +303,7 @@ const App = () => {
                         <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                         <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                        <a href={`${window.location.protocol+'://'+window.location.host+'/?blog='}@${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                        <a href={`https://feed.spot.pizza/${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                       </div>
                     )
                   ))
@@ -354,6 +354,8 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       let blogN = (await contract.blogs(useAddress)).name
       
        userAddress = await contract.blogNameToAddress(!blogName?blogN:blogName);
+       if(!blogName){
+          setBlogName(blogN)}
     console.log('User Address:', userAddress);
       setBlog(await contract.blogs(userAddress));
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
@@ -465,7 +467,7 @@ console.log('Posts:', postsFromContract[0]);
                       <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`${window.location.protocol+'://'+window.location.host+'/?blog='}@${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                      <a href={`https://feed.spot.pizza/?blog='}@${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                     </div>
                   )
                 ))
