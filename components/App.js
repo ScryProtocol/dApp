@@ -259,7 +259,7 @@ const App = () => {
                     value={content}
                     placeholder={`Title\nContent...`}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out h-40"
+                    className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   ></textarea>
                 </div>
                 <button
