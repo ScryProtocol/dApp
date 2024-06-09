@@ -317,6 +317,7 @@ const App = () => {
             isOpen={tipping}
             onClose={() => setTipping(false)}
             onTip={(amount) => tipPost(tipping[0], amount)}
+            tipping={tipping}
           />
         )}
       </div>
@@ -477,16 +478,27 @@ console.log('Posts:', postsFromContract[0]);
   );
 };
 
-const TipModal = ({ isOpen, onClose, onTip }) => {
+const TipModal = ({ isOpen, onClose, onTip,tipping }) => {
   const [amount, setAmount] = useState('');
-
+const [symbol, setSymbol] = useState('');
+  const ethersProvider = useEthersProvider();
   if (!isOpen) return null;
-
+useEffect(() => {
+    getSymbol();
+  }, []);
   const handleTip = () => {
     onTip(amount);
     setAmount('');
     onClose();
   };
+  async function getSymbol() {
+    const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
+    let blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1]))).token;
+    const token = new ethers.Contract(blogToken, ['function symbol() view returns (string)'], ethersProvider);
+
+    const symbol = await token.symbol();
+    setSymbol(symbol);
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -494,7 +506,7 @@ const TipModal = ({ isOpen, onClose, onTip }) => {
         <h2 className="text-2xl text-pink-600 font-bold mb-4">Tip Post</h2>
         <div className="space-y-6">
           <div>
-            <label htmlFor="tipAmount" className="block mb-2 font-semibold text-gray-600">Tip Amount:</label>
+            <label htmlFor="tipAmount" className="block mb-2 font-semibold text-gray-600">Tip Amount in {symbol}:</label>
             <input
               type="number"
               id="tipAmount"
