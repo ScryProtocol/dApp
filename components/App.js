@@ -334,32 +334,36 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const extractedBlogName = queryParams.get('blog');
-    if (extractedBlogName) {
+    if (!blogName) {
       setBlogName(extractedBlogName);
+      console.log('Extracted Blog:', extractedBlogName);
     }
-    else {
+    else if (!blogName) {
       setBlog(useAddress);
       console.log('Blog:', useAddress);
     }
+    console.log('Blog:', blog);
     fetchBlogPosts();
   }, [blogName]);
 
   const fetchBlogPosts = async () => {
     try {
       setLoading(true);
-      let userAddress = useAddress
+      let userAddress
       let blogN = (await contract.blogs(useAddress)).name
-      setBlogName(blogN);
-      if (!blog) {
-       userAddress = await contract.blogNameToAddress(blogName);
-    }
+      
+       userAddress = await contract.blogNameToAddress(!blogName?blogN:blogName);
+    console.log('User Address:', userAddress);
       setBlog(await contract.blogs(userAddress));
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
       const decimals = await token.decimals();
       const postCount = await contract.authorPostCount(userAddress);
       const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
+      for (let i = 0; i < postIds.length; i++) {
+        postIds[i] = await contract.authorPosts(userAddress, i);
+      }
       const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
-
+console.log('Posts:', postsFromContract[0]);
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
         content: post.content.split('\n').slice(1).join('\n'),
@@ -375,6 +379,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       setPosts(formattedPosts);
     } catch (error) {
       toast.error('Error fetching blog posts');
+      console.error('Error fetching blog posts:', error);
     } finally {
       setLoading(false);
     }
