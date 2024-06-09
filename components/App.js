@@ -172,15 +172,26 @@ const App = () => {
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
   };
-
+  const renderContentWithImages = (content) => {
+    const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
+    const parts = content.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto" />;
+      } else {
+        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
+      }
+    });
+  };
   return (
       <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800">
         <main className="container mx-auto py-8">
-          <h1 className="text-center text-4xl mb-8 text-gray-700 font-extrabold">Blog dApp</h1>
+          <h1 className="text-center text-4xl mb-8 text-white font-extrabold">feed</h1>
           <Toaster />
           <BlogView likePost={likePost} tipPost={tipPost} setTipping={setTipping} />
 
-          <div className="flex flex-wrap -mx-2 mb-8">z
+          <div className="flex flex-wrap -mx-2 mb-8">
             <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/5 mx-2">
               <div className="text-center mb-8">
                 <h2 className="text-2xl text-pink-600 font-bold">Create a new blog</h2>
@@ -244,6 +255,7 @@ const App = () => {
                   <textarea
                     id="content"
                     value={content}
+                    placeholder={`Title\nContent...`}
                     onChange={(e) => setContent(e.target.value)}
                     className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out h-40"
                   ></textarea>
@@ -269,10 +281,10 @@ const App = () => {
                     post.title !== 'subscribe to view post' ? (
                       <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md">
                         <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
-                        <div
-                          className="text-gray-600 mt-2"
-                          dangerouslySetInnerHTML={renderMarkdown(post.content)}
-                        />
+                        {//<div className="text-gray-600 mt-2" dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
+                        }
+                                                                  <div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
+
                         <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                         <div className="flex justify-between items-center mt-4">
                           <p className="text-gray-500 text-sm">{post.timestamp}</p>
@@ -366,6 +378,18 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
     }
   };
 
+  const renderContentWithImages = (content) => {
+    const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
+    const parts = content.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto" />;
+      } else {
+        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
+      }
+    });
+  };
   const renderMarkdown = (markdown) => {
     const md = new Remarkable();
     const html = md.render(markdown);
@@ -375,7 +399,9 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   return (
     <div className="">
       <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-4 text-gray-700 font-extrabold">{blogName ? `${blogName}'s Blog` : 'Blog View'}</h1>
+        <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold">{blogName ? `${blogName}'s Blog` : 'Blog View'}</h1>
+        <button onClick={() => {
+    navigator.clipboard.writeText(window.location.protocol+'://'+window.location.host+'/?blog='+blogName);toast.success('Link copied :)') }}className="flex mx-auto center text-sm text-white rounded-full bg-blue-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out">Copy link</button>
         <Toaster />
         <section className="mt-4">
           <div className="mb-4 flex justify-center">
@@ -409,10 +435,10 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
                   post.title !== 'subscribe to view post' ? (
                     <div key={index} className="bg-white p-6 rounded-3xl border-l-8 shadow-md" style={{ borderColor: index % 2 === 0 ? 'blue' : 'green' }}>
                       <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
-                      <div
-                        className="text-gray-600 mt-2"
-                        dangerouslySetInnerHTML={renderMarkdown(post.content)}
-                      />
+                      {//<div className="text-gray-600 mt-2"dangerouslySetInnerHTML={renderMarkdown(post.content)}/>
+}
+<div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
+
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <div className="flex justify-between items-center mt-4">
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
