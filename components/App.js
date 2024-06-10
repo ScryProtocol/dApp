@@ -41,8 +41,9 @@ const App = () => {
   const ethersSigner = useEthersSigner();
   const account = useAccount();
   const userAddress = account.address;
+let chain = useChainId()
 
-  const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
+  const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
 
   useEffect(() => {
     if (userAddress) {
@@ -85,6 +86,7 @@ const App = () => {
     if (!content) return;
     try {
       const tx = await contract.connect(ethersSigner).createPost(content);
+      toast('Creating post');
       await tx.wait();
       toast.success('Post created successfully');
       fetchPosts();
@@ -100,19 +102,22 @@ const App = () => {
       toast.error('All fields are required');
       return;
     }
-    try {
-      const token = new ethers.Contract(blogToken || '0x94373a4919b3240d86ea41593d5eba789fef3848', ['function decimals() view returns (uint)'], ethersProvider);
+    try { const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
+
+      //const token = new ethers.Contract(blogToken || '0x94373a4919b3240d86ea41593d5eba789fef3848', ['function decimals() view returns (uint)'], ethersProvider);
       const blogAddress = await contract.blogNameToAddress(blogName);
       if (blogAddress !== '0x0000000000000000000000000000000000000000') {
         toast.error('Blog name already taken');
         return;
       }
+      console.log('Blog Token:', blogName);
       const tx = await contract.connect(ethersSigner).createBlog(
         blogName, 
         blogBio, 
-        blogToken || '0x94373a4919b3240d86ea41593d5eba789fef3848', 
+        blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',//'0x94373a4919b3240d86ea41593d5eba789fef3848', 
         ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())
       );
+      toast('Creating blog');
       await tx.wait();
       toast.success('Blog created successfully');
     } catch (error) {
@@ -338,7 +343,8 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   const [loading, setLoading] = useState(false);
   const [blog, setBlog] = useState(false);
   const ethersProvider = useEthersProvider();
-  const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
+  let chain = useChainId()
+  const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
   let useAddress = useAccount().address
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -360,20 +366,35 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   }, [blogName]);
 
   const fetchBlogPosts = async (extractedBlogName) => {
+
     try {
       setLoading(true);
       let userAddress
-      let blogN = (await contract.blogs(useAddress)).name
+      let blogN
+      try {
+        blogN = (await contract.blogs(useAddress)).name
+      } catch (error) {
+        blogN =extractedBlogName
+      }
       console.log('Blog:', blogN,'t',blogName);
+      console.log('Blog:', blogN,'t',extractedBlogName);
        userAddress = await contract.blogNameToAddress(!extractedBlogName?blogN:extractedBlogName);
        if(!extractedBlogName){
           setBlogName(blogN)}
     console.log('User Address: ', userAddress);
       setBlog(await contract.blogs(userAddress));
       const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
-      const decimals = await token.decimals();
+      let decimals
+      try {
+        decimals = await token.decimals();
+      } catch (error) {
+        decimals = 18
+      }
+      //const decimals = await token.decimals();
+      console.log('Decimals:', decimals);
       const postCount = await contract.authorPostCount(userAddress);
       let postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
+      try {
       let multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], ethersProvider);
       const calls = postIds.map(id => ({
         target: ContractAddress,
@@ -381,8 +402,13 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       }));
 
       const { returnData } = await multicallContract.aggregate(calls);
+      console.log('Return Data:', returnData);
       postIds = returnData.map(data => contract.interface.decodeFunctionResult('authorPosts', data)[0]);
-
+    }catch (error) {
+      for (let i = 0; i < postCount; i++) {
+        postIds[i] = await contract.authorPosts(userAddress, i);
+        console.log('Post ID:', postIds[i]);
+      }      }
       const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
 console.log('Posts:', postsFromContract[0]);
       const formattedPosts = postsFromContract.map((post, index) => ({
