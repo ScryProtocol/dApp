@@ -543,8 +543,9 @@ useEffect(() => {
     setAmount('');
     onClose();
   };
+  let chain = useChainId()
   async function getSymbol() {
-    const contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);
+    const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
     let blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1]))).token;
     const token = new ethers.Contract(blogToken, ['function symbol() view returns (string)'], ethersProvider);
 
