@@ -64,7 +64,7 @@ const App = () => {
 
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n'),
+        content: post.content.split('\n').slice(1).join('\n').trim(),
         author: post.author,
         timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
         blog: post.blog,
@@ -168,7 +168,13 @@ const App = () => {
   };
 
   const renderMarkdown = (markdown) => {
-    const md = new Remarkable();
+    const md = new Remarkable({
+      html: true,        // Enable HTML tags in source
+      xhtmlOut: true,    // Use '/' to close single tags (<br />)
+      breaks: true,      // Convert '\n' in paragraphs into <br>
+      langPrefix: 'language-',  // CSS language prefix for fenced blocks
+    });
+//    const md = new Remarkable();
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
   };
@@ -182,7 +188,9 @@ const App = () => {
       if (urlRegex.test(part)) {
         return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto mx-auto" />;
       } else {
-        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
+        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part.replace(/\n/g, '<br/>' ) )} />;
+
+        //  return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part.replace(/\n/g, '<br/>' ) )} />;
       }
     });
   };
@@ -379,7 +387,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
 console.log('Posts:', postsFromContract[0]);
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n'),
+        content: post.content.split('\n').slice(1).join('\n').trim(),
         author: post.author,
         timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
         blog: post.blog,
@@ -408,12 +416,18 @@ console.log('Posts:', postsFromContract[0]);
       if (urlRegex.test(part)) {
         return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto  mx-auto" />;
       } else {
-        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part)} />;
+        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part.replace(/\n/g, '<br/>' ))} />;
       }
     });
   };
   const renderMarkdown = (markdown) => {
-    const md = new Remarkable();
+    const md = new Remarkable({
+      html: true,        // Enable HTML tags in source
+      xhtmlOut: true,    // Use '/' to close single tags (<br />)
+      breaks: true,      // Convert '\n' in paragraphs into <br>
+      langPrefix: 'language-',  // CSS language prefix for fenced blocks
+    });
+    //const md = new Remarkable();
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
   };
