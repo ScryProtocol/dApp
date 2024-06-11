@@ -334,7 +334,7 @@ let chain = useChainId()
                       </div>
                     ) : (
                       <div key={index} className="bg-pink-200 p-6 rounded-3xl border-l-8 border-green-500 shadow-md">
-                        <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
+                        <h3 className="text-xl font-bold text-gray-800"><a href={`https://feed.spot.pizza/?blog=@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                         <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
                         <a href={`https://feed.spot.pizza/?blog=${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
