@@ -233,14 +233,34 @@ let chain = useChainId()
                 </div>
                 <div>
                   <label htmlFor="blogToken" className="block mb-2 font-semibold text-gray-600">Blog Subscription Token Address:</label>
-                  <input
+                {0==1&&  <input
                     type="text"
                     id="blogToken"
                     value={blogToken}
                     placeholder="empty for USDC"
                     onChange={(e) => setBlogToken(e.target.value)}
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  />}    <select
+                  id="blogToken"
+                  value={blogToken}
+                  onChange={(e) => setBlogToken(e.target.value)}
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                >
+                  <option value="">Select a token</option>
+                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+                  <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                  <option value="0x4ed4e862860bed51a9570b96d89af5e1b0efefed">DEGEN</option>
+                  <option value="custom">Custom</option>
+                </select>
+                {blogToken === 'custom' && (
+                  <input
+                    type="text"
+                    id="customToken"
+                    placeholder="Enter custom token address"
+                    onChange={(e) => {setBlogToken(e.target.value);toast.success('Custom token address set')}}
+                    className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
+                )}
                 </div>
                 <div>
                   <label htmlFor="blogAmount" className="block mb-2 font-semibold text-gray-600">Subscription Cost per 30d:</label>
