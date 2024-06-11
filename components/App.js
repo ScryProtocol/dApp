@@ -72,7 +72,7 @@ let chain = useChainId()
         blogAddress: post.blogAddress,
         likes: Number(post.likes),
         liked: likedStatuses[index],
-        tips: Number(ethers.formatUnits(post.tips.toString(), 18)),
+        tips: Number(ethers.formatUnits(post.tips.toString(), post.tips.toString().length>12?18:6)),
       }));
 
       setPosts(formattedPosts);
