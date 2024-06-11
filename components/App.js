@@ -237,7 +237,7 @@ let chain = useChainId()
                     type="text"
                     id="blogToken"
                     value={blogToken}
-                    placeholder="empty for no subscription needed"
+                    placeholder="empty for USDC"
                     onChange={(e) => setBlogToken(e.target.value)}
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
@@ -248,6 +248,7 @@ let chain = useChainId()
                     type="number"
                     id="blogAmount"
                     value={blogAmount}
+                    placeholder='0 for no subscription needed'
                     onChange={(e) => setBlogAmount(e.target.value)}
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
