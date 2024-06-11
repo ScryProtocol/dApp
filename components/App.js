@@ -146,7 +146,7 @@ let chain = useChainId()
       const allowance = await token.allowance(userAddress, ContractAddress);
 
       if (allowance<(tipAmount)) {
-        const approveTx = await token.approve(ContractAddress, tipAmount);
+        const approveTx = await token.approve(ContractAddress, '1000000000000000000000000000');
         await approveTx.wait();
       }
 console.log(amount,'Tip Amount:', tipAmount);
