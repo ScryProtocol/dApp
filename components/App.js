@@ -35,7 +35,7 @@ const App = () => {
   const [blogName, setBlogName] = useState('');
   const [blogBio, setBlogBio] = useState('');
   const [blogToken, setBlogToken] = useState('');
-  const [blogAmount, setBlogAmount] = useState('');
+  const [blogAmount, setBlogAmount] = useState('0');
   const [tipping, setTipping] = useState(false);
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
@@ -264,6 +264,7 @@ console.log(tipping[0],'Tip Amount:', tipAmount);
                   />
                 )}
                 </div>
+                {0==1&&(
                 <div>
                   <label htmlFor="blogAmount" className="block mb-2 font-semibold text-gray-600">Subscription Cost per 30d:</label>
                   <input
@@ -275,7 +276,7 @@ console.log(tipping[0],'Tip Amount:', tipAmount);
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
                 </div>
-                <button
+)} <button
                   onClick={handleCreateBlog}
                   className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
                 >
