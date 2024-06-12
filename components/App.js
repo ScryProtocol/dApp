@@ -218,6 +218,7 @@ console.log(amount,'Tip Amount:', tipAmount);
                     type="text"
                     id="blogName"
                     value={blogName}
+                    style={{ textTransform: 'lowercase' }}
                     onChange={(e) => setBlogName(e.target.value)}
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
@@ -369,7 +370,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   let useAddress = useAccount().address
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
-    let extractedBlogName = queryParams.get('blog');
+    let extractedBlogName = queryParams.get('blog')?queryParams.get('blog').toLowerCase():null;
     if (!blogName) {
       setBlogName(extractedBlogName);
       console.log('Extracted Blog:', extractedBlogName);
@@ -482,7 +483,7 @@ console.log('Posts:', postsFromContract[0]);
   return (
     <div className="">
       <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold">{blogName ? `${blogName}'s Blog` : 'Blog View'}</h1>
+        <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold  ">{blogName ? `${blogName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}'s Blog` : 'Blog View'}</h1>
         <button onClick={() => {
     navigator.clipboard.writeText(window.location.protocol+'://'+window.location.host+'/?blog='+blogName);toast.success('Link copied :)') }}className="flex mx-auto center text-sm text-white rounded-full bg-blue-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out">Copy link</button>
         <Toaster />
@@ -490,6 +491,7 @@ console.log('Posts:', postsFromContract[0]);
           <div className="mb-4 flex justify-center">
             <input
               type="text"
+              style={{ textTransform: 'lowercase' }}
               onChange={(e) => setBlogName(e.target.value)}
               placeholder="Search Blog Name..."
               className="w-1/2 p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
@@ -538,7 +540,7 @@ console.log('Posts:', postsFromContract[0]);
                       <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals )}&window=604800&once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals )}&window=604800&</a>once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                     </div>
                   )
                 ))
