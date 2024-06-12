@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { N, ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId,useConnect } from 'wagmi';
 import 'tailwindcss/tailwind.css';
 import { Remarkable } from 'remarkable';
 import DOMPurify from 'dompurify';
@@ -11,6 +11,7 @@ import 'tailwindcss/tailwind.css';
 import { http, createConfig } from '@wagmi/core';
 import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { useCapabilities,useWriteContracts } from 'wagmi/experimental'
 
 const config = getDefaultConfig({
   chains: [mainnet, sepolia, holesky, base, optimism],
@@ -42,7 +43,11 @@ const App = () => {
   const account = useAccount();
   const userAddress = account.address;
 let chain = useChainId()
-
+const { writeContracts } = useWriteContracts({
+  mutation: { onSuccess: () => fetchPosts() },
+});
+const { data: capabilities } = useCapabilities() 
+console.log('Capabilities:', capabilities);
   const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
 
   useEffect(() => {
@@ -86,9 +91,24 @@ let chain = useChainId()
   const handleCreatePost = async () => {
     if (!content) return;
     try {
+      
+      if (capabilities) {
+        console.log('Paymaster:', capabilities.paymasterService);
+        writeContracts({
+          contracts: [{
+            address: ContractAddress,
+            abi: ContractABI,
+            functionName: 'createPost',
+            args: [content],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+        }else{
       const tx = await contract.connect(ethersSigner).createPost(content);
       toast('Creating post');
-      await tx.wait();
+      await tx.wait();}
       toast.success('Post created successfully');
       fetchPosts();
       setContent('');
@@ -112,6 +132,23 @@ let chain = useChainId()
         return;
       }
       console.log('Blog Token:', blogName);
+      if (capabilities) {
+      writeContracts({
+        contracts: [{
+          address: ContractAddress,
+          abi: ContractABI,
+          functionName: 'createBlog',
+          args: [blogName, 
+            blogBio, 
+            blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',//'0x94373a4919b3240d86ea41593d5eba789fef3848', 
+            ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())
+          ],
+        }],
+        capabilities: {
+          paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+        },
+      });
+      }else{
       const tx = await contract.connect(ethersSigner).createBlog(
         blogName, 
         blogBio, 
@@ -119,7 +156,7 @@ let chain = useChainId()
         ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())
       );
       toast('Creating blog');
-      await tx.wait();
+      await tx.wait();}
       toast.success('Blog created successfully');
     } catch (error) {
       console.error('Error creating blog:', error);
@@ -151,8 +188,22 @@ let chain = useChainId()
         await approveTx.wait();
       }
 console.log(tipping[0],'Tip Amount:', tipAmount);
+
+if (capabilities) {
+  writeContracts({
+    contracts: [{
+      address: ContractAddress,
+      abi: ContractABI,
+      functionName: 'tipPost',
+      args: [tipping[0], tipAmount],
+    }],
+    capabilities: {
+      paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+    },
+  });
+  }else{
       const tx = await contract.connect(ethersSigner).tipPost(tipping[0], tipAmount);
-      await tx.wait();
+      await tx.wait();}
       toast.success("Post tipped successfully!");
       fetchPosts();
     } catch (error) {
@@ -163,8 +214,22 @@ console.log(tipping[0],'Tip Amount:', tipAmount);
 
   const likePost = async (postId) => {
     try {
+      
+      if (capabilities) {
+        writeContracts({
+          contracts: [{
+            address: ContractAddress,
+            abi: ContractABI,
+            functionName: 'likePost',
+            args: [postId],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+        }else{
       const tx = await contract.connect(ethersSigner).likePost(postId);
-      await tx.wait();
+      await tx.wait();}
       toast.success('Post liked successfully');
       fetchPosts();
     } catch (error) {
@@ -282,6 +347,8 @@ console.log(tipping[0],'Tip Amount:', tipAmount);
                 >
                   Create Blog
                 </button>
+                {!userAddress &&
+                <BlueCreateWalletButton/>}
               </div>
             </section>
             <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-3/4 mx-2">
@@ -555,7 +622,21 @@ console.log('Formatted Posts:', formattedPosts);
     </div>
   );
 };
-
+function BlueCreateWalletButton() {
+  const { connectors, connect, data } = useConnect();
+ 
+  const createWallet = useCallback(() => {
+    const coinbaseWalletConnector = connectors.find(
+      (connector) => connector.id === 'coinbaseWalletSDK'
+    );
+    if (coinbaseWalletConnector) {
+      connect({ connector: coinbaseWalletConnector });
+    }
+  }, [connectors, connect]);
+  return (
+    <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
+      Create Wallet
+    </button>)}
 const TipModal = ({ isOpen, onClose, onTip,tipping }) => {
   const [amount, setAmount] = useState('');
 const [symbol, setSymbol] = useState('');
