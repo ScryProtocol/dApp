@@ -47,6 +47,8 @@ function MyApp({ Component, pageProps }) {
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={toggleTheme} 
          ><a href="https://sub.spot.pizza/"><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
+          <a href="https://discord.gg/vrV4YpUccq"><img style={{position: 'absolute', right: '10px', top: '10px', width: '50px' }}src='./discord.png'/></a>
+          <a href="https://twitter.com/spotdotpizza"><img style={{position: 'absolute', right: '70px', top: '10px', width: '50px' }}src='./twitter.png'/></a>
           <Component {...pageProps} />
         </div>
       </RainbowKitProvider>
