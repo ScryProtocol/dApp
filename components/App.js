@@ -111,7 +111,6 @@ console.log('Capabilities:', capabilities);
       await tx.wait();}
       toast.success('Post created successfully');
       fetchPosts();
-      setContent('');
     } catch (error) {
       console.error('Error creating post:', error);
       toast.error('Error creating post');
