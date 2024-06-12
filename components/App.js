@@ -72,6 +72,7 @@ let chain = useChainId()
         blogAddress: post.blogAddress,
         likes: Number(post.likes),
         liked: likedStatuses[index],
+        id: postIds[index],
         tips: Number(ethers.formatUnits(post.tips.toString(), post.tips.toString().length>12?18:6)),
       }));
 
@@ -139,7 +140,7 @@ let chain = useChainId()
     }
 
     try {
-      const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1]))).token;
+      const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()) )).token;
       const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
       const decimals = await token.decimals();
       const tipAmount = ethers.parseUnits(amount.toString(), decimals);
@@ -149,7 +150,7 @@ let chain = useChainId()
         const approveTx = await token.approve(ContractAddress, '1000000000000000000000000000');
         await approveTx.wait();
       }
-console.log(amount,'Tip Amount:', tipAmount);
+console.log(tipping[0],'Tip Amount:', tipAmount);
       const tx = await contract.connect(ethersSigner).tipPost(tipping[0], tipAmount);
       await tx.wait();
       toast.success("Post tipped successfully!");
@@ -326,10 +327,10 @@ console.log(amount,'Tip Amount:', tipAmount);
                         <div className="flex justify-between items-center mt-4">
                           <p className="text-gray-500 text-sm">{post.timestamp}</p>
                           <div className="flex space-x-4">
-                            {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                            {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
                             )
-                            :(<button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
-                            )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
+                            :(<button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
+                            )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([post.id, post.blog])}>$ {post.tips} tips</button>
                           </div>
                         </div>
                       </div>
@@ -442,10 +443,11 @@ console.log('Posts:', postsFromContract[0]);
         blogAddress: post.blogAddress,
         likes: Number(post.likes),
         liked: likedStatuses[index],
+        id: postIds[index],
         tips: Number(ethers.formatUnits(post.tips.toString(), decimals)),
         decimals: decimals,
       }));
-
+console.log('Formatted Posts:', formattedPosts);
       setPosts(formattedPosts);
     } catch (error) {
     //  toast.error('Error fetching blog posts');
@@ -527,11 +529,11 @@ console.log('Posts:', postsFromContract[0]);
                       <div className="flex justify-between items-center mt-4">
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
                         <div className="flex space-x-4">
-                        {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
+                        {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
                             )
                             :(
-                          <button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(index)}>♡ {post.likes}</button>
-                        )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([index, post.blog])}>$ {post.tips} tips</button>
+                          <button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
+                        )}<button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([post.id, post.blog])}>$ {post.tips} tips</button>
                         </div>
                       </div>
                     </div>
@@ -569,7 +571,8 @@ useEffect(() => {
   let chain = useChainId()
   async function getSymbol() {
     const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
-    let blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1]))).token;
+    console.log('Tipping:', tipping[1].toLowerCase());
+    let blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()))).token;
     const token = new ethers.Contract(blogToken, ['function symbol() view returns (string)'], ethersProvider);
 
     const symbol = await token.symbol();
