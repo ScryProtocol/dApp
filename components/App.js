@@ -634,8 +634,8 @@ function BlueCreateWalletButton() {
     }
   }, [connectors, connect]);
   return (
-    <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
-      Create Wallet
+    <button className="w-full p-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
+    Create Coinbase Smart Wallet For Free Txs 
     </button>)}
 const TipModal = ({ isOpen, onClose, onTip,tipping }) => {
   const [amount, setAmount] = useState('');
