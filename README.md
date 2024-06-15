@@ -20,7 +20,7 @@ npm install ghosttag ethers
 To stream transactions with a specific tag:
 
 ```javascript
-const { GhostTagStreamer, TaggedContract } = require('ghost-tag-streamer');
+const { GhostTagStreamer, TaggedContract } = require('ghosttag');
 const { ethers } = require('ethers');
 
 const rpcUrl = 'https://1rpc.io/holesky';
@@ -51,7 +51,7 @@ To send tagged transactions using a TaggedContract:
 
 ```javascript
 const { ethers } = require('ethers');
-const { TaggedContract } = require('ghost-tag-streamer');
+const { TaggedContract } = require('ghosttag');
 
 async function main() {
     const rpcUrl = 'https://1rpc.io/holesky';

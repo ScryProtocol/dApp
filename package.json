@@ -1,6 +1,6 @@
 {
   "name": "ghosttag",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": " Backward compatible analytics tags for txs",
   "main": "ghostTag.js",
   "scripts": {
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/ScryProtocol/ghostTag#readme",
   "dependencies": {
-    "ethers": "^6.13.0"
+    "ethers": "^6.13.0",
+    "ghosttag": "^1.0.1"
   }
 }
