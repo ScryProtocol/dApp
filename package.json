@@ -1,0 +1,25 @@
+{
+  "name": "ghosttag",
+  "version": "1.0.0",
+  "description": " Backward compatible analytics tags for txs",
+  "main": "ghostTag.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ScryProtocol/ghostTag.git"
+  },
+  "keywords": [
+    "eth",
+    "crypto",
+    "ethereum",
+    "evm"
+  ],
+  "author": "pr0",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ScryProtocol/ghostTag/issues"
+  },
+  "homepage": "https://github.com/ScryProtocol/ghostTag#readme"
+}
