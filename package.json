@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/ScryProtocol/ghostTag/issues"
   },
-  "homepage": "https://github.com/ScryProtocol/ghostTag#readme"
+  "homepage": "https://github.com/ScryProtocol/ghostTag#readme",
+  "dependencies": {
+    "ethers": "^6.13.0"
+  }
 }

@@ -10,7 +10,7 @@ GhostTag is an npm package for tagging, streaming and filtering Ethereum blockch
 You can install the package using npm:
 
 ```sh
-npm install ghost-tag-streamer ethers
+npm install ghosttag ethers
 ```
 
 ## Usage
