@@ -568,13 +568,42 @@ console.log('Formatted Posts:', formattedPosts);
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
   };
+  const renderBioWithLinks = (bio) => {
+    const twitterRegex = /https:\/\/twitter\.com\/[^\s]+/g;
+    const githubRegex = /https:\/\/github\.com\/[^\s]+/g;
+  
+    const twitterLink = bio.match(twitterRegex) ? bio.match(twitterRegex)[0] : null;
+    const githubLink = bio.match(githubRegex) ? bio.match(githubRegex)[0] : null;
+  
+    const filteredBio = bio.replace(twitterRegex, '').replace(githubRegex, '').trim();
+  
+    return (
+      <div className="text-center">
+                          <p>{filteredBio}</p>
+
+        <div className="flex justify-center space-x-4 mb-4">
+          {twitterLink && (
+            <a href={twitterLink} target="_blank" rel="noopener noreferrer">
+              <img src="./twitter.png" alt="Twitter" className="w-6 h-6" />
+            </a>
+          )}
+          {githubLink && (
+            <a href={githubLink} target="_blank" rel="noopener noreferrer">
+              <img src="./discord.png" alt="GitHub" className="w-6 h-6" />
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  };
+  
 
   return (
     <div className="">
       <main className="container mx-auto py-8">
         <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold  ">{blogName ? `${blogName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}'s Blog` : 'Blog View'}</h1>
-                {blog && <p className="text-center text-xl mb-4 text-gray-600 w-1/2 mx-auto">{blog.bio}</p>}
-
+                {//blog && <p className="text-center text-xl mb-4 text-gray-600 w-1/2 mx-auto">{blog.bio}</p>}
+              blog && <div className="text-center text-xl mb-4 text-gray-600  w-1/2 mx-auto">{renderBioWithLinks(blog.bio)}</div>}
         <button onClick={() => {
     navigator.clipboard.writeText(window.location.protocol+'://'+window.location.host+'/?blog='+blogName);toast.success('Link copied :)') }}className="flex mx-auto center text-sm text-white rounded-full bg-blue-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out">Copy link</button>
         <Toaster />
