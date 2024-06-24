@@ -573,6 +573,8 @@ console.log('Formatted Posts:', formattedPosts);
     <div className="">
       <main className="container mx-auto py-8">
         <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold  ">{blogName ? `${blogName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}'s Blog` : 'Blog View'}</h1>
+                {blog && <p className="text-center text-xl mb-4 text-gray-600 w-1/2 mx-auto">{blog.bio}</p>}
+
         <button onClick={() => {
     navigator.clipboard.writeText(window.location.protocol+'://'+window.location.host+'/?blog='+blogName);toast.success('Link copied :)') }}className="flex mx-auto center text-sm text-white rounded-full bg-blue-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out">Copy link</button>
         <Toaster />
