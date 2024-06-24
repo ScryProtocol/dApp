@@ -8,6 +8,8 @@ import 'tailwindcss/tailwind.css';
 import { Remarkable } from 'remarkable';
 import DOMPurify from 'dompurify';
 import 'tailwindcss/tailwind.css';
+import { readContract } from '@wagmi/core';
+
 import { http, createConfig } from '@wagmi/core';
 import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
@@ -66,7 +68,17 @@ console.log('Capabilities:', capabilities);
     try {
       const postCount = await contract.postCount();
       const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-      const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
+      
+      const [postsFromContract, likedStatuses] = await  readContract(config,{
+        //  contracts: [{
+            address: ContractAddress,
+            abi: ContractABI,
+            functionName: 'getPosts',
+            args: [postIds],
+            account: userAddress
+        //  }]
+        });
+     // const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
 
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
@@ -328,7 +340,6 @@ if (capabilities) {
                   />
                 )}
                 </div>
-                {0==1&&(
                 <div>
                   <label htmlFor="blogAmount" className="block mb-2 font-semibold text-gray-600">Subscription Cost per 30d:</label>
                   <input
@@ -340,7 +351,7 @@ if (capabilities) {
                     className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                   />
                 </div>
-)} <button
+ <button
                   onClick={handleCreateBlog}
                   className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
                 >
@@ -434,6 +445,7 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   const [blog, setBlog] = useState(false);
   const ethersProvider = useEthersProvider();
   let chain = useChainId()
+  let addrs = useAccount().address
   const contract = new ethers.Contract(chain==17000?ContractAddress:'0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
   let useAddress = useAccount().address
   useEffect(() => {
@@ -498,8 +510,16 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
       for (let i = 0; i < postCount; i++) {
         postIds[i] = await contract.authorPosts(userAddress, i);
         console.log('Post ID:', postIds[i]);
-      }      }
-      const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
+      }      }   const [postsFromContract, likedStatuses] = await  readContract(config,{
+       // contracts: [{
+          address: ContractAddress,
+          abi: ContractABI,
+          functionName: 'getPosts',
+          args: [postIds],
+          account: addrs,
+      //  }]
+      });
+      //const [postsFromContract, likedStatuses] = await contract.getPosts(postIds);
 console.log('Posts:', postsFromContract[0]);
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
@@ -609,7 +629,7 @@ console.log('Formatted Posts:', formattedPosts);
                       <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
                       <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
                       <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals )}&window=604800&</a>once=false&network=8453${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
+                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals )}&window=604800&network=8453`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
                     </div>
                   )
                 ))
