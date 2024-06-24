@@ -589,7 +589,7 @@ console.log('Formatted Posts:', formattedPosts);
           )}
           {githubLink && (
             <a href={githubLink} target="_blank" rel="noopener noreferrer">
-              <img src="./discord.png" alt="GitHub" className="w-6 h-6" />
+              <img src="https://simpleicons.org/icons/github.svg" alt="GitHub" className="w-6 h-6" />
             </a>
           )}
         </div>
