@@ -254,8 +254,8 @@ const App = () => {
         }));
       } else {
         setSubscriptionDetails({
-          lender: subscribe,
-          friend: userAddress,
+          lender: userAddress,//subscribe,
+          friend: subscribe,//userAddress,
           token: token,
           totalStreamed: '',
           outstanding: '',
