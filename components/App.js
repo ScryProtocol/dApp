@@ -567,20 +567,37 @@ console.log('Formatted Posts:', formattedPosts);
     //const md = new Remarkable();
     const html = md.render(markdown);
     return { __html: DOMPurify.sanitize(html) };
-  };
-  const renderBioWithLinks = (bio) => {
+  };const renderBioWithLinks = (bio) => {
     const twitterRegex = /https:\/\/twitter\.com\/[^\s]+/g;
     const githubRegex = /https:\/\/github\.com\/[^\s]+/g;
+    const iconLinkRegex = /\((https:\/\/[^\s]+)\)\[([^\s]+)\]/g;
   
     const twitterLink = bio.match(twitterRegex) ? bio.match(twitterRegex)[0] : null;
     const githubLink = bio.match(githubRegex) ? bio.match(githubRegex)[0] : null;
   
-    const filteredBio = bio.replace(twitterRegex, '').replace(githubRegex, '').trim();
+    const filteredBio = bio.replace(twitterRegex, '').replace(githubRegex, '').replace(iconLinkRegex, '').trim();
+  
+    const renderIcons = (bio) => {
+      const parts = [];
+      let lastIndex = 0;
+  
+      bio.replace(iconLinkRegex, (match, iconUrl, linkUrl, offset) => {
+        parts.push(
+          <a key={offset} href={linkUrl} target="_blank" rel="noopener noreferrer">
+            <img src={iconUrl} alt="Icon" className="w-6 h-6 inline mx-1" />
+          </a>
+        );
+        lastIndex = offset + match.length;
+      });
+  
+      return parts;
+    };
+  
+    const renderedIcons = renderIcons(bio);
   
     return (
-      <div className="text-center">
-                          <p>{filteredBio}</p>
-
+      <div className="text-center w-1/2 mx-auto">
+        <p className="flex justify-center space-x-4 mb-2">{filteredBio}</p>
         <div className="flex justify-center space-x-4 mb-4">
           {twitterLink && (
             <a href={twitterLink} target="_blank" rel="noopener noreferrer">
@@ -592,6 +609,7 @@ console.log('Formatted Posts:', formattedPosts);
               <img src="https://simpleicons.org/icons/github.svg" alt="GitHub" className="w-6 h-6" />
             </a>
           )}
+          {renderedIcons}
         </div>
       </div>
     );
