@@ -82,7 +82,7 @@ console.log('Capabilities:', capabilities);
 
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n').trim(),
+        content: post.content.split('\n').slice(1).join('\n').trim().substring(0, 2000) + (post.content.length > 1000 ? '... View more on '+post.blog+'s blog': ''),
         author: post.author,
         timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
         blog: post.blog,
