@@ -1063,6 +1063,13 @@ console.log('Comment Counts:', commentCounts,postIds);
                       <div className="flex justify-between items-center mt-4">
                         <p className="text-gray-500 text-sm">{post.timestamp}</p>
                         <div className="flex space-x-4">
+                          {useAddress === post.blogAddress && (
+                            <button
+                              className="text-sm text-white rounded-full bg-red-300 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
+                              onClick={() => {let tx = contract.connect(ethersSigner).deletePost(post.id);}}
+                            >
+                              Delete
+                            </button>)}
                           {post.liked ? (
                             <button
                               className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
