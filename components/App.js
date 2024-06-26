@@ -915,23 +915,25 @@ console.log('Comment Counts:', commentCounts,postIds);
     const postComments = comments[postId] || [];
     return (
       <div className="mt-4">
-          <div>
-            <textarea
-              type="text"
-              id='commentInput'
-              placeholder="Add a comment..."
-              className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out"
-            />
-          </div>
-          <div>
-            <button
-              className="text-center py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto"
-              onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}
-            >
-              Create Comment
-            </button>
-          </div>
-        </div>
+                        <div>
+
+      <div>
+        <textarea
+          type="text"
+          id='commentInput'
+          placeholder="Add a comment..."
+          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out"
+        />
+      </div>
+      <div>
+        <button
+          className="text-center py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto"
+          onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}
+        >
+          Create Comment
+        </button>
+      </div>
+    </div>
         {postComments.map((comment, index) => (
           <div key={index} className="bg-gray-100 p-4 rounded-3xl mb-4">
             <p className="text-gray-800">{renderContentWithImages(comment.content)}</p>
@@ -965,7 +967,6 @@ console.log('Comment Counts:', commentCounts,postIds);
             </div>
           </div>
         ))}
-        <div className="mt-4 items-center">
       </div>
     );
   };
