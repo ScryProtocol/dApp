@@ -361,7 +361,7 @@ const App = () => {
             className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out"
           /></div>
           <div>
-          <button className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto" onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}>Create Comment</button>
+          <button className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-500 transition duration-300 ease-in-out w-full mx-auto" onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}>Create Comment</button>
           </div>
         {postComments.map((comment, index) => (
           <div key={index} className="bg-gray-100 p-4 rounded-3xl mb-4">
@@ -927,7 +927,7 @@ console.log('Comment Counts:', commentCounts,postIds);
       </div>
       <div>
         <button
-          className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto"
+          className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-500 transition duration-300 ease-in-out w-full mx-auto"
           onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}
         >
           Create Comment
