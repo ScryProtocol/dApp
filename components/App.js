@@ -683,6 +683,11 @@ const BlogView = ({ likePost, tipPost, setTipping }) => {
   const contract = new ethers.Contract(chain === 17000 ? ContractAddress : '0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
   const commentsContract = new ethers.Contract(CommentsContractAddress, CommentsContractABI, ethersProvider);
   let useAddress = useAccount().address
+  const { data: capabilities } = useCapabilities();
+
+    const { writeContracts } = useWriteContracts({
+    mutation: { onSuccess: () => fetchPosts() },
+  });
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const extractedBlogName = queryParams.get('blog') ? queryParams.get('blog').toLowerCase() : null;
@@ -801,12 +806,9 @@ console.log('Comment Counts:', commentCounts,postIds);
   };
 
   const handleCreateComment = async (postId, commentContent) => {
-    try {        const { data: capabilities } = useCapabilities();
+    try {       
 
       if (capabilities) {
-        const { writeContracts } = useWriteContracts({
-          mutation: { onSuccess: () => fetchPosts() },
-        });
         writeContracts({
           contracts: [{
             address: CommentsContractAddress,
