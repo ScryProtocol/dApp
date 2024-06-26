@@ -784,7 +784,7 @@ console.log('Comment Counts:', commentCounts,postIds);
       if (capabilities) {
         writeContracts({
           contracts: [{
-            address: commentsContractAddress,
+            address: CommentsContractAddress,
             abi: CommentsContractABI,
             functionName: 'createComment',
             args: [postId,content],
