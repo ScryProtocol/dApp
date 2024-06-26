@@ -385,7 +385,13 @@ if (capabilities) {
                 </button>
                 <ConnectButton className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300 ease-in-out" />
               </div>
-            </section>
+            </section>     {content && (
+                           <>   <h3 className="text-xl font-bold text-pink-600 ">Post Preview</h3>
+
+              <div className="mt-8 p-6 bg-white rounded-3xl shadow-2xl w-full border-l-8 border-blue-500">
+                <h3 className="text-xl font-bold text-gray-800">{renderContentWithImages(content.split('\n')[0])}</h3>
+                <div className="text-gray-600 mt-2">{renderContentWithImages(content.split('\n').slice(1).join('\n').trim())}</div>              </div>
+                </> )}
           </div>
           <section className="w-full">
             <div>
