@@ -780,8 +780,12 @@ console.log('Comment Counts:', commentCounts,postIds);
   };
 
   const handleCreateComment = async (postId, commentContent) => {
-    try {
+    try {        const { data: capabilities } = useCapabilities();
+
       if (capabilities) {
+        const { writeContracts } = useWriteContracts({
+          mutation: { onSuccess: () => fetchPosts() },
+        });
         writeContracts({
           contracts: [{
             address: CommentsContractAddress,
