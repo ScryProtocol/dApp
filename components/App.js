@@ -927,7 +927,7 @@ console.log('Comment Counts:', commentCounts,postIds);
       </div>
       <div>
         <button
-          className="text-center py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto"
+          className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300 ease-in-out w-full mx-auto"
           onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}
         >
           Create Comment
