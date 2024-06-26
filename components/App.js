@@ -126,11 +126,32 @@ const App = () => {
 
   const handleCreateComment = async (postId, commentContent) => {
     try {
+              const { data: capabilities } = useCapabilities();
+  
+        if (capabilities) {
+          const { writeContracts } = useWriteContracts({
+            mutation: { onSuccess: () => fetchPosts() },
+          });
+          writeContracts({
+            contracts: [{
+              address: CommentsContractAddress,
+              abi: CommentsContractABI,
+              functionName: 'createComment',
+              args: [postId,content],
+            }],
+            capabilities: {
+              paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+            },
+          });
+        toast.success('Comment created successfully');
+        fetchComments(postId);
+  
+        } else {
       const tx = await commentsContract.connect(ethersSigner).createComment(postId, commentContent);
       await tx.wait();
       toast.success('Comment created successfully');
       fetchComments(postId);
-    } catch (error) {
+    }} catch (error) {
       console.error('Error creating comment:', error);
       toast.error('Error creating comment');
     }
