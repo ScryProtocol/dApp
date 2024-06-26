@@ -101,7 +101,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
         commentCount: Number(commentCounts[index]),
       }));
 
-      setPosts(formattedPosts);
+      setPosts(formattedPosts.filter(post => post.content));
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
