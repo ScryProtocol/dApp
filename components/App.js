@@ -82,7 +82,7 @@ console.log('Capabilities:', capabilities);
 
       const formattedPosts = postsFromContract.map((post, index) => ({
         title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n').trim().substring(0, 2000) + (post.content.length > 1000 ? '... View more on '+post.blog+'s blog': ''),
+        content: post.content.split('\n').slice(1).join('\n').trim().substring(0, 2000) + (post.content.length > 2000 ? '... View more on '+post.blog+'s blog': ''),
         author: post.author,
         timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
         blog: post.blog,
@@ -258,6 +258,7 @@ if (capabilities) {
     });
 //    const md = new Remarkable();
     const html = md.render(markdown);
+    console.log ('HTML:', html);
     return { __html: DOMPurify.sanitize(html) };
   };
   const borderColors = ['blue', 'green', 'red', '#f0f', 'orange'];
