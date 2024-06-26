@@ -383,9 +383,9 @@ const App = () => {
         {postComments.map((comment, index) => (
           <div key={index} className="bg-gray-100 p-4 rounded-3xl mb-4">
             <p className="text-gray-800">{renderContentWithImages(comment.content)}</p>
-            <div className="flex justify-between items-center mt-2">
-            <div className="text-gray-500 text-sm flex justify-between mt-2">
-              <span>- {comment.author} @ {comment.timestamp}</span></div>
+            <div className="mt-2">
+            <div className="text-gray-500 text-sm flex flex-col sm:flex-row sm:justify-between mt-2">
+              <span>- {comment.author} @ {comment.timestamp}</span>
               <div className="flex space-x-4">
                 {comment.liked ? (
                   <button
@@ -408,7 +408,7 @@ const App = () => {
                 >
                   $ {comment.tips} tips
                 </button>
-              </div>
+              </div></div>
             </div>
           </div>
         ))}</div>
