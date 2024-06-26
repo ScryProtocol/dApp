@@ -126,12 +126,8 @@ const App = () => {
 
   const handleCreateComment = async (postId, commentContent) => {
     try {
-              const { data: capabilities } = useCapabilities();
   
         if (capabilities) {
-          const { writeContracts } = useWriteContracts({
-            mutation: { onSuccess: () => fetchPosts() },
-          });
           writeContracts({
             contracts: [{
               address: CommentsContractAddress,
