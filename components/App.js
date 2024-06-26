@@ -417,7 +417,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800 overflow-hidden ">
       <main className="container mx-auto py-8">
         <h1 className="text-center text-4xl mb-8 text-white font-extrabold">feed</h1>
         <Toaster />
