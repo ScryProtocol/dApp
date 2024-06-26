@@ -45,11 +45,14 @@ const App = () => {
   const [blogAmount, setBlogAmount] = useState('0');
   const [tipping, setTipping] = useState(false);
   const [comments, setComments] = useState({});
+  const [hasBlog, sethasBlog] = useState(false);
+
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const account = useAccount();
   const userAddress = account.address;
   let chain = useChainId();
+  
   const { writeContracts } = useWriteContracts({
     mutation: { onSuccess: () => fetchPosts() },
   });
@@ -72,7 +75,8 @@ const App = () => {
     try {
       const postCount = await contract.postCount();
       const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-
+let has = await contract.blogs(userAddress);
+sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
       const [postsFromContract, likedStatuses] = await readContract(config, {
         address: ContractAddress,
         abi: ContractABI,
@@ -228,6 +232,44 @@ const App = () => {
   };
 
   const handleCreateBlog = async () => {
+    if(hasBlog){
+      let blogName = await contract.blogs(userAddress);
+      blogName=blogName.name;
+      console.log(blogName)
+    if (!blogBio || !blogAmount) {
+      toast.error('All fields are required');
+      return;
+    }
+    try {
+      const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
+      const blogAddress = await contract.blogNameToAddress(blogName);
+      if (blogAddress !== '0x0000000000000000000000000000000000000000'&&blogAddress!=userAddress) {
+        toast.error('Blog name already taken');
+        return;
+      }
+
+      if (capabilities) {
+        writeContracts({
+          contracts: [{
+            address: ContractAddress,
+            abi: ContractABI,
+            functionName: 'updateBlog',
+            args: [blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+      } else {
+        const tx = await contract.connect(ethersSigner).updateBlog(blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals()));
+        toast('Updating blog');
+        await tx.wait();
+      }
+      toast.success('Blog updated successfully');
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      toast.error('Error creating blog');
+    }}else{
     if (!blogName || !blogBio || !blogAmount) {
       toast.error('All fields are required');
       return;
@@ -261,6 +303,7 @@ const App = () => {
     } catch (error) {
       console.error('Error creating blog:', error);
       toast.error('Error creating blog');
+    }
     }
   };
 
@@ -426,7 +469,7 @@ const App = () => {
         <div className="flex flex-wrap -mx-2 mb-8">
           <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/5 mx-2">
             <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-600 font-bold">Create a new blog</h2>
+              <h2 className="text-2xl text-pink-600 font-bold">                {hasBlog?'Update':  'Create a new'} blog</h2>
             </div>
             <div className="space-y-6">
               <div>
@@ -488,7 +531,7 @@ const App = () => {
                 onClick={handleCreateBlog}
                 className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
               >
-                Create Blog
+                {hasBlog?'Update Blog':'Create Blog'}
               </button>
               {!userAddress &&
                 <BlueCreateWalletButton />}
