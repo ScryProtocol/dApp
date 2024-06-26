@@ -592,7 +592,7 @@ const TipModal = ({ isOpen, onClose, onTip, tipping }) => {
   const [amount, setAmount] = useState('');
   const [symbol, setSymbol] = useState('');
   const ethersProvider = useEthersProvider();
-
+let chain = useChainId();
   useEffect(() => {
     getSymbol();
   }, []);
