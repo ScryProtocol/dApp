@@ -268,8 +268,8 @@ const App = () => {
         });
         setShowSubscribeForm(true);
         console.log('no subscription found');
-        const resolvedLender = await resolveENS(subscribe);
-        const resolvedFriend = await resolveENS(userAddress);
+        const resolvedLender = await resolveENS(userAddress)//subscribe);
+        const resolvedFriend = await resolveENS(subscribe)//userAddress);
         const resolvedToken = await resolveENS(token, 1);
         console.log('2', resolvedLender, resolvedFriend, resolvedToken);
 
