@@ -10,8 +10,6 @@ import { useEthersSigner } from './tl';
 import { useAccount, useConnect, useEnsName, useChainId } from 'wagmi';
 
 import 'tailwindcss/tailwind.css';
-import { Remarkable } from 'remarkable';
-import DOMPurify from 'dompurify';
 import { http, createConfig } from '@wagmi/core';
 import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
