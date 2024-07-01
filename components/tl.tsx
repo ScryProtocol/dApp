@@ -4,13 +4,25 @@ import { FallbackProvider, JsonRpcProvider } from 'ethers'
 import { type HttpTransport } from 'viem'
 import { type WalletClient, useWalletClient } from 'wagmi'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
+import { json } from 'react-router-dom'
 
 export function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient
+  console.log('walletClient', walletClient)
+  let chainId
+  let chainName
+  if (chain) {
+    chainId = chain.id
+    chainName = chain.name
+  }
+  else {
+    chainId = 8453
+    chainName = 'base'
+  }
   const network = {
-    chainId: chain.id,
-    name: chain.name,
-    ensAddress: chain.contracts?.ensRegistry?.address,
+    chainId: chainId,//chain.id,
+    name: chainName,//chain.name:'base',
+    ensAddress: chain?chain.contracts?.ensRegistry?.address:'',
   }
   const provider = new BrowserProvider(transport, network)
   const signer = new JsonRpcSigner(provider, account.address)
@@ -27,6 +39,9 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
 }
 
 export function publicClientToProvider(publicClient: PublicClient) {
+    if (!publicClient) {
+    return new JsonRpcProvider('https://1rpc.io/base')
+  }
   const { chain, transport } = publicClient
   const network = {
     chainId: chain.id,
