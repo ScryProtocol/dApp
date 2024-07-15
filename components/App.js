@@ -3,7 +3,7 @@ const { useState, useEffect, useCallback } = require('react');
 const ethers = require('ethers');
 
 import { Toaster, toast } from 'react-hot-toast';
-import { chainId } from 'wagmi'; 
+import { chainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider } from './tl';
 import { useEthersSigner } from './tl';
@@ -104,7 +104,7 @@ const streamContractABI = [{ "inputs": [{ "internalType": "address payable", "na
       "stateMutability": "view",
       "type": "function"
     }]
-  
+
 
 const App = () => {
   const [streamContract, setStreamContract] = useState(null);
@@ -294,13 +294,45 @@ const App = () => {
     console.log(tokenContract.allowance(userAddress, streamContractAddress));
     if (await tokenContract.allowance(userAddress, streamContractAddress) < (amount * 10 ** Number(dec))) {
       toast('Approving token for subscription');
-      const tx = await tokenContract.approve(streamContractAddress, ethers.MaxUint256);
-      await tx.wait();
+
+      if (capabilities) {
+        console.log('Paymaster:', capabilities.paymasterService);
+        writeContracts({
+          contracts: [{
+            address: token,
+            abi: tokenABI,
+            functionName: 'approve',
+            args: [streamContractAddress, ethers.MaxUint256],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+      }else {
+        const tx = await tokenContract.approve(streamContractAddress, ethers.MaxUint256);
+        await tx.wait();
+      }
     }
     toast('Subscribing');
 
-    const tx = await streamContract.allowStream(token, subscribe, (amount * 10 ** Number(dec)).toString(), window, once);
-    await tx.wait();
+    if (capabilities) {
+      console.log('Paymaster:', capabilities.paymasterService);
+      writeContracts({
+        contracts: [{
+          address: streamContractAddress,
+          abi: streamContractABI,
+          functionName: 'allowStream',
+          args: [token, subscribe, (amount * 10 ** Number(dec)).toString(), window, once],
+        }],
+        capabilities: {
+          paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+        },
+      });
+    }else {
+
+      const tx = await streamContract.allowStream(token, subscribe, (amount * 10 ** Number(dec)).toString(), window, once);
+      await tx.wait();
+    }
 
     await checkSubscription();
     setShowSubscribedMessage(true);
@@ -418,9 +450,26 @@ const App = () => {
 
   const handleCancelSubscription = async (token, friend) => {
     try {
-      let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
-      const tx = await streamContract.allowStream(token, friend, 0, 0, false);
-      await tx.wait();
+
+      if (capabilities) {
+        console.log('Paymaster:', capabilities.paymasterService);
+        writeContracts({
+          contracts: [{
+            address: streamContractAddress,
+            abi: streamContractABI,
+            functionName: 'allowStream',
+            args: [token, friend, 0, 0, false],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+      }else {
+        let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+        const tx = await streamContract.allowStream(token, friend, 0, 0, false);
+        await tx.wait();
+      }
+
       fetchSubscriptions();
       toast.success('Subscription canceled successfully');
     } catch (error) {
@@ -430,9 +479,27 @@ const App = () => {
 
   const handleClaimSubscription = async (token, friend) => {
     try {
-      let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
-      const tx = await streamContract.stream(token, friend, userAddress);
-      await tx.wait();
+
+      if (capabilities) {
+        console.log('Paymaster:', capabilities.paymasterService);
+        writeContracts({
+          contracts: [{
+            address: streamContractAddress,
+            abi: streamContractABI,
+            functionName: 'stream',
+            args: [token, friend, userAddress],
+          }],
+          capabilities: {
+            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
+          },
+        });
+      }else {
+
+        let streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+        const tx = await streamContract.stream(token, friend, userAddress);
+        await tx.wait();
+      }
+
       fetchSubscriptions();
       toast.success('Subscription claim successful');
     } catch (error) {
@@ -462,6 +529,22 @@ const App = () => {
       { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
     ],
   };
+
+  function BlueCreateWalletButton() {
+    const { connectors, connect, data } = useConnect();
+
+    const createWallet = useCallback(() => {
+      const coinbaseWalletConnector = connectors.find(
+          (connector) => connector.id === 'coinbaseWalletSDK'
+      );
+      if (coinbaseWalletConnector) {
+        connect({ connector: coinbaseWalletConnector });
+      }
+    }, [connectors, connect]);
+    return (
+        <button className="py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
+          Create Wallet
+        </button>)}
 
   return (
     <body>
@@ -618,6 +701,8 @@ const App = () => {
           </div>
         )}
         <ConnectButton />
+        {!userAddress &&
+            <BlueCreateWalletButton/>}
       </div>
       <br />
       <div className="container" id="subscriptionsContainer" style={{ marginTop: '0px' }}>
