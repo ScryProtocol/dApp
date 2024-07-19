@@ -84,6 +84,7 @@ const App = () => {
   const [vaultSettings, setVaultSettings] = useState({});
   const [vaults, setVaults] = useState([]);
   const [selectedVault, setSelectedVault] = useState('');
+const [limitSection, setLimitSection] = useState(false);
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider = useEthersProvider();
@@ -133,7 +134,7 @@ const App = () => {
       const dailyLimit = Number(await contract.dailyLimit());
       const threshold = Number(await contract.threshold());
       const delay = Number(await contract.delay());
-      let whitelistedAddresses = ['lol']
+      let whitelistedAddresses = []
       let i = 0;
       while (true) {
         try {
@@ -309,7 +310,7 @@ const handleSearch = async (vaultName) => {
       <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
         <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
         <div className="flex items-center mb-2">
-          <img src={asset.logo || 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+          <img src={asset.logo ||tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
           <div className="text-2xl font-bold">{asset.symbol}</div>
         </div>
         <div className="text-lg mb-2">Balance: {asset.balance}</div>
@@ -552,14 +553,15 @@ const handleSearch = async (vaultName) => {
             <div className="space-y-6">
               <div>
                 <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
-                <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleTokenChange}>
+                <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)}>
                   <option value="">Select a token</option>
-                  <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                  <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                  <option value="0x0987654321098765432109876543210987654321">USDC</option>
+                {1==2 &&  <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>}
+                  <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
                   <option value="custom">Custom</option>
                 </select>
-                <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out hidden" placeholder="Enter custom token address" />
+                {selectedToken === 'custom'&&
+                <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => {setSelectedToken(e.target.value);toast.success('Token set')}}/>}
               </div>
               <div className="flex space-x-4">
                 <div className="flex-1">
@@ -585,9 +587,9 @@ const handleSearch = async (vaultName) => {
               <h2 className="text-2xl text-pink-500 font-bold">Set Token Limits</h2>
             </div>
             <div className="tab-switcher mb-4">
-              <div className="tab tab-active" id="fixed-tab" onClick={() => showLimitSection('fixed')}>Fixed Limit</div>
-              <div className="tab" id="percentage-tab" onClick={() => showLimitSection('percentage')}>Percentage Limit (%)</div>
-              <div className="tab" id="no-limit-tab" onClick={() => showLimitSection('no-limit')}>No Specific Limit</div>
+              <div className="tab tab-active" id="fixed-tab" onClick={() => setLimitSection('fixed')}>Fixed Limit</div>
+              <div className="tab" id="percentage-tab" onClick={() => setLimitSection('percentage')}>Percentage Limit (%)</div>
+              <div className="tab" id="no-limit-tab" onClick={() => setLimitSection('no-limit')}>No Specific Limit</div>
             </div>
             <div id="fixed-limit-section" className="space-y-6">
               <div>
@@ -611,14 +613,6 @@ const handleSearch = async (vaultName) => {
     );
   }
 
-  function handleTokenChange(value) {
-    const customTokenInput = document.getElementById('customToken');
-    if (value === 'custom') {
-      customTokenInput.classList.remove('hidden');
-    } else {
-      customTokenInput.classList.add('hidden');
-    }
-  }
 };
 
 export default App;
