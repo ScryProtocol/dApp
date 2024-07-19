@@ -350,8 +350,8 @@ try {
           <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
-          <input id={`amount-${asset.symbol}`} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
-          <button className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
+          <input id={`amount-${asset.symbol}`} style={{position:'relative',right:window.innerWidth<1500&&window.innerWidth>800?'10px':''}}className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
+          <button style={{position:'relative',right:window.innerWidth<1500&&window.innerWidth>800?'20px':''}}className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
           <button className="sm:w-28 sm:left-8 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
         </div>
       </div>
