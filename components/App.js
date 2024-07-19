@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ethers, N } from 'ethers';
+import { ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId } from 'wagmi';
@@ -84,7 +84,7 @@ const App = () => {
   const [vaultSettings, setVaultSettings] = useState({});
   const [vaults, setVaults] = useState([]);
   const [selectedVault, setSelectedVault] = useState('');
-const [limitSection, setLimitSection] = useState(false);
+  const [limitSection, setLimitSection] = useState('fixed');
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider = useEthersProvider();
@@ -150,7 +150,7 @@ const [limitSection, setLimitSection] = useState(false);
           break;
         }
       }
-    console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses)
+      console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses)
       setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses });
     } catch (error) {
       console.error(error);
@@ -244,10 +244,11 @@ const [limitSection, setLimitSection] = useState(false);
       toast.error('Failed to deposit token.');
     }
   };
-const handleSearch = async (vaultName) => {
-  console.log(vaultName)
+
+  const handleSearch = async (vaultName) => {
+    console.log(vaultName)
     try {
-      const factory = new ethers.Contract(factoryAddress,factoryAbi, provider);
+      const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
       const vaultAddress = await factory.vaultNames(vaultName);
       if (vaultAddress === ethers.AddressZero) {
         toast.error('Vault not found.');
@@ -262,6 +263,7 @@ const handleSearch = async (vaultName) => {
       toast.error('Failed to search for vault.');
     }
   };
+
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
     try {
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
@@ -274,23 +276,26 @@ const handleSearch = async (vaultName) => {
       toast.error('Failed to create vault.');
     }
   };
-const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
-  try {console.log(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits)
-    const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-    !whitelistedAddresses? whitelistedAddresses=[]:whitelistedAddresses;
-    !tokens? tokens=[]:tokens;
-    !fixedLimits? fixedLimits=[]:fixedLimits;
-    !percentageLimits? percentageLimits=[]:percentageLimits;
-    !useBaseLimits? useBaseLimits=[]:useBaseLimits;
-    const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
-    await tx.wait();
-    toast.success('Settings updated successfully!');
-    fetchTokenBalances(selectedVault);
-  } catch (error) {
-    console.error(error);
-    toast.error('Failed to update settings.');
-  }
-};
+
+  const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
+    try {
+      console.log(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits)
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      !whitelistedAddresses ? whitelistedAddresses = [] : whitelistedAddresses;
+      !tokens ? tokens = [] : tokens;
+      !fixedLimits ? fixedLimits = [] : fixedLimits;
+      !percentageLimits ? percentageLimits = [] : percentageLimits;
+      !useBaseLimits ? useBaseLimits = [] : useBaseLimits;
+      const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
+      await tx.wait();
+      toast.success('Settings updated successfully!');
+      fetchTokenBalances(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update settings.');
+    }
+  };
+
   const handleWithdrawToken = async (tokenAddress, amount) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
@@ -326,7 +331,7 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
       <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
         <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
         <div className="flex items-center mb-2">
-          <img src={asset.logo ||tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+          <img src={asset.logo || tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
           <div className="text-2xl font-bold">{asset.symbol}</div>
         </div>
         <div className="text-lg mb-2">Balance: {asset.balance}</div>
@@ -334,55 +339,58 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
         <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
           <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
         </div>
-        <div className="flex space-x-4 mt-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
           <input id={`amount-${asset.symbol}`} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
-          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
-          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
+          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
+          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
         </div>
       </div>
     ));
   };
-
   const displayTransactions = () => {
     return queuedTransactions.map((transaction) => (
-      <div key={transaction.id} className="grid grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
-        <div className="flex items-center justify-left space-x-4">
+      <div key={transaction.id} style={{borderRadius:screen.availHeight<1000?'20px':''}} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
+        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20">
           <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2`}>
             {transaction.to !== selectedVault ?
               <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
               : '⚙️'}
           </div>
-          <div className="text-gray-700 font-semibold relative left-16">{transaction.id}</div>
+          <div className="text-gray-700 font-semibold">{transaction.id}</div>
         </div>
-        <div className="text-pink-500 font-semibold text-left relative right-20">{transaction.to}</div>
-        <div className="text-gray-600 font-semibold">{transaction.amount}</div>
-        <div className="text-gray-600">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
-        <div className="flex flex-col items-center">
-          <div className={`${transaction.executed ? 'text-green-600' : 'text-yellow-600'} font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'}</div>
-          {!transaction.executed && (
+        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2">{screen.availWidth<1000?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div>
+        <div className="text-gray-600 font-semibold relative lg:top-2">{transaction.amount}</div>
+        <div className="text-gray-600 relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
+        <div className="flex flex-col items-center relative lg:top-2">
+          <div className={`${transaction.executed ? 'text-green-600' : 'text-yellow-600'} font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'} {!transaction.executed && (
             <button className="bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
           )}
+</div>
+          
         </div>
       </div>
     ));
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
       <Toaster />
-      <main className="container mx-auto py-8">
+      <main className="container mx-auto py-8 px-4 sm:px-8">
         <Header />
-        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/2 mx-auto">
+        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 lg:w-1/2 mx-auto">
           <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
-          {currentTab === 'open' && <><OpenVaultSection />
-          <div className="mt-2">
-          <label htmlFor="vault-select" className="block mb-2 font-semibold text-gray-600">My Vaults:</label>
-          <select id="vault-select" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleVaultChange} value={selectedVault}>
-            {vaults.map(vault => (
-              <option key={vault} value={vault}>{vault}</option>
-            ))}
-          </select>
-        </div></>}
+          {currentTab === 'open' && <>
+            <OpenVaultSection />
+            <div className="mt-2">
+              <label htmlFor="vault-select" className="block mb-2 font-semibold text-gray-600">My Vaults:</label>
+              <select id="vault-select" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleVaultChange} value={selectedVault}>
+                {vaults.map(vault => (
+                  <option key={vault} value={vault}>{vault}</option>
+                ))}
+              </select>
+            </div>
+          </>}
           {currentTab === 'create' && <CreateVaultSection />}
           {currentTab === 'settings' && <SettingsSection />}
         </section>
@@ -425,7 +433,7 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
 
   function TabSwitcher({ activeTab, onTabChange }) {
     return (
-      <div className="tab-switcher mb-4">
+      <div className="tab-switcher mb-4 flex justify-center space-x-4">
         <div className={`tab ${activeTab === 'open' ? 'tab-active' : ''}`} onClick={() => onTabChange('open')}>Open</div>
         <div className={`tab ${activeTab === 'create' ? 'tab-active' : ''}`} onClick={() => onTabChange('create')}>Create</div>
         <div className={`tab ${activeTab === 'settings' ? 'tab-active' : ''}`} onClick={() => onTabChange('settings')}>Settings</div>
@@ -470,7 +478,7 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
         </div>
         <div>
           <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder='Signers needed to confirm txs'/>
+          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder='Signers needed to confirm txs' />
         </div>
         <div>
           <label htmlFor="custom-limits" className="block mb-2 font-semibold text-gray-600">Limit per day of an asset (%):</label>
@@ -484,49 +492,49 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
   function SettingsSection() {
     return (
       <div className="space-y-6">
-            <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
+        <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
 
         <div>
           <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
-          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center ">{vaultSettings.recoveryAddress}</p>
-        </div>                
+          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.recoveryAddress}</p>
+        </div>
         <div className="space-x-6 col-3 flex items-center justify-center ">
 
-        <div>
-          <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">Daily Limit:</label>
-          <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">{vaultSettings.dailyLimit}%</p>
-        </div>
-        <div>
-          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-          <p className="text-gray-600  text-center bg-pink-100 rounded-3xl">{vaultSettings.threshold}</p>
-        </div>
-        <div>
-          <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
-          <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">D:{(vaultSettings.delay/84000).toFixed(0)} H:{(vaultSettings.delay%84000/3600).toFixed(0)} M:{(vaultSettings.delay%3600/60).toFixed(0)} S:{(vaultSettings.delay%60).toFixed(0)}</p>
-        </div>          </div>
+          <div>
+            <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">Daily Limit:</label>
+            <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">{vaultSettings.dailyLimit}%</p>
+          </div>
+          <div>
+            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
+            <p className="text-gray-600  text-center bg-pink-100 rounded-3xl">{vaultSettings.threshold}</p>
+          </div>
+          <div>
+            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
+            <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">D:{(vaultSettings.delay / 84000).toFixed(0)} H:{(vaultSettings.delay % 84000 / 3600).toFixed(0)} M:{(vaultSettings.delay % 3600 / 60).toFixed(0)} S:{(vaultSettings.delay % 60).toFixed(0)}</p>
+          </div>          </div>
         <div>
           <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
         </div>    {vaultSettings.whitelistedAddresses && vaultSettings.whitelistedAddresses.length > 0 ? (
-      vaultSettings.whitelistedAddresses.map((address, index) => (
-        <p key={index} className="text-gray-600 text-center bg-pink-100 rounded-3xl m-0">{address}</p>
-      ))
-    ) : (
-      <p className="text-gray-600">No whitelisted addresses found.</p>
-    )}
-    <h1 className='text-pink-600 text-center text-lg m-2 font-semibold'>Update</h1>
-    <div className='flex items-center justify-center col-3 space-x-4'>
-    <div>
-          <label htmlFor="withdraw-limit" className="block mb-2 font-semibold text-gray-600">Limit Per Day of An Asset (%):</label>
-          <input type="number" id="withdraw-limit" name="withdraw-limit" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
-          <input type="number" id="delay" name="delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
+          vaultSettings.whitelistedAddresses.map((address, index) => (
+            <p key={index} className="text-gray-600 text-center bg-pink-100 rounded-3xl m-0 overflow-hidden">{address}</p>
+          ))
+        ) : (
+          <p className="text-gray-600">No whitelisted addresses found.</p>
+        )}
+        <h1 className='text-pink-600 text-center text-lg m-2 font-semibold'>Update</h1>
+        <div className='flex items-center justify-center col-3 space-x-4'>
+          <div>
+            <label htmlFor="withdraw-limit" className="block mb-2 font-semibold text-gray-600">Limit Per Day of An Asset (%):</label>
+            <input type="number" id="withdraw-limit" name="withdraw-limit" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+          </div>
+          <div>
+            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
+            <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+          </div>
+          <div>
+            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
+            <input type="number" id="delay" name="delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+          </div>
         </div>
         <div>
           <label htmlFor="recovery-addresses" className="block mb-2 font-semibold text-gray-600">Recovery Addresses:</label>
@@ -571,13 +579,13 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
                 <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
                 <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)}>
                   <option value="">Select a token</option>
-                {1==2 &&  <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>}
+                  {1 == 2 && <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>}
                   <option value="0x4200000000000000000000000000000000000006">wETH</option>
                   <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
                   <option value="custom">Custom</option>
                 </select>
-                {selectedToken === 'custom'&&
-                <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => {setSelectedToken(e.target.value);toast.success('Token set')}}/>}
+                {selectedToken === 'custom' &&
+                  <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => { setSelectedToken(e.target.value); toast.success('Token set') }} />}
               </div>
               <div className="flex space-x-4">
                 <div className="flex-1">
@@ -602,27 +610,33 @@ const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit,
             <div className="text-center mb-8">
               <h2 className="text-2xl text-pink-500 font-bold">Set Token Limits</h2>
             </div>
-            <div className="tab-switcher mb-4">
-              <div className="tab tab-active" id="fixed-tab" onClick={() => setLimitSection('fixed')}>Fixed Limit</div>
-              <div className="tab" id="percentage-tab" onClick={() => setLimitSection('percentage')}>Percentage Limit (%)</div>
-              <div className="tab" id="no-limit-tab" onClick={() => setLimitSection('no-limit')}>No Specific Limit</div>
+            <div className="tab-switcher mb-4 flex justify-center space-x-4">
+              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'fixed' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('fixed')}>Fixed Limit</div>
+              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'percentage' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('percentage')}>Percentage Limit (%)</div>
+              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'no-limit' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('no-limit')}>No Specific Limit</div>
             </div>
-            <div id="fixed-limit-section" className="space-y-6">
-              <div>
-                <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
-                <input type="number" id="fixed-limit" name="fixed-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+            {limitSection === 'fixed' && (
+              <div id="fixed-limit-section" className="space-y-6">
+                <div>
+                  <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
+                  <input type="number" id="fixed-limit" name="fixed-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+                </div>
               </div>
-            </div>
-            <div id="percentage-limit-section" className="space-y-6 hidden">
-              <div>
-                <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
-                <input type="number" id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+            )}
+            {limitSection === 'percentage' && (
+              <div id="percentage-limit-section" className="space-y-6">
+                <div>
+                  <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
+                  <input type="number" id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+                </div>
               </div>
-            </div>
-            <div id="no-limit-section" className="space-y-6 hidden">
-              <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
-            </div>
-            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => alert('Token limits set successfully!')}>Set Limits</button>
+            )}
+            {limitSection === 'no-limit' && (
+              <div id="no-limit-section" className="space-y-6">
+                <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
+              </div>
+            )}
+            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => alert('Token limits set successfully!')}>Set Limits</button>
           </section>
         </div>
       </div>
