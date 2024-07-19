@@ -361,7 +361,7 @@ try {
     return queuedTransactions.map((transaction) => (
       <div key={transaction.id} style={{borderRadius:screen.availWidth<1000?'20px':''}} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
         <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20"style={{right:window.innerWidth<1500?'40px':''}}>
-          <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2`}>
+          <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2 relative sm:right-4`}>
             {transaction.to !== selectedVault ?
               <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
               : '⚙️'}
