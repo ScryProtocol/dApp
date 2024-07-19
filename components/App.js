@@ -393,6 +393,9 @@ const App = () => {
           </>}
           {currentTab === 'create' && <CreateVaultSection />}
           {currentTab === 'settings' && <SettingsSection />}
+          <div className="relative top-4">
+      <ConnectButton/>
+      </div>
         </section>
         <h1 className='text-4xl text-center text-white font-bold mb-8'>{vaultSettings.name}</h1>
         <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
