@@ -11,12 +11,12 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Feed connects you to the onchain world.
+      content="A simple, safe place for your assets.
       "
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Feed</title>
+    <title>Vault</title>
   </head>
         <App />
     </>
