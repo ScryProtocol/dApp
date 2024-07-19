@@ -31,6 +31,7 @@ const vaultAbi = [
   "function updateDailyLimit(uint256 newDailyLimit) external",
   "function updateThreshold(uint256 newThreshold) external",
   "function updateDelay(uint256 newDelay) external",
+  "function queueTransaction(address to, bytes memory data, uint256 value) external",
   "function setTokenLimit(address token, uint256 fixedLimit, uint256 percentageLimit, uint256 useBaseLimit) external",
   "function recover(address token, address to, uint256 amount, bytes memory data) external",
   "function updateSettings(address newRecoveryAddress, address[] memory newWhitelistedAddresses, uint256 newDailyLimit, uint256 newThreshold, uint256 newDelay, address[] memory tokens, uint256[] memory fixedLimits, uint256[] memory percentageLimits, uint256[] memory useBaseLimits) external",
@@ -60,7 +61,8 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
 
 const bgColors = [
   'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
-  'bg-gradient-to-r from-green-400 to-blue-500',  'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
+  'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
+  'bg-gradient-to-r from-green-400 to-blue-500',
   'bg-gradient-to-r from-yellow-400 to-orange-500',
   'bg-gradient-to-r from-red-400 to-yellow-500',
   'bg-gradient-to-r from-teal-400 to-blue-500'
@@ -76,6 +78,7 @@ const tokenLogos = {
 const App = () => {
   const [currentTab, setCurrentTab] = useState('open');
   const [tokenBalances, setTokenBalances] = useState([]);
+  const [nftAssets, setNftAssets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
@@ -151,11 +154,28 @@ const App = () => {
       }
       console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses)
       setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses });
+      await fetchNftAssets(vault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to fetch token balances.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchNftAssets = async (vault) => {
+    try {
+      const nftsForOwner = await alchemy.nft.getNftsForOwner(vault);
+      console.log(nftsForOwner)
+
+      const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
+        ...nft,
+        imageUrl: nft.image.cachedUrl || 'https://via.placeholder.com/150'
+      }));
+      setNftAssets(nftDetails);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to fetch NFT assets.');
     }
   };
 
@@ -320,6 +340,24 @@ try {
     }
   };
 
+  const handleWithdrawNft = async (nft) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const abi = new ethers.Interface([
+        "function transferFrom(address from, address to, uint256 tokenId)"
+      ]);
+     console.log(nft)
+      const data = abi.encodeFunctionData("transferFrom", [selectedVault, userAddress, nft.tokenId]);
+      const tx = await contract.queueTransaction(nft.contract.address, data, 0);
+      await tx.wait();
+      toast.success('NFT withdrawal queued successfully!');
+      fetchTokenBalances(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to withdraw NFT.');
+    }
+  };
+
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -337,51 +375,67 @@ try {
   };
 
   const displayAssets = () => {
-    return tokenBalances.map((asset, index) => (
-      <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
-        <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
-        <div className="flex items-center mb-2">
-          <img src={asset.logo || tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
-          <div className="text-2xl font-bold">{asset.symbol}</div>
-        </div>
-        <div className="text-lg mb-2">Balance: {asset.balance}</div>
-        <div className="text-lg mb-2">Limit: {asset.limit}</div>
-        <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
-          <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
-          <input id={`amount-${asset.symbol}`} style={{position:'relative',right:window.innerWidth<1500&&window.innerWidth>800?'10px':''}}className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
-          <button style={{position:'relative',right:window.innerWidth<1500&&window.innerWidth>800?'20px':''}}className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
-          <button className="sm:w-28 sm:left-8 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
-        </div>
-      </div>
-    ));
+    return (
+      <>
+        {tokenBalances.map((asset, index) => (
+          <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
+            <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
+            <div className="flex items-center mb-2">
+              <img src={asset.logo || tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+              <div className="text-2xl font-bold">{asset.symbol}</div>
+            </div>
+            <div className="text-lg mb-2">Balance: {asset.balance}</div>
+            <div className="text-lg mb-2">Limit: {asset.limit}</div>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+              <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
+              <input id={`amount-${asset.symbol}`} style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '10px' : '' }} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
+              <button style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '20px' : '' }} className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
+              <button className="sm:w-28 sm:left-8 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
+            </div>
+          </div>
+        ))}
+        {nftAssets.map((nft, index) => (
+          <div key={nft.tokenId} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`} style={{ backgroundImage: `url(${nft.imageUrl})`, backgroundSize: 'cover',minHeight:'250px' }}>
+            <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
+            <div className="flex items-center mb-2">
+              <img src={nft.imageUrl} alt={`${nft.title} logo`} className="w-8 h-8 mr-2" />
+              <div style={{backgroundColor:'#f9a8d4bf'}}className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
+            </div>  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+
+            <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
+            </div>
+            </div>
+        ))}
+      </>
+    );
   };
+
   const displayTransactions = () => {
     return queuedTransactions.map((transaction) => (
-      <div key={transaction.id} style={{borderRadius:screen.availWidth<1000?'20px':''}} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
-        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20"style={{right:window.innerWidth<1500?'40px':''}}>
+      <div key={transaction.id} style={{ borderRadius: screen.availWidth < 1000 ? '20px' : '' }} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
+        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20" style={{ right: window.innerWidth < 1500 ? '40px' : '' }}>
           <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2 relative sm:right-4`}>
             {transaction.to !== selectedVault ?
               <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
               : '⚙️'}
           </div>
           <div className="text-gray-700 font-semibold">{transaction.id}</div>
-        </div><a href={'https://etherscan.io/address/'+transaction.to}>
-        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{top:window.innerWidth<1000&&window.innerWidth>600?'40px':''}}>{window.innerWidth<1500?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div></a>
+        </div><a href={'https://etherscan.io/address/' + transaction.to}>
+          <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{ top: window.innerWidth < 1000 && window.innerWidth > 600 ? '40px' : '' }}>{window.innerWidth < 1500 ? transaction.to.slice(0, 10) + '...' + transaction.to.slice(30, 40) : transaction.to}</div></a>
         <div className="text-gray-600 font-semibold relative lg:top-2">{transaction.amount}</div>
         <div className="text-gray-600 relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
         <div className="flex flex-col items-center relative lg:top-2">
           <div className={`${transaction.executed ? 'text-green-600' : 'text-yellow-600'} font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'} {!transaction.executed && (
             <button className="bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
           )}
-</div>
-          
+          </div>
         </div>
       </div>
     ));
   };
-  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
@@ -404,8 +458,8 @@ try {
           {currentTab === 'create' && <CreateVaultSection />}
           {currentTab === 'settings' && <SettingsSection />}
           <div className="relative top-4">
-      <ConnectButton/>
-      </div>
+            <ConnectButton />
+          </div>
         </section>
         <h1 className='text-4xl text-center text-white font-bold mb-8'>{vaultSettings.name}</h1>
         <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
