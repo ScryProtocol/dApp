@@ -267,6 +267,8 @@ const App = () => {
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
     try {
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
+      if (!whitelistedAddresses||recoveryAddress===''||dailyLimit===''||threshold===''||delay==='') {
+toast.error('Please fill all fields.');   }
       const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay*84000);
       await tx.wait();
       toast.success('Vault created successfully!');
