@@ -1,1169 +1,624 @@
-import React, { useState, useEffect,useCallback } from 'react';
-import { N, ethers } from 'ethers';
+import React, { useState, useEffect } from 'react';
+import { ethers, N } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useChainId } from 'wagmi';
+import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl';
-import { useAccount, useChainId,useConnect } from 'wagmi';
-import 'tailwindcss/tailwind.css';
-import { Remarkable } from 'remarkable';
-import DOMPurify from 'dompurify';
-import 'tailwindcss/tailwind.css';
-import { readContract } from '@wagmi/core';
+import { Alchemy, Network } from 'alchemy-sdk';
 
-import { http, createConfig } from '@wagmi/core';
-import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { useCapabilities,useWriteContracts } from 'wagmi/experimental'
+const alchemyConfig = {
+  apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
+  network: Network.BASE_MAINNET,
+};
+const alchemy = new Alchemy(alchemyConfig);
 
-const config = getDefaultConfig({
-  chains: [mainnet, sepolia, holesky, base, optimism],
-  projectId: '97d417268e5bd5a42151f0329e544898',
+const defaultVaultAddress = '0xC808010a3f2c5962991F08719EDdf75261AC6aAF'; // Replace with your Vault contract address
 
-  transports: {
-    [mainnet.id]: http(),
-    [holesky.id]: http(),
-    [base.id]: http(),
-    [optimism.id]: http(),
-    [mainnet.id]: http(),
-  },
-});
+// Define the Vault contract ABI
+const vaultAbi = [
+  "event TokenDeposited(address indexed token, uint256 amount, address indexed depositor)",
+  "event TokenWithdrawn(address indexed token, uint256 amount)",
+  "event NftDeposited(address indexed token, uint256 indexed tokenId, address indexed depositor)",
+  "event NftWithdrawn(address indexed token, uint256 indexed tokenId)",
+  "function depositToken(address token, uint256 amount) external payable",
+  "function depositNft(address token, uint256 tokenId) external",
+  "function withdrawToken(address to, address token, uint256 amount) external",
+  "function withdrawNft(address to, address token, uint256 tokenId) external",
+  "function getLimit(address to, address token, uint256 amount) external view returns(uint)",
+  "function updateRecoveryAddress(address newRecoveryAddress) external",
+  "function updateWhitelistAddresses(address[] memory newWhitelistedAddresses) external",
+  "function updateDailyLimit(uint256 newDailyLimit) external",
+  "function updateThreshold(uint256 newThreshold) external",
+  "function updateDelay(uint256 newDelay) external",
+  "function setTokenLimit(address token, uint256 fixedLimit, uint256 percentageLimit, uint256 useBaseLimit) external",
+  "function recover(address token, address to, uint256 amount, bytes memory data) external",
+  "function updateSettings(address newRecoveryAddress, address[] memory newWhitelistedAddresses, uint256 newDailyLimit, uint256 newThreshold, uint256 newDelay, address[] memory tokens, uint256[] memory fixedLimits, uint256[] memory percentageLimits, uint256[] memory useBaseLimits) external",
+  "function confirmTransaction(uint256 id) external",
+  "function owner() external view returns (address)",
+  "function name() external view returns (string memory)",
+  "function recoveryAddress() external view returns (address)",
+  "function whitelistedAddresses(uint256) external view returns (address)",
+  "function dailyLimit() external view returns (uint256)",
+  "function threshold() external view returns (uint256)",
+  "function delay() external view returns (uint256)",
+  "function isWhitelisted(address) external view returns (bool)",
+  "function dailyWithdrawnAmount(address) external view returns (uint256)",
+  "function lastWithdrawTimestamp(address) external view returns (uint256)",
+  "function tokenLimits(address) external view returns (uint256, uint256, uint256)",
+  "function queuedTransactions(uint256) external view returns (address, bytes memory, uint256, bool, uint256, uint256)"
+];
+// Define the VaultFactory contract ABI
+const factoryAbi = [
+  "constructor()",
+  "event VaultCreated(address vaultAddress, address indexed owner, string name, address recoveryAddress)",
+  "function createVault(string _name, address _recoveryAddress, address[] _whitelistedAddresses, uint256 _dailyLimit, uint256 _threshold, uint256 _delay) external returns (address)",
+  "function getVaultsByOwner(address _owner) external view returns (address[])",
+  "function vaultNames(string) external view returns (address)"
+];
+const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace with your VaultFactory contract address
 
-// Contract ABI and Address
-const ContractABI = [ {"inputs":[{"internalType":"contract IStreamContract","name":"_streamContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"bio","type":"string"},{"indexed":false,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BlogUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":false,"internalType":"string","name":"content","type":"string"}],"name":"PostCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"}],"name":"PostDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newContent","type":"string"}],"name":"PostEdited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"blog","type":"address"}],"name":"likedPost","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"blog","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"token","type":"address"}],"name":"tippedPost","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"authorPostCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"authorPosts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"blogNameToAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"blogs","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"address","name":"blogOwner","type":"address"}],"name":"checkSubd","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"lender","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"friend","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"bio","type":"string"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"createBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"content","type":"string"}],"name":"createPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"deletePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"string","name":"newContent","type":"string"}],"name":"editPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"getPost","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post","name":"","type":"tuple"},{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"postIds","type":"uint256[]"}],"name":"getPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"},{"internalType":"bool[]","name":"","type":"bool[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"likePost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"liked","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"postCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"newURI","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"streamContract","outputs":[{"internalType":"contract IStreamContract","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"tipPost","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"newName","type":"string"},{"internalType":"string","name":"newBio","type":"string"},{"internalType":"address","name":"newToken","type":"address"},{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"updateBlog","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"limit","type":"uint256"}],"name":"viewLatestPosts","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"blog","type":"string"},{"internalType":"address","name":"blogAddress","type":"address"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct blog.Post[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"}],"name":"viewPost","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
-const ContractAddress = '0xdd528829749d6a4656d84cddbdc65e7dc5b350a7'//'0x5dcaC8c556D861E45A562C4c4AF7814FDEDEdFBF';
-const BlogContractABI = ContractABI;
-const CommentsContractABI = [{"inputs":[{"internalType":"address","name":"_blogContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"commentId","type":"uint256"},{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":false,"internalType":"string","name":"content","type":"string"}],"name":"CommentCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"commentId","type":"uint256"}],"name":"CommentDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"commentId","type":"uint256"},{"indexed":false,"internalType":"string","name":"newContent","type":"string"}],"name":"CommentEdited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"commentId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"}],"name":"LikedComment","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"postId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"commentId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"token","type":"address"}],"name":"TippedComment","type":"event"},{"inputs":[],"name":"blogContract","outputs":[{"internalType":"contract IBlog","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"comments","outputs":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"string","name":"content","type":"string"}],"name":"createComment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"commentId","type":"uint256"}],"name":"deleteComment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"commentId","type":"uint256"},{"internalType":"string","name":"newContent","type":"string"}],"name":"editComment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"postIds","type":"uint256[]"}],"name":"getCommentCounts","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"commentId","type":"uint256"}],"name":"likeComment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"likedComments","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"postCommentCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"commentId","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"tipComment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"postId","type":"uint256"},{"internalType":"uint256","name":"limit","type":"uint256"}],"name":"viewComments","outputs":[{"components":[{"internalType":"string","name":"content","type":"string"},{"internalType":"address","name":"author","type":"address"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"uint256","name":"tips","type":"uint256"},{"internalType":"uint256","name":"likes","type":"uint256"}],"internalType":"struct Comments.Comment[]","name":"","type":"tuple[]"},{"internalType":"bool[]","name":"","type":"bool[]"}],"stateMutability":"view","type":"function"}];
-const BlogContractAddress = '0x5dcaC8c556D861E45A562C4c4AF7814FDEDEdFBF';
-const CommentsContractAddress = '0x53020d48B612f5b1CD1C8017abd4dB855e98B10a';
+const bgColors = [
+  'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
+  'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
+  'bg-gradient-to-r from-green-400 to-blue-500',
+  'bg-gradient-to-r from-yellow-400 to-orange-500',
+  'bg-gradient-to-r from-red-400 to-yellow-500',
+  'bg-gradient-to-r from-teal-400 to-blue-500'
+];
+
+const tokenLogos = {
+  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+  '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+  '0x94373a4919b3240d86ea41593d5eba789fef3848': 'https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png',
+  // Add more token addresses and their corresponding logos here
+};
 
 const App = () => {
-  const [posts, setPosts] = useState([]);
-  const [content, setContent] = useState('');
-  const [blogName, setBlogName] = useState('');
-  const [blogBio, setBlogBio] = useState('');
-  const [blogToken, setBlogToken] = useState('');
-  const [blogAmount, setBlogAmount] = useState('0');
-  const [tipping, setTipping] = useState(false);
-  const [comments, setComments] = useState({});
-  const [hasBlog, sethasBlog] = useState(false);
-
-  const ethersProvider = useEthersProvider();
-  const ethersSigner = useEthersSigner();
-  const account = useAccount();
-  const userAddress = account.address;
-  let chain = useChainId();
-  
-  const { writeContracts } = useWriteContracts({
-    mutation: { onSuccess: () => fetchPosts() },
-  });
-  const { data: capabilities } = useCapabilities();
-  const contract = new ethers.Contract(chain == 17000 ? ContractAddress : '0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
-  const commentsContract = new ethers.Contract(CommentsContractAddress, CommentsContractABI, ethersProvider);
-
-  useEffect(() => {
-    if (userAddress) {
-      const queryParams = new URLSearchParams(window.location.search);
-      const extractedBlogName = queryParams.get('blog');
-      if (extractedBlogName) {
-        setBlogName(extractedBlogName);
-      }
-      fetchPosts();
-    }
-  }, [userAddress]);
-
-  const fetchPosts = async () => {
-    try {
-      const postCount = await contract.postCount();
-      const postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-let has = await contract.blogs(userAddress);
-sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
-      const [postsFromContract, likedStatuses] = await readContract(config, {
-        address: ContractAddress,
-        abi: ContractABI,
-        functionName: 'getPosts',
-        args: [postIds],
-        account: userAddress,
-      });
-
-      const commentCounts = await commentsContract.getCommentCounts(postIds);
-
-      const formattedPosts = postsFromContract.map((post, index) => ({
-        title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n').trim().substring(0, 2000) + (post.content.length > 2000 ? '... View more on ' + post.blog + 's blog' : ''),
-        author: post.author,
-        timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
-        blog: post.blog,
-        blogAddress: post.blogAddress,
-        likes: Number(post.likes),
-        liked: likedStatuses[index],
-        id: postIds[index],
-        tips: Number(ethers.formatUnits(post.tips.toString(), post.tips.toString().length > 12 ? 18 : 6)),
-        commentCount: Number(commentCounts[index]),
-      }));
-
-      setPosts(formattedPosts.filter(post => post.content));
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
-
-  const fetchComments = async (postId) => {
-    try {
-      const limit = 10;
-      const [commentsFromContract, likedStatuses] = await commentsContract.viewComments(postId, limit);
-
-      const formattedComments = commentsFromContract.map((comment, index) => ({
-        content: comment.content,
-        author: comment.author,
-        timestamp: new Date(Number(comment.timestamp) * 1000).toLocaleString(),
-        likes: Number(comment.likes),
-        tips: Number(comment.tips),
-        liked: likedStatuses[index],
-        id: index,
-      }));
-
-      setComments(prevComments => ({ ...prevComments, [postId]: formattedComments }));
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
-  const handleCreateComment = async (postId, commentContent) => {
-    try {
-  
-        if (capabilities) {
-          writeContracts({
-            contracts: [{
-              address: CommentsContractAddress,
-              abi: CommentsContractABI,
-              functionName: 'createComment',
-              args: [postId,content],
-            }],
-            capabilities: {
-              paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-            },
-          });
-        toast.success('Comment created successfully');
-        fetchComments(postId);
-  
-        } else {
-      const tx = await commentsContract.connect(ethersSigner).createComment(postId, commentContent);
-      await tx.wait();
-      toast.success('Comment created successfully');
-      fetchComments(postId);
-    }} catch (error) {
-      console.error('Error creating comment:', error);
-      toast.error('Error creating comment');
-    }
-  };
-
-  const handleTipComment = async (postId, commentId, amount) => {
-    const ERC20_ABI = [
-      "function approve(address spender, uint256 amount) external returns (bool)",
-      "function allowance(address owner, address spender) view returns (uint256)",
-      "function decimals() view returns (uint8)",
-    ];
-
-    if (amount <= 0) {
-      toast.error("Tip amount must be greater than zero.");
-      return;
-    }
-
-    try {
-      const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()))).token;
-      const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
-      const decimals = await token.decimals();
-      const tipAmount = ethers.parseUnits(amount.toString(), decimals);
-      const allowance = await token.allowance(userAddress, CommentsContractAddress);
-
-      if (allowance < tipAmount) {
-        const approveTx = await token.approve(CommentsContractAddress, '1000000000000000000000000000');
-        await approveTx.wait();
-      }
-
-      const tx = await commentsContract.connect(ethersSigner).tipComment(postId, commentId, tipAmount);
-      await tx.wait();
-      toast.success("Comment tipped successfully!");
-      fetchComments(postId);
-    } catch (error) {
-      console.error("Error tipping comment:", error);
-      toast.error("Error tipping comment");
-    }
-  };
-
-  const handleLikeComment = async (postId, commentId) => {
-    try {
-      const tx = await commentsContract.connect(ethersSigner).likeComment(postId, commentId);
-      await tx.wait();
-      toast.success('Comment liked successfully');
-      fetchComments(postId);
-    } catch (error) {
-      console.error('Error liking comment:', error);
-      toast.error('Error liking comment');
-    }
-  };
-
-  const handleCreatePost = async () => {
-    if (!content) return;
-    try {
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: ContractAddress,
-            abi: ContractABI,
-            functionName: 'createPost',
-            args: [content],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      } else {
-        const tx = await contract.connect(ethersSigner).createPost(content);
-        toast('Creating post');
-        await tx.wait();
-      }
-      toast.success('Post created successfully');
-      fetchPosts();
-    } catch (error) {
-      console.error('Error creating post:', error);
-      toast.error('Error creating post');
-    }
-  };
-
-  const handleCreateBlog = async () => {
-    if(hasBlog){
-      let blogName = await contract.blogs(userAddress);
-      blogName=blogName.name;
-      console.log(blogName)
-    if (!blogBio || !blogAmount) {
-      toast.error('All fields are required');
-      return;
-    }
-    try {
-      const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
-      const blogAddress = await contract.blogNameToAddress(blogName);
-      if (blogAddress !== '0x0000000000000000000000000000000000000000'&&blogAddress!=userAddress) {
-        toast.error('Blog name already taken');
-        return;
-      }
-
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: ContractAddress,
-            abi: ContractABI,
-            functionName: 'updateBlog',
-            args: [blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      } else {
-        const tx = await contract.connect(ethersSigner).updateBlog(blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals()));
-        toast('Updating blog');
-        await tx.wait();
-      }
-      toast.success('Blog updated successfully');
-    } catch (error) {
-      console.error('Error creating blog:', error);
-      toast.error('Error creating blog');
-    }}else{
-    if (!blogName || !blogBio || !blogAmount) {
-      toast.error('All fields are required');
-      return;
-    }
-    try {
-      const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
-      const blogAddress = await contract.blogNameToAddress(blogName);
-      if (blogAddress !== '0x0000000000000000000000000000000000000000') {
-        toast.error('Blog name already taken');
-        return;
-      }
-
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: ContractAddress,
-            abi: ContractABI,
-            functionName: 'createBlog',
-            args: [blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      } else {
-        const tx = await contract.connect(ethersSigner).createBlog(blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals()));
-        toast('Creating blog');
-        await tx.wait();
-      }
-      toast.success('Blog created successfully');
-    } catch (error) {
-      console.error('Error creating blog:', error);
-      toast.error('Error creating blog');
-    }
-    }
-  };
-
-  const tipPost = async (postId, amount) => {
-    const ERC20_ABI = [
-      "function approve(address spender, uint256 amount) external returns (bool)",
-      "function allowance(address owner, address spender) view returns (uint256)",
-      "function decimals() view returns (uint8)",
-    ];
-
-    if (amount <= 0) {
-      toast.error("Tip amount must be greater than zero.");
-      return;
-    }
-
-    try {
-      const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()))).token;
-      const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
-      const decimals = await token.decimals();
-      const tipAmount = ethers.parseUnits(amount.toString(), decimals);
-      const allowance = await token.allowance(userAddress, ContractAddress);
-
-      if (allowance < tipAmount) {
-        const approveTx = await token.approve(ContractAddress, '1000000000000000000000000000');
-        await approveTx.wait();
-      }
-
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: ContractAddress,
-            abi: ContractABI,
-            functionName: 'tipPost',
-            args: [tipping[0], tipAmount],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      } else {
-        const tx = await contract.connect(ethersSigner).tipPost(tipping[0], tipAmount);
-        await tx.wait();
-      }
-      toast.success("Post tipped successfully!");
-      fetchPosts();
-    } catch (error) {
-      console.error("Error tipping post:", error);
-      toast.error("Error tipping post");
-    }
-  };
-
-  const likePost = async (postId) => {
-    try {
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: ContractAddress,
-            abi: ContractABI,
-            functionName: 'likePost',
-            args: [postId],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      } else {
-        const tx = await contract.connect(ethersSigner).likePost(postId);
-        await tx.wait();
-      }
-      toast.success('Post liked successfully');
-      fetchPosts();
-    } catch (error) {
-      console.error('Error liking post:', error);
-      toast.error('Error liking post');
-    }
-  };
-
-  const renderMarkdown = (markdown) => {
-    const md = new Remarkable({
-      html: true,
-      xhtmlOut: true,
-      breaks: true,
-      langPrefix: 'language-',
-    });
-    const html = md.render(markdown);
-    return { __html: DOMPurify.sanitize(html) };
-  };
-
-  const borderColors = ['blue', 'green', 'red', '#f0f', 'orange'];
-
-  const renderContentWithImages = (content) => {
-    const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
-    const parts = content.split(urlRegex);
-
-    return parts.map((part, index) => {
-      if (urlRegex.test(part)) {
-        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto mx-auto" />;
-      } else {
-        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part.replace(/\n/g, '<br/>'))} />;
-      }
-    });
-  };
-
-  const renderComments = (postId) => {
-    const postComments = comments[postId] || [];
-    return (
-      <div className="mt-4">
-                <div>
-
-        <div>
-          <textarea
-            
-            id='commentInput'
-            placeholder="Add a comment..."
-            className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out"
-          /></div>
-          <div>
-          <button className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-500 transition duration-300 ease-in-out w-full mx-auto" onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}>Create Comment</button>
-          </div>
-        {postComments.map((comment, index) => (
-          <div key={index} className="bg-gray-100 p-4 rounded-3xl mb-4">
-            <p className="text-gray-800">{renderContentWithImages(comment.content)}</p>
-            <div className="mt-2">
-            <div className="text-gray-500 text-sm flex flex-col sm:flex-row sm:justify-between mt-2">
-              <span>- {comment.author} @ {comment.timestamp}</span>
-              <div className="flex space-x-4">
-                {comment.liked ? (
-                  <button
-                    className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                    onClick={() => handleLikeComment(postId, comment.id)}
-                  >
-                    ♡ {comment.likes}
-                  </button>
-                ) : (
-                  <button
-                    className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                    onClick={() => handleLikeComment(postId, comment.id)}
-                  >
-                    ♡ {comment.likes}
-                  </button>
-                )}
-                <button
-                  className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out"
-                  onClick={() => setTipping([postId, comment.id])}
-                >
-                  $ {comment.tips} tips
-                </button>
-              </div></div>
-            </div>
-          </div>
-        ))}</div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800 overflow-hidden ">
-      <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-8 text-white font-extrabold">feed</h1>
-        <Toaster />
-        <BlogView likePost={likePost} tipPost={tipPost} setTipping={setTipping} />
-
-        <div className="flex flex-wrap -mx-2 mb-8">
-          <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/5 mx-2">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-600 font-bold">                {hasBlog?'Update':  'Create a new'} blog</h2>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="blogName" className="block mb-2 font-semibold text-gray-600">Blog Name:</label>
-                <input
-                  type="text"
-                  id="blogName"
-                  value={blogName}
-                  style={{ textTransform: 'lowercase' }}
-                  onChange={(e) => setBlogName(e.target.value)}
-                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                />
-              </div>
-              <div>
-                <label htmlFor="blogBio" className="block mb-2 font-semibold text-gray-600">Blog Bio:</label>
-                <textarea
-                  id="blogBio"
-                  value={blogBio}
-                  onChange={(e) => setBlogBio(e.target.value)}
-                  className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out h-20"
-                ></textarea>
-              </div>
-              <div>
-                <label htmlFor="blogToken" className="block mb-2 font-semibold text-gray-600">Blog Subscription Token Address:</label>
-                <select
-                  id="blogToken"
-                  value={blogToken}
-                  onChange={(e) => setBlogToken(e.target.value)}
-                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                >
-                  <option value="">Select a token</option>
-                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                  <option value="0x4ed4e862860bed51a9570b96d89af5e1b0efefed">DEGEN</option>
-                  <option value="custom">Custom</option>
-                </select>
-                {blogToken === 'custom' && (
-                  <input
-                    type="text"
-                    id="customToken"
-                    placeholder="Enter custom token address"
-                    onChange={(e) => { setBlogToken(e.target.value); toast.success('Custom token address set') }}
-                    className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                  />
-                )}
-              </div>
-              <div>
-                <label htmlFor="blogAmount" className="block mb-2 font-semibold text-gray-600">Subscription Cost per 30d:</label>
-                <input
-                  type="number"
-                  id="blogAmount"
-                  value={blogAmount}
-                  placeholder='0 for no subscription needed'
-                  onChange={(e) => setBlogAmount(e.target.value)}
-                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                />
-              </div>
-              <button
-                onClick={handleCreateBlog}
-                className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
-              >
-                {hasBlog?'Update Blog':'Create Blog'}
-              </button>
-              {!userAddress &&
-                <BlueCreateWalletButton />}
-            </div>
-          </section>
-          <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-3/4 mx-2">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-600 font-bold">Create a new post</h2>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="content" className="block mb-2 font-semibold text-gray-600">Content:</label>
-                <textarea
-                  id="content"
-                  value={content}
-                  placeholder={'Title\nContent...'}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 h-80 transition duration-300 ease-in-out"
-                ></textarea>
-              </div>
-              <button
-                onClick={handleCreatePost}
-                className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
-              >
-                Create Post
-              </button>
-              <ConnectButton className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300 ease-in-out" />
-            </div>
-          </section>
-          {content && (
-            <>
-              <h3 className="text-xl font-bold text-pink-600 ">Post Preview</h3>
-              <div className="mt-8 p-6 bg-white rounded-3xl shadow-2xl w-full border-l-8 border-blue-500">
-                <h3 className="text-xl font-bold text-gray-800">{renderContentWithImages(content.split('\n')[0])}</h3>
-                <div className="text-gray-600 mt-2">{renderContentWithImages(content.toString().split('\n').slice(1).join('\n').trim())}</div>
-              </div>
-            </>)}
-        </div>
-        <section className="w-full">
-          <div>
-            <h2 className="text-xl text-pink-600 mb-4 font-bold">Latest Posts</h2>
-            <div className="space-y-4">
-              {posts.length === 0 ? (
-                <p className="text-gray-800">No posts yet.</p>
-              ) : (
-                posts.slice().reverse().map((post, index) => (
-                  post.title !== 'subscribe to view post' ? (
-                    <div key={index} className="bg-white p-6 rounded-3xl border-l-8 border-blue-500 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
-                      <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`https://feed.spot.pizza/?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
-                      <div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
-                      <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
-                      <div className="flex justify-between items-center mt-4">
-                        <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                        <div className="flex space-x-4">
-                          {post.liked ? (<button className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
-                          )
-                            : (<button className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out" onClick={() => likePost(post.id)}>♡ {post.likes}</button>
-                            )}
-                          <button className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out" onClick={() => setTipping([post.id, post.blog])}>$ {post.tips} tips</button>
-                          <button className="text-sm text-gray-500 rounded-full bg-pink-200 px-3 py-1 hover:bg-pink-300 transition duration-300 ease-in-out" onClick={() => fetchComments(post.id)}>💬 {post.commentCount}</button>
-                        </div>
-                      </div>
-                      {comments[post.id] && renderComments(post.id)}
-                    </div>
-                  ) : (
-                    <div key={index} className="bg-pink-200 p-6 rounded-3xl border-l-8 border-green-500 shadow-md">
-                      <h3 className="text-xl font-bold text-gray-800"><a href={`https://feed.spot.pizza/?blog=@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
-                      <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
-                      <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://feed.spot.pizza/?blog=${post.blog}`}><button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">Subscribe to blog</button></a>
-                    </div>
-                  )
-                ))
-              )}
-            </div>
-          </div>
-        </section>
-      </main>
-      {tipping && (
-        <TipModal
-          isOpen={tipping}
-          onClose={() => setTipping(false)}
-          onTip={(amount) => {
-            if (Array.isArray(tipping) && tipping.length === 2) {
-              if (typeof tipping[1] === 'number') {
-                handleTipComment(tipping[0], tipping[1], amount);
-              } else {
-                tipPost(tipping[0], amount);
-              }
-            }
-          }}
-          tipping={tipping}
-        />
-      )}
-    </div>
-  );
-};
-
-const BlueCreateWalletButton = () => {
-  const { connectors, connect } = useConnect();
-
-  const createWallet = useCallback(() => {
-    const coinbaseWalletConnector = connectors.find(
-      (connector) => connector.id === 'coinbaseWalletSDK'
-    );
-    if (coinbaseWalletConnector) {
-      connect({ connector: coinbaseWalletConnector });
-    }
-  }, [connectors, connect]);
-
-  return (
-    <button className="w-full p-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
-      Create Coinbase Smart Wallet For Free Txs
-    </button>
-  );
-};
-
-const TipModal = ({ isOpen, onClose, onTip, tipping }) => {
-  const [amount, setAmount] = useState('');
-  const [symbol, setSymbol] = useState('');
-  const ethersProvider = useEthersProvider();
-let chain = useChainId();
-  useEffect(() => {
-    getSymbol();
-  }, []);
-
-  const handleTip = () => {
-    onTip(amount);
-    setAmount('');
-    onClose();
-  };
-
-  const getSymbol = async () => {
-    const contract = new ethers.Contract(chain == 17000 ? ContractAddress : '0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
-    const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()))).token;
-    const token = new ethers.Contract(blogToken, ['function symbol() view returns (string)'], ethersProvider);
-    const symbol = await token.symbol();
-    setSymbol(symbol);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-3xl shadow-2xl">
-        <h2 className="text-2xl text-pink-600 font-bold mb-4">Tip Post</h2>
-        <div className="space-y-6">
-          <div>
-            <label htmlFor="tipAmount" className="block mb-2 font-semibold text-gray-600">Tip Amount in {symbol}:</label>
-            <input
-              type="number"
-              id="tipAmount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-            />
-          </div>
-          <div className="flex justify-end space-x-4">
-            <button
-              onClick={onClose}
-              className="py-2 px-4 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition duration-300 ease-in-out"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleTip}
-              className="py-2 px-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
-            >
-              Tip
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const BlogView = ({ likePost, tipPost, setTipping }) => {
-  const [blogName, setBlogName] = useState('');
-  const [posts, setPosts] = useState([]);
+  const [currentTab, setCurrentTab] = useState('open');
+  const [tokenBalances, setTokenBalances] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [blog, setBlog] = useState(false);
-  const [comments, setComments] = useState({});
-  const ethersProvider = useEthersProvider();
-  const ethersSigner = useEthersSigner();
-  const chain = useChainId();
-  const addrs = useAccount().address;
-  const contract = new ethers.Contract(chain === 17000 ? ContractAddress : '0xdd528829749d6a4656d84cddbdc65e7dc5b350a7', ContractABI, ethersProvider);
-  const commentsContract = new ethers.Contract(CommentsContractAddress, CommentsContractABI, ethersProvider);
-  let useAddress = useAccount().address
-  const { data: capabilities } = useCapabilities();
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+  const [queuedTransactions, setQueuedTransactions] = useState([]);
+  const [vaultSettings, setVaultSettings] = useState({});
+  const [vaults, setVaults] = useState([]);
+  const [selectedVault, setSelectedVault] = useState('');
+  const { address: userAddress } = useAccount();
+  const chainId = useChainId();
+  const provider = useEthersProvider();
+  const signer = useEthersSigner();
 
-    const { writeContracts } = useWriteContracts({
-    mutation: { onSuccess: () => fetchPosts() },
-  });
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const extractedBlogName = queryParams.get('blog') ? queryParams.get('blog').toLowerCase() : null;
-    if (!blogName) {
-      setBlogName(extractedBlogName);
-      console.log('Extracted Blog:', extractedBlogName);
-    } else if (!blogName) {
-      setBlog(useAddress);
-      console.log('Blog:', useAddress);
-    }
-    console.log('Blog:', blog);
-    fetchBlogPosts(extractedBlogName);
-  }, []);
-
-  useEffect(() => {
-    if (blogName) {
-      fetchBlogPosts(blogName);
-    }
-  }, [blogName]);
-
-  const fetchBlogPosts = async (extractedBlogName) => {
+  const fetchVaults = async () => {
     try {
-      setLoading(true);
-      let userAddress;
-      let blogN;
-      try {
-        blogN = (await contract.blogs(useAddress)).name;
-      } catch (error) {
-        blogN = extractedBlogName;
+      const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
+      const userVaults = await factory.getVaultsByOwner(userAddress);
+      const allVaults = userVaults.length > 0 ? userVaults : [defaultVaultAddress];
+      setVaults(allVaults);
+      if (!selectedVault) {
+        setSelectedVault(allVaults[0]);
       }
-      console.log('Blog:', blogN, 't', blogName);
-      console.log('Blog:', blogN, 't', extractedBlogName);
-      userAddress = await contract.blogNameToAddress(!extractedBlogName ? blogN : extractedBlogName);
-      if (!extractedBlogName) {
-        setBlogName(blogN);
-      }
-      console.log('User Address: ', userAddress);
-      setBlog(await contract.blogs(userAddress));
-      const token = new ethers.Contract((await contract.blogs(userAddress)).token, ['function decimals() view returns (uint)'], ethersProvider);
-      let decimals;
-      try {
-        decimals = await token.decimals();
-      } catch (error) {
-        decimals = 18;
-      }
-      const postCount = await contract.authorPostCount(userAddress);
-      let postIds = Array.from({ length: Number(postCount) }, (v, k) => k);
-      try {
-        const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], ethersProvider);
-        const calls = postIds.map(id => ({
-          target: ContractAddress,
-          callData: contract.interface.encodeFunctionData('authorPosts', [userAddress, id]),
-        }));
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to fetch user vaults.');
+    }
+  };
 
-        const { returnData } = await multicallContract.aggregate(calls);
-        console.log('Return Data:', returnData);
-        postIds = returnData.map(data => contract.interface.decodeFunctionResult('authorPosts', data)[0]);
-      } catch (error) {
-        for (let i = 0; i < postCount; i++) {
-          postIds[i] = await contract.authorPosts(userAddress, i);
-          console.log('Post ID:', postIds[i]);
+  const fetchTokenBalances = async (vault) => {
+    setLoading(true);
+    try {
+      const balances = await alchemy.core.getTokenBalances(vault);
+      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0");
+
+      const tokenDetails = await Promise.all(nonZeroBalances.map(async token => {
+        const balance = token.tokenBalance;
+        const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
+        const adjustedBalance = balance / Math.pow(10, metadata.decimals);
+        const contract = new ethers.Contract(vault, vaultAbi, provider);
+        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, balance);
+        const baseLimit = await contract.dailyLimit();
+        const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
+        return {
+          ...metadata,
+          balance: adjustedBalance.toFixed(2),
+          address: token.contractAddress,
+          limit: limit
+        };
+      }));
+
+      setTokenBalances(tokenDetails);
+      const contract = new ethers.Contract(vault, vaultAbi, provider);
+      const name = await contract.name();
+      const recoveryAddress = await contract.recoveryAddress();
+      const dailyLimit = Number(await contract.dailyLimit());
+      const threshold = Number(await contract.threshold());
+      const delay = Number(await contract.delay());
+      let whitelistedAddresses = ['lol']
+      let i = 0;
+      while (true) {
+        try {
+          const address = await contract.whitelistedAddresses(i);
+          whitelistedAddresses.push(address);
+          console.log(address)
+          i++;
+          if (address === ethers.constants.AddressZero) {
+            break;
+          }
+        }
+        catch (error) {
+          break;
         }
       }
-      const [postsFromContract, likedStatuses] = await readContract(config, {
-        address: ContractAddress,
-        abi: ContractABI,
-        functionName: 'getPosts',
-        args: [postIds],
-        account: addrs,
-      });
-
-      const commentCounts = await commentsContract.getCommentCounts(postIds);
-console.log('Comment Counts:', commentCounts,postIds);
-      const formattedPosts = postsFromContract.map((post, index) => ({
-        title: post.content.split('\n')[0],
-        content: post.content.split('\n').slice(1).join('\n').trim(),
-        author: post.author,
-        timestamp: new Date(Number(post.timestamp) * 1000).toLocaleString(),
-        blog: post.blog,
-        blogAddress: post.blogAddress,
-        likes: Number(post.likes),
-        liked: likedStatuses[index],
-        id: postIds[index],
-        tips: Number(ethers.formatUnits(post.tips.toString(), decimals)),
-        decimals: decimals,
-        commentCount: Number(commentCounts[index]),
-      }));
-
-      setPosts(formattedPosts);
+    console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses)
+      setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses });
     } catch (error) {
-      console.error('Error fetching blog posts:', error);
+      console.error(error);
+      toast.error('Failed to fetch token balances.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchComments = async (postId) => {
+  const fetchQueuedTransactions = async (vault) => {
+    setLoading(true);
     try {
-      const limit = 10;
-      const [commentsFromContract, likedStatuses] = await commentsContract.viewComments(postId, limit);
+      const contract = new ethers.Contract(vault, vaultAbi, provider);
+      let queuedTransactions = [];
+      let i = 0;
+      const threshold = await contract.threshold();
 
-      const formattedComments = commentsFromContract.map((comment, index) => ({
-        content: comment.content,
-        author: comment.author,
-        timestamp: new Date(Number(comment.timestamp) * 1000).toLocaleString(),
-        likes: Number(comment.likes),
-        tips: Number(comment.tips),
-        liked: likedStatuses[index],
-        id: index,
-      }));
+      while (true) {
+        try {
+          const [to, data, timestamp, executed, numConfirmations, amount] = await contract.queuedTransactions(i);
+          if (timestamp === 0) {
+            break;
+          }
+          const tx = {
+            id: i,
+            to,
+            data,
+            timestamp: Number(timestamp),
+            executed,
+            numConfirmations: Number(numConfirmations),
+            threshold: Number(threshold),
+            amount: ethers.formatUnits(amount, 'ether') < 0.00000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
+          };
+          queuedTransactions.push(tx);
+          i++;
+        } catch (error) {
+          break;
+        }
+      }
 
-      setComments(prevComments => ({ ...prevComments, [postId]: formattedComments }));
+      setQueuedTransactions(queuedTransactions.reverse());
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error(error);
+      toast.error('Failed to fetch queued transactions.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCreateComment = async (postId, commentContent) => {
-    try {       
-
-      if (capabilities) {
-        writeContracts({
-          contracts: [{
-            address: CommentsContractAddress,
-            abi: CommentsContractABI,
-            functionName: 'createComment',
-            args: [postId,content],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-      toast.success('Comment created successfully');
-      fetchComments(postId);
-
-      } else {
-      const tx = await commentsContract.connect(ethersSigner).createComment(postId, commentContent);
-      await tx.wait();
-      toast.success('Comment created successfully');
-      fetchComments(postId);
-    }} catch (error) {
-      console.error('Error creating comment:', error);
-      toast.error('Error creating comment');
-    }
-  };
-
-  const handleTipComment = async (postId, commentId, amount) => {
-    const ERC20_ABI = [
-      "function approve(address spender, uint256 amount) external returns (bool)",
-      "function allowance(address owner, address spender) view returns (uint256)",
-      "function decimals() view returns (uint8)",
-    ];
-
-    if (amount <= 0) {
-      toast.error("Tip amount must be greater than zero.");
-      return;
-    }
-
+  const handleConfirmTransaction = async (txIndex) => {
     try {
-      const blogToken = (await contract.blogs(await contract.blogNameToAddress(tipping[1].toLowerCase()))).token;
-      const token = new ethers.Contract(blogToken, ERC20_ABI, ethersSigner);
-      const decimals = await token.decimals();
-      const tipAmount = ethers.parseUnits(amount.toString(), decimals);
-      const allowance = await token.allowance(userAddress, CommentsContractAddress);
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const tx = await contract.confirmTransaction(txIndex);
+      await tx.wait();
+      toast.success('Transaction confirmed successfully!');
+      fetchQueuedTransactions(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to confirm transaction.');
+    }
+  };
 
-      if (allowance < tipAmount) {
-        const approveTx = await token.approve(CommentsContractAddress, '1000000000000000000000000000');
+  useEffect(() => {
+    if (userAddress) {
+      fetchVaults();
+    }
+  }, [userAddress]);
+
+  useEffect(() => {
+    if (selectedVault) {
+      fetchTokenBalances(selectedVault);
+      fetchQueuedTransactions(selectedVault);
+    }
+  }, [selectedVault]);
+
+  const handleDepositToken = async (tokenAddress, amount) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const token = new ethers.Contract(tokenAddress, ['function approve(address spender, uint256 amount)', 'function allowance(address owner, address spender) view returns (uint256)', 'function decimals() view returns (uint8)'], signer);
+      const allowance = await token.allowance(userAddress, selectedVault);
+      if (allowance < ethers.parseUnits(amount.toString(), await token.decimals())) {
+        const approveTx = await token.approve(selectedVault, ethers.parseUnits('1000000000000000000', await token.decimals()));
         await approveTx.wait();
       }
-
-      const tx = await commentsContract.connect(ethersSigner).tipComment(postId, commentId, tipAmount);
+      const tx = await contract.depositToken(tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
       await tx.wait();
-      toast.success("Comment tipped successfully!");
-      fetchComments(postId);
+      toast.success('Token deposited successfully!');
+      fetchTokenBalances(selectedVault);
     } catch (error) {
-      console.error("Error tipping comment:", error);
-      toast.error("Error tipping comment");
+      console.error(error);
+      toast.error('Failed to deposit token.');
     }
   };
-
-  const handleLikeComment = async (postId, commentId) => {
+const handleSearch = async (vaultName) => {
+  console.log(vaultName)
     try {
-      const tx = await commentsContract.connect(ethersSigner).likeComment(postId, commentId);
-      await tx.wait();
-      toast.success('Comment liked successfully');
-      fetchComments(postId);
+      const factory = new ethers.Contract(factoryAddress,factoryAbi, provider);
+      const vaultAddress = await factory.vaultNames(vaultName);
+      if (vaultAddress === ethers.AddressZero) {
+        toast.error('Vault not found.');
+      } else {
+        setSelectedVault(vaultAddress);
+        fetchTokenBalances(vaultAddress);
+        fetchQueuedTransactions(vaultAddress);
+        toast.success('Vault found successfully!');
+      }
     } catch (error) {
-      console.error('Error liking comment:', error);
-      toast.error('Error liking comment');
+      console.error(error);
+      toast.error('Failed to search for vault.');
+    }
+  };
+  const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
+    try {
+      const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
+      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay);
+      await tx.wait();
+      toast.success('Vault created successfully!');
+      fetchVaults();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create vault.');
     }
   };
 
-  const borderColors = ['blue', 'green', 'red', '#f0f', 'orange'];
-
-  const renderContentWithImages = (content) => {
-    const urlRegex = /(https?:\/\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif))/g;
-    const parts = content.split(urlRegex);
-
-    return parts.map((part, index) => {
-      if (urlRegex.test(part)) {
-        return <img key={index} src={part} alt="Embedded" className="my-4 max-w-full h-auto mx-auto" />;
-      } else {
-        return <span key={index} dangerouslySetInnerHTML={renderMarkdown(part.replace(/\n/g, '<br/>'))} />;
-      }
-    });
+  const handleWithdrawToken = async (tokenAddress, amount) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const token = new ethers.Contract(tokenAddress, ['function decimals() view returns (uint8)'], signer);
+      const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
+      await tx.wait();
+      toast.success('Token withdrawn successfully!');
+      fetchTokenBalances(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to withdraw token.');
+    }
   };
 
-  const renderMarkdown = (markdown) => {
-    const md = new Remarkable({
-      html: true,
-      xhtmlOut: true,
-      breaks: true,
-      langPrefix: 'language-',
-    });
-    const html = md.render(markdown);
-    return { __html: DOMPurify.sanitize(html) };
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
   };
 
-  const renderBioWithLinks = (bio) => {
-    const twitterRegex = /https:\/\/twitter\.com\/[^\s]+/g;
-    const githubRegex = /https:\/\/github\.com\/[^\s]+/g;
-    const iconLinkRegex = /\((https:\/\/[^\s]+)\)\[([^\s]+)\]/g;
+  const handleDepositModalToggle = () => {
+    setIsDepositModalOpen(!isDepositModalOpen);
+  };
 
-    const twitterLink = bio.match(twitterRegex) ? bio.match(twitterRegex)[0] : null;
-    const githubLink = bio.match(githubRegex) ? bio.match(githubRegex)[0] : null;
+  const handleLimitModalToggle = () => {
+    setIsLimitModalOpen(!isLimitModalOpen);
+  };
 
-    const filteredBio = bio.replace(twitterRegex, '').replace(githubRegex, '').replace(iconLinkRegex, '').trim();
+  const handleVaultChange = (e) => {
+    setSelectedVault(e.target.value);
+  };
 
-    const renderIcons = (bio) => {
-      const parts = [];
-      let lastIndex = 0;
-
-      bio.replace(iconLinkRegex, (match, iconUrl, linkUrl, offset) => {
-        parts.push(
-          <a key={offset} href={linkUrl} target="_blank" rel="noopener noreferrer">
-            <img src={iconUrl} alt="Icon" className="w-6 h-6 inline mx-1" />
-          </a>
-        );
-        lastIndex = offset + match.length;
-      });
-
-      return parts;
-    };
-
-    const renderedIcons = renderIcons(bio);
-
-    return (
-      <div className="text-center w-1/2 mx-auto">
-        <p className="flex justify-center space-x-4 mb-2">{filteredBio}</p>
-        <div className="flex justify-center space-x-4 mb-4">
-          {twitterLink && (
-            <a href={twitterLink} target="_blank" rel="noopener noreferrer">
-              <img src="./twitter.png" alt="Twitter" className="w-6 h-6" />
-            </a>
-          )}
-          {githubLink && (
-            <a href={githubLink} target="_blank" rel="noopener noreferrer">
-              <img src="https://simpleicons.org/icons/github.svg" alt="GitHub" className="w-6 h-6" />
-            </a>
-          )}
-          {renderedIcons}
+  const displayAssets = () => {
+    return tokenBalances.map((asset, index) => (
+      <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
+        <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
+        <div className="flex items-center mb-2">
+          <img src={asset.logo || 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+          <div className="text-2xl font-bold">{asset.symbol}</div>
+        </div>
+        <div className="text-lg mb-2">Balance: {asset.balance}</div>
+        <div className="text-lg mb-2">Limit: {asset.limit}</div>
+        <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+          <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
+        </div>
+        <div className="flex space-x-4 mt-4 w-full">
+          <input id={`amount-${asset.symbol}`} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
+          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
+          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
         </div>
       </div>
-    );
+    ));
   };
 
-  const renderComments = (postId) => {
-    const postComments = comments[postId] || [];
-    return (
-      <div className="mt-4">
-                        <div>
-
-      <div>
-        <textarea
-          type="text"
-          id='commentInput'
-          placeholder="Add a comment..."
-          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out"
-        />
-      </div>
-      <div>
-        <button
-          className="text-center mb-2 py-3 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-500 transition duration-300 ease-in-out w-full mx-auto"
-          onClick={() => handleCreateComment(postId, document.getElementById('commentInput').value)}
-        >
-          Create Comment
-        </button>
-      </div>
-    </div>
-        {postComments.map((comment, index) => (
-          <div key={index} className="bg-gray-100 p-4 rounded-3xl mb-4">
-            <p className="text-gray-800">{renderContentWithImages(comment.content)}</p>
-            <div className="mt-2">
-              <div className="text-gray-500 text-sm flex flex-col sm:flex-row sm:justify-between justify-between mt-2">
-                <span>- {comment.author} @ {comment.timestamp}</span>
-              <div className="flex space-x-4">
-                {comment.liked ? (
-                  <button
-                    className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                    onClick={() => handleLikeComment(postId, comment.id)}
-                  >
-                    ♡ {comment.likes}
-                  </button>
-                ) : (
-                  <button
-                    className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                    onClick={() => handleLikeComment(postId, comment.id)}
-                  >
-                    ♡ {comment.likes}
-                  </button>
-                )}
-                <button
-                  className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out"
-                  onClick={() => setTipping([postId, comment.id])}
-                >
-                  $ {comment.tips} tips
-                </button>
-              </div>
-              </div>
-            </div>
+  const displayTransactions = () => {
+    return queuedTransactions.map((transaction) => (
+      <div key={transaction.id} className="grid grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
+        <div className="flex items-center justify-left space-x-4">
+          <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2`}>
+            {transaction.to !== selectedVault ?
+              <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
+              : '⚙️'}
           </div>
-        ))}
+          <div className="text-gray-700 font-semibold relative left-16">{transaction.id}</div>
+        </div>
+        <div className="text-pink-500 font-semibold text-left relative right-20">{transaction.to}</div>
+        <div className="text-gray-600 font-semibold">{transaction.amount}</div>
+        <div className="text-gray-600">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
+        <div className="flex flex-col items-center">
+          <div className={`${transaction.executed ? 'text-green-600' : 'text-yellow-600'} font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'}</div>
+          {!transaction.executed && (
+            <button className="bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
+          )}
+        </div>
       </div>
-    );
+    ));
   };
 
   return (
-    <div className="">
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
+      <Toaster />
       <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-2 text-gray-700 font-extrabold">
-          {blogName ? `${blogName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}'s Blog` : 'Blog View'}
-        </h1>
-        {blog && <div className="text-center text-xl mb-4 text-gray-600 w-1/2 mx-auto">{renderBioWithLinks(blog.bio)}</div>}
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.protocol + '://' + window.location.host + '/?blog=' + blogName);
-            toast.success('Link copied :)');
-          }}
-          className="flex mx-auto center text-sm text-white rounded-full bg-blue-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-        >
-          Copy link
-        </button>
-        <Toaster />
-        <section className="mt-4">
-          <div className="mb-4 flex justify-center">
-            <input
-              type="text"
-              style={{ textTransform: 'lowercase' }}
-              onChange={(e) => setBlogName(e.target.value)}
-              placeholder="Search Blog Name..."
-              className="w-1/2 p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-            />
+        <Header />
+        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 w-full sm:w-1/2 mx-auto">
+          <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
+          {currentTab === 'open' && <><OpenVaultSection />
+          <div className="mt-2">
+          <label htmlFor="vault-select" className="block mb-2 font-semibold text-gray-600">My Vaults:</label>
+          <select id="vault-select" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleVaultChange} value={selectedVault}>
+            {vaults.map(vault => (
+              <option key={vault} value={vault}>{vault}</option>
+            ))}
+          </select>
+        </div></>}
+          {currentTab === 'create' && <CreateVaultSection />}
+          {currentTab === 'settings' && <SettingsSection />}
+        </section>
+        <h1 className='text-4xl text-center text-white font-bold mb-8'>{vaultSettings.name}</h1>
+        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
+            <button className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
           </div>
-          {posts[0] && blog && posts[0].title === 'subscribe to view post' && (
-            <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals)}&window=604800&once=false&network=8453`}>
-              <button className="w-1/2 mx-auto block py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out">
-                Subscribe to blog
-              </button>
-            </a>
-          )}
-          <div className="">
-            <h2 className="text-xl text-pink-600 mb-4 font-bold">Posts</h2>
-            <div className="space-y-4">
-              {loading ? (
-                <p className="text-gray-800 bg-pink-200 p-6 rounded-3xl border-l-8 border-green-500 shadow-md">Loading...</p>
-              ) : posts.length === 0 ? (
-                <div className="bg-white p-6 rounded-3xl border-l-8 shadow-md">
-                  <p className="text-gray-800">No posts yet.</p>
-                </div>
-              ) : (
-                posts.slice().reverse().map((post, index) => (
-                  post.title !== 'subscribe to view post' ? (
-                    <div key={index} className="bg-white p-6 rounded-3xl border-l-8 shadow-md" style={{ borderColor: borderColors[index % borderColors.length] }}>
-                      <h3 className="text-xl font-bold text-gray-800">{post.title}<a href={`${window.location}?blog=${post.blog}`} className="text-gray-500 text-sm ml-2">@ {post.blog}</a></h3>
-                      <div className="text-gray-600 mt-2">{renderContentWithImages(post.content)}</div>
-                      <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
-                      <div className="flex justify-between items-center mt-4">
-                        <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                        <div className="flex space-x-4">
-                          {useAddress === post.blogAddress && (
-                            <button
-                              className="text-sm text-white rounded-full bg-red-300 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                              onClick={() => {let tx = contract.connect(ethersSigner).deletePost(post.id);}}
-                            >
-                              Delete
-                            </button>)}
-                          {post.liked ? (
-                            <button
-                              className="text-sm text-red-500 rounded-full bg-red-100 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                              onClick={() => likePost(post.id)}
-                            >
-                              ♡ {post.likes}
-                            </button>
-                          ) : (
-                            <button
-                              className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                              onClick={() => likePost(post.id)}
-                            >
-                              ♡ {post.likes}
-                            </button>
-                          )}
-                          <button
-                            className="text-sm text-blue-500 rounded-full bg-blue-200 px-3 py-1 hover:bg-blue-300 transition duration-300 ease-in-out"
-                            onClick={() => setTipping([post.id, post.blog])}
-                          >
-                            $ {post.tips} tips
-                          </button>
-                          <button
-                            className="text-sm text-gray-500 rounded-full bg-gray-200 px-3 py-1 hover:bg-gray-300 transition duration-300 ease-in-out"
-                            onClick={() => fetchComments(post.id)}
-                          >
-                            💬 {post.commentCount}
-                          </button>
-                        </div>
-                      </div>
-                      {comments[post.id] && renderComments(post.id)}
-                    </div>
-                  ) : (
-                    <div key={index} className="bg-pink-200 p-6 rounded-3xl border-l-8 border-green-500 shadow-md">
-                      <h3 className="text-xl font-bold text-gray-800"><a href={`${window.location}@${post.blog}`}>Subscribe to view post @ {post.blog}</a></h3>
-                      <p className="text-gray-500 text-sm mt-2">- {post.author}</p>
-                      <p className="text-gray-500 text-sm">{post.timestamp}</p>
-                      <a href={`https://sub.spot.pizza/?token=${blog.token}&subscribe=${posts[0].blogAddress}&amount=${ethers.formatUnits((Number(blog.amount) * 604800).toString(), posts[0].decimals)}&window=604800&network=8453`}>
-                        <button className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4">
-                          Subscribe to blog
-                        </button>
-                      </a>
-                    </div>
-                  )
-                ))
-              )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="asset-list">
+            {displayAssets()}
+          </div>
+        </section>
+        <section id="allowance-list" className="mt-8">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-x-auto">
+            <h2 className="text-xl text-pink-600 font-bold mb-4">Vault Transactions</h2>
+            <div className="grid grid-cols-5 text-center font-semibold text-gray-600 mb-4">
+              <div>Transaction ID</div>
+              <div>To</div>
+              <div>Amount</div>
+              <div>Date</div>
+              <div>Status</div>
+            </div>
+            <div id="transaction-list" className="space-y-4">
+              {displayTransactions()}
             </div>
           </div>
         </section>
       </main>
+      {isDepositModalOpen && <DepositModal handleClose={handleDepositModalToggle} handleDepositToken={handleDepositToken} />}
+      {isLimitModalOpen && <LimitModal handleClose={handleLimitModalToggle} />}
     </div>
   );
+
+  function Header() {
+    return (
+      <h1 className="text-center text-4xl mb-8 relative text-white font-extrabold">Welcome to Vault</h1>
+    );
+  }
+
+  function TabSwitcher({ activeTab, onTabChange }) {
+    return (
+      <div className="tab-switcher mb-4">
+        <div className={`tab ${activeTab === 'open' ? 'tab-active' : ''}`} onClick={() => onTabChange('open')}>Open</div>
+        <div className={`tab ${activeTab === 'create' ? 'tab-active' : ''}`} onClick={() => onTabChange('create')}>Create</div>
+        <div className={`tab ${activeTab === 'settings' ? 'tab-active' : ''}`} onClick={() => onTabChange('settings')}>Settings</div>
+      </div>
+    );
+  }
+
+  function OpenVaultSection() {
+    return (
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="vault-search" className="block mb-2 font-semibold text-gray-600">Search Vault:</label>
+          <input type="text" id="vault-search" name="vault-search" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name to search" />
+        </div>
+        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => handleSearch(document.getElementById('vault-search').value)}>Search</button>
+      </div>
+    );
+  }
+
+  function CreateVaultSection() {
+    return (
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Vault Name:</label>
+          <div className="flex items-center">
+            <input type="text" id="vault-name" name="vault-name" required className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name" />
+            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.eth</span>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="recovery" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
+          <input type="text" id="recovery" name="recovery" placeholder="Enter address. This address is for backup and should be a cold wallet, has full control." required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="custom-whitelist" className="block mb-2 font-semibold text-gray-600">Custom Whitelist Addresses:</label>
+          <input type="text" id="custom-whitelist" name="custom-whitelist" placeholder="Enter addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="transaction-delay" className="block mb-2 font-semibold text-gray-600">Safety Delay (in days):</label>
+          <input type="number" id="transaction-delay" name="transaction-delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
+          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder='Signers needed to confirm txs'/>
+        </div>
+        <div>
+          <label htmlFor="custom-limits" className="block mb-2 font-semibold text-gray-600">Limit per day of an asset (%):</label>
+          <input type="number" id="custom-limits" name="custom-limits" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => createVault(document.getElementById('vault-name').value, document.getElementById('recovery').value, document.getElementById('custom-whitelist').value.split(','), document.getElementById('custom-limits').value, document.getElementById('transaction-delay').value, document.getElementById('transaction-delay').value)}>Create Vault</button>
+      </div>
+    );
+  }
+
+  function SettingsSection() {
+    return (
+      <div className="space-y-6">
+            <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
+
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
+          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center ">{vaultSettings.recoveryAddress}</p>
+        </div>                
+        <div className="space-x-6 col-3 flex items-center justify-center ">
+
+        <div>
+          <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">Daily Limit:</label>
+          <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">{vaultSettings.dailyLimit}%</p>
+        </div>
+        <div>
+          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
+          <p className="text-gray-600  text-center bg-pink-100 rounded-3xl">{vaultSettings.threshold}</p>
+        </div>
+        <div>
+          <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
+          <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">D:{(vaultSettings.delay/84000).toFixed(0)} H:{(vaultSettings.delay%84000/3600).toFixed(0)} M:{(vaultSettings.delay%3600/60).toFixed(0)} S:{(vaultSettings.delay%60).toFixed(0)}</p>
+        </div>          </div>
+        <div>
+          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
+        </div>    {vaultSettings.whitelistedAddresses && vaultSettings.whitelistedAddresses.length > 0 ? (
+      vaultSettings.whitelistedAddresses.map((address, index) => (
+        <p key={index} className="text-gray-600 text-center bg-pink-100 rounded-3xl m-0">{address}</p>
+      ))
+    ) : (
+      <p className="text-gray-600">No whitelisted addresses found.</p>
+    )}
+    <h1 className='text-pink-600 text-center text-lg m-2 font-semibold'>Update</h1>
+    <div className='flex items-center justify-center col-3 space-x-4'>
+    <div>
+          <label htmlFor="withdraw-limit" className="block mb-2 font-semibold text-gray-600">Limit Per Day of An Asset (%):</label>
+          <input type="number" id="withdraw-limit" name="withdraw-limit" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
+          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
+          <input type="number" id="delay" name="delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        </div>
+        <div>
+          <label htmlFor="recovery-addresses" className="block mb-2 font-semibold text-gray-600">Recovery Addresses:</label>
+          <input type="text" id="recovery-addresses" name="recovery-addresses" placeholder="Enter recovery addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <div>
+          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
+          <input type="text" id="whitelisted-addresses" name="whitelisted-addresses" placeholder="Enter whitelisted addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+        </div>
+        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => alert('Settings saved successfully!')}>Save Settings</button>
+      </div>
+    );
+  }
+
+  function DepositModal({ handleClose, handleDepositToken }) {
+    const [selectedToken, setSelectedToken] = useState('');
+    const [amount, setAmount] = useState('');
+
+    const handleTokenChange = (e) => {
+      setSelectedToken(e.target.value);
+    };
+
+    const handleAmountChange = (e) => {
+      setAmount(e.target.value);
+    };
+
+    const handleDeposit = () => {
+      handleDepositToken(selectedToken, amount);
+      handleClose();
+    };
+
+    return (
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
+          <section id="deposit-tokens">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Deposit Tokens</h2>
+            </div>
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
+                <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleTokenChange}>
+                  <option value="">Select a token</option>
+                  <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
+                  <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
+                  <option value="0x0987654321098765432109876543210987654321">USDC</option>
+                  <option value="custom">Custom</option>
+                </select>
+                <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out hidden" placeholder="Enter custom token address" />
+              </div>
+              <div className="flex space-x-4">
+                <div className="flex-1">
+                  <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">Amount:</label>
+                  <input type="number" id="amount" name="amount" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleAmountChange} />
+                </div>
+              </div>
+              <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDeposit}>Deposit Tokens</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  function LimitModal({ handleClose }) {
+    return (
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
+          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
+          <section id="limit-settings">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Set Token Limits</h2>
+            </div>
+            <div className="tab-switcher mb-4">
+              <div className="tab tab-active" id="fixed-tab" onClick={() => showLimitSection('fixed')}>Fixed Limit</div>
+              <div className="tab" id="percentage-tab" onClick={() => showLimitSection('percentage')}>Percentage Limit (%)</div>
+              <div className="tab" id="no-limit-tab" onClick={() => showLimitSection('no-limit')}>No Specific Limit</div>
+            </div>
+            <div id="fixed-limit-section" className="space-y-6">
+              <div>
+                <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
+                <input type="number" id="fixed-limit" name="fixed-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+              </div>
+            </div>
+            <div id="percentage-limit-section" className="space-y-6 hidden">
+              <div>
+                <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
+                <input type="number" id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+              </div>
+            </div>
+            <div id="no-limit-section" className="space-y-6 hidden">
+              <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
+            </div>
+            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => alert('Token limits set successfully!')}>Set Limits</button>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  function handleTokenChange(value) {
+    const customTokenInput = document.getElementById('customToken');
+    if (value === 'custom') {
+      customTokenInput.classList.remove('hidden');
+    } else {
+      customTokenInput.classList.add('hidden');
+    }
+  }
 };
 
 export default App;
