@@ -367,8 +367,8 @@ try {
               : '⚙️'}
           </div>
           <div className="text-gray-700 font-semibold">{transaction.id}</div>
-        </div>
-        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{top:window.innerWidth<1000&&window.innerWidth>600?'40px':''}}>{window.innerWidth<1500?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div>
+        </div><a href={'https://etherscan.io/address/'+transaction.to}>
+        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{top:window.innerWidth<1000&&window.innerWidth>600?'40px':''}}>{window.innerWidth<1500?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div></a>
         <div className="text-gray-600 font-semibold relative lg:top-2">{transaction.amount}</div>
         <div className="text-gray-600 relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
         <div className="flex flex-col items-center relative lg:top-2">
