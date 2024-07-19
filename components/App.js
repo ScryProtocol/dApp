@@ -267,8 +267,17 @@ const App = () => {
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
     try {
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
-      if (!whitelistedAddresses||recoveryAddress===''||dailyLimit===''||threshold===''||delay==='') {
-toast.error('Please fill all fields.');   }
+      if (!whitelistedAddresses||name===''||recoveryAddress===''||dailyLimit===''||threshold===''||delay==='') {
+toast.error('Please fill all fields.');
+return   }
+try {
+  let vault = await contract.vaultNames(name);
+  if (vault !== '0x0000000000000000000000000000000000000000') {
+    toast.error('Vault name already exists.');
+    return;
+  }
+} catch (error) {
+}
       const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay*84000);
       await tx.wait();
       toast.success('Vault created successfully!');
@@ -487,7 +496,7 @@ toast.error('Please fill all fields.');   }
         </div>
         <div>
           <label htmlFor="custom-limits" className="block mb-2 font-semibold text-gray-600">Limit per day of an asset (%):</label>
-          <input type="number" id="custom-limits" name="custom-limits" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+          <input type="number" id="custom-limits" name="custom-limits" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
         </div>
         <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => createVault(document.getElementById('vault-name').value, document.getElementById('recovery').value, document.getElementById('custom-whitelist').value.split(','), document.getElementById('custom-limits').value, document.getElementById('transaction-delay').value, document.getElementById('transaction-delay').value)}>Create Vault</button>
       </div>
