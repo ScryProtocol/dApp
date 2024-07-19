@@ -274,7 +274,23 @@ const handleSearch = async (vaultName) => {
       toast.error('Failed to create vault.');
     }
   };
-
+const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
+  try {console.log(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits)
+    const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+    !whitelistedAddresses? whitelistedAddresses=[]:whitelistedAddresses;
+    !tokens? tokens=[]:tokens;
+    !fixedLimits? fixedLimits=[]:fixedLimits;
+    !percentageLimits? percentageLimits=[]:percentageLimits;
+    !useBaseLimits? useBaseLimits=[]:useBaseLimits;
+    const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
+    await tx.wait();
+    toast.success('Settings updated successfully!');
+    fetchTokenBalances(selectedVault);
+  } catch (error) {
+    console.error(error);
+    toast.error('Failed to update settings.');
+  }
+};
   const handleWithdrawToken = async (tokenAddress, amount) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
@@ -520,7 +536,7 @@ const handleSearch = async (vaultName) => {
           <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
           <input type="text" id="whitelisted-addresses" name="whitelisted-addresses" placeholder="Enter whitelisted addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
         </div>
-        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => alert('Settings saved successfully!')}>Save Settings</button>
+        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => updateSettings(document.getElementById('recovery-addresses').value, document.getElementById('whitelisted-addresses').value.split(','), document.getElementById('withdraw-limit').value, document.getElementById('threshold').value, document.getElementById('delay').value)}>Save Settings</button>
       </div>
     );
   }
