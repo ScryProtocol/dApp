@@ -359,8 +359,8 @@ try {
   };
   const displayTransactions = () => {
     return queuedTransactions.map((transaction) => (
-      <div key={transaction.id} style={{borderRadius:screen.availHeight<1000?'20px':''}} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
-        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20">
+      <div key={transaction.id} style={{borderRadius:screen.availWidth<1000?'20px':''}} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
+        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20"style={{right:window.innerWidth<1500?'40px':''}}>
           <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2`}>
             {transaction.to !== selectedVault ?
               <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
@@ -368,7 +368,7 @@ try {
           </div>
           <div className="text-gray-700 font-semibold">{transaction.id}</div>
         </div>
-        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2">{screen.availWidth<1000?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div>
+        <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{top:window.innerWidth<1000&&window.innerWidth>600?'40px':''}}>{window.innerWidth<1500?transaction.to.slice(0,10)+'...'+transaction.to.slice(30,40):transaction.to}</div>
         <div className="text-gray-600 font-semibold relative lg:top-2">{transaction.amount}</div>
         <div className="text-gray-600 relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
         <div className="flex flex-col items-center relative lg:top-2">
