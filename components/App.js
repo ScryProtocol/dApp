@@ -60,8 +60,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
 
 const bgColors = [
   'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
-  'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
-  'bg-gradient-to-r from-green-400 to-blue-500',
+  'bg-gradient-to-r from-green-400 to-blue-500',  'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
   'bg-gradient-to-r from-yellow-400 to-orange-500',
   'bg-gradient-to-r from-red-400 to-yellow-500',
   'bg-gradient-to-r from-teal-400 to-blue-500'
@@ -352,8 +351,8 @@ try {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
           <input id={`amount-${asset.symbol}`} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
-          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
-          <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
+          <button className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
+          <button className="sm:w-28 sm:left-8 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
         </div>
       </div>
     ));
@@ -474,7 +473,7 @@ try {
           <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Vault Name:</label>
           <div className="flex items-center">
             <input type="text" id="vault-name" name="vault-name" required className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name" />
-            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.eth</span>
+            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vault.eth</span>
           </div>
         </div>
 
