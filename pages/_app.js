@@ -13,13 +13,13 @@ import { BrowserRouter as Router, Route, Switch, useParams } from 'react-router-
 const queryClient = new QueryClient()
 
 const config = getDefaultConfig({
-  chains: [base, holesky],//mainnet, sepolia, holesky, base, optimism],
+  chains: [base, holesky,mainnet],// sepolia, holesky, base, optimism],
   projectId: '97d417268e5bd5a42151f0329e544898',
 
   transports: {
  //   [mainnet.id]: http(),
     [holesky.id]: http(),
-    [base.id]: http(),
+    [base.id]: http(), [optimism.id]: http(),[mainnet.id]: http(),
 //  [optimism.id]: http(),
   //  [mainnet.id]: http(),
   },
