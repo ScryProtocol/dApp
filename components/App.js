@@ -51,8 +51,6 @@ const factoryAbi = [
   "function vaultNames(string) external view returns (address)"
 ];
 
-//const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace with your VaultFactory contract address
-
 const bgColors = [
   'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500',
   'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500',
@@ -81,18 +79,24 @@ const App = () => {
   const [vaults, setVaults] = useState([]);
   const [selectedVault, setSelectedVault] = useState('');
   const [limitSection, setLimitSection] = useState('fixed');
+  const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false); // New state for info modal
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee' : '0x85F832bb7305C2E0Ae4ef4B46D7505dA357CA587'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
-    network: useChainId() == 8453?Network.BASE_MAINNET:useChainId() == 1?Network.ETH_MAINNET:Network.OPT_MAINNET,
+    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : Network.OPT_MAINNET,
   };
   const alchemy = new Alchemy(alchemyConfig);
-
+  const [net, setNet] = useState(null);
+useEthersProvider().addListener('network', (newNetwork, oldNetwork) => {
+if (  net!=null){
+  window.location.reload();}
+  setNet(newNetwork);
+});
   const fetchVaults = async () => {
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
@@ -112,6 +116,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
     setLoading(true);
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
+      console.log(vault);
       const balances = await alchemy.core.getTokenBalances(vault);
       const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0");
       const name = await contract.name();
@@ -120,6 +125,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
       const threshold = Number(await contract.threshold());
       const delay = Number(await contract.delay());
       const baseLimit = await contract.dailyLimit();
+      let owner = await contract.owner();
 
       const tokenDetails = await Promise.all(nonZeroBalances.map(async token => {
         const balance = token.tokenBalance;
@@ -139,7 +145,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
       const adjustedEthBalance = ethers.formatEther(ethBalance);
       const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', ethBalance);
       const ethLimitAmount = Number(ethLimit.fixedLimit > 0 ? ethLimit.fixedLimit : ethLimit.percentageLimit > 0 ? ethLimit.percentageLimit * Number(ethBalance) / 100 : ethLimit.useBaseLimit == 1 ? '0' : ethLimit.useBaseLimit == 2 ? adjustedEthBalance : adjustedEthBalance * Number(baseLimit) / 100);
-      
+
       tokenDetails.unshift({
         name: 'Ether',
         symbol: 'ETH',
@@ -166,7 +172,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
         }
       }
       console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses);
-      setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses });
+      setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses, owner });
       await fetchNftAssets(vault);
     } catch (error) {
       console.error(error);
@@ -314,7 +320,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
           toast.error('Vault name already exists.');
           return;
         }
-      } catch (error) {}
+      } catch (error) { }
       const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay * 86400);
       await tx.wait();
       toast.success('Vault created successfully!');
@@ -393,6 +399,10 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
     setIsLimitModalOpen(!isLimitModalOpen);
   };
 
+  const handleCreateInfoModalToggle = () => { // New function for toggling the info modal
+    setIsCreateInfoModalOpen(!isCreateInfoModalOpen);
+  };
+
   const handleVaultChange = (e) => {
     setSelectedVault(e.target.value);
   };
@@ -420,16 +430,16 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
           </div>
         ))}
         {nftAssets.map((nft, index) => (
-          <div key={nft.tokenId} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`} style={{ backgroundImage: `url(${nft.imageUrl})`, backgroundSize: 'cover',minHeight:'250px' }}>
+          <div key={nft.tokenId} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`} style={{ backgroundImage: `url(${nft.imageUrl})`, backgroundSize: 'cover', minHeight: '250px' }}>
             <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
             <div className="flex items-center mb-2">
               <img src={nft.imageUrl} alt={`${nft.title} logo`} className="w-8 h-8 mr-2" />
-              <div style={{backgroundColor:'#f9a8d4bf'}}className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
+              <div style={{ backgroundColor: '#f9a8d4bf' }} className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
             </div>  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
 
-            <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
+              <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
             </div>
-            </div>
+          </div>
         ))}
       </>
     );
@@ -511,6 +521,7 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
       </main>
       {isDepositModalOpen && <DepositModal handleClose={handleDepositModalToggle} handleDepositToken={handleDepositToken} />}
       {isLimitModalOpen && <LimitModal handleClose={handleLimitModalToggle} />}
+      {isCreateInfoModalOpen && <CreateInfoModal handleClose={handleCreateInfoModalToggle} />}
     </div>
   );
 
@@ -544,9 +555,11 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
 
   function CreateVaultSection() {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         <div>
-          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Vault Name:</label>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Vault Name:</label><button className="absolute font-semibold w-6 h-6 right-0 rounded-full border border-pink-500 top-0 text-pink-500 cursor-pointer" onClick={handleCreateInfoModalToggle}>
+            ?
+          </button>
           <div className="flex items-center">
             <input type="text" id="vault-name" name="vault-name" required className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name" />
             <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vault.eth</span>
@@ -583,6 +596,10 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
       <div className="space-y-6">
         <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
 
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Owner Address:</label>
+          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.owner}</p>
+        </div>
         <div>
           <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
           <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.recoveryAddress}</p>
@@ -732,6 +749,50 @@ const factoryAddress = '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee'; // Replace 
     );
   }
 
+  function CreateInfoModal({ handleClose }) { // New component for the info modal
+    return (
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative sm:w-1/2 m-auto relative max-h-screen overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
+          <section id="create-info">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Creating a Vault</h2>
+            </div>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">What is a Vault?</h3>
+                <p className="text-gray-600">A Vault is a secure smart contract that allows users to deposit tokens and NFTs, set limits, whitelist addresses, and require multiple signers for transactions. It is designed to enhance the security and management of digital assets.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Vault Name</h3>
+                <p className="text-gray-600">The unique name for your vault on this specific chain. It will be associated with a .vault.eth domain if one is free but should not be relied on.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Recovery Address</h3>
+                <p className="text-gray-600">An address used for recovering access to the vault. It should be a secure, cold wallet address.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Whitelist Addresses</h3>
+                <p className="text-gray-600">Addresses that are allowed to interact with the vault as signers. These confirm transactions using your chosen threshold. Separate multiple addresses with commas.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Safety Delay</h3>
+                <p className="text-gray-600">A delay period in days to provide an extra layer of security for transactions that are not simple limit withdrawals. After the delay you can self approve txs without signers. Leave at 0 to require signers.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Threshold</h3>
+                <p className="text-gray-600">The number of signers required to confirm a transaction.</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-600">Daily Limit</h3>
+                <p className="text-gray-600">The maximum percentage of an asset that can be withdrawn from the vault daily.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default App;
