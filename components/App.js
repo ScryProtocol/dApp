@@ -168,6 +168,7 @@ const App = () => {
 
       const tokenDetails = await Promise.all(nonZeroBalances.map(async (token, index) => {
         console.log(token);
+        let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
         const balance = token.tokenBalance;
         console.log(returnData[index]);
         const decimals = Number(returnData[index] ? Number(returnData[index]) : 18); // Default to 18 decimals if undefined
@@ -176,6 +177,7 @@ const App = () => {
         const lim = await contract.getLimitAmount(token.contractAddress);
         return {
           ...token,
+          ...metadata,
           balance: adjustedBalance,
           address: token.contractAddress,
           dailyLimit: Number(lim) / Math.pow(10, decimals),
@@ -198,7 +200,7 @@ const App = () => {
       });
 
       setTokenBalances(tokenDetails);
-
+console.log(tokenDetails);
       let whitelistedAddresses = [];
       let i = 0;
       while (true) {
