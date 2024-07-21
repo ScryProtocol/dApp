@@ -40,7 +40,8 @@ const vaultAbi = [
   "function dailyWithdrawnAmount(address) external view returns (uint256)",
   "function lastWithdrawTimestamp(address) external view returns (uint256)",
   "function tokenLimits(address) external view returns (uint256, uint256, uint256)",
-  "function queuedTransactions(uint256) external view returns (address, bytes memory, uint256, bool, uint256, uint256)"
+  "function queuedTransactions(uint256) external view returns (address, bytes memory, uint256, bool, uint256, uint256)",
+  "function queuedTxs() external view returns (uint)"
 ];
 
 // Define the VaultFactory contract ABI
@@ -94,11 +95,13 @@ const App = () => {
   };
   const alchemy = new Alchemy(alchemyConfig);
   const [net, setNet] = useState(null);
-useEthersProvider().addListener('network', (newNetwork, oldNetwork) => {
-if (  net!=null){
-  window.location.reload();}
-  setNet(newNetwork);
-});
+  useEthersProvider().addListener('network', (newNetwork, oldNetwork) => {
+    if (net != null) {
+      window.location.reload();
+    }
+    setNet(newNetwork);
+  });
+
   const fetchVaults = async () => {
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
@@ -113,56 +116,88 @@ if (  net!=null){
       toast.error('Failed to fetch user vaults.');
     }
   };
+
   const fetchTokenBalances = async (vault) => {
     setLoading(true);
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
-      console.log(vault);
       const balances = await alchemy.core.getTokenBalances(vault);
       const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0");
-      const name = await contract.name();
-      const recoveryAddress = await contract.recoveryAddress();
-      const dailyLimit = Number(await contract.dailyLimit());
-      const threshold = Number(await contract.threshold());
-      const delay = Number(await contract.delay());
-      const baseLimit = await contract.dailyLimit();
-      let owner = await contract.owner();
 
-      const tokenDetails = await Promise.all(nonZeroBalances.map(async token => {
+      const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
+
+      const calls = nonZeroBalances.map(token => ({
+        target: token.contractAddress,
+        callData: new ethers.Interface(["function decimals() view returns (uint8)"]).encodeFunctionData('decimals')
+      })).concat([
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('name')
+        },
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('recoveryAddress')
+        },
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('dailyLimit')
+        },
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('threshold')
+        },
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('delay')
+        },
+        {
+          target: vault,
+          callData: contract.interface.encodeFunctionData('owner')
+        },
+      ]);
+
+      const { returnData } = await multicallContract.aggregate(calls);
+      console.log(returnData);
+
+      const name = contract.interface.decodeFunctionResult('name', returnData[nonZeroBalances.length])[0];
+      const recoveryAddress = contract.interface.decodeFunctionResult('recoveryAddress', returnData[nonZeroBalances.length + 1])[0];
+      const dailyLimit = Number(contract.interface.decodeFunctionResult('dailyLimit', returnData[nonZeroBalances.length + 2])[0]);
+      const threshold = Number(contract.interface.decodeFunctionResult('threshold', returnData[nonZeroBalances.length + 3])[0]);
+      const delay = Number(contract.interface.decodeFunctionResult('delay', returnData[nonZeroBalances.length + 4])[0]);
+      const owner = contract.interface.decodeFunctionResult('owner', returnData[nonZeroBalances.length + 5])[0];
+
+      const tokenDetails = await Promise.all(nonZeroBalances.map(async (token, index) => {
+        console.log(token);
         const balance = token.tokenBalance;
-        const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
-        console.log(metadata);
-        const adjustedBalance = balance / Math.pow(10, metadata.decimals);
+        console.log(returnData[index]);
+        const decimals = Number(returnData[index] ? Number(returnData[index]) : 18); // Default to 18 decimals if undefined
+        const adjustedBalance = balance / Math.pow(10, decimals);
         const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, 0);
-        console.log('boop',tokenLimit);
-const lim = await contract.getLimitAmount(token.contractAddress)//Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
-console.log(metadata.name,lim,tokenLimit,Number(lim)/ Math.pow(10, metadata.decimals), Number(tokenLimit)/ Math.pow(10, metadata.decimals));
-
-return {
-          ...metadata,
+        const lim = await contract.getLimitAmount(token.contractAddress);
+        return {
+          ...token,
           balance: adjustedBalance,
           address: token.contractAddress,
-          dailyLimit: Number(lim)/ Math.pow(10, metadata.decimals),
-          limit: Number(tokenLimit)/ Math.pow(10, metadata.decimals)
+          dailyLimit: Number(lim) / Math.pow(10, decimals),
+          limit: Number(tokenLimit) / Math.pow(10, decimals)
         };
       }));
 
       const ethBalance = await provider.getBalance(vault);
       const adjustedEthBalance = ethers.formatEther(ethBalance);
       const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
-      const lim = await contract.getLimitAmount('0x0000000000000000000000000000000000000000')
-      const ethLimitAmount = Number(ethLimit.fixedLimit > 0 ? ethLimit.fixedLimit : ethLimit.percentageLimit > 0 ? ethLimit.percentageLimit * Number(ethBalance) / 100 : ethLimit.useBaseLimit == 1 ? '0' : ethLimit.useBaseLimit == 2 ? adjustedEthBalance : adjustedEthBalance * Number(baseLimit) / 100);
+      const lim = await contract.getLimitAmount('0x0000000000000000000000000000000000000000');
 
       tokenDetails.unshift({
         name: 'Ether',
         symbol: 'ETH',
         balance: adjustedEthBalance,
         address: '0x0000000000000000000000000000000000000000',
-        dailyLimit: Number(lim)/ Math.pow(10, 18),
-        limit: (Number(ethLimit)/ Math.pow(10, 18) )
-            });
+        dailyLimit: Number(lim) / Math.pow(10, 18),
+        limit: (Number(ethLimit) / Math.pow(10, 18))
+      });
 
-      setTokenBalances(tokenDetails.filter(token => token.symbol.length < 10));
+      setTokenBalances(tokenDetails);
 
       let whitelistedAddresses = [];
       let i = 0;
@@ -170,7 +205,6 @@ return {
         try {
           const address = await contract.whitelistedAddresses(i);
           whitelistedAddresses.push(address);
-          console.log(address);
           i++;
           if (address === '0x0000000000000000000000000000000000000000') {
             break;
@@ -179,7 +213,7 @@ return {
           break;
         }
       }
-      console.log(recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses);
+
       setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses, owner });
       await fetchNftAssets(vault);
     } catch (error) {
@@ -193,8 +227,6 @@ return {
   const fetchNftAssets = async (vault) => {
     try {
       const nftsForOwner = await alchemy.nft.getNftsForOwner(vault);
-      console.log(nftsForOwner);
-
       const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
         ...nft,
         imageUrl: nft.image.cachedUrl || 'https://via.placeholder.com/150'
@@ -210,31 +242,37 @@ return {
     setLoading(true);
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
-      let queuedTransactions = [];
-      let i = 0;
-      const threshold = await contract.threshold();
+      const totalTxs = Number(await contract.queuedTxs());
+      const startTx = totalTxs > 100 ? totalTxs - 100 : 0;
+      const endTx = totalTxs;
 
-      while (true) {
-        try {
-          const [to, data, timestamp, executed, numConfirmations, amount] = await contract.queuedTransactions(i);
-          if (timestamp === 0) {
-            break;
-          }
-          const tx = {
-            id: i,
-            to,
-            data,
-            timestamp: Number(timestamp),
-            executed,
-            numConfirmations: Number(numConfirmations),
-            threshold: Number(threshold),
-            amount: ethers.formatUnits(amount, 'ether') < 0.00000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
-          };
-          queuedTransactions.push(tx);
-          i++;
-        } catch (error) {
-          break;
-        }
+      const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
+
+      const calls = [];
+      for (let i = startTx; i < endTx; i++) {
+        calls.push({
+          target: vault,
+          callData: contract.interface.encodeFunctionData('queuedTransactions', [i])
+        });
+      }
+
+      const { returnData } = await multicallContract.aggregate(calls);
+      const threshold = Number(await contract.threshold());
+
+      let queuedTransactions = [];
+      for (let i = 0; i < returnData.length; i++) {
+        const [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
+        const tx = {
+          id: startTx + i,
+          to,
+          data,
+          timestamp: Number(timestamp),
+          executed,
+          numConfirmations: Number(numConfirmations),
+          threshold: threshold,
+          amount: ethers.formatUnits(amount, 'ether') < 0.00000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
+        };
+        queuedTransactions.push(tx);
       }
 
       setQueuedTransactions(queuedTransactions.reverse());
@@ -245,6 +283,7 @@ return {
       setLoading(false);
     }
   };
+
   function convert(n) {
     var sign = +n < 0 ? "-" : "",
       toStr = n.toString();
@@ -310,7 +349,6 @@ return {
   };
 
   const handleSearch = async (vaultName) => {
-    console.log(vaultName);
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
       const vaultAddress = await factory.vaultNames(vaultName);
@@ -342,12 +380,12 @@ return {
           return;
         }
       } catch (error) { }
-      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay*84000).toFixed(0));
+      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
       await tx.wait();
-      window.location.reload()
+      window.location.reload();
       toast.success('Vault created successfully!');
-     await fetchVaults();
-     await fetchTokenBalances(selectedVault);
+      await fetchVaults();
+      await fetchTokenBalances(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to create vault.');
@@ -355,9 +393,8 @@ return {
   };
 
   const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
-    try {      let abi = new ethers.Interface(vaultAbi);
-
-      console.log(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
+    try {
+      let abi = new ethers.Interface(vaultAbi);
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
       !whitelistedAddresses ? whitelistedAddresses = vaultSettings.whitelistedAddresses : whitelistedAddresses;
       !tokens ? tokens = [] : tokens;
@@ -368,52 +405,40 @@ return {
       !threshold ? threshold = 0 : threshold;
       !delay ? delay = 0 : delay;
       !recoveryAddress ? recoveryAddress = '0x0000000000000000000000000000000000000000' : recoveryAddress;
-      if(userAddress===vaultSettings.recoveryAddress){
-     console.log('lol')
-      const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
-      await tx.wait();
+      if (userAddress === vaultSettings.recoveryAddress) {
+        const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
+        await tx.wait();
+      } else if (whitelistedAddresses != '') {
+        const data = abi.encodeFunctionData("updateWhitelistAddresses", [whitelistedAddresses]);
+        const tx = await contract.queueTransaction(selectedVault, data, 0);
+        await tx.wait();
+      } else if (dailyLimit != '') {
+        const data = abi.encodeFunctionData("updateDailyLimit", [dailyLimit]);
+        const tx = await contract.queueTransaction(selectedVault, data, 0);
+        await tx.wait();
+      } else if (threshold != '') {
+        const data = abi.encodeFunctionData("updateThreshold", [threshold]);
+        const tx = await contract.queueTransaction(selectedVault, data, 0);
+        await tx.wait();
+      } else if (delay != '') {
+        const data = abi.encodeFunctionData("updateDelay", [delay]);
+        const tx = await contract.queueTransaction(selectedVault, data, 0);
+        await tx.wait();
+      } else if (recoveryAddress != '') {
+        const data = abi.encodeFunctionData("updateRecoveryAddress", [recoveryAddress]);
+        const tx = await contract.queueTransaction(contract.address, data, 0);
+        await tx.wait();
+      } else if (selectedToken != '') {
+        fixedLimits = document.getElementById('fixed-limit').value;
+        percentageLimits = document.getElementById('percentage-limit').value;
+        useBaseLimits = document.getElementById('use-base-limit').value;
+        !fixedLimits ? fixedLimits = [0] : fixedLimits;
+        !percentageLimits ? percentageLimits = [0] : percentageLimits;
+        !useBaseLimits ? useBaseLimits = [0] : useBaseLimits;
+        const data = abi.encodeFunctionData("setTokenLimit", [[selectedToken], [fixedLimits], [percentageLimits], [useBaseLimits]]);
+        const tx = await contract.queueTransaction(selectedVault, data, 0);
+        await tx.wait();
       }
-      else if(whitelistedAddresses!='')
-{     const data = abi.encodeFunctionData("updatewhitelistAddresses", [whitelistedAddresses]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0); 
-await tx.wait();
-}
-else if(dailyLimit!='')
-{     const data = abi.encodeFunctionData("updateDailyLimit", [dailyLimit]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0);
-await tx.wait();
-}
-else if(threshold!='')
-{     const data = abi.encodeFunctionData("updateThreshold", [threshold]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0);
-await tx.wait();
-}
-else if(delay!='')
-{     const data = abi.encodeFunctionData("updateDelay", [delay]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0);
-await tx.wait();
-}
-else if(recoveryAddress!='')
-{     const data = abi.encodeFunctionData("updateRecoveryAddress", [recoveryAddress]);
-  const tx = await contract.queueTransaction(contract.address, data, 0);
-await tx.wait();
-}
-else if(selectedToken!='')
-{    
-  fixedLimits = document.getElementById('fixed-limit').value
-  percentageLimits = document.getElementById('percentage-limit').value
-  useBaseLimits = document.getElementById('use-base-limit').value
-  !fixedLimits ? fixedLimits = [0] : fixedLimits;
-  !percentageLimits ? percentageLimits = [0] : percentageLimits;
-  !useBaseLimits ? useBaseLimits = [0] : useBaseLimits;
-  console.log(fixedLimits, percentageLimits, useBaseLimits);
-  console.log(document.getElementById('use-base-limit').value);
-  const data = abi.encodeFunctionData("setTokenLimit", [[selectedToken], [fixedLimits], [percentageLimits], [useBaseLimits]]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0);
-await tx.wait();
-}
-
-  
       toast.success('Settings updated successfully!');
       fetchTokenBalances(selectedVault);
     } catch (error) {
@@ -421,20 +446,19 @@ await tx.wait();
       toast.error('Failed to update settings.');
     }
   };
-  const[tokenlimit,setTokenlimit]=useState({fixedLimit:'',percentageLimit:'',useBaseLimit:''});
-const updatetokenlimit = async () => {
-  console.log('lol',selectedToken,tokenlimit);
 
+  const [tokenLimit, setTokenLimit] = useState({ fixedLimit: '', percentageLimit: '', useBaseLimit: '' });
+
+  const updateTokenLimit = async () => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      let fixedLimits = tokenlimit.fixedLimit!=''?tokenlimit.fixedLimit:0;
-      let percentageLimits = tokenlimit.percentageLimit!=''?tokenlimit.percentageLimit:0;
-      let useBaseLimits = tokenlimit.useBaseLimit!=''?tokenlimit.useBaseLimit:0;
-      console.log(fixedLimits, percentageLimits, useBaseLimits);
+      let fixedLimits = tokenLimit.fixedLimit != '' ? tokenLimit.fixedLimit : 0;
+      let percentageLimits = tokenLimit.percentageLimit != '' ? tokenLimit.percentageLimit : 0;
+      let useBaseLimits = tokenLimit.useBaseLimit != '' ? tokenLimit.useBaseLimit : 0;
       let abi = new ethers.Interface(vaultAbi);
-  const data = abi.encodeFunctionData("setTokenLimit", [selectedToken, fixedLimits, percentageLimits, useBaseLimits]);
-  const tx = await contract.queueTransaction(selectedVault, data, 0);
-await tx.wait();
+      const data = abi.encodeFunctionData("setTokenLimit", [selectedToken, fixedLimits, percentageLimits, useBaseLimits]);
+      const tx = await contract.queueTransaction(selectedVault, data, 0);
+      await tx.wait();
       toast.success('Settings updated successfully!');
     } catch (error) {
       console.error(error);
@@ -450,7 +474,6 @@ await tx.wait();
         await tx.wait();
       } else {
         const token = new ethers.Contract(tokenAddress, ['function decimals() view returns (uint8)'], signer);
-        console.log(ethers.parseUnits(amount, await token.decimals()));
         const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
         await tx.wait();
       }
@@ -468,7 +491,6 @@ await tx.wait();
       const abi = new ethers.Interface([
         "function transferFrom(address from, address to, uint256 tokenId)"
       ]);
-      console.log(nft);
       const data = abi.encodeFunctionData("transferFrom", [selectedVault, userAddress, nft.tokenId]);
       const tx = await contract.queueTransaction(nft.contract.address, data, 0);
       await tx.wait();
@@ -492,7 +514,7 @@ await tx.wait();
     setIsLimitModalOpen(!isLimitModalOpen);
   };
 
-  const handleCreateInfoModalToggle = () => { // New function for toggling the info modal
+  const handleCreateInfoModalToggle = () => {
     setIsCreateInfoModalOpen(!isCreateInfoModalOpen);
   };
 
@@ -505,15 +527,15 @@ await tx.wait();
       <>
         {tokenBalances.map((asset, index) => (
           <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
-            <div className="gear-icon text-lg" onClick={() =>{handleLimitModalToggle();setSelectedToken(asset.address)}}>⚙️</div>
+            <div className="gear-icon text-lg" onClick={() => { handleLimitModalToggle(); setSelectedToken(asset.address) }}>⚙️</div>
             <div className="flex items-center mb-2">
-              <img src={asset.logo?asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+              <img src={asset.logo ? asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
               <div className="text-2xl font-bold">{asset.symbol}</div>
             </div>
-            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0,12)}</div>
-            <div className="text-lg mb-2">Limit: {convert(asset.limit).toString().substring(0,12)}</div>
+            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0, 12)}</div>
+            <div className="text-lg mb-2">Limit: {convert(asset.limit).toString().substring(0, 12)}</div>
             <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
-              <div className="bg-blue-300 h-4 rounded-full" style={{ width: `${asset.limit/asset.dailyLimit*100 }%` }}></div>
+              <div className="bg-blue-300 h-4 rounded-full" style={{ width: `${asset.limit / asset.dailyLimit * 100}%` }}></div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
               <input id={`amount-${asset.symbol}`} style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '10px' : '' }} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
@@ -529,7 +551,6 @@ await tx.wait();
               <img src={nft.imageUrl} alt={`${nft.title} logo`} className="w-8 h-8 mr-2" />
               <div style={{ backgroundColor: '#f9a8d4bf' }} className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
             </div>  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-
               <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
             </div>
           </div>
@@ -588,7 +609,6 @@ await tx.wait();
         </section>
         <h1 className='text-4xl text-center text-white font-bold mb-1'>{vaultSettings.name}</h1>
         <div className='text-center items-center'>        <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2'>{selectedVault}</h1>
-
         </div>        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
@@ -690,7 +710,6 @@ await tx.wait();
     return (
       <div className="space-y-6">
         <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
-
         <div>
           <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Owner Address:</label>
           <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.owner}</p>
@@ -700,7 +719,6 @@ await tx.wait();
           <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.recoveryAddress}</p>
         </div>
         <div className="space-x-6 col-3 flex items-center justify-center ">
-
           <div>
             <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">Daily Limit:</label>
             <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">{vaultSettings.dailyLimit}%</p>
@@ -712,7 +730,8 @@ await tx.wait();
           <div>
             <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
             <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">D:{(vaultSettings.delay / 84000).toFixed(0)} H:{(vaultSettings.delay % 84000 / 3600).toFixed(0)} M:{(vaultSettings.delay % 3600 / 60).toFixed(0)} S:{(vaultSettings.delay % 60).toFixed(0)}</p>
-          </div>          </div>
+          </div>
+        </div>
         <div>
           <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
         </div>    {vaultSettings.whitelistedAddresses && vaultSettings.whitelistedAddresses.length > 0 ? (
@@ -802,7 +821,7 @@ await tx.wait();
     );
   }
 
-  function LimitModal({ handleClose,token }) {
+  function LimitModal({ handleClose }) {
     return (
       <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
         <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
@@ -820,7 +839,7 @@ await tx.wait();
               <div id="fixed-limit-section" className="space-y-6">
                 <div>
                   <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
-                  <input type="number" value={tokenlimit.fixedLimit} id="fixed-limit" name="fixed-limit" step="1" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenlimit({...tokenlimit,fixedLimit:e.target.value})}/>
+                  <input type="number" value={tokenLimit.fixedLimit} id="fixed-limit" name="fixed-limit" step="1" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, fixedLimit: e.target.value })} />
                 </div>
               </div>
             )}
@@ -828,28 +847,28 @@ await tx.wait();
               <div id="percentage-limit-section" className="space-y-6">
                 <div>
                   <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
-                  <input type="number" value={tokenlimit.percentageLimit} id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenlimit({...tokenlimit,percentageLimit:e.target.value})}/>
+                  <input type="number" value={tokenLimit.percentageLimit} id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, percentageLimit: e.target.value })} />
                 </div>
               </div>
             )}
             {limitSection === 'no-limit' && (
               <div id="no-limit-section" className="space-y-6">
                 <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
-              <select id="use-base-limits" value={tokenlimit.useBaseLimit} name="use-base-limits" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={ (e) => setTokenlimit({...tokenlimit,useBaseLimit:e.target.value})}>
-              <option value="0">Use Base Limit</option>
-              <option value="1">Disable withdrawals</option>
-              <option value="2">Unlimited withdrawals</option>
-</select>
+                <select id="use-base-limits" value={tokenLimit.useBaseLimit} name="use-base-limits" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, useBaseLimit: e.target.value })}>
+                  <option value="0">Use Base Limit</option>
+                  <option value="1">Disable withdrawals</option>
+                  <option value="2">Unlimited withdrawals</option>
+                </select>
               </div>
             )}
-            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => updatetokenlimit()}>Set Limits</button>
+            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => updateTokenLimit()}>Set Limits</button>
           </section>
         </div>
       </div>
     );
   }
 
-  function CreateInfoModal({ handleClose }) { // New component for the info modal
+  function CreateInfoModal({ handleClose }) {
     return (
       <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
         <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative sm:w-1/2 m-auto relative max-h-screen overflow-y-auto" onClick={e => e.stopPropagation()}>
