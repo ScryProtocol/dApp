@@ -472,7 +472,7 @@ await tx.wait();
               <img src={asset.logo?asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
               <div className="text-2xl font-bold">{asset.symbol}</div>
             </div>
-            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0,12}</div>
+            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0,12)}</div>
             <div className="text-lg mb-2">Limit: {convert(asset.limit).toString().substring(0,12)}</div>
             <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
               <div className="bg-blue-300 h-4 rounded-full" style={{ width: `${asset.limit/asset.dailyLimit*100 }%` }}></div>
