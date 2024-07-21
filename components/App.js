@@ -18,6 +18,7 @@ const vaultAbi = [
   "function depositToken(address token, uint256 amount) external payable",
   "function withdrawToken(address to, address token, uint256 amount) external",
   "function getLimit(address to, address token, uint256 amount) external view returns(uint)",
+  "function getLimitAmount(address token) external view returns(uint)",
   "function updateRecoveryAddress(address newRecoveryAddress) external",
   "function updateWhitelistAddresses(address[] memory newWhitelistedAddresses) external",
   "function updateDailyLimit(uint256 newDailyLimit) external",
@@ -84,7 +85,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0xBAa9e4467ad7673a8A54b36fB5dc4ecd8b29FB05' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -111,7 +112,6 @@ if (  net!=null){
       toast.error('Failed to fetch user vaults.');
     }
   };
-
   const fetchTokenBalances = async (vault) => {
     setLoading(true);
     try {
@@ -132,33 +132,24 @@ if (  net!=null){
         const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
         console.log(metadata);
         const adjustedBalance = balance / Math.pow(10, metadata.decimals);
-//        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, balance);
-let tokenLimit
-try {
-tokenLimit= await contract.getLimit(userAddress, token.contractAddress, balance);
-    
-} catch (error) {
-  tokenLimit = 0
-}
-const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
-        return {
+        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, 0);
+        console.log('boop',tokenLimit);
+const lim = await contract.getLimitAmount(token.contractAddress)//Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
+console.log(metadata.name,lim,tokenLimit,Number(lim)/ Math.pow(10, metadata.decimals), Number(tokenLimit)/ Math.pow(10, metadata.decimals));
+
+return {
           ...metadata,
-          balance: adjustedBalance.toFixed(2),
+          balance: adjustedBalance,
           address: token.contractAddress,
-          limit: limit
+          dailyLimit: Number(lim)/ Math.pow(10, metadata.decimals),
+          limit: Number(tokenLimit)/ Math.pow(10, metadata.decimals)
         };
       }));
 
       const ethBalance = await provider.getBalance(vault);
       const adjustedEthBalance = ethers.formatEther(ethBalance);
-      //const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
-      let ethLimit
-      try {
-        ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
-      } catch (error) {
-        ethLimit = 0
-      
-      }
+      const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
+      const lim = await contract.getLimitAmount('0x0000000000000000000000000000000000000000')
       const ethLimitAmount = Number(ethLimit.fixedLimit > 0 ? ethLimit.fixedLimit : ethLimit.percentageLimit > 0 ? ethLimit.percentageLimit * Number(ethBalance) / 100 : ethLimit.useBaseLimit == 1 ? '0' : ethLimit.useBaseLimit == 2 ? adjustedEthBalance : adjustedEthBalance * Number(baseLimit) / 100);
 
       tokenDetails.unshift({
@@ -166,10 +157,11 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
         symbol: 'ETH',
         balance: adjustedEthBalance,
         address: '0x0000000000000000000000000000000000000000',
-        limit: ethLimitAmount
-      });
+        dailyLimit: Number(lim)/ Math.pow(10, 18),
+        limit: (Number(ethLimit)/ Math.pow(10, 18) )
+            });
 
-      setTokenBalances(tokenDetails);
+      setTokenBalances(tokenDetails.filter(token => token.symbol.length < 10));
 
       let whitelistedAddresses = [];
       let i = 0;
@@ -252,7 +244,20 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
       setLoading(false);
     }
   };
-
+  function convert(n) {
+    var sign = +n < 0 ? "-" : "",
+      toStr = n.toString();
+    if (!/e/i.test(toStr)) {
+      return n;
+    }
+    var [lead, decimal, pow] = n.toString()
+      .replace(/^-/, "")
+      .replace(/^([0-9]+)(e.*)/, "$1.$2")
+      .split(/e|\./);
+    return +pow < 0 ?
+      sign + "0." + "0".repeat(Math.max(Math.abs(pow) - 1 || 0, 0)) + lead + decimal :
+      sign + lead + (+pow >= decimal.length ? (decimal + "0".repeat(Math.max(+pow - decimal.length || 0, 0))) : (decimal.slice(0, +pow) + "." + decimal.slice(+pow)))
+  }
   const handleConfirmTransaction = async (txIndex) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
@@ -288,11 +293,11 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
       } else {
         const token = new ethers.Contract(tokenAddress, ['function approve(address spender, uint256 amount)', 'function allowance(address owner, address spender) view returns (uint256)', 'function decimals() view returns (uint8)'], signer);
         const allowance = await token.allowance(userAddress, selectedVault);
-        if (allowance < ethers.formatUnits(amount.toString(), await token.decimals())) {
-          const approveTx = await token.approve(selectedVault, ethers.formatUnits('1000000000000000000', await token.decimals()));
+        if (allowance < ethers.parseUnits(amount.toString(), await token.decimals())) {
+          const approveTx = await token.approve(selectedVault, ethers.parseUnits('1000000000000000000', await token.decimals()));
           await approveTx.wait();
         }
-        const tx = await contract.depositToken(tokenAddress, ethers.formatUnits(amount.toString(), await token.decimals()));
+        const tx = await contract.depositToken(tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
         await tx.wait();
       }
       toast.success('Token deposited successfully!');
@@ -336,7 +341,7 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
           return;
         }
       } catch (error) { }
-      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay * 86400);
+      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay);
       await tx.wait();
       toast.success('Vault created successfully!');
       fetchVaults();
@@ -347,16 +352,50 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
   };
 
   const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
-    try {
+    try {      let abi = new ethers.Interface(vaultAbi);
+
       console.log(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      !whitelistedAddresses ? whitelistedAddresses = [] : whitelistedAddresses;
+      !whitelistedAddresses ? whitelistedAddresses = vaultSettings.whitelistedAddresses : whitelistedAddresses;
       !tokens ? tokens = [] : tokens;
       !fixedLimits ? fixedLimits = [] : fixedLimits;
       !percentageLimits ? percentageLimits = [] : percentageLimits;
       !useBaseLimits ? useBaseLimits = [] : useBaseLimits;
+      !dailyLimit ? dailyLimit = 0 : dailyLimit;
+      !threshold ? threshold = 0 : threshold;
+      !delay ? delay = 0 : delay;
+      !recoveryAddress ? recoveryAddress = '0x0000000000000000000000000000000000000000' : recoveryAddress;
+      if(userAddress===vaultSettings.recoveryAddress){
+     console.log('lol')
       const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
       await tx.wait();
+      }
+      else if(whitelistedAddresses!='')
+{     const data = abi.encodeFunctionData("updatewhitelistAddresses", [whitelistedAddresses]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0); 
+await tx.wait();
+}
+else if(dailyLimit!='')
+{     const data = abi.encodeFunctionData("updateDailyLimit", [dailyLimit]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0);
+await tx.wait();
+}
+else if(threshold!='')
+{     const data = abi.encodeFunctionData("updateThreshold", [threshold]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0);
+await tx.wait();
+}
+else if(delay!='')
+{     const data = abi.encodeFunctionData("updateDelay", [delay]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0);
+await tx.wait();
+}
+else if(recoveryAddress!='')
+{     const data = abi.encodeFunctionData("updateRecoveryAddress", [recoveryAddress]);
+  const tx = await contract.queueTransaction(contract.address, data, 0);
+await tx.wait();
+}
+  
       toast.success('Settings updated successfully!');
       fetchTokenBalances(selectedVault);
     } catch (error) {
@@ -373,7 +412,8 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
         await tx.wait();
       } else {
         const token = new ethers.Contract(tokenAddress, ['function decimals() view returns (uint8)'], signer);
-        const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.formatUnits(amount.toString(), await token.decimals()));
+        console.log(ethers.parseUnits(amount, await token.decimals()));
+        const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
         await tx.wait();
       }
       toast.success('Token withdrawn successfully!');
@@ -432,10 +472,10 @@ const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLi
               <img src={asset.logo?asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
               <div className="text-2xl font-bold">{asset.symbol}</div>
             </div>
-            <div className="text-lg mb-2">Balance: {asset.balance}</div>
-            <div className="text-lg mb-2">Limit: {asset.limit}</div>
+            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0,12}</div>
+            <div className="text-lg mb-2">Limit: {convert(asset.limit).toString().substring(0,12)}</div>
             <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
-              <div className="bg-blue-300 h-4 rounded-full" style={{ width: '100%' }}></div>
+              <div className="bg-blue-300 h-4 rounded-full" style={{ width: `${asset.limit/asset.dailyLimit*100 }%` }}></div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
               <input id={`amount-${asset.symbol}`} style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '10px' : '' }} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
