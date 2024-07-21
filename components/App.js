@@ -84,7 +84,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee' : '0x85F832bb7305C2E0Ae4ef4B46D7505dA357CA587'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0xc6251a80dBCa419Bf54768587b32CFf3FBfb58Ee' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -130,6 +130,7 @@ if (  net!=null){
       const tokenDetails = await Promise.all(nonZeroBalances.map(async token => {
         const balance = token.tokenBalance;
         const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
+        console.log(metadata);
         const adjustedBalance = balance / Math.pow(10, metadata.decimals);
         const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, balance);
         const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
@@ -414,7 +415,7 @@ if (  net!=null){
           <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
             <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
             <div className="flex items-center mb-2">
-              <img src={asset.logo || tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
+              <img src={asset.logo?asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
               <div className="text-2xl font-bold">{asset.symbol}</div>
             </div>
             <div className="text-lg mb-2">Balance: {asset.balance}</div>
