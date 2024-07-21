@@ -80,6 +80,7 @@ const App = () => {
   const [vaults, setVaults] = useState([]);
   const [selectedVault, setSelectedVault] = useState('');
   const [limitSection, setLimitSection] = useState('fixed');
+  const [selectedToken, setSelectedToken] = useState('');
   const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false); // New state for info modal
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
@@ -395,7 +396,43 @@ else if(recoveryAddress!='')
   const tx = await contract.queueTransaction(contract.address, data, 0);
 await tx.wait();
 }
+else if(selectedToken!='')
+{    
+  fixedLimits = document.getElementById('fixed-limit').value
+  percentageLimits = document.getElementById('percentage-limit').value
+  useBaseLimits = document.getElementById('use-base-limit').value
+  !fixedLimits ? fixedLimits = [0] : fixedLimits;
+  !percentageLimits ? percentageLimits = [0] : percentageLimits;
+  !useBaseLimits ? useBaseLimits = [0] : useBaseLimits;
+  console.log(fixedLimits, percentageLimits, useBaseLimits);
+  console.log(document.getElementById('use-base-limit').value);
+  const data = abi.encodeFunctionData("setTokenLimit", [[selectedToken], [fixedLimits], [percentageLimits], [useBaseLimits]]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0);
+await tx.wait();
+}
+
   
+      toast.success('Settings updated successfully!');
+      fetchTokenBalances(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update settings.');
+    }
+  };
+  const[tokenlimit,setTokenlimit]=useState({fixedLimit:'',percentageLimit:'',useBaseLimit:''});
+const updatetokenlimit = async () => {
+  console.log('lol',selectedToken,tokenlimit);
+
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      let fixedLimits = tokenlimit.fixedLimit!=''?tokenlimit.fixedLimit:0;
+      let percentageLimits = tokenlimit.percentageLimit!=''?tokenlimit.percentageLimit:0;
+      let useBaseLimits = tokenlimit.useBaseLimit!=''?tokenlimit.useBaseLimit:0;
+      console.log(fixedLimits, percentageLimits, useBaseLimits);
+      let abi = new ethers.Interface(vaultAbi);
+  const data = abi.encodeFunctionData("setTokenLimit", [selectedToken, fixedLimits, percentageLimits, useBaseLimits]);
+  const tx = await contract.queueTransaction(selectedVault, data, 0);
+await tx.wait();
       toast.success('Settings updated successfully!');
       fetchTokenBalances(selectedVault);
     } catch (error) {
@@ -467,7 +504,7 @@ await tx.wait();
       <>
         {tokenBalances.map((asset, index) => (
           <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
-            <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
+            <div className="gear-icon text-lg" onClick={() =>{handleLimitModalToggle();setSelectedToken(asset.address)}}>⚙️</div>
             <div className="flex items-center mb-2">
               <img src={asset.logo?asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
               <div className="text-2xl font-bold">{asset.symbol}</div>
@@ -762,7 +799,7 @@ await tx.wait();
     );
   }
 
-  function LimitModal({ handleClose }) {
+  function LimitModal({ handleClose,token }) {
     return (
       <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
         <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
@@ -780,7 +817,7 @@ await tx.wait();
               <div id="fixed-limit-section" className="space-y-6">
                 <div>
                   <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
-                  <input type="number" id="fixed-limit" name="fixed-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+                  <input type="number" value={tokenlimit.fixedLimit} id="fixed-limit" name="fixed-limit" step="1" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenlimit({...tokenlimit,fixedLimit:e.target.value})}/>
                 </div>
               </div>
             )}
@@ -788,16 +825,21 @@ await tx.wait();
               <div id="percentage-limit-section" className="space-y-6">
                 <div>
                   <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
-                  <input type="number" id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
+                  <input type="number" value={tokenlimit.percentageLimit} id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenlimit({...tokenlimit,percentageLimit:e.target.value})}/>
                 </div>
               </div>
             )}
             {limitSection === 'no-limit' && (
               <div id="no-limit-section" className="space-y-6">
                 <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
+              <select id="use-base-limits" value={tokenlimit.useBaseLimit} name="use-base-limits" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={ (e) => setTokenlimit({...tokenlimit,useBaseLimit:e.target.value})}>
+              <option value="0">Use Base Limit</option>
+              <option value="1">Disable withdrawals</option>
+              <option value="2">Unlimited withdrawals</option>
+</select>
               </div>
             )}
-            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => alert('Token limits set successfully!')}>Set Limits</button>
+            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => updatetokenlimit()}>Set Limits</button>
           </section>
         </div>
       </div>
