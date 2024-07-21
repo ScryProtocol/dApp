@@ -586,8 +586,10 @@ await tx.wait();
             <ConnectButton />
           </div>
         </section>
-        <h1 className='text-4xl text-center text-white font-bold mb-8'>{vaultSettings.name}</h1>
-        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
+        <h1 className='text-4xl text-center text-white font-bold mb-1'>{vaultSettings.name}</h1>
+        <div className='text-center'>        <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2'>{selectedVault}</h1>
+
+        </div>        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
             <button className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
