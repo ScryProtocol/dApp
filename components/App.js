@@ -86,7 +86,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0xBAa9e4467ad7673a8A54b36fB5dc4ecd8b29FB05' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0x0F3438AC708E2d520B58ea67D2B471262a863B34' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -342,10 +342,12 @@ return {
           return;
         }
       } catch (error) { }
-      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay);
+      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay*84000).toFixed(0));
       await tx.wait();
+      window.location.reload()
       toast.success('Vault created successfully!');
-      fetchVaults();
+     await fetchVaults();
+     await fetchTokenBalances(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to create vault.');
@@ -434,7 +436,6 @@ const updatetokenlimit = async () => {
   const tx = await contract.queueTransaction(selectedVault, data, 0);
 await tx.wait();
       toast.success('Settings updated successfully!');
-      fetchTokenBalances(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to update settings.');
