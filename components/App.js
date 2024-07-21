@@ -132,8 +132,15 @@ if (  net!=null){
         const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
         console.log(metadata);
         const adjustedBalance = balance / Math.pow(10, metadata.decimals);
-        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, balance);
-        const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
+//        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, balance);
+let tokenLimit
+try {
+tokenLimit= await contract.getLimit(userAddress, token.contractAddress, balance);
+    
+} catch (error) {
+  tokenLimit = 0
+}
+const limit = Number(tokenLimit.fixedLimit > 0 ? tokenLimit.fixedLimit : tokenLimit.percentageLimit > 0 ? tokenLimit.percentageLimit * Number(balance) / 100 : tokenLimit.useBaseLimit == 1 ? '0' : tokenLimit.useBaseLimit == 2 ? adjustedBalance.toFixed(2) : adjustedBalance * Number(baseLimit) / 100);
         return {
           ...metadata,
           balance: adjustedBalance.toFixed(2),
@@ -144,7 +151,14 @@ if (  net!=null){
 
       const ethBalance = await provider.getBalance(vault);
       const adjustedEthBalance = ethers.formatEther(ethBalance);
-      const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', ethBalance);
+      //const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
+      let ethLimit
+      try {
+        ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
+      } catch (error) {
+        ethLimit = 0
+      
+      }
       const ethLimitAmount = Number(ethLimit.fixedLimit > 0 ? ethLimit.fixedLimit : ethLimit.percentageLimit > 0 ? ethLimit.percentageLimit * Number(ethBalance) / 100 : ethLimit.useBaseLimit == 1 ? '0' : ethLimit.useBaseLimit == 2 ? adjustedEthBalance : adjustedEthBalance * Number(baseLimit) / 100);
 
       tokenDetails.unshift({
