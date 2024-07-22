@@ -90,7 +90,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0x0F3438AC708E2d520B58ea67D2B471262a863B34' : '0xc9035Dc511C7C4856E63b54fa0f39d012c45862f'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0x0F3438AC708E2d520B58ea67D2B471262a863B34' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
