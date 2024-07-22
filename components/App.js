@@ -82,7 +82,10 @@ const App = () => {
   const [selectedVault, setSelectedVault] = useState('');
   const [limitSection, setLimitSection] = useState('fixed');
   const [selectedToken, setSelectedToken] = useState('');
-  const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false); // New state for info modal
+  const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false);
+  const [isCustomTxModalOpen, setIsCustomTxModalOpen] = useState(false);
+  const [customTx, setCustomTx] = useState({ to: '', value: '', fnSig: '', params: [] });
+
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider = useEthersProvider();
@@ -200,7 +203,8 @@ const App = () => {
       });
 
       setTokenBalances(tokenDetails);
-console.log(tokenDetails);
+      console.log(tokenDetails);
+
       let whitelistedAddresses = [];
       let i = 0;
       while (true) {
@@ -520,6 +524,10 @@ console.log(tokenDetails);
     setIsCreateInfoModalOpen(!isCreateInfoModalOpen);
   };
 
+  const handleCustomTxModalToggle = () => {
+    setIsCustomTxModalOpen(!isCustomTxModalOpen);
+  };
+
   const handleVaultChange = (e) => {
     setSelectedVault(e.target.value);
   };
@@ -552,7 +560,8 @@ console.log(tokenDetails);
             <div className="flex items-center mb-2">
               <img src={nft.imageUrl} alt={`${nft.title} logo`} className="w-8 h-8 mr-2" />
               <div style={{ backgroundColor: '#f9a8d4bf' }} className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
-            </div>  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            </div>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
             </div>
           </div>
@@ -562,27 +571,71 @@ console.log(tokenDetails);
   };
 
   const displayTransactions = () => {
-    return queuedTransactions.map((transaction) => (
-      <div key={transaction.id} style={{ borderRadius: screen.availWidth < 1000 ? '20px' : '' }} className="grid grid-cols-1 sm:grid-cols-5 text-center bg-pink-100 rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105">
+    return queuedTransactions.map((transaction, index) => (
+      <div key={transaction.id} style={{ borderRadius: screen.availWidth < 1000 ? '20px' : '' }} className={`${bgColors[index % bgColors.length]} text-white grid grid-cols-1 sm:grid-cols-5 text-center rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105`}>
         <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20" style={{ right: window.innerWidth < 1500 ? '40px' : '' }}>
           <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2 relative sm:right-4`}>
             {transaction.to !== selectedVault ?
               <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
               : '⚙️'}
           </div>
-          <div className="text-gray-700 font-semibold">{transaction.id}</div>
+          <div className=" font-semibold">{transaction.id}</div>
         </div><a href={'https://etherscan.io/address/' + transaction.to}>
-          <div className="text-pink-500 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{ top: window.innerWidth < 1000 && window.innerWidth > 600 ? '40px' : '' }}>{window.innerWidth < 1500 ? transaction.to.slice(0, 10) + '...' + transaction.to.slice(30, 40) : transaction.to}</div></a>
-        <div className="text-gray-600 font-semibold relative lg:top-2">{transaction.amount}</div>
-        <div className="text-gray-600 relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
+          <div className="text-pink-100 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{ top: window.innerWidth < 1000 && window.innerWidth > 600 ? '40px' : '' }}>{window.innerWidth < 1500 ? transaction.to.slice(0, 10) + '...' + transaction.to.slice(30, 40) : transaction.to}</div></a>
+        <div className="font-semibold relative lg:top-2">{transaction.amount}</div>
+        <div className="relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
         <div className="flex flex-col items-center relative lg:top-2">
-          <div className={`${transaction.executed ? 'text-green-600' : 'text-yellow-600'} font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'} {!transaction.executed && (
-            <button className="bg-red-500 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
+          <div className={`${transaction.executed ? 'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'} {!transaction.executed && (
+            <button className="bg-pink-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
           )}
           </div>
         </div>
       </div>
     ));
+  };
+  const handleSendCustomTx = async () => {
+    try {
+      const { to, value, fnSig, params } = customTx;
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      console.log(fnSig);
+      // Create the function fragment
+      const abi = new ethers.Interface([`function ${fnSig}`]);
+      
+      // Encode the function data
+      const data = abi.encodeFunctionData(fnSig.split('(')[0], params);
+      console.log(data);
+      
+      // Queue the transaction
+      const tx = await contract.queueTransaction(to, data, ethers.parseUnits(value.toString(), 'ether'));
+      await tx.wait();
+      
+      toast.success('Custom transaction queued successfully!');
+      fetchQueuedTransactions(selectedVault);
+      handleCustomTxModalToggle();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to queue custom transaction.');
+    }
+  };
+  
+
+  const commonFunctionSignatures = [
+    "transfer(address to, uint256 amount)",
+    "approve(address to, uint256 amount)",
+    "transferFrom(address from, address to, uint256 amount)"
+  ];
+
+  const handleCustomTxChange = (index, value) => {
+    const newParams = [...customTx.params];
+    newParams[index] = value;
+    setCustomTx({ ...customTx, params: newParams });
+  };
+
+  const handleFnSigChange = (e) => {
+    const fnSig = e.target.value;
+    const paramsCount = fnSig.split(',').length - 1;
+    const params = Array(paramsCount).fill('');
+    setCustomTx({ ...customTx, fnSig, params });
   };
 
   return (
@@ -610,8 +663,10 @@ console.log(tokenDetails);
           </div>
         </section>
         <h1 className='text-4xl text-center text-white font-bold mb-1'>{vaultSettings.name}</h1>
-        <div className='text-center items-center'>        <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2'>{selectedVault}</h1>
-        </div>        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
+        <div className='text-center items-center'>
+          <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2'>{selectedVault}</h1>
+        </div>
+        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
             <button className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
@@ -633,12 +688,14 @@ console.log(tokenDetails);
             <div id="transaction-list" className="space-y-4">
               {displayTransactions()}
             </div>
+            <button className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out float-right mt-4" onClick={handleCustomTxModalToggle}>Queue Custom Transaction</button>
           </div>
         </section>
       </main>
       {isDepositModalOpen && <DepositModal handleClose={handleDepositModalToggle} handleDepositToken={handleDepositToken} />}
       {isLimitModalOpen && <LimitModal handleClose={handleLimitModalToggle} />}
       {isCreateInfoModalOpen && <CreateInfoModal handleClose={handleCreateInfoModalToggle} />}
+      {isCustomTxModalOpen && <CustomTxModal handleClose={handleCustomTxModalToggle} customTx={customTx} setCustomTx={setCustomTx} handleSendCustomTx={handleSendCustomTx} />}
     </div>
   );
 
@@ -767,6 +824,11 @@ console.log(tokenDetails);
           <input type="text" id="whitelisted-addresses" name="whitelisted-addresses" placeholder="Enter whitelisted addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
         </div>
         <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => updateSettings(document.getElementById('recovery-addresses').value, document.getElementById('whitelisted-addresses').value.split(','), document.getElementById('withdraw-limit').value, document.getElementById('threshold').value, document.getElementById('delay').value)}>Save Settings</button>
+        {(userAddress == vaultSettings.owner || userAddress == vaultSettings.recoveryAddress || vaultSettings.whitelistedAddresses.includes(userAddress)) &&
+          <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => {
+            let contract = new ethers.Contract(selectedVault, ["function freezeLock(uint) external"], signer);
+            let tx = contract.freezeLock(2);
+          }}>Freeze Vault</button>}
       </div>
     );
   }
@@ -908,12 +970,71 @@ console.log(tokenDetails);
                 <h3 className="text-lg font-semibold text-gray-600">Daily Limit</h3>
                 <p className="text-gray-600">The maximum percentage of an asset that can be withdrawn from the vault daily.</p>
               </div>
+              <div><h3 className="text-lg font-semibold text-gray-600">Freeze</h3>
+                <p className="text-gray-600">The vault can be frozen to stop all withdrawals and transactions, the vault allows the vault owner, recovery address, or whitelisted addresses to freeze the vault on demand. <strong>Only the recovery address can unfreeze the vault.</strong></p>
+              </div>
             </div>
           </section>
         </div>
       </div>
     );
   }
+  function CustomTxModal({ handleClose, customTx, setCustomTx, handleSendCustomTx }) {
+    const [paramInputs, setParamInputs] = useState([]);
+  
+    useEffect(() => {
+      const params = customTx.fnSig.match(/\(([^)]+)\)/)?.[1].split(',') || [];
+      setParamInputs(params);
+    }, [customTx.fnSig]);
+  
+    const handleParamChange = (index, value) => {
+      const newParams = [...customTx.params];
+      newParams[index] = value;
+      setCustomTx({ ...customTx, params: newParams });
+    };
+  
+    return (
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
+          <section id="custom-tx">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Queue Custom Transaction</h2>
+            </div>
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="to" className="block mb-2 font-semibold text-gray-600">To Address:</label>
+                <input type="text" id="to" name="to" value={customTx.to} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, to: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="value" className="block mb-2 font-semibold text-gray-600">ETH Value:</label>
+                <input type="number" id="value" name="value" step="0.01" value={customTx.value} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, value: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="fnSig" className="block mb-2 font-semibold text-gray-600">Function Signature:</label>
+                <select id="fnSig" name="fnSig" value={customTx.fnSig} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })}>
+                  <option value="">Select a function</option>
+                  {commonFunctionSignatures.map((sig, index) => (
+                    <option key={index} value={sig}>{sig}</option>
+                  ))}
+                  <option value="custom">Custom</option>
+                </select>
+                {customTx.fnSig === 'custom' &&
+                  <input type="text" id="customFnSig" name="customFnSig" value={customTx.fnSig} className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom function signature" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })} />}
+              </div>
+              {paramInputs.map((param, index) => (
+                <div key={index}>
+                  <label htmlFor={`param${index}`} className="block mb-2 font-semibold text-gray-600">{param.split(' ')[1] || `param${index}`}:</label>
+                  <input type="text" id={`param${index}`} name={`param${index}`} value={customTx.params[index] || ''} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => handleParamChange(index, e.target.value)} />
+                </div>
+              ))}
+              <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleSendCustomTx}>Queue Custom Transaction</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+  
 };
-
 export default App;
