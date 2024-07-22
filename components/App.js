@@ -1021,7 +1021,7 @@ const App = () => {
                   <option value="custom">Custom</option>
                 </select>
                 {customTx.fnSig === 'custom' &&
-                  <input type="text" id="customFnSig" name="customFnSig" value={customTx.fnSig} className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom function signature" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })} />}
+                  <input type="text" id="customFnSig" name="customFnSig" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom function signature" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })} />}
               </div>
               {paramInputs.map((param, index) => (
                 <div key={index}>
