@@ -677,6 +677,8 @@ const App = () => {
         </section>
         <section id="allowance-list" className="mt-8">
           <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-x-auto">
+
+          <button className="bg-pink-500 text-white font-semibold lg:py-2 px-4 relative bottom-14 lg:bottom-0 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out float-right" onClick={handleCustomTxModalToggle}>Queue Custom Transaction</button>
             <h2 className="text-xl text-pink-600 font-bold mb-4">Vault Transactions</h2>
             <div className="grid grid-cols-5 text-center font-semibold text-gray-600 mb-4">
               <div>Transaction ID</div>
@@ -688,7 +690,6 @@ const App = () => {
             <div id="transaction-list" className="space-y-4">
               {displayTransactions()}
             </div>
-            <button className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out float-right mt-4" onClick={handleCustomTxModalToggle}>Queue Custom Transaction</button>
           </div>
         </section>
       </main>
