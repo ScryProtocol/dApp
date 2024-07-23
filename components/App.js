@@ -7,7 +7,7 @@ import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { Alchemy, Network } from 'alchemy-sdk';
 
-const defaultVaultAddress = '0x757Db67ef173678115a2E7F080eaD93d6aD76E00'; // Replace with your Vault contract address
+const defaultVaultAddress = '0x96a7436546450200856b57d419F45E756e8d226f'//'0x757Db67ef173678115a2E7F080eaD93d6aD76E00'; // Replace with your Vault contract address
 
 // Define the Vault contract ABI
 const vaultAbi = [
@@ -90,7 +90,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0x0F3438AC708E2d520B58ea67D2B471262a863B34' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0x45066dF0FB19b64fa14e41810515dEf411EF6eB2' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -402,7 +402,7 @@ const App = () => {
     try {
       let abi = new ethers.Interface(vaultAbi);
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      !whitelistedAddresses ? whitelistedAddresses = vaultSettings.whitelistedAddresses : whitelistedAddresses;
+      !whitelistedAddresses ? whitelistedAddresses = [] : whitelistedAddresses;
       !tokens ? tokens = [] : tokens;
       !fixedLimits ? fixedLimits = [] : fixedLimits;
       !percentageLimits ? percentageLimits = [] : percentageLimits;
