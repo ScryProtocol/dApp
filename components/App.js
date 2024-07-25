@@ -386,6 +386,10 @@ const App = () => {
           return;
         }
       } catch (error) { }
+      if (whitelistedAddresses.length < threshold) {
+        toast.error('Threshold must be less than or equal to the number of whitelisted addresses.');
+        return;
+      }
       const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
       await tx.wait();
       window.location.reload();
