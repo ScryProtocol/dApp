@@ -201,8 +201,8 @@ const App = () => {
         dailyLimit: Number(lim) / Math.pow(10, 18),
         limit: (Number(ethLimit) / Math.pow(10, 18))
       });
-
-      setTokenBalances(tokenDetails.filter(token => token.symbol.length > 0));
+let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
+      setTokenBalances(tokenDetail);//tokenDetails);
       console.log(tokenDetails);
 
       let whitelistedAddresses = [];
