@@ -267,7 +267,17 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
 
       let queuedTransactions = [];
       for (let i = 0; i < returnData.length; i++) {
-        const [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
+        let [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
+        //const [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
+        let token =''
+        if(data.startsWith('0xa9059cbb')) {
+          const abi = new ethers.Interface(['function transfer(address to, uint256 amount)']);
+          const decodedData = abi.decodeFunctionData('transfer', data);
+          const amt = decodedData.amount;
+          token = to;
+          to = decodedData.to;
+amount = amt;
+      }
         const tx = {
           id: startTx + i,
           to,
@@ -277,6 +287,7 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
           numConfirmations: Number(numConfirmations),
           threshold: threshold,
           amount: ethers.formatUnits(amount, 'ether') < 0.00000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
+        ,token
         };
         queuedTransactions.push(tx);
       }
@@ -580,7 +591,7 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
         <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20" style={{ right: window.innerWidth < 1500 ? '40px' : '' }}>
           <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2 relative sm:right-4`}>
             {transaction.to !== selectedVault ?
-              <img className="h-6 w-6" src={tokenLogos[transaction.to.toLowerCase()] ? tokenLogos[transaction.to.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
+              <img className="h-6 w-6" src={tokenLogos[transaction.token.toLowerCase()] ? tokenLogos[transaction.token.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
               : '⚙️'}
           </div>
           <div className=" font-semibold">{transaction.id}</div>
