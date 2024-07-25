@@ -202,7 +202,7 @@ const App = () => {
         limit: (Number(ethLimit) / Math.pow(10, 18))
       });
 
-      setTokenBalances(tokenDetails);
+      setTokenBalances(tokenDetails.filter(token => token.symbol.length > 0));
       console.log(tokenDetails);
 
       let whitelistedAddresses = [];
