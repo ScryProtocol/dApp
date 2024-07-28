@@ -90,7 +90,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0x45066dF0FB19b64fa14e41810515dEf411EF6eB2' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0x536464347746ffb486499d5aa8e50245ce434723' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -286,7 +286,7 @@ amount = amt;
           executed,
           numConfirmations: Number(numConfirmations),
           threshold: threshold,
-          amount: ethers.formatUnits(amount, 'ether') < 0.00000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
+          amount: ethers.formatUnits(amount, 'ether') < 0.000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
         ,token
         };
         queuedTransactions.push(tx);
