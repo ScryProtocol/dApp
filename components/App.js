@@ -717,7 +717,14 @@ amount = amt;
 
   function Header() {
     return (
-      <h1 className="text-center text-4xl mb-8 relative text-white font-extrabold">Welcome to Vault</h1>
+      <>
+      <h1 className="text-center text-4xl amb-8 relative text-white font-extrabold">Welcome to Vault</h1>
+      <div className="flex justify-center items-center">
+        <a href="https://twitter.com/spotdotpizza" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
+        <img src="https://cdn.simpleicons.org/x/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
+        <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
+          <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
+</div></>
     );
   }
 
