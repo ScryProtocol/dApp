@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -29,6 +29,7 @@ const vaultAbi = [
   "function recover(address token, address to, uint256 amount, bytes memory data) external",
   "function updateSettings(address newRecoveryAddress, address[] memory newWhitelistedAddresses, uint256 newDailyLimit, uint256 newThreshold, uint256 newDelay, address[] memory tokens, uint256[] memory fixedLimits, uint256[] memory percentageLimits, uint256[] memory useBaseLimits) external",
   "function confirmTransaction(uint256 id) external",
+  "function cancelTransaction(uint256 id) external",
   "function owner() external view returns (address)",
   "function name() external view returns (string memory)",
   "function recoveryAddress() external view returns (address)",
@@ -90,7 +91,7 @@ const App = () => {
   const chainId = useChainId();
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0x3403e5600EdD8bD7A22864B941Ec62E917Aa4A6F' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0xe0E0FF0C2eD84f7EAef1aE988E288Fc6F00f57E4' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -522,7 +523,18 @@ amount = amt;
       toast.error('Failed to withdraw NFT.');
     }
   };
-
+const handleCancelTransaction = async (txIndex) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const tx = await contract.cancelTransaction(txIndex);
+      await tx.wait();
+      toast.success('Transaction canceled successfully!');
+      fetchQueuedTransactions(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to cancel transaction.');
+    }
+  }
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -600,10 +612,11 @@ amount = amt;
         <div className="font-semibold relative lg:top-2">{transaction.amount}</div>
         <div className="relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
         <div className="flex flex-col items-center relative lg:top-2">
-          <div className={`${transaction.executed ? 'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2`}>{transaction.executed ? 'Completed' : 'Pending'} {!transaction.executed && (
+          <div className={`${transaction.executed ? transaction.numConfirmations==404?'text-red-100 bg-red-500':'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2`}>{transaction.executed ? transaction.numConfirmations==404?'Canceled':'Completed' : 'Pending'} {!transaction.executed && (
             <button className="bg-pink-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
           )}
-          </div>
+          </div>{(!transaction.executed &&userAddress==vaultSettings.owner)&&<button className="bg-red-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleCancelTransaction(transaction.id)}>Cancel</button>
+          }
         </div>
       </div>
     ));
