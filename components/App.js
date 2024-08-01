@@ -464,6 +464,7 @@ amount = amt;
       }
       toast.success('Settings updated successfully!');
       fetchTokenBalances(selectedVault);
+      fetchQueuedTransactions(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to update settings.');
@@ -502,6 +503,7 @@ amount = amt;
       }
       toast.success('Token withdrawn successfully!');
       fetchTokenBalances(selectedVault);
+      fetchQueuedTransactions(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to withdraw token.');
@@ -519,6 +521,7 @@ amount = amt;
       await tx.wait();
       toast.success('NFT withdrawal queued successfully!');
       fetchTokenBalances(selectedVault);
+      fetchQueuedTransactions(selectedVault);
     } catch (error) {
       console.error(error);
       toast.error('Failed to withdraw NFT.');
