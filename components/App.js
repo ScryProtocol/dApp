@@ -89,7 +89,7 @@ const App = () => {
 
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
-  const provider = chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.providers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.providers.JsonRpcProvider('https://optimism.meowrpc.com') : null;
+  const provider = chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
    //useEthersProvider();
   const signer = useEthersSigner();
   const factoryAddress = chainId == 8453 ? '0xe0E0FF0C2eD84f7EAef1aE988E288Fc6F00f57E4' : '0xb45d9e3e45fb398eed9a79a1daa25361b30dfa8b'; // Replace with your VaultFactory contract address
