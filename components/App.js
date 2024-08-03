@@ -388,7 +388,7 @@ amount = amt;
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
     try {
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
-      delay==0?delay=52*2:delay;
+      delay==0?2*52:delay;
       if (!whitelistedAddresses || name === '' || recoveryAddress === '' || dailyLimit === '' || threshold === '' || delay === '') {
         toast.error('Please fill all fields.');
         return;
@@ -675,11 +675,7 @@ const handleCancelTransaction = async (txIndex) => {
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
       <Toaster />
       <main className="container mx-auto py-8 px-4 sm:px-8">
-        <Header />        <div className='text-center items-center'>
-
-        <h1 className='inline-block bg-red-300 rounded-3xl text-center text-white mx-auto font-bold mb-2 px-2'>ALPHA - Do not put in any real value</h1>
-        </div>
-
+        <Header />
         <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 lg:w-1/2 mx-auto">
           <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
           {currentTab === 'open' && <>
