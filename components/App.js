@@ -388,6 +388,7 @@ amount = amt;
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
     try {
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
+      delay==0?delay=60*60*24*52*2:delay;
       if (!whitelistedAddresses || name === '' || recoveryAddress === '' || dailyLimit === '' || threshold === '' || delay === '') {
         toast.error('Please fill all fields.');
         return;
