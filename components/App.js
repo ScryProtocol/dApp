@@ -776,7 +776,7 @@ const handleCancelTransaction = async (txIndex) => {
           </button>
           <div className="flex items-center">
             <input type="text" id="vault-name" name="vault-name" required className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name" />
-            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vault.eth</span>
+            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vault.pay.eth</span>
           </div>
         </div>
 
@@ -988,7 +988,7 @@ const handleCancelTransaction = async (txIndex) => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-600">Vault Name</h3>
-                <p className="text-gray-600">The unique name for your vault on this specific chain. It will be associated with a .vault.eth domain if one is free but should not be relied on.</p>
+                <p className="text-gray-600">The unique name for your vault on this specific chain. It will be associated with a .vault.pay.eth domain if one is free but should not be relied on.</p>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-600">Recovery Address</h3>
