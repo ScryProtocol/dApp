@@ -716,7 +716,7 @@ const handleCancelTransaction = async (txIndex) => {
             <h2 className="text-xl text-pink-600 font-bold mb-4">Vault Transactions</h2>
             <div className="grid grid-cols-5 text-center font-semibold text-gray-600 mb-4">
               <div>Transaction ID</div>
-              <div>To</div>
+              <div className="ml-6">To</div>
               <div>Amount</div>
               <div>Date</div>
               <div>Status</div>
