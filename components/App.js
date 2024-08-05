@@ -697,7 +697,7 @@ const handleCancelTransaction = async (txIndex) => {
         </section>
         <h1 className='text-4xl text-center text-white font-bold mb-1'>{vaultSettings.name}</h1>
         <div className='text-center items-center'>
-          <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2'>{selectedVault}</h1>
+          <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2 text-xs sm:text-base md:text-base xl:text-base'>{selectedVault}</h1>
         </div>
         <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-8">
