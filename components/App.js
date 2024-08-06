@@ -92,7 +92,7 @@ const App = () => {
   const provider = chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
    //useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress = chainId == 8453 ? '0xe0E0FF0C2eD84f7EAef1aE988E288Fc6F00f57E4':chainId==10?'0xd97EEE1bdDF251785F8cfC8DC323f7b782f8385e' : '0x1aB960a8249C015423390d20B4E9cf6a272d5113'; // Replace with your VaultFactory contract address
+  const factoryAddress = chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
