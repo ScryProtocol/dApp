@@ -111,7 +111,7 @@ const App = () => {
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
       const userVaults = await factory.getVaultsByOwner(userAddress);
-      userVaults.length == 0&toast('Create a vault to get started',{style:{backgroundColor:'#00aaff',color:'#fff',fontWeight:'bold'}});
+      userVaults.length == 0&&toast('Create a vault to get started',{style:{backgroundColor:'#00aaff',color:'#fff',fontWeight:'bold'}});
       const allVaults = userVaults.length > 0 ? userVaults : [chainId==1?'0x5bC3bB0d396072f0a86ACb4F3790505A54a25579':defaultVaultAddress];
       setVaults(allVaults);
       if (!selectedVault) {
