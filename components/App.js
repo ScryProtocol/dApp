@@ -905,9 +905,19 @@ const handleCancelTransaction = async (txIndex) => {
                 <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
                 <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)}>
                   <option value="">Select a token</option>
+                  {chainId === 8453 && <>
                   <option value="0x0000000000000000000000000000000000000000">ETH</option>
                   <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
+                  <option value="0x50c5725949a6f0c72e6c4a641f24049a917db0cb">DAI</option>
+                  <option value="0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42">EURC</option>
+                  </>
+                  }
+                  {chainId === 1 && <>
+                  <option value="0x0000000000000000000000000000000000000000">ETH</option>
+                  <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+                  <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
+                  </>
+                  }
                   <option value="custom">Custom</option>
                 </select>
                 {selectedToken === 'custom' &&
