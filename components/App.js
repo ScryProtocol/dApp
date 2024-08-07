@@ -617,11 +617,11 @@ const handleCancelTransaction = async (txIndex) => {
           <div className="text-pink-100 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{ top: window.innerWidth < 1000 && window.innerWidth > 600 ? '40px' : '' }}>{window.innerWidth < 1500 ? transaction.to.slice(0, 10) + '...' + transaction.to.slice(30, 40) : transaction.to}</div></a>
         <div className="font-semibold relative lg:top-2">{transaction.amount}</div>
         <div className="relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
-        <div className="flex flex-col items-center relative lg:top-2">
-          <div className={`${transaction.executed ? transaction.numConfirmations==404?'text-red-100 bg-red-500':'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2`}>{transaction.executed ? transaction.numConfirmations==404?'Canceled':'Completed' : 'Pending'} {!transaction.executed && (
-            <button className="bg-pink-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
+        <div className="flex items-center relative lg:top-2">
+          <div className={`${transaction.executed ? transaction.numConfirmations==404?'text-red-100 bg-red-500':'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2 mx-auto`}>{transaction.executed ? transaction.numConfirmations==404?'Canceled':'Completed' : 'Pending'} {!transaction.executed && (
+            <button className="bg-pink-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2 mx-auto" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
           )}
-          </div>{(!transaction.executed &&userAddress==vaultSettings.owner)&&<button className="bg-red-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2" onClick={() => handleCancelTransaction(transaction.id)}>Cancel</button>
+          </div>{(!transaction.executed &&userAddress==vaultSettings.owner)&&<button className="bg-red-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2 bottom-1 mx-auto" onClick={() => handleCancelTransaction(transaction.id)}>Cancel</button>
           }
         </div>
       </div>
