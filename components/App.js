@@ -89,7 +89,7 @@ const App = () => {
 
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
-  const provider = chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
+  const provider = chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
    //useEthersProvider();
   const signer = useEthersSigner();
   const factoryAddress ='0x00000000000052068951aed201da868e29db48ac'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
