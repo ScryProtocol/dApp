@@ -96,7 +96,7 @@ const App = () => {
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
-    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : Network.OPT_MAINNET,
+    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:  Network.OPT_MAINNET,
   };
   const alchemy = new Alchemy(alchemyConfig);
   const [net, setNet] = useState(null);
@@ -115,7 +115,11 @@ const App = () => {
       const allVaults = userVaults.length > 0 ? userVaults : [chainId==1?'0x5bC3bB0d396072f0a86ACb4F3790505A54a25579':defaultVaultAddress];
       setVaults(allVaults);
       if (!selectedVault) {
+        if(userVaults.length==0){
+        setIsCreateInfoModalOpen(true);
+        }else{
         setSelectedVault(allVaults[0]);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -334,6 +338,10 @@ amount = amt;
   useEffect(() => {
     if (userAddress) {
       fetchVaults();
+    }
+    else {
+      setIsCreateInfoModalOpen(true);
+toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',color:'#fff',fontWeight:'bold'}});
     }
   }, [userAddress]);
 
@@ -983,54 +991,127 @@ const handleCancelTransaction = async (txIndex) => {
       </div>
     );
   }
-
   function CreateInfoModal({ handleClose }) {
     return (
       <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative sm:w-1/2 m-auto relative max-h-screen overflow-y-auto" onClick={e => e.stopPropagation()}>
-          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
+        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto max-h-screen overflow-y-auto " onClick={e => e.stopPropagation()}>
+          <button className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4 focus:outline-none" onClick={handleClose}>
+            &times;
+          </button>
           <section id="create-info">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-500 font-bold">Creating a Vault</h2>
+            <div className="text-center mb-10">
+              <h2 className="text-4xl text-pink-500 font-extrabold">Crypto Vault Survival Guide</h2>
+              <p className="text-gray-600 mt-2 text-lg">Learn how to create a vault and keep your assets safe.</p>
             </div>
-            <div className="space-y-6">
+  
+            {/* Section 1: Crypto Vault Survival Guide */}
+            <div className="space-y-8">
               <div>
-                <h3 className="text-lg font-semibold text-gray-600">What is a Vault?</h3>
-                <p className="text-gray-600">A Vault is a secure smart contract that allows users to deposit tokens and NFTs, set limits, whitelist addresses, and require multiple signers for transactions. It is designed to enhance the security and management of digital assets.</p>
+                <h3 className="text-xl font-bold text-gray-900">What is a Vault?</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  A Vault is a secure smart contract that functions as a simple, safe savings account for your hot wallet. It allows you to deposit tokens and NFTs, set withdrawal limits, whitelist addresses, and require multiple signers for transactions. Vaults help keep your assets safe from drainers, hacks, open approvals, and lost or leaked private keys, making it an effective way to enhance the security and management of your digital assets.
+                </p>
               </div>
+  
               <div>
-                <h3 className="text-lg font-semibold text-gray-600">Vault Name</h3>
-                <p className="text-gray-600">The unique name for your vault on this specific chain. It will be associated with a .vault.pay.eth domain if one is free but should not be relied on.</p>
+                <h3 className="text-xl font-bold text-gray-900">Benefits of Using a Vault</h3>
+                <div className="text-gray-700 space-y-2">
+                  <p>🔒 <strong>Protection from Drainers:</strong> Vaults limit daily withdrawals, making it nearly impossible for malicious contracts to drain your account in one go.</p>
+                  <p>🛡️ <strong>Mitigation Against Hacks:</strong> Even if a hacker gains access to your wallet, vault security measures like multisig approvals and daily limits give you time to react.</p>
+                  <p>⚙️ <strong>Protection from Contract Hacks:</strong> Vaults prevent open token approvals from allowing unauthorized access to your assets.</p>
+                  <p>🔑 <strong>Safety from Leaked Private Keys:</strong> Vaults offer multiple layers of security, such as requiring multiple signers and utilizing a recovery address, ensuring your assets are safe even if your private key is compromised.</p>
+                </div>
               </div>
+  
               <div>
-                <h3 className="text-lg font-semibold text-gray-600">Recovery Address</h3>
-                <p className="text-gray-600">An address used for recovering access to the vault. It should be a secure, cold wallet address.</p>
+                <h3 className="text-xl font-bold text-gray-900">Key Features of Crypto Vaults</h3>
+                <div className="text-gray-700 space-y-2">
+                  <p>💰 <strong>Deposit & Withdraw Any Token/NFT:</strong> Vaults allow for easy deposit and withdrawal of any tokens or NFTs, offering flexibility in managing assets.</p>
+                  <p>🌐 <strong>Universal Vaults:</strong> Vaults are universal, using the same address for every user across all chains.</p>
+                  <p>📊 <strong>Daily Withdrawal Limits:</strong> Set daily limits to protect your assets from large losses due to hacks or mistakes.</p>
+                  <p>🖊️ <strong>Multisig Approval:</strong> Require multiple signatures to approve transactions, adding extra protection.</p>
+                  <p>✅ <strong>Whitelist Addresses:</strong> Authorize trusted addresses to interact with your vault and confirm transactions.</p>
+                  <p>⏳ <strong>Safety Delays:</strong> Set a delay before certain transactions are executed to detect suspicious activity.</p>
+                  <p>🛑 <strong>Freeze and Recovery:</strong> Freeze the vault to stop all activity and use the recovery address to regain access when needed.</p>
+                </div>
               </div>
+  
               <div>
-                <h3 className="text-lg font-semibold text-gray-600">Whitelist Addresses</h3>
-                <p className="text-gray-600">Addresses that are allowed to interact with the vault as signers. These confirm transactions using your chosen threshold. Separate multiple addresses with commas.</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-600">Safety Delay</h3>
-                <p className="text-gray-600">A delay period in days to provide an extra layer of security for transactions that are not simple limit withdrawals. After the delay you can self approve txs without signers. Leave at 0 to require signers.</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-600">Threshold</h3>
-                <p className="text-gray-600">The number of signers required to confirm a transaction.</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-600">Daily Limit</h3>
-                <p className="text-gray-600">The maximum percentage of an asset that can be withdrawn from the vault daily.</p>
-              </div>
-              <div><h3 className="text-lg font-semibold text-gray-600">Freeze</h3>
-                <p className="text-gray-600">The vault can be frozen to stop all withdrawals and transactions, the vault allows the vault owner, recovery address, or whitelisted addresses to freeze the vault on demand. <strong>Only the recovery address can unfreeze the vault.</strong></p>
+                <h3 className="text-xl font-bold text-gray-900">How to Use a Vault Effectively</h3>
+                <div className="text-gray-700 space-y-2">
+                  <p>⚖️ <strong>Set Realistic Daily Limits:</strong> Balance security with flexibility by adjusting withdrawal limits based on your usage patterns.</p>
+                  <p>🤝 <strong>Choose Trusted Signers:</strong> Select reliable, knowledgeable signers for multisig transactions to enhance protection.</p>
+                  <p>📦 <strong>Use a Cold Wallet for Recovery:</strong> Ensure your recovery address is a secure cold wallet that’s stored safely offline.</p>
+                </div>
               </div>
             </div>
+  
+            {/* Section 2: Creating a Vault */}
+            <div className="space-y-8 mt-12">
+              <h3 className="text-2xl font-bold text-pink-500 text-center">Creating a Vault</h3>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Vault Name</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Select a unique name for your vault on the chosen blockchain. The vault may be associated with a `.vault.pay.eth` domain if available, but this should not be relied upon for security purposes.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Recovery Address</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  The recovery address is a secure cold wallet address used to recover access to your vault. Keep this address offline and stored securely to safeguard your assets.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Whitelist Addresses</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Specify trusted addresses allowed to interact with your vault as signers. These addresses will confirm transactions according to your defined threshold. Separate multiple addresses with commas.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Safety Delay</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Set a delay period (in days) to add an extra layer of security for non-daily transactions. After the delay, you can self-approve transactions. Set it to 0 to always require signers.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Threshold</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Define the number of signers required to approve a transaction. This threshold ensures that no single signer has complete control over your assets.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Daily Limit</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Set a daily withdrawal limit to control the amount of assets that can be withdrawn from the vault. This limits exposure to potential risks.
+                </p>
+              </div>
+  
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Freeze</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  The vault can be frozen to stop all withdrawals and transactions. The vault owner, recovery address, or whitelisted addresses can initiate the freeze, but only the recovery address can unfreeze the vault.
+                </p>
+              </div>
+            </div>
+  
+            <button
+              className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
+              onClick={handleClose}
+            >
+              Got it
+            </button>
           </section>
         </div>
       </div>
     );
   }
+  
   function CustomTxModal({ handleClose, customTx, setCustomTx, handleSendCustomTx }) {
     const [paramInputs, setParamInputs] = useState([]);
   
