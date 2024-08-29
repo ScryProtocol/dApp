@@ -395,7 +395,7 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
   };
 
   const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
-    try {
+    try {    
       const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
       delay==0?delay=2*52:delay;
       if (!whitelistedAddresses || name === '' || recoveryAddress === '' || dailyLimit === '' || threshold === '' || delay === '') {
@@ -415,6 +415,31 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       }
       const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
       await tx.wait();
+      
+    if (typeof window !== 'undefined') {
+      console.log('gtag'); // This should show in your console
+      
+      window.dataLayer = window.dataLayer || [];
+      
+      function gtag(){
+        window.dataLayer.push(arguments);
+      }
+      
+      gtag('js', new Date());
+      gtag('config', 'G-L8YDH0NR8C');
+      
+    const queryParams = new URLSearchParams(window.location.search);
+         let ref = queryParams.get('ref'); // Replace 'paramName' with the actual parameter you want to retrieve
+
+      console.log(ref);
+      gtag('event', 'createVault', {
+        event_category: 'Vault',
+        event_label: 'Create Vault',
+        ref: ref?ref.toString():'0x',
+        user:userAddress,
+        vault:name
+      });
+    }
       window.location.reload();
       toast.success('Vault created successfully!');
       await fetchVaults();
@@ -751,6 +776,9 @@ const handleCancelTransaction = async (txIndex) => {
         <img src="https://cdn.simpleicons.org/x/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
         <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
           <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
+          <button onClick={() => {navigator.clipboard.writeText('https://vaults.my/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
+          </button>
+
 </div></>
     );
   }

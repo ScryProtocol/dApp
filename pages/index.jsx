@@ -18,6 +18,11 @@ export default function Home() {
     
     <title>Vault</title>
   </head>
+  
+  <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-L8YDH0NR8C" >
+    </script>
         <App />
     </>
   );
