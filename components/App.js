@@ -669,10 +669,11 @@ const handleCancelTransaction = async (txIndex) => {
       const abi = new ethers.Interface([`function ${fnSig}`]);
       
       // Encode the function data
-      const data = abi.encodeFunctionData(fnSig.split('(')[0], params);
+      const data = fnSig.startsWith('calldata')?params[0]:abi.encodeFunctionData(fnSig.split('(')[0], params);
       console.log(data);
       
       // Queue the transaction
+      console.log(data);
       const tx = await contract.queueTransaction(to, data, ethers.parseUnits(value.toString(), 'ether'));
       await tx.wait();
       
@@ -1179,6 +1180,8 @@ const handleCancelTransaction = async (txIndex) => {
                     <option key={index} value={sig}>{sig}</option>
                   ))}
                   <option value="custom">Custom</option>
+                  <option value="calldata">Call Data</option>
+
                 </select>
                 {customTx.fnSig === 'custom' &&
                   <input type="text" id="customFnSig" name="customFnSig" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom function signature" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })} />}
@@ -1189,6 +1192,12 @@ const handleCancelTransaction = async (txIndex) => {
                   <input type="text" id={`param${index}`} name={`param${index}`} value={customTx.params[index] || ''} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => handleParamChange(index, e.target.value)} />
                 </div>
               ))}
+              {customTx.fnSig === 'calldata' &&
+              (<div>    
+                  <label className="block mb-2 font-semibold text-gray-600">Enter call data</label>
+                  <input type="text" value={customTx.params || ''} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => handleParamChange(0, e.target.value)} />
+                </div>
+              )}
               <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleSendCustomTx}>Queue Custom Transaction</button>
             </div>
           </section>
