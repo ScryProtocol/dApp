@@ -691,7 +691,8 @@ const handleCancelTransaction = async (txIndex) => {
   const commonFunctionSignatures = [
     "transfer(address to, uint256 amount)",
     "approve(address to, uint256 amount)",
-    "transferFrom(address from, address to, uint256 amount)"
+    "transferFrom(address from, address to, uint256 amount)",
+    "delegate(address delegatee)"
   ];
 
   const handleCustomTxChange = (index, value) => {
