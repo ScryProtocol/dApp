@@ -133,7 +133,15 @@ const App = () => {
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
       const balances = await alchemy.core.getTokenBalances(vault);
-      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => token.symbol.length < 7);
+      let symbols = [];
+      const Details = await Promise.all(balances.tokenBalances.map(async (token, index) => {
+        let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
+        if (metadata.symbol.length > 7) {
+          symbols.push(token.contractAddress);
+        }
+      }));
+
+      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => !symbols.includes(token.contractAddress));
 
       const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
 
