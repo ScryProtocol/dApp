@@ -133,7 +133,7 @@ const App = () => {
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
       const balances = await alchemy.core.getTokenBalances(vault);
-      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => token.symbol.length < 10);
+      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => token.symbol.length < 7);
 
       const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
 
