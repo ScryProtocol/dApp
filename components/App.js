@@ -1138,7 +1138,60 @@ const handleCancelTransaction = async (txIndex) => {
                 </p>
               </div>
             </div>
+  {/* Using a Vault */}
+<div className="space-y-8 mt-12">
+  <h3 className="text-2xl font-bold text-pink-500 text-center">Using a Vault</h3>
   
+  {/* Depositing into the Vault */}
+  <div>
+    <h3 className="text-xl font-bold text-gray-900">Depositing into the Vault</h3>
+    <p className="text-gray-700 leading-relaxed">
+      💰 <strong>Deposit Tokens/NFTs using dApp:</strong> Select a token to deposit from the presets or use the "Deposit New Token" option in the Vault interface. Enter the amount you wish to deposit and follow the prompts to complete the transaction.
+      <br />
+      💸 <strong>Direct Deposit:</strong> You can also deposit tokens or NFTs by sending them directly to the vault’s address from your wallet, bypassing the dApp interface.
+    </p>
+  </div>
+  
+  {/* Managing Assets */}
+  <div>
+    <h3 className="text-xl font-bold text-gray-900">Managing Assets</h3>
+    <div className="text-gray-700 space-y-2">
+      <p>💼 <strong>View Balances:</strong> You can view the tokens and NFTs stored in your vault at any time within the app interface.</p>
+      <p>📊 <strong>Set Token Limits:</strong> You can define fixed or percentage-based withdrawal limits for each asset, ensuring that only a portion of the asset can be withdrawn in a single day.</p>
+      <p>❄️ <strong>Freeze Functionality:</strong> You can freeze the vault to stop all activity and withdrawals. Only the recovery address or a majority of signers can unfreeze it.</p>
+    </div>
+  </div>
+  
+  {/* Withdrawing Assets */}
+  <div>
+    <h3 className="text-xl font-bold text-gray-900">Withdrawing Assets</h3>
+    <div className="text-gray-700 space-y-2">
+      <p>🏦 <strong>Queue a Withdrawal:</strong> Use the Vault interface to queue a withdrawal of tokens or NFTs. Depending on your vault’s configuration, additional signers may need to approve the transaction. You can withdraw up to the daily limit without needing signers, but larger amounts or NFTs will require approval.</p>
+      <p>📝 <strong>Approval Process:</strong> The whitelisted signers, according to the set threshold, must approve the transaction before it can be executed.</p>
+      <p>⏳ <strong>Delayed Transactions:</strong> For large withdrawals, custom transactions, or NFTs, there may be a delay period during which any signer or the owner can cancel the transaction if necessary. Once the delay passes without cancellation, the transaction will be executed.</p>
+    </div>
+  </div>
+  
+  {/* Custom Transactions */}
+  <div>
+    <h3 className="text-xl font-bold text-gray-900">Custom Transactions</h3>
+    <p className="text-gray-700 leading-relaxed">
+      ⚙️ <strong>Vaults allow you to queue custom transactions.</strong> Specify a target address, an Ethereum value, and a function signature to call specific contract functions from the vault. This gives you advanced control over your assets.
+    </p>
+  </div>
+
+  {/* Signers Confirming or Canceling Transactions */}
+  <div>
+    <h3 className="text-xl font-bold text-gray-900">Signers Confirming or Canceling Transactions</h3>
+    <p className="text-gray-700 leading-relaxed">
+      ✍️ <strong>Signers’ Role in Approval:</strong> Once a transaction is queued, any of the signers can review and approve it. If enough signers confirm, the transaction will be executed.
+      <br />
+      🛑 <strong>Canceling Transactions:</strong> During the delay period for large withdrawals, custom transactions, or NFTs, any signer or the vault owner can cancel the transaction, preventing it from being executed.
+    </p>
+  </div>
+  
+</div>
+
             <button
               className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
               onClick={handleClose}
