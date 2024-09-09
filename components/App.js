@@ -87,7 +87,8 @@ const App = () => {
   const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false);
   const [isCustomTxModalOpen, setIsCustomTxModalOpen] = useState(false);
   const [customTx, setCustomTx] = useState({ to: '', value: '', fnSig: '', params: [] });
-let todeposit =[]
+const [todeposit,settodeposit]=useState([]);
+const [todepositnft,settodepositnft]=useState([]);
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider =  useEthersProvider()//chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
@@ -184,15 +185,12 @@ let todeposit =[]
       const threshold = Number(contract.interface.decodeFunctionResult('threshold', returnData[nonZeroBalances.length + 3])[0]);
       const delay = Number(contract.interface.decodeFunctionResult('delay', returnData[nonZeroBalances.length + 4])[0]);
       const owner = contract.interface.decodeFunctionResult('owner', returnData[nonZeroBalances.length + 5])[0];
-let mybals = await alchemy.core.getTokenBalances(vault);
-const Bals = mybals.tokenBalances.filter(token => token.tokenBalance !== "0");
-const tokenDets = await Promise.all(Bals.map(async (token, index) => {
-  todeposit.push(<option value={Bals[index].contractAddress}>{Bals[index].symbol}</option>)}
-))
       const tokenDetails = await Promise.all(nonZeroBalances.map(async (token, index) => {
         console.log(token);
         let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
         const balance = token.tokenBalance;
+        let mybals = await alchemy.core.getTokenBalances(userAddress);
+        console.log(mybals);
         console.log(returnData[index]);
         const decimals = Number(returnData[index] ? Number(returnData[index]) : 18); // Default to 18 decimals if undefined
         const adjustedBalance = balance / Math.pow(10, decimals);
@@ -204,7 +202,8 @@ const tokenDets = await Promise.all(Bals.map(async (token, index) => {
           balance: adjustedBalance,
           address: token.contractAddress,
           dailyLimit: Number(lim) / Math.pow(10, decimals),
-          limit: Number(tokenLimit) / Math.pow(10, decimals)
+          limit: Number(tokenLimit) / Math.pow(10, decimals),
+          wallet: mybals[token.contractAddress] ? mybals[token.contractAddress] : 0
         };
       }));
 
@@ -219,7 +218,8 @@ const tokenDets = await Promise.all(Bals.map(async (token, index) => {
         balance: adjustedEthBalance,
         address: '0x0000000000000000000000000000000000000000',
         dailyLimit: Number(lim) / Math.pow(10, 18),
-        limit: (Number(ethLimit) / Math.pow(10, 18))
+        limit: (Number(ethLimit) / Math.pow(10, 18)),
+        wallet: ethers.formatEther( await provider.getBalance(userAddress))
       });
 let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
       setTokenBalances(tokenDetail);//tokenDetails);
@@ -255,7 +255,7 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
       const nftsForOwner = await alchemy.nft.getNftsForOwner(vault);
       const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
         ...nft,
-        imageUrl: nft.image.cachedUrl || 'https://via.placeholder.com/150'
+        imageUrl: nft.image.cachedUrl || './favicon.ico'
       }));
       setNftAssets(nftDetails);
     } catch (error) {
@@ -263,7 +263,41 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
       toast.error('Failed to fetch NFT assets.');
     }
   };
+async function fetchDeps(){
+  
+  let mybals = await alchemy.core.getTokenBalances(userAddress);
+  const Bals = mybals.tokenBalances.filter(token => token.tokenBalance !== "0");
+  console.log(Bals);
+  const tokenDets = await Promise.all(Bals.map(async (token, index) => {
+    console.log('boop',token);
+    let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
+    console.log(metadata);
+      const balance = token.tokenBalance;
+      const decimals = metadata.decimals ? Number(metadata.decimals) : 18; // Default to 18 decimals if undefined
+      const adjustedBalance = balance / Math.pow(10, decimals);
+      return {
+        ...token,
+        ...metadata,
+        balance: adjustedBalance,
+        address: token.contractAddress
+      };
+    }))
+    const balances = await alchemy.core.getTokenBalances(selectedVault);
 
+    settodeposit(tokenDets.filter(token => token.symbol? token.symbol.length <10:token.symbol).filter(token => token.balance!==0).filter(token => !balances.tokenBalances.find(t => t.contractAddress === token.contractAddress)).sort((a, b) => b.balance - a.balance));
+    
+  try {
+    const nftsForOwner = await alchemy.nft.getNftsForOwner(userAddress);
+    const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
+      ...nft,
+      imageUrl: nft.image.cachedUrl || './favicon.ico'
+    }));
+    settodepositnft(nftDetails);
+  } catch (error) {
+    console.error(error);
+    toast.error('Failed to fetch NFT assets.');
+  }
+  }
   const fetchQueuedTransactions = async (vault) => {
     setLoading(true);
     try {
@@ -610,44 +644,239 @@ const handleCancelTransaction = async (txIndex) => {
   const handleVaultChange = (e) => {
     setSelectedVault(e.target.value);
   };
-
-  const displayAssets = () => {
+  const [showVaultOnly, setShowVaultOnly] = useState(true);const displayAssets = () => {
     return (
       <>
+        {/* Display token balances */}
         {tokenBalances.map((asset, index) => (
-          <div key={asset.symbol} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}>
-            <div className="gear-icon text-lg" onClick={() => { handleLimitModalToggle(); setSelectedToken(asset.address) }}>⚙️</div>
+          <div
+            key={asset.symbol}
+            className={`${bgColors[index % bgColors.length]} px-4 py-2 md:px-6 md:py-4 rounded-3xl shadow-lg flex flex-col items-center text-white relative space-y-2 md:space-y-2`}
+          >
+            {/* Settings Gear Icon */}
+            <div
+              className="gear-icon text-lg absolute top-3 right-3 cursor-pointer"
+              onClick={() => {
+                handleLimitModalToggle();
+                setSelectedToken(asset.address);
+              }}
+            >
+              ⚙️
+            </div>
+  
+            {/* Token Logo and Symbol - Logo on the Left */}
             <div className="flex items-center mb-2">
-              <img src={asset.logo ? asset.logo : tokenLogos[asset.address.toLowerCase()] ? tokenLogos[asset.address.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} alt={`${asset.symbol} logo`} className="w-8 h-8 mr-2" />
-              <div className="text-2xl font-bold">{asset.symbol}</div>
+              <img
+                src={
+                  asset.logo
+                    ? asset.logo
+                    : tokenLogos[asset.address.toLowerCase()] ||
+                      'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+                }
+                alt={`${asset.symbol} logo`}
+                className="h-8 mr-2"
+              />
+              <div className="text-lg md:text-2xl font-bold">{asset.symbol}</div>
             </div>
-            <div className="text-lg mb-2">Balance: {convert(asset.balance).toString().substring(0, 12)}</div>
-            <div className="text-lg mb-2">Limit: {convert(asset.limit).toString().substring(0, 12)}</div>
-            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
-              <div className="bg-blue-300 h-4 rounded-full" style={{ width: `${asset.limit / asset.dailyLimit * 100}%` }}></div>
+  
+            {/* Balance and Wallet Info */}
+            <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold">
+              <div className="w-full md:w-1/2 text-md">
+                <span>Balance:</span>
+                <div className="mt-1 rounded-full py-2 px-3 bg-blue-500">
+                  {convert(asset.balance).toString().substring(0, 12)}
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 text-md">
+                <span>Wallet:</span>
+                <div className="rounded-full py-2 px-3 bg-yellow-500">
+                  {asset.wallet}
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 space-x-4 mt-4 w-full sm:grid-cols-5 space-y-2 sm:space-y-0">
-              <input id={`amount-${asset.symbol}`} style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '10px' : '' }} className="rounded-full text-center text-gray-800 flex-1 p-2" placeholder='amount' />
-              <button style={{ position: 'relative', right: window.innerWidth < 1500 && window.innerWidth > 800 ? '20px' : '' }} className="sm:w-24 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1 relative right-2 sm:right-0" onClick={() => handleDepositToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Deposit</button>
-              <button className="sm:w-28 sm:left-8 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out flex-1  relative right-2 sm:right-0" onClick={() => handleWithdrawToken(asset.address, document.getElementById(`amount-${asset.symbol}`).value)}>Withdraw</button>
+  
+            {/* Token Limit */}
+            <div className="w-full text-center text-md font-semibold">
+              {convert(asset.limit).toString().substring(0, 12)} <span>Available</span>
+              <div className="w-full bg-gray-300 rounded-full h-3 mt-2">
+                <div
+                  className="bg-blue-400 h-3 rounded-full"
+                  style={{ width: `${(asset.limit / asset.dailyLimit) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+  
+            {/* Deposit and Withdraw Buttons */}
+            <div className="flex flex-col md:flex-row w-full space-y-2 md:space-x-4 mt-4">
+              <input
+                id={`amount-${asset.symbol}`}
+                className="flex-1 text-center text-gray-800 rounded-full p-2 text-sm"
+                placeholder="Amount"
+              />
+              <button
+                className="w-full md:w-1/2 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out"
+                onClick={() =>
+                  handleDepositToken(
+                    asset.address,
+                    document.getElementById(`amount-${asset.symbol}`).value
+                  )
+                }
+              >
+                Deposit
+              </button>
+              <button
+                className="w-full md:w-1/2 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out"
+                onClick={() =>
+                  handleWithdrawToken(
+                    asset.address,
+                    document.getElementById(`amount-${asset.symbol}`).value
+                  )
+                }
+              >
+                Withdraw
+              </button>
             </div>
           </div>
         ))}
+  
+        {/* Display NFT Assets */}
         {nftAssets.map((nft, index) => (
-          <div key={nft.tokenId} className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`} style={{ backgroundImage: `url(${nft.imageUrl})`, backgroundSize: 'cover', minHeight: '250px' }}>
-            <div className="gear-icon text-lg" onClick={handleLimitModalToggle}>⚙️</div>
-            <div className="flex items-center mb-2">
-              <img src={nft.imageUrl} alt={`${nft.title} logo`} className="w-8 h-8 mr-2" />
-              <div style={{ backgroundColor: '#f9a8d4bf' }} className="text-2xl font-bold  rounded-full px-2">{nft.name} #{nft.tokenId}</div>
+          <div
+            key={nft.tokenId}
+            className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}
+            style={{
+              backgroundImage: `url(${nft.imageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              minHeight: '250px',
+            }}
+          >
+            <div
+              className="gear-icon text-lg absolute top-3 right-3 cursor-pointer"
+              onClick={handleLimitModalToggle}
+            >
+              ⚙️
             </div>
+  
+            {/* NFT Details */}
+            <div className="flex flex-col items-center mb-2 space-y-2">
+              <img
+                src={nft.imageUrl}
+                alt={`${nft.name} logo`}
+                className="w-8 h-8 rounded-full border border-white shadow-lg"
+              />
+              <div className="bg-pink-500 rounded-full text-lg font-bold px-3 py-1 shadow-md">
+                {nft.name} #{nft.tokenId}
+              </div>
+            </div>
+  
+            {/* Withdraw Button */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4  bottom-4" onClick={() => handleWithdrawNft(nft)}>Withdraw</button>
+              <button
+                className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4 text-sm"
+                onClick={() => handleWithdrawNft(nft)}
+              >
+                Withdraw
+              </button>
             </div>
           </div>
         ))}
+  
+        {/* Conditionally show tokens and NFTs not secured in vault */}
+        {!showVaultOnly && (
+          <>
+            {/* Display tokens not secured in vault */}
+            {todeposit.map((asset, index) => (
+              <div
+                key={asset.symbol}
+                className="bg-pink-300 px-6 py-4 rounded-3xl shadow-lg flex flex-col items-center text-white space-y-2"
+              >
+                <div className="flex items-center mb-2">
+                  <img
+                    src={
+                      asset.logo ||
+                      tokenLogos[asset.address.toLowerCase()] ||
+                      'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+                    }
+                    alt={`${asset.symbol} logo`}
+                    className="w-8 h-8 mr-2"
+                  />
+                  <div className="text-xl font-bold">{asset.symbol}</div>
+                </div>
+  
+                <div className="text-lg font-semibold text-center">
+                  <span>My Wallet:</span>
+                  <div className="mt-1 rounded-full py-2 px-3 bg-yellow-500">
+                    {convert(asset.balance).toString().substring(0, 12)}
+                  </div>
+                </div>
+  
+                <input
+                  id={`amt-${asset.symbol}`}
+                  className="rounded-full text-center text-gray-800 p-2 text-sm"
+                  placeholder="Amount"
+                />
+  
+                <button
+                  className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out text-sm"
+                  onClick={() =>
+                    handleDepositToken(
+                      asset.address,
+                      document.getElementById(`amt-${asset.symbol}`).value
+                    )
+                  }
+                >
+                  Deposit
+                </button>
+              </div>
+            ))}
+  
+            {/* Display NFT Assets not secured in vault */}
+            {todepositnft.map((nft, index) => (
+              <div
+                key={nft.tokenId}
+                className="bg-pink-300 p-6 rounded-3xl shadow-lg flex flex-col items-center text-white relative"
+                style={{
+                  backgroundImage: `url(${nft.imageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  minHeight: '250px',
+                }}
+              >
+                <div className="flex items-center mb-2 space-y-2">
+                  <img
+                    src={nft.imageUrl}
+                    alt={`${nft.name} logo`}
+                    className="w-8 h-8 rounded-full border border-white shadow-lg"
+                  />
+                  <div className="bg-pink-300 rounded-full text-lg font-bold px-3 py-1 shadow-md">
+                    {nft.name} {nft.symbol} #{nft.tokenId}
+                  </div>
+                </div>
+                  <p className="font-bold rounded-full bg-pink-500 px-3 py-1 text-sm">
+                    NFT Not Secured
+                  </p>
+  
+                {/* Deposit Button */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                  <button
+                    className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4 text-sm"
+                    onClick={() => handleDepositNft(nft)}
+                  >
+                    Deposit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </>
     );
   };
+  
+  
+  
+  
 
   const displayTransactions = () => {
     return queuedTransactions.map((transaction, index) => (
@@ -750,9 +979,10 @@ const handleCancelTransaction = async (txIndex) => {
         </div>
         <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
-            <button className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
-          </div>
+            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2><div className="space-x-2">
+            <button className={`px-4 py-2 rounded-full font-semibold transition duration-300 ease-in-out  text-white ${ showVaultOnly ? 'bg-blue-500' : 'bg-pink-500' }`} onClick={() => {setShowVaultOnly(!showVaultOnly); fetchDeps()}} > {showVaultOnly ? 'Deposit Assets' : 'Show Vault Assets'} </button>
+            <button className="bg-pink-500 text-white font-semibold py-2 px-4 my-6 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
+            </div ></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="asset-list">
             {displayAssets()}
           </div>
@@ -970,7 +1200,6 @@ const handleCancelTransaction = async (txIndex) => {
                   </>
                   }
                   <option value="custom">Custom</option>
-                  {todeposit}
                 </select>
                 {selectedToken === 'custom' &&
                   <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => { setSelectedToken(e.target.value); toast.success('Token set') }} />}
