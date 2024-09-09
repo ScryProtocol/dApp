@@ -86,7 +86,7 @@ const App = () => {
   const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false);
   const [isCustomTxModalOpen, setIsCustomTxModalOpen] = useState(false);
   const [customTx, setCustomTx] = useState({ to: '', value: '', fnSig: '', params: [] });
-
+let todeposit =[]
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const provider =  useEthersProvider()//chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
@@ -171,7 +171,11 @@ const App = () => {
       const threshold = Number(contract.interface.decodeFunctionResult('threshold', returnData[nonZeroBalances.length + 3])[0]);
       const delay = Number(contract.interface.decodeFunctionResult('delay', returnData[nonZeroBalances.length + 4])[0]);
       const owner = contract.interface.decodeFunctionResult('owner', returnData[nonZeroBalances.length + 5])[0];
-
+let mybals = await alchemy.core.getTokenBalances(vault);
+const Bals = mybals.tokenBalances.filter(token => token.tokenBalance !== "0");
+const tokenDets = await Promise.all(Bals.map(async (token, index) => {
+  todeposit.push(<option value={Bals[index].contractAddress}>{Bals[index].symbol}</option>)}
+))
       const tokenDetails = await Promise.all(nonZeroBalances.map(async (token, index) => {
         console.log(token);
         let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
@@ -919,6 +923,7 @@ const handleCancelTransaction = async (txIndex) => {
                   </>
                   }
                   <option value="custom">Custom</option>
+                  {todeposit}
                 </select>
                 {selectedToken === 'custom' &&
                   <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => { setSelectedToken(e.target.value); toast.success('Token set') }} />}
