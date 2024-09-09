@@ -1168,7 +1168,7 @@ const handleCancelTransaction = async (txIndex) => {
     <div className="text-gray-700 space-y-2">
       <p>🏦 <strong>Queue a Withdrawal:</strong> Use the Vault interface to queue a withdrawal of tokens or NFTs. Depending on your vault’s configuration, additional signers may need to approve the transaction. You can withdraw up to the daily limit without needing signers, but larger amounts or NFTs will require approval.</p>
       <p>📝 <strong>Approval Process:</strong> The whitelisted signers, according to the set threshold, must approve the transaction before it can be executed.</p>
-      <p>⏳ <strong>Delayed Transactions:</strong> For large withdrawals, custom transactions, or NFTs, there may be a delay period during which any signer or the owner can cancel the transaction if necessary. Once the delay passes without cancellation, the transaction will be executed.</p>
+      <p>⏳ <strong>Delayed Transactions:</strong> For large withdrawals, custom transactions, or NFTs, there may be a delay period. Once the delay passes without cancellation, the transaction can be executed without signers.</p>
     </div>
   </div>
   
