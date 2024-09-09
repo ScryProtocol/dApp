@@ -841,6 +841,7 @@ const handleCancelTransaction = async (txIndex) => {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   minHeight: '250px',
+                  overflow: 'hidden'
                 }}
               >
                 <div className="flex items-center mb-2 space-y-2">
