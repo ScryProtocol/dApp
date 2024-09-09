@@ -203,7 +203,10 @@ const [todepositnft,settodepositnft]=useState([]);
           address: token.contractAddress,
           dailyLimit: Number(lim) / Math.pow(10, decimals),
           limit: Number(tokenLimit) / Math.pow(10, decimals),
-          wallet: mybals[token.contractAddress] ? mybals[token.contractAddress] : 0
+          wallet: mybals.tokenBalances.find(bal => bal.contractAddress == token.contractAddress) 
+          ? Number(mybals.tokenBalances.find(bal => bal.contractAddress == token.contractAddress).tokenBalance) / Math.pow(10, decimals) 
+          : 0
+        
         };
       }));
 
@@ -680,7 +683,7 @@ const handleCancelTransaction = async (txIndex) => {
             </div>
   
             {/* Balance and Wallet Info */}
-            <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold">
+            <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold overflow-hidden">
               <div className="w-full md:w-1/2 text-md">
                 <span>Balance:</span>
                 <div className="mt-1 rounded-full py-2 px-3 bg-blue-500">
@@ -705,38 +708,37 @@ const handleCancelTransaction = async (txIndex) => {
                 ></div>
               </div>
             </div>
-  
-            {/* Deposit and Withdraw Buttons */}
-            <div className="flex flex-col md:flex-row w-full space-y-2 md:space-x-4 mt-4">
-              <input
-                id={`amount-${asset.symbol}`}
-                className="flex-1 text-center text-gray-800 rounded-full p-2 text-sm"
-                placeholder="Amount"
-              />
-              <button
-                className="w-full md:w-1/2 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out"
-                onClick={() =>
-                  handleDepositToken(
-                    asset.address,
-                    document.getElementById(`amount-${asset.symbol}`).value
-                  )
-                }
-              >
-                Deposit
-              </button>
-              <button
-                className="w-full md:w-1/2 bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out"
-                onClick={() =>
-                  handleWithdrawToken(
-                    asset.address,
-                    document.getElementById(`amount-${asset.symbol}`).value
-                  )
-                }
-              >
-                Withdraw
-              </button>
-            </div>
-          </div>
+  {/* Deposit and Withdraw Buttons */}
+<div className="flex flex-wrap items-center w-full gap-4 mt-4">
+  <input
+    id={`amount-${asset.symbol}`}
+    className="w-full md:w-auto text-center text-gray-800 rounded-full p-2 text-sm w-full mx-auto"
+    placeholder="Amount"
+  />
+  <button
+    className="w-full md:w-auto bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    onClick={() =>
+      handleDepositToken(
+        asset.address,
+        document.getElementById(`amount-${asset.symbol}`).value
+      )
+    }
+  >
+    Deposit
+  </button>
+  <button
+    className="w-full md:w-auto bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    onClick={() =>
+      handleWithdrawToken(
+        asset.address,
+        document.getElementById(`amount-${asset.symbol}`).value
+      )
+    }
+  >
+    Withdraw
+  </button>
+</div>
+</div>
         ))}
   
         {/* Display NFT Assets */}
