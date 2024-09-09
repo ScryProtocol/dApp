@@ -709,14 +709,16 @@ const handleCancelTransaction = async (txIndex) => {
               </div>
             </div>
   {/* Deposit and Withdraw Buttons */}
-<div className="flex flex-wrap items-center w-full gap-4 mt-4">
+<div className="flex flex-wrap items-center w-full space-y-2 mt-4">
   <input
     id={`amount-${asset.symbol}`}
-    className="w-full md:w-auto text-center text-gray-800 rounded-full p-2 text-sm w-full mx-auto"
+    style={{ minWidth: '50px' }}
+    className="w-full lg:w-1/4 md:w-full mt-2 text-center text-gray-800 rounded-full p-2 text-sm w-full mx-auto"
     placeholder="Amount"
   />
   <button
-    className="w-full md:w-auto bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    style={{ minWidth: '80px' }}
     onClick={() =>
       handleDepositToken(
         asset.address,
@@ -727,7 +729,9 @@ const handleCancelTransaction = async (txIndex) => {
     Deposit
   </button>
   <button
-    className="w-full md:w-auto bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+    style={{ minWidth: '80px' }}
+
     onClick={() =>
       handleWithdrawToken(
         asset.address,
