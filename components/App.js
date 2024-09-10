@@ -686,13 +686,13 @@ const handleCancelTransaction = async (txIndex) => {
             <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold overflow-hidden">
               <div className="w-full md:w-1/2 text-md">
                 <span>Balance:</span>
-                <div className="mt-1 rounded-full py-2 px-3 bg-blue-500">
+                <div className="mt-1 rounded-full py-2 px-3 bg-blue-400">
                   {convert(asset.balance).toString().substring(0, 12)}
                 </div>
               </div>
               <div className="w-full md:w-1/2 text-md">
                 <span>Wallet:</span>
-                <div className="rounded-full py-2 px-3 bg-yellow-500">
+                <div className="rounded-full py-2 px-3 bg-orange-400">
                   {asset.wallet}
                 </div>
               </div>
@@ -795,7 +795,7 @@ const handleCancelTransaction = async (txIndex) => {
             {todeposit.map((asset, index) => (
               <div
                 key={asset.symbol}
-                className="bg-pink-300 px-6 py-4 rounded-3xl shadow-lg flex flex-col items-center text-white space-y-2"
+                className="bg-gradient-to-r from-purple-300 via-pink-300 to-red-300 px-6 py-4 rounded-3xl shadow-lg flex flex-col items-center text-white space-y-2"
               >
                 <div className="flex items-center mb-2">
                   <img
@@ -812,7 +812,7 @@ const handleCancelTransaction = async (txIndex) => {
   
                 <div className="text-lg font-semibold text-center">
                   <span>My Wallet:</span>
-                  <div className="mt-1 rounded-full py-2 px-3 bg-yellow-500">
+                  <div className="mt-1 rounded-full py-2 px-3 bg-orange-500">
                     {convert(asset.balance).toString().substring(0, 12)}
                   </div>
                 </div>
