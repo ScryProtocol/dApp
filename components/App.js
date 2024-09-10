@@ -1154,7 +1154,7 @@ const handleCancelTransaction = async (txIndex) => {
           <input type="text" id="whitelisted-addresses" name="whitelisted-addresses" placeholder="Enter whitelisted addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
         </div>
         <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => updateSettings(document.getElementById('recovery-addresses').value, document.getElementById('whitelisted-addresses').value.split(','), document.getElementById('withdraw-limit').value, document.getElementById('threshold').value, document.getElementById('delay').value)}>Save Settings</button>
-        {(userAddress == vaultSettings.owner || userAddress == vaultSettings.recoveryAddress || vaultSettings.whitelistedAddresses.includes(userAddress)) &&
+        {(userAddress == vaultSettings.owner || userAddress == vaultSettings.recoveryAddress || vaultSettings.whitelistedAddresses&&vaultSettings.whitelistedAddresses.includes(userAddress)) &&
           <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => {
             let contract = new ethers.Contract(selectedVault, ["function freezeLock(uint) external"], signer);
             let tx = contract.freezeLock(2);
