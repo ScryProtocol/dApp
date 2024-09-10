@@ -686,7 +686,7 @@ const handleCancelTransaction = async (txIndex) => {
             <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold overflow-hidden">
               <div className="w-full md:w-1/2 text-md">
                 <span>Balance:</span>
-                <div className="mt-1 rounded-full py-2 px-3 bg-blue-400">
+                <div className="mt-1 rounded-full py-2 px-3 bg-blue-500">
                   {convert(asset.balance).toString().substring(0, 12)}
                 </div>
               </div>
