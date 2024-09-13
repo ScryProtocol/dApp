@@ -66,6 +66,7 @@ const bgColors = [
 const tokenLogos = {
   '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
   '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+  '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf': 'https://basescan.org/token/images/cbbtc_32.png',
   '0x94373a4919b3240d86ea41593d5eba789fef3848': 'https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png',
   '0x4200000000000000000000000000000000000042': 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png',
   // Add more token addresses and their corresponding logos here
