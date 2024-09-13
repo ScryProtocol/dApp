@@ -1028,7 +1028,7 @@ const handleCancelTransaction = async (txIndex) => {
         <img src="https://cdn.simpleicons.org/x/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
         <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
           <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
-          <button onClick={() => {navigator.clipboard.writeText('https://vaults.my/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
+          <button onClick={() => {navigator.clipboard.writeText('https://vault.store/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
           </button>
 
 </div></>
