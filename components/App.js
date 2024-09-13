@@ -464,8 +464,19 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
         toast.error('Threshold must be less than or equal to the number of whitelisted addresses.');
         return;
       }
-      const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
+      let iface = new ethers.Interface(factoryAbi);
+
+      const queryParams = new URLSearchParams(window.location.search);
+      let ref = queryParams.get('ref'); // Replace 'paramName' with the actual parameter you want to retrieve
+
+      let data = iface.encodeFunctionData("createVault", [name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0)]);
+      const tx = await signer.sendTransaction({
+        to: factoryAddress,
+        data: data+ethers.hexlify(ethers.toUtf8Bytes('gstagref='+ref)).toString().slice(2),
+      });
       await tx.wait();
+      //const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
+      //await tx.wait();
       
     if (typeof window !== 'undefined') {
       console.log('gtag'); // This should show in your console
