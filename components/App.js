@@ -99,7 +99,7 @@ const [todepositnft,settodepositnft]=useState([]);
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
-    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:chainId==534352 ?Network.SCROLL_MAINNET:  Network.OPT_MAINNET,
+    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:chainId==534352 ?Network.SCROLL_MAINNET:chainId == 42161 ? Network.ARB_MAINNET :  Network.OPT_MAINNET,
   };
   const alchemy = new Alchemy(alchemyConfig);
   const [net, setNet] = useState(null);
