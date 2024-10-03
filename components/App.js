@@ -498,18 +498,26 @@ const App = () => {
           alt="Selected NFT Image"
         />
       </a>
-      <main className="container mx-auto py-8">
-        <h1 className="text-center text-4xl mb-8 relative text-white font-extrabold">
+      <main className="mx-auto py-8 px-4 lg:px-0">
+        <h1 className="text-center text-4xl mb-8 text-white font-extrabold">
           Stream - in Alpha
         </h1>
         <Toaster />
-        <section id="borrow-form" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
+        
+        {/* Borrow Form Section */}
+        <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl text-pink-600 font-bold">Stream tokens from your wallet, no locking tokens, no interest, no fees.</h2>
+            <h2 className="text-2xl text-pink-600 font-bold">
+              Stream tokens from your wallet, no locking tokens, no interest, no fees.
+            </h2>
           </div>
+          {/* Form for borrowing */}
           <div className="space-y-6">
+            {/* Token Select */}
             <div>
-              <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
+              <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">
+                Token Address:
+              </label>
               <select
                 id="token"
                 name="token"
@@ -519,38 +527,11 @@ const App = () => {
                 className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
               >
                 <option value="">{stoken ? stoken : 'Select a token'}</option>
-                {ChainId == 17000 && (
-                  <>
-                    <option value="0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5">PR0</option>
-                    <option value="0x94373a4919b3240d86ea41593d5eba789fef3848">wETH</option>
-                    <option value="0x0987654321098765432109876543210987654321">USDC</option>
-                  </>
-                )}
-                {ChainId == 1 && (
+                {ChainId === 1 && (
                   <>
                     <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">wETH</option>
                     <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
                     <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-                  </>
-                )}
-                {ChainId == 10 && (
-                  <>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x0b2c639c533813f4aa9d7837caf62653d097ff85">USDC</option>
-                    <option value="0x94b008aa00579c1307b0ef2c499ad98a8ce58e58">USDT</option>
-                    <option value="0x4200000000000000000000000000000000000042">OP</option>
-                  </>
-                )}
-                {ChainId == 8453 && (
-                  <>
-                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
-                    <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  </>
-                )}
-                {ChainId == 534352 && (
-                  <>
-                    <option value="0x5300000000000000000000000000000000000004">wETH</option>
-                    <option value="0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4">USDC</option>
                   </>
                 )}
                 <option value="custom">Custom</option>
@@ -567,9 +548,12 @@ const App = () => {
                 />
               )}
             </div>
+            {/* Friend and Amount Fields */}
             <div className="flex space-x-4">
               <div className="flex-1">
-                <label htmlFor="friend" className="block mb-2 font-semibold text-gray-600">To Address/ENS:</label>
+                <label htmlFor="friend" className="block mb-2 font-semibold text-gray-600">
+                  To Address/ENS:
+                </label>
                 <input
                   type="text"
                   id="friend"
@@ -581,7 +565,9 @@ const App = () => {
                 />
               </div>
               <div className="flex-1">
-                <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">Stream Amount:</label>
+                <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">
+                  Stream Amount:
+                </label>
                 <input
                   type="number"
                   id="amount"
@@ -593,10 +579,13 @@ const App = () => {
                 />
               </div>
             </div>
+            {/* Time Fields */}
             <div className="flex space-x-4">
               {!once && (
                 <div className="flex-1">
-                  <label htmlFor="days" className="block mb-2 font-semibold text-gray-600">Days to Stream Amount:</label>
+                  <label htmlFor="days" className="block mb-2 font-semibold text-gray-600">
+                    Days to Stream Amount:
+                  </label>
                   <input
                     type="number"
                     id="days"
@@ -610,7 +599,9 @@ const App = () => {
               )}
               {once && (
                 <div className="flex-1">
-                  <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-600">End Date:</label>
+                  <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-600">
+                    End Date:
+                  </label>
                   <input
                     type="datetime-local"
                     id="endDate"
@@ -627,26 +618,26 @@ const App = () => {
                 </div>
               )}
             </div>
-            <div className="items-center">
-              <div className="items-center space-x-2">
+            {/* Once Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
                 <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
                 <span className="text-gray-600">Stream</span>
                 <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
               </div>
-              <div className="">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    id="once"
-                    name="once"
-                    checked={once}
-                    onChange={(e) => setOnce(e.target.checked)}
-                    className="toggle-checkbox"
-                  />
-                  <span className="toggle-slider round"></span>
-                </label>
-              </div>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="once"
+                  name="once"
+                  checked={once}
+                  onChange={(e) => setOnce(e.target.checked)}
+                  className="toggle-checkbox"
+                />
+                <span className="toggle-slider round"></span>
+              </label>
             </div>
+            {/* Action Buttons */}
             <button
               onClick={() => requestBorrow(stoken, friend, amount)}
               className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
@@ -662,184 +653,122 @@ const App = () => {
             <ConnectButton />
           </div>
         </section>
-        <section id="allowance-list" className="mt-8">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-scroll">
-            <h2 className="text-xl text-pink-600 font-bold mb-4">Allowances to Friends</h2>
-            <table className="min-w-full bg-pink-100 rounded-lg overflow-hidden">
-              <thead className="bg-pink-200 text-gray-600">
-                <tr>
-                  <th className="py-2 px-4">Friend</th>
-                  <th className="py-2 px-4">Token</th>
-                  <th className="py-2 px-4">Limit</th>
-                  <th className="py-2 px-4">Available</th>
-                  <th className="py-2 px-4">Stream Type</th>
-                  <th className="py-2 px-4">Time</th>
-                  <th className="py-2 px-4">Volume Streamed</th>
-                  <th className="py-2 px-4">Amount</th>
-                  <th className="py-2 px-4">Ends In</th>
-                  <th className="py-2 px-4">Duration</th>
-                  <th className="py-2 px-4"></th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600">
-                {Object.entries(
-                  allowances.reduce((acc, allowance) => {
-                    if (!acc[allowance.friend]) {
-                      acc[allowance.friend] = [];
-                    }
-                    acc[allowance.friend].push(allowance);
-                    return acc;
-                  }, {})
-                ).map(([friend, friendAllowances]) =>
-                  friendAllowances.map((allowance) => (
-                    <tr key={allowance.hash} className="border-b border-pink-200">
-                      <td className="py-2 px-4">{map(friend)}</td>
-                      <td className="py-2 px-4">{map(allowance.token)}</td>
-                      <td className="py-2 px-4">{allowance.allowable}</td>
-                      <td className="py-2 px-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
-                      <td className="py-2 px-4">
-                        <span className="text-orange-400">{!allowance.once && 'Unlimited'}</span>
-                        <span className="text-green-400">{allowance.once && 'Once only'}</span>
-                      </td>
-                      <td className="py-2 px-4">
-                        {!allowance.once ? (
-                          <span>
-                            @ {allowance.allowable} tokens per {Math.floor(allowance.window / (3600 * 24))}d:
-                            {Math.floor((allowance.window % (3600 * 24)) / 3600)}h:
-                            {Math.floor((allowance.window % 3600) / 60)}m:
-                            {Math.floor(allowance.window % 60)}s
-                          </span>
-                        ) : (
-                          <span>
-                            ends in{' '}
-                            {`${Math.floor((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) / 3600)}h:` +
-                              `${Math.floor(((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                              `${Math.floor((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) % 60)}s`}
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-2 px-4">{allowance.totalStreamed}</td>
-                      <td className="py-2 px-4">
-                        <input
-                          type="text"
-                          id="token"
-                          name="token"
-                          placeholder="amount"
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="p-2 w-20 bg-pink-100 border border-pink-200 rounded-md focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                          required
-                        />
-                      </td>
-                      <td className="py-2 px-4">
-                        <input
-                          type="number"
-                          id="amount"
-                          name="amount"
-                          step="0.01"
-                          placeholder="days"
-                          onChange={(e) => setWindow(e.target.value)}
-                          required
-                          className="p-2 w-20 bg-pink-100 border border-pink-200 rounded-md focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                        />
-                      </td>
-                      <td className="py-2 px-4">
-                        <label className="flex items-center space-x-2">
-                          <span>{once == true && 'Once'} {once != true && 'Unlimited'}</span>
-                          <label className="switch">
-                            <input
-                              type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
-                              onChange={(e) => setOnce(e.target.checked)}
-                              className="toggle-checkbox"
-                            />
-                            <span className="toggle-slider round"></span>
-                          </label>
-                        </label>
-                      </td>
-                      <td className="py-2 px-2">
-                        <button
-                          onClick={() => requestBorrow(allowance.token, friend, amount)}
-                          className="py-2 px-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out w-40 "
-                        >
-                          Set Allowance
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+
+        {/* Borrows by Lender Section */}
+        <section className="container mt-8">
+          <h2 className="text-xl text-pink-600 font-bold mb-4">Friends That Have Spotted Me</h2>
+            {Object.entries(
+              borrows.reduce((acc, borrow) => {
+                if (!acc[borrow.lender]) {
+                  acc[borrow.lender] = [];
+                }
+                acc[borrow.lender].push(borrow);
+                return acc;
+              }, {})
+            ).map(([lender, lenderBorrows]) => (
+              <div key={lender} className="bg-white p-6 rounded-xl shadow-md space-y-4 subscription-item">
+                <h3 className="text-xl text-pink-600 font-semibold text-gray-700 mb-2">
+                  {lender.substring(0, 20)}
+                </h3>            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {lenderBorrows.map((borrow) => (
+                  <div key={borrow.hash} className="space-y-2 container">
+                    <p className="item-label">🪙 Token:</p>
+                    <p className="item-value">{borrow.token}</p>
+                    <div className="flex space-x-4">
+                      <div className="flex-1">
+                        <p className="item-label">💸 Amount:</p>
+                        <p className="item-value">{borrow.allowable}</p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="item-label">🏦 Outstanding:</p>
+                        <p className="item-value">{borrow.outstanding}</p>
+                      </div>
+                    </div>
+                    <p className="item-label">📊 Volume Borrowed:</p>
+                    <p className="item-value">{borrow.totalBorrowed}</p>
+                    <div className="progress-bar">
+                      <div
+                        className="progress-bar-inner"
+                        style={{
+                          width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
+                        }}
+                      >
+                        {((borrow.outstanding / borrow.allowable) * 100).toFixed(2)}%
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleBorrow(borrow.token, lender)}
+                      className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mt-4"
+                    >
+                      Claim
+                    </button>
+                  </div>
+                ))}                </div>
+
+              </div>
+            ))}
         </section>
-        <section id="borrow-list" className="mt-8">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-scroll">
-            <h2 className="text-xl text-pink-600 font-bold mb-4">Friends That Have Spotted Me</h2>
-            <table className="min-w-full bg-pink-100 rounded-lg overflow-hidden">
-              <thead className="bg-pink-200 text-gray-600">
-                <tr>
-                  <th className="py-2 px-4">Streamer</th>
-                  <th className="py-2 px-4">Token</th>
-                  <th className="py-2 px-4">Amount</th>
-                  <th className="py-2 px-4">Available</th>
-                  <th className="py-2 px-4">Stream Type</th>
-                  <th className="py-2 px-4">Time</th>
-                  <th className="py-2 px-4">Volume Streamed</th>
-                  <th className="py-2 px-4"></th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600">
-                {Object.entries(
-                  borrows.reduce((acc, borrow) => {
-                    if (!acc[borrow.lender]) {
-                      acc[borrow.lender] = [];
-                    }
-                    acc[borrow.lender].push(borrow);
-                    return acc;
-                  }, {})
-                ).map(([lender, lenderBorrows]) =>
-                  lenderBorrows.map((borrow) => (
-                    <tr key={borrow.hash} className="border-b border-pink-200">
-                      <td className="py-2 px-4">{map(lender)}</td>
-                      <td className="py-2 px-4">{map(borrow.token)}</td>
-                      <td className="py-2 px-4">{borrow.allowable}</td>
-                      <td className="py-2 px-4">{(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</td>
-                      <td className="py-2 px-4">
-                        <span className="text-orange-400">{!borrow.once && 'Unlimited'}</span>
-                        <span className="text-green-400">{borrow.once && 'Once only'}</span>
-                      </td>
-                      <td className="py-2 px-4">
-                        {!borrow.once ? (
-                          <span>
-                            @ {borrow.allowable} tokens per {Math.floor(borrow.window / (3600 * 24))}d:
-                            {Math.floor((borrow.window % (3600 * 24)) / 3600)}h:
-                            {Math.floor((borrow.window % 3600) / 60)}m:
-                            {Math.floor(borrow.window % 60)}s
-                          </span>
-                        ) : (
-                          <span>
-                            ends in{' '}
-                            {`${Math.floor((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) / 3600)}h:` +
-                              `${Math.floor(((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m:` +
-                              `${Math.floor((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) % 60)}s`}
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-2 px-4">{borrow.totalStreamed}</td>
-                      <td className="py-2 px-4">
-                        <button
-                          onClick={() => handleBorrow(borrow.token, borrow.lender)}
-                          className="py-2 px-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
-                        >
-                          Claim
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+
+        {/* Allowances to Friends Section */}
+        <section className="container mt-8">
+          <h2 className="text-xl text-pink-600 font-bold mb-4">Allowances to Friends</h2>
+          <div className="">
+            {Object.entries(
+              allowances.reduce((acc, allowance) => {
+                if (!acc[allowance.friend]) {
+                  acc[allowance.friend] = [];
+                }
+                acc[allowance.friend].push(allowance);
+                return acc;
+              }, {})
+            ).map(([friend, friendAllowances]) => (
+              <div key={friend} className="bg-white p-6 rounded-xl shadow-md space-y-4 subscription-item">
+                <h3 className="text-xl font-semibold text-gray-700 mb-2 text-pink-600">
+                  Friend: {friend.substring(0, 20)}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {friendAllowances.map((allowance, idx) => (
+                  <div key={idx} className="space-y-2 container">
+                    <p className="item-label">🪙 Token:</p>
+                    <p className="item-value">{allowance.token}</p>
+                    <div className="flex space-x-4">
+                      <div className="flex-1">
+                        <p className="item-label">💸 Limit:</p>
+                        <p className="item-value">{allowance.allowable}</p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="item-label">🏦 Outstanding:</p>
+                        <p className="item-value">{allowance.outstanding}</p>
+                      </div>
+                    </div>
+                    <p className="item-label">📊 Volume Borrowed:</p>
+                    <p className="item-value">{allowance.totalBorrowed}</p>
+                    <div className="progress-bar">
+                      <div
+                        className="progress-bar-inner"
+                        style={{
+                          width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
+                        }}
+                      >
+                        {((allowance.outstanding / allowance.allowable) * 100).toFixed(2)}%
+                      </div>
+                    </div>
+                    <input type="number" onChange={(e) => setAmount(e.target.value)} className='w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out' placeholder='Enter new allowance' />
+
+                    <button
+                      onClick={() => requestBorrow(allowance.token, friend, amount)}
+                      className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out mt-4"
+                    >
+                      Update Allowance
+                    </button>
+                  </div>
+                ))}
+                                </div>
+
+              </div>
+            ))}
           </div>
         </section>
       </main>
