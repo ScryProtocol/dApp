@@ -670,9 +670,12 @@ const App = () => {
                 {lender.substring(0, 20)}
               </h3>
               {/* Updated grid class here */}
-              <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {lenderBorrows.map((borrow) => (
-                  <div key={borrow.hash} className="space-y-2 container">
+              <div
+  className={`grid gap-6 grid-cols-1 ${
+    lenderBorrows.length >= 2 ? 'md:grid-cols-2' : ''
+  } ${lenderBorrows.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
+>                {lenderBorrows.map((borrow) => (
+                  <div key={borrow.hash} className="space-y-2 container max-w-md mx-auto">
                     <div className="items-center justify-between mb-4">
                       <div>
                         <p className="item-label">🪙 Token:</p>
@@ -781,9 +784,12 @@ const App = () => {
                 <h3 className="text-xl font-semibold text-gray-700 mb-2 text-pink-600">
                   {friend.substring(0, 20)}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {friendAllowances.map((allowance, idx) => (
-                    <div key={idx} className="space-y-2 container">
+                <div
+  className={`grid gap-6 grid-cols-1 ${
+    friendAllowances.length >= 2 ? 'md:grid-cols-2' : ''
+  } ${friendAllowances.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
+>                  {friendAllowances.map((allowance, idx) => (
+                    <div key={idx} className="space-y-2 container max-w-md mx-auto">
                       <div className="items-center justify-between mb-4">
                         <div>
                           <p className="item-label">🪙 Token:</p>
