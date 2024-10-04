@@ -497,7 +497,7 @@ const App = () => {
           alt="Selected NFT Image"
         />
       </a>
-      <main className="mx-auto py-8 px-4 lg:px-0 max-w-2xl">
+      <main className="mx-auto py-8 px-4 lg:px-0 max-w-5xl">
         <h1 className="text-center text-4xl mb-8 text-white font-extrabold">
           Stream - in Alpha
         </h1>
@@ -670,7 +670,7 @@ const App = () => {
                 {lender.substring(0, 20)}
               </h3>
               {/* Updated grid class here */}
-              <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {lenderBorrows.map((borrow) => (
                   <div key={borrow.hash} className="space-y-2 container">
                     <div className="items-center justify-between mb-4">
@@ -781,7 +781,7 @@ const App = () => {
                 <h3 className="text-xl font-semibold text-gray-700 mb-2 text-pink-600">
                   {friend.substring(0, 20)}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {friendAllowances.map((allowance, idx) => (
                     <div key={idx} className="space-y-2 container">
                       <div className="items-center justify-between mb-4">
@@ -806,15 +806,6 @@ const App = () => {
                       <div className="mb-4">
                         <p className="item-label">📊 Volume Streamed:</p>
                         <p className="item-value">{allowance.totalStreamed}</p>
-                      </div>
-                      <div className="mb-4">
-                        <p className="item-label">Available Amount:</p>
-                        <p className="item-value">{calculateAvailableAmount(allowance).toFixed(6)}</p>
-                      </div>
-  
-                      <div className="mb-4">
-                        <p className="item-label">Streamed Amount:</p>
-                        <p className="item-value">{allowance.allowable}</p>
                       </div>
                       <div className="flex space-x-4 mb-4">
                         <div className="flex-1">
