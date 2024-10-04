@@ -165,6 +165,12 @@ const App = () => {
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
     '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
   });
+  function checkToken(token) {
+    if (maps[token] != null) {
+      return maps[token];
+    }
+    return token;
+  }
 
   const addMapping = (address, name) => {
     console.log('Adding mapping:', address, name);
@@ -215,7 +221,7 @@ const App = () => {
             hash: hash,
             lender: details.lender,
             friend: details.friend,
-            token: details.token,
+            token: checkToken(details.token),
             show: ENS,
             totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
             outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
@@ -257,7 +263,7 @@ const App = () => {
             hash: hash,
             lender: details.lender,
             friend: details.friend,
-            token: details.token,
+            token: checkToken(details.token),
             show: ENS,
             totalStreamed: Number(ethers.formatUnits(details.totalStreamed, decimals)),
             outstanding: Number(ethers.formatUnits(details.outstanding, decimals)),
