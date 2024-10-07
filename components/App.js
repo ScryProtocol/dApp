@@ -541,6 +541,12 @@ const App = () => {
                     <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
                   </>
                 )}
+                {ChainId === 8453 && (
+                  <>
+                    <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+                    <option value="0x4200000000000000000000000000000000000006">wETH</option>
+                    </>
+                )}
                 <option value="custom">Custom</option>
               </select>
               {stoken === 'custom' && (
