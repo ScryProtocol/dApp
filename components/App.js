@@ -6,7 +6,7 @@ import { useAccount, useChainId } from 'wagmi';
 import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { Alchemy, Network } from 'alchemy-sdk';
-import Spot from './Spot';
+
 const defaultVaultAddress = '0x4CcfC47F4631B6e9a24A0BD18391E9De29B75381'//'0x757Db67ef173678115a2E7F080eaD93d6aD76E00'; // Replace with your Vault contract address
 
 // Define the Vault contract ABI
@@ -1028,7 +1028,6 @@ const handleCancelTransaction = async (txIndex) => {
       {isLimitModalOpen && <LimitModal handleClose={handleLimitModalToggle} />}
       {isCreateInfoModalOpen && <CreateInfoModal handleClose={handleCreateInfoModalToggle} />}
       {isCustomTxModalOpen && <CustomTxModal handleClose={handleCustomTxModalToggle} customTx={customTx} setCustomTx={setCustomTx} handleSendCustomTx={handleSendCustomTx} />}
-    <Spot/>
     </div>
   );
 

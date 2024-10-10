@@ -9,7 +9,9 @@ import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { BrowserRouter as Router, Route, Switch, useParams } from 'react-router-dom';
-
+import Spot from '../components/Spot';
+import Stream from "../components/Stream";
+import App from '../components/App';
 const queryClient = new QueryClient()
 
 const config = getDefaultConfig({
@@ -47,7 +49,9 @@ function MyApp({ Component, pageProps }) {
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
          ><a href={0!==1?'https://twitter.com/spotdotpizza':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
-          <Component {...pageProps} />
+          <App />
+          <Stream/>
+          <Spot/>
         </div>
       </RainbowKitProvider>
       </QueryClientProvider>
