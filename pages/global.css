@@ -36,6 +36,21 @@ html, body {
   transform: scale(1.03);
 }
 
+.tab-switcher {
+  display: flex;
+  cursor: pointer;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid transparent;
+}
+.tab-active {
+  border-bottom: 2px solid #f50057;
+  color: #f50057;
+}
 /* Titles */
 .main-title {
   color: #ec4899;

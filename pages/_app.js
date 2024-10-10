@@ -42,16 +42,41 @@ function MyApp({ Component, pageProps }) {
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
+  const [activeTab, setActiveTab] = useState('vault');
+  
+  function TabSwitcher({ activeTab, onTabChange }) {
+    
+    return (
+      
+      <div className="tab-switcher ml-20">
+      <div className="tab-switcher absolute  text-white bg-gray-500 rounded-full opacity-50 text-opacity-100 mx-1/2 mt-1">
+        <button className={`tab ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
+          Vault
+          </button>
+        <button className={`tab ${activeTab === 'stream' ? 'tab-active' : ''}`} onClick={() => setActiveTab('stream')}>
+          Stream
+          </button>
+        <button className={`tab ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
+          Spot
+          </button>
+      </div>
+      </div>
+    );
+  }
   return (
     <WagmiProvider  config={config}>
       <QueryClientProvider client={queryClient}>
       <RainbowKitProvider>
-        <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
+        <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
          ><a href={0!==1?'https://twitter.com/spotdotpizza':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
-          <App />
-          <Stream/>
-          <Spot/>
+          <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} className="bg-gradient-to-r from-blue-100 via-blue-300 to-green-300" />
+          {activeTab === 'vault' && 
+          <App /> }
+          {activeTab === 'stream' &&
+          <Stream/>}
+          {activeTab === 'spot' &&
+          <Spot/>}
         </div>
       </RainbowKitProvider>
       </QueryClientProvider>
