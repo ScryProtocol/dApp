@@ -50,13 +50,13 @@ function MyApp({ Component, pageProps }) {
       
       <div className="tab-switcher justify-center">
       <div className="tab-switcher absolute justify-center text-white bg-gray-500 rounded-full opacity-50 mx-1/2 mt-1">
-        <button className={`tab ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
+        <button className={`ta ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
           Vault
           </button>
-        <button className={`tab ${activeTab === 'stream' ? 'tab-active' : ''}`} onClick={() => setActiveTab('stream')}>
+        <button className={`ta ${activeTab === 'stream' ? 'tab-active' : ''}`} onClick={() => setActiveTab('stream')}>
           Stream
           </button>
-        <button className={`tab ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
+        <button className={`ta ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
           Spot
           </button>
       </div>

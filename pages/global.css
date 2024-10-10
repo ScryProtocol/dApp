@@ -51,6 +51,15 @@ html, body {
   border-bottom: 2px solid #f50057;
   color: #f50057;
 }
+.ta {
+  flex: 1;
+  padding: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid transparent;
+}
 /* Titles */
 .main-title {
   color: #ec4899;
