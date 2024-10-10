@@ -48,8 +48,8 @@ function MyApp({ Component, pageProps }) {
     
     return (
       
-      <div className="tab-switcher ml-20">
-      <div className="tab-switcher absolute  text-white bg-gray-500 rounded-full opacity-50 text-opacity-100 mx-1/2 mt-1">
+      <div className="tab-switcher justify-center">
+      <div className="tab-switcher absolute justify-center text-white bg-gray-500 rounded-full opacity-50 mx-1/2 mt-1">
         <button className={`tab ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
           Vault
           </button>
