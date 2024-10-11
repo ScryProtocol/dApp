@@ -203,7 +203,7 @@ let capabilities = null
     const once = document.getElementById('once').value === 'true';
     const selectedNetwork = document.getElementById('networkSelect').value;
 
-    const subscriptionLink = `https://sub.spot.pizza/?token=${tokenAddress}&subscribe=${subscriber}&amount=${amount}&window=${window}&once=${once}&network=${selectedNetwork}`;
+    const subscriptionLink = `https://spot.pizza/?token=${tokenAddress}&subscribe=${subscriber}&amount=${amount}&window=${window}&once=${once}&network=${selectedNetwork}`;
     displaySubscriptionLink(subscriptionLink);
   };
 
