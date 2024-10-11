@@ -545,7 +545,7 @@ console.log('3', token, subscribe, amount, window, once);
       }
     }, [connectors, connect]);
     return (
-        <button className="py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
+        <button className="w-1/4 py-3 bg-blue-500 text-white font-semibold rounded-xl h-12 hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
           Create Wallet
         </button>)}
 
@@ -689,8 +689,10 @@ console.log('3', token, subscribe, amount, window, once);
       
   </div>
 )}
+<div className="flex items-center mt-2 gap-2">
     <ConnectButton />
     {!userAddress && <BlueCreateWalletButton />}
+  </div>
   </div>
 
   {/* Subscriptions Section */}
