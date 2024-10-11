@@ -35,15 +35,20 @@ function MyApp({ Component, pageProps }) {
     }
     return false;
   });
+  const [activeTab, setActiveTab] = useState('vault');
 
   useEffect(() => {
     // Save theme preference to local storage whenever it changes
     localStorage.setItem('isDarkTheme', isDarkTheme);
+    let location = window.location.href;
+    if (location.includes('token')) {
+      setActiveTab('sub');
+    }
+    
   }, [isDarkTheme]);
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
-  const [activeTab, setActiveTab] = useState('vault');
   
   function TabSwitcher({ activeTab, onTabChange }) {
     

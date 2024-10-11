@@ -545,8 +545,8 @@ console.log('3', token, subscribe, amount, window, once);
       }
     }, [connectors, connect]);
     return (
-        <button className="w-1/4 py-3 bg-blue-500 text-white font-semibold rounded-xl h-12 hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
-          Create Wallet
+        <button className="w-1/4 py-3 bg-blue-500 text-white font-semibold rounded-xl h-10 hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
+          <p className='relative bottom-1 font-bold'>Create Wallet</p>
         </button>)}
 
   return (<body className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-300 text-gray-800 font-sans flex flex-col items-center py-10">
@@ -566,7 +566,7 @@ console.log('3', token, subscribe, amount, window, once);
                 <select
                   id="tokenAddress"
                   onChange={(e) => setselectedToken(e.target.value)}
-                  className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                  className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                 >
                   <option value="">Select a token</option>
                   {tokenOptions[ChainId]?.map((token) => (
@@ -582,32 +582,32 @@ console.log('3', token, subscribe, amount, window, once);
                     id="customTokenAddress"
                     onChange={(e) => { setselectedToken(e.target.value); toast.success('Custom token set'); }}
                     placeholder="Enter custom token address"
-                    className="w-full p-4 mt-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                    className="w-full p-4 mt-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                   />
                 )}
               </div>
               <div className="text-left">
                 <label htmlFor="subscriber" className="block font-semibold text-gray-700 mb-2">Subscribe To Address:</label>
-                <input type="text" id="subscriber" placeholder="Enter subscribe address (blank for own address)" className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
+                <input type="text" id="subscriber" placeholder="Enter subscribe address (blank for own address)" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
               </div>
               <div className="text-left">
                 <label htmlFor="amount" className="block font-semibold text-gray-700 mb-2">Amount:</label>
-                <input type="number" id="amount" placeholder="Enter amount of tokens" className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
+                <input type="number" id="amount" placeholder="Enter amount of tokens" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
               </div>
               <div className="text-left">
                 <label htmlFor="window" className="block font-semibold text-gray-700 mb-2">Duration (in days):</label>
-                <input type="number" id="window" placeholder="Enter duration in days" className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
+                <input type="number" id="window" placeholder="Enter duration in days" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
               </div>
               <div className="text-left">
                 <label htmlFor="once" className="block font-semibold text-gray-700 mb-2">Subscription Type:</label>
-                <select id="once" className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
+                <select id="once" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
                   <option value="false">Recurring</option>
                   <option value="true">One-time</option>
                 </select>
               </div>
               <div className="text-left">
                 <label htmlFor="networkSelect" className="block font-semibold text-gray-700 mb-2">Network:</label>
-                <select id="networkSelect" className="w-full p-4 bg-orange-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
+                <select id="networkSelect" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
                   <option value="1">Mainnet</option>
                   <option value="10">holesky</option>
                   <option value="10">Optimism</option>
