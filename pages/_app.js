@@ -11,6 +11,7 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { BrowserRouter as Router, Route, Switch, useParams } from 'react-router-dom';
 import Spot from '../components/Spot';
 import Stream from "../components/Stream";
+import Sub from "../components/Sub";
 import App from '../components/App';
 const queryClient = new QueryClient()
 
@@ -59,6 +60,9 @@ function MyApp({ Component, pageProps }) {
         <button className={`ta ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
           Spot
           </button>
+          <button className={`ta ${activeTab === 'sub' ? 'tab-active' : ''}`} onClick={() => setActiveTab('sub')}>
+          Sub
+          </button>
       </div>
       </div>
     );
@@ -77,6 +81,8 @@ function MyApp({ Component, pageProps }) {
           <Stream/>}
           {activeTab === 'spot' &&
           <Spot/>}
+          {activeTab === 'sub' &&
+          <Sub/>}
         </div>
       </RainbowKitProvider>
       </QueryClientProvider>
