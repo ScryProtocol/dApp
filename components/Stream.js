@@ -58,6 +58,11 @@ const Stream = () => {
   const ethersSigner = useEthersSigner();
   provider = ethersProvider;
   signer = ethersSigner;
+  const multicallContract = new ethers.Contract(
+    '0xcA11bde05977b3631167028862bE2a173976CA11', 
+    ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], 
+    provider
+  );
 
   let account = useAccount();
   let userAddress = useAccount().address;
@@ -196,22 +201,30 @@ const Stream = () => {
     fetchFriendAllowances();
     console.log(ChainId);
   };
-
   const fetchLenderAllowances = async () => {
     if (contract && userAddress) {
       const lenderAllowances = await contract.viewLenderAllowances(userAddress);
+  
+      // Prepare calls for multicall: streamDetails and ENS lookups
+      const streamDetailsCalls = lenderAllowances.map((hash) => ({
+        target: ContractAddress,
+        callData: contract.interface.encodeFunctionData('streamDetails', [hash]),
+      }));
+  
+      // Execute multicall for stream details
+      const { returnData: streamDetailsData } = await multicallContract.aggregate(streamDetailsCalls);
+  
       const borrowDetails = await Promise.all(
-        lenderAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
+        lenderAllowances.map(async (hash, index) => {
+          const details = contract.interface.decodeFunctionResult('streamDetails', streamDetailsData[index]);
+  
+          // Batch ENS lookups
           let pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-          const getAddressENS = async (address) => {
-            const ensName = await pr.lookupAddress(address);
-            if (ensName) addMapping(address, ensName);
-            return ensName || address;
-          };
-          const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS);
-
+          const ensName = await pr.lookupAddress(details.friend);
+          if (ensName) addMapping(details.friend, ensName);
+          const ENS = ensName || details.friend;
+  
+          // Batch decimals fetch
           const token = new ethers.Contract(details.token, tokenABI, provider);
           let decimals;
           try {
@@ -219,6 +232,7 @@ const Stream = () => {
           } catch (error) {
             decimals = 18;
           }
+  
           return {
             hash: hash,
             lender: details.lender,
@@ -234,26 +248,35 @@ const Stream = () => {
           };
         })
       );
-      console.log(borrowDetails);
+  
       setAllowances(borrowDetails);
     }
   };
-
+  
   const fetchFriendAllowances = async () => {
     if (contract && userAddress) {
       const friendAllowances = await contract.viewFriendAllowances(userAddress);
+  
+      // Prepare calls for multicall: streamDetails and ENS lookups
+      const streamDetailsCalls = friendAllowances.map((hash) => ({
+        target: ContractAddress,
+        callData: contract.interface.encodeFunctionData('streamDetails', [hash]),
+      }));
+  
+      // Execute multicall for stream details
+      const { returnData: streamDetailsData } = await multicallContract.aggregate(streamDetailsCalls);
+  
       const borrowDetails = await Promise.all(
-        friendAllowances.map(async (hash) => {
-          const details = await contract.streamDetails(hash);
+        friendAllowances.map(async (hash, index) => {
+          const details = contract.interface.decodeFunctionResult('streamDetails', streamDetailsData[index]);
+  
+          // Batch ENS lookups
           let pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-          const getAddressENS = async (address) => {
-            const ensName= await pr.lookupAddress(address);
-            if (ensName) addMapping(address, ensName);
-            return ensName || address;
-          };
-          const ENS = await getAddressENS(details.friend);
-          console.log('lol', ENS);
-
+          const ensName = await pr.lookupAddress(details.friend);
+          if (ensName) addMapping(details.friend, ensName);
+          const ENS = ensName || details.friend;
+  
+          // Batch decimals fetch
           const token = new ethers.Contract(details.token, tokenABI, provider);
           let decimals;
           try {
@@ -261,6 +284,7 @@ const Stream = () => {
           } catch (error) {
             decimals = 18;
           }
+  
           return {
             hash: hash,
             lender: details.lender,
@@ -277,9 +301,11 @@ const Stream = () => {
           };
         })
       );
+  
       setBorrows(borrowDetails);
     }
   };
+  
 
   const fetchAllowances = async () => {
     if (contract && userAddress) {
