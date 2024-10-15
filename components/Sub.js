@@ -286,7 +286,7 @@ subscribe = await resolveENS(subscribe);
   const handleSubscribe = async () => {
     let { token, subscribe, amount, window, once, network } = getQueryParams();
 let provider = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-subscribe = await resolveENS(subscribe);
+subscribe = await provider._getAddress(subscribe);
     if (ChainId != network) {
       toast.error(`Check network! Must be chainId: ${network.toString()}`);
       return;
