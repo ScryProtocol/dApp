@@ -462,7 +462,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800 overflow-hidden ">
       <main className="w-11/12 p-8  mx-auto py-8">
-        <h1 className="text-center text-4xl mb-8 text-white font-extrabold">feed</h1>
+        <h1 className="text-center text-4xl text-white font-extrabold">feed</h1>
         <Toaster />
         <BlogView likePost={likePost} tipPost={tipPost} setTipping={setTipping} />
 
