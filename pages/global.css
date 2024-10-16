@@ -32,6 +32,13 @@ html, body {
   transition: transform 0.3s ease;
 }
 
+.cont {
+  max-width: 600px;
+  width: 85%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
 .container:hover {
   transform: scale(1.03);
 }

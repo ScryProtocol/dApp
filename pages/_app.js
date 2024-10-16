@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Route, Switch, useParams } from 'react-router-
 import Spot from '../components/Spot';
 import Stream from "../components/Stream";
 import Sub from "../components/Sub";
+import Feed from "../components/Feed";
 import App from '../components/App';
 const queryClient = new QueryClient()
 
@@ -68,6 +69,9 @@ function MyApp({ Component, pageProps }) {
           <button className={`ta ${activeTab === 'sub' ? 'tab-active' : ''}`} onClick={() => setActiveTab('sub')}>
           Sub
           </button>
+          <button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
+          Feed
+          </button>
       </div>
       </div>
     );
@@ -88,6 +92,8 @@ function MyApp({ Component, pageProps }) {
           <Spot/>}
           {activeTab === 'sub' &&
           <Sub/>}
+          {activeTab === 'feed' &&
+          <Feed/>}
         </div>
       </RainbowKitProvider>
       </QueryClientProvider>
