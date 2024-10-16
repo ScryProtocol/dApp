@@ -61,6 +61,9 @@ const Feed = () => {
   const commentsContract = new ethers.Contract(CommentsContractAddress, CommentsContractABI, ethersProvider);
 
   useEffect(() => {
+    if (chain != 8453) {
+      toast.error('Feed is only available on the Base chain.');
+    }
     if (userAddress) {
       const queryParams = new URLSearchParams(window.location.search);
       const extractedBlogName = queryParams.get('blog');
