@@ -616,7 +616,7 @@ console.log('3', token, subscribe, amount, window, once);
                 </select>
               </div>
             </div>
-            <button type="submit" className="w-full py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition duration-300 mt-8">Create Subscription</button>
+            <button type="submit" className="w-full py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition duration-300 mt-8">Create Subscription Link</button>
           </div>
         </form>
         {subscriptionLink && (
