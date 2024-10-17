@@ -244,7 +244,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
       return;
     }
     try {
-      const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
+      const token = new ethers.Contract(blogToken || '0xaBAb594Dad78A9A6D19B376CcFB45935eC7c8790', ['function decimals() view returns (uint)'], ethersProvider);
       const blogAddress = await contract.blogNameToAddress(blogName);
       if (blogAddress !== '0x0000000000000000000000000000000000000000'&&blogAddress!=userAddress) {
         toast.error('Blog name already taken');
@@ -257,7 +257,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
             address: ContractAddress,
             abi: ContractABI,
             functionName: 'updateBlog',
-            args: [blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
+            args: [blogName, blogBio, blogToken || '0xaBAb594Dad78A9A6D19B376CcFB45935eC7c8790', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
           }],
           capabilities: {
             paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
@@ -278,7 +278,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
       return;
     }
     try {
-      const token = new ethers.Contract(blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ['function decimals() view returns (uint)'], ethersProvider);
+      const token = new ethers.Contract(blogToken || '0xaBAb594Dad78A9A6D19B376CcFB45935eC7c8790', ['function decimals() view returns (uint)'], ethersProvider);
       const blogAddress = await contract.blogNameToAddress(blogName);
       if (blogAddress !== '0x0000000000000000000000000000000000000000') {
         toast.error('Blog name already taken');
@@ -291,7 +291,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
             address: ContractAddress,
             abi: ContractABI,
             functionName: 'createBlog',
-            args: [blogName, blogBio, blogToken || '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
+            args: [blogName, blogBio, blogToken || '0xaBAb594Dad78A9A6D19B376CcFB45935eC7c8790', ethers.parseUnits((blogAmount / 3600 / 24 / 30).toFixed().toString(), await token.decimals())],
           }],
           capabilities: {
             paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
@@ -504,6 +504,7 @@ sethasBlog(has.token!='0x0000000000000000000000000000000000000000')
                   className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
                 >
                   <option value="">Select a token</option>
+                  <option value="0xaBAb594Dad78A9A6D19B376CcFB45935eC7c8790">SPOT</option>
                   <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
                   <option value="0x4200000000000000000000000000000000000006">wETH</option>
                   <option value="0x4ed4e862860bed51a9570b96d89af5e1b0efefed">DEGEN</option>
