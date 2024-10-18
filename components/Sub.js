@@ -716,6 +716,10 @@ console.log('3', token, subscribe, amount, window, once);
             <span className="text-orange-600">{subscription.allowable}</span>
           </div>
           <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
+            <span className="font-semibold text-gray-700">💧 Available:</span>
+            <span className="text-orange-600">{subscription.outstanding}</span>
+          </div>
+          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">⏰ Window:</span>
             <span className="text-orange-600">{subscription.window}</span>
           </div>
@@ -749,6 +753,10 @@ console.log('3', token, subscribe, amount, window, once);
         <span className="font-semibold text-gray-700">🎉 Amount:</span>
         <span className="text-orange-600">{subscription.allowable}</span>
       </div>
+      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
+            <span className="font-semibold text-gray-700">💧 Available:</span>
+            <span className="text-orange-600">{subscription.outstanding}</span>
+          </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
         <span className="font-semibold text-gray-700">⏰ Window:</span>
         <span className="text-orange-600">{subscription.window}</span>
