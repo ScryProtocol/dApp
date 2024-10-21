@@ -384,11 +384,11 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
         return;
     }
 
-    let tokenTo = useSingleToken ? Array(recipients.length).fill(token) : tokens;
+    let tokenTo = useSingleToken ? Array(recipients.length).fill(stoken) : tokens;
     let amountTo = useSameAmount ? Array(recipients.length).fill(amount) : amounts;
 
     // Assuming `window` is already defined somewhere else in the scope
-    let windows = Array(recipients.length).fill(window*3600); // Use the `window` variable here
+    let windows = Array(recipients.length).fill(!once?window*3600*24:window); // Use the `window` variable here
     let onces = Array(recipients.length).fill(once); // Assuming you have a single `once` value (true/false)
 
     try {
@@ -416,6 +416,7 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
 // Reusable function to calculate token approvals
 const calculateTokenApprovals = async (tokens, amounts) => {
     let tokenAmounts = {};
+    console.log('tokens', tokens, 'amounts', amounts);
     for (let i = 0; i < tokens.length; i++) {
         let tokenAddress = tokens[i];
         let amount = amounts[i];
@@ -1320,10 +1321,46 @@ const handleChange = (e) => {
                     {borrow.once ? 'Once only' : 'Unlimited'}
                   </span>
                 </td>
-                <td className="px-6 py-4">{borrow.allowable}</td>
+                <td className="px-6 py-4">
+                  {!borrow.once ? (
+                    <span>
+                      @ {borrow.allowable} tokens per{' '}
+                      {Math.floor(borrow.window / (3600 * 24))}d{' '}
+                      {Math.floor((borrow.window % (3600 * 24)) / 3600)}h{' '}
+                      {Math.floor((borrow.window % 3600) / 60)}m{' '}
+                      {Math.floor(borrow.window % 60)}s
+                    </span>
+                  ) : (
+                    <span>
+                      ends in{' '}
+                      {Math.floor(
+                        (borrow.timestamp +
+                          (borrow.outstanding * borrow.window) / borrow.allowable -
+                          Date.now() / 1000) /
+                          3600
+                      )}
+                      h{' '}
+                      {Math.floor(
+                        ((borrow.timestamp +
+                          (borrow.outstanding * borrow.window) / borrow.allowable -
+                          Date.now() / 1000) %
+                          3600) /
+                          60
+                      )}
+                      m{' '}
+                      {Math.floor(
+                        (borrow.timestamp +
+                          (borrow.outstanding * borrow.window) / borrow.allowable -
+                          Date.now() / 1000) %
+                          60
+                      )}
+                      s
+                    </span>
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   <button
-                    onClick={() => handleBorrow(borrow.token, borrow.lender)}
+                    onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
                     className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
                   >
                     Claim
@@ -1405,13 +1442,13 @@ const handleChange = (e) => {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend)}
-                        className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
+                        className="bg-green-500 text-white font-semibold py-2 px-4 m-1 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
                       >
                         Save
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300 ease-in-out ml-2"
+                        className="bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300 ease-in-out"
                       >
                         Cancel
                       </button>
