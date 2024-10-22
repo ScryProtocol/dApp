@@ -332,6 +332,9 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
         let decimals = await token.decimals();
 
         console.log('lol', await token.balanceOf(userAddress), 'lol', am);
+        let allowance = await token.allowance(userAddress, ContractAddress);
+        if (allowance < once?ethers.parseUnits(amount, decimals):ethers.MaxUint256) {
+         
         if (!once) {
           let tx = await token.approve(ContractAddress, ethers.MaxUint256);
           tx.wait();
@@ -340,7 +343,7 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
             let tx = await token.approve(ContractAddress, ethers.parseUnits(amount, decimals));
             tx.wait();
           }
-        }
+        }}
         if (!ethers.isAddress(friend)) {
           let pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
           const getAddressENS = async (address) => {
