@@ -1512,7 +1512,7 @@ const handleChange = (e) => {
                         Modify
                       </button>
                       <button
-                        onClick={() => handleBorrow(allowance.tokenAddrs, allowance.friend,0)}
+                        onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend,0)}
                         className="bg-red-300 text-white font-semibold py-2 px-2 rounded-full hover:bg-red-600 transition duration-300 ease-in-out ml-2"
                       >
                       🗑️
