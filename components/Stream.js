@@ -358,7 +358,7 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
           }
         }
         console.log('borrowing', stoken, friend, ethers.parseUnits(amount, decimals), window, once);
-        const tx = await contract.allowStream(stoken, friend, ethers.parseUnits(amount, decimals), once?window*3600*24:window, once);
+        const tx = await contract.allowStream(stoken, friend, ethers.parseUnits(amount, decimals), !once?window*3600*24:window, once);
         await tx.wait();
         toast.success('Allowance successful');
         fetchLenderAllowances();
