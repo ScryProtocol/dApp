@@ -68,12 +68,6 @@ const Stream = () => {
   let userAddress = useAccount().address;
   let ChainId = useChainId();
 
-  if (ChainId === 1) {
-    ContractAddress = '0x90076e40A74F33cC2C673eCBf2fBa4068Af77892';
-  } else if (ChainId === 17000) {
-    ContractAddress = '0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b';
-  }
-
   account = account.address;
   let contract = new ethers.Contract(ContractAddress, ContractABI, provider);
   let token;
@@ -81,11 +75,6 @@ const Stream = () => {
   provider.addListener('network', (newNetwork, oldNetwork) => {
     console.log('newNetwork', newNetwork, 'oldNetwork', oldNetwork);
     try {
-      if (ChainId === 1) {
-        ContractAddress = '0x90076e40A74F33cC2C673eCBf2fBa4068Af77892';
-      } else if (ChainId === 17000) {
-        ContractAddress = '0x27090cd6D7c20007B9a976E58Ac4231b74c20D8b';
-      }
       console.log('ContractAddress', ContractAddress);
       account = account.address;
       contract = new ethers.Contract(ContractAddress, ContractABI, ethersProvider);

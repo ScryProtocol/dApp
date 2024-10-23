@@ -27,9 +27,9 @@ const config = getDefaultConfig({
   },
 });
 
-let streamContractAddress = '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
-const streamContractABI = [{ "inputs": [{ "internalType": "address payable", "name": "feeAddrs", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "friend", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "StreamAllowed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "token", "type": "address" }, { "indexed": true, "internalType": "address", "name": "lender", "type": "address" }, { "indexed": true, "internalType": "address", "name": "streamer", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Streamed", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "name": "allowStream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }], "name": "computeHash", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "fee", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "feeAddress", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "getAvailable", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }, { "internalType": "address", "name": "newfeeAddress", "type": "address" }], "name": "setFee", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "me", "type": "address" }], "name": "stream", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "streamDetails", "outputs": [{ "internalType": "address", "name": "lender", "type": "address" }, { "internalType": "address", "name": "friend", "type": "address" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "totalStreamed", "type": "uint256" }, { "internalType": "uint256", "name": "outstanding", "type": "uint256" }, { "internalType": "uint256", "name": "allowable", "type": "uint256" }, { "internalType": "uint256", "name": "window", "type": "uint256" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }, { "internalType": "bool", "name": "once", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByFriend", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "streamDetailsByLender", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "friend", "type": "address" }], "name": "viewFriendAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "lender", "type": "address" }], "name": "viewLenderAllowances", "outputs": [{ "internalType": "bytes32[]", "name": "", "type": "bytes32[]" }], "stateMutability": "view", "type": "function" }];
-  let tokenABI = [
+let streamContractAddress = '0x6d384bf7124b8b354ee41bc839994c4dc1de70cb';
+const streamContractABI = [{"inputs":[{"internalType":"address payable","name":"feeAddrs","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"StreamAllowed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Streamed","type":"event"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"name":"allowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"uint256[]","name":"windows","type":"uint256[]"},{"internalType":"bool[]","name":"onces","type":"bool[]"}],"name":"batchAllowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"batchStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddress","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"getAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"hashes","type":"bytes32[]"}],"name":"getStreamDetails","outputs":[{"internalType":"uint256[]","name":"availableAmounts","type":"uint256[]"},{"internalType":"uint8[]","name":"decimals","type":"uint8[]"},{"internalType":"string[]","name":"tokenNames","type":"string[]"},{"internalType":"string[]","name":"tokenSymbols","type":"string[]"},{"components":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"internalType":"struct Stream.StreamDetails[]","name":"details","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"},{"internalType":"address","name":"newFeeAddress","type":"address"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"stream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"streamDetails","outputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByRecipient","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByStreamer","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"}],"name":"viewRecipientAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"}],"name":"viewStreamerAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"}]
+let tokenABI = [
     {
       "constant": true,
       "inputs": [],
@@ -133,13 +133,11 @@ const Sub = () => {
   let account = useAccount();
   let userAddress = useAccount().address;
   let ChainId = useChainId();
-  streamContractAddress = ChainId === 1 ? '0x90076e40a74f33cc2c673ecbf2fba4068af77892' : '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
 let capabilities = null
   useEffect(() => {
     const initializeContract = async () => {
       if (window.ethereum) {
         const { network } = getQueryParams();
-        const streamContractAddress = network === '1' ? '0x90076e40a74f33cc2c673ecbf2fba4068af77892' : '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
         const streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
         setStreamContract(streamContract);
         await checkSubscription();
@@ -218,7 +216,6 @@ let capabilities = null
       try {
         let provider = new ethers.JsonRpcProvider('https://1rpc.io/eth');
 subscribe = await resolveENS(subscribe);
-        const streamContractAddress = network === '1' ? '0x90076e40a74f33cc2c673ecbf2fba4068af77892' : '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
         const streamContract = new ethers.Contract(streamContractAddress, streamContractABI, provider);
         subscriptionHash = await streamContract.computeHash(userAddress, token, subscribe);
         details = await streamContract.streamDetails(subscriptionHash);
@@ -364,27 +361,16 @@ console.log('3', token, subscribe, amount, window, once);
 
   const fetchSubscriptions = async () => {
     const lenderAddress = userAddress;
-    let streamContractAddress = ChainId === 1 ? '0x90076e40a74f33cc2c673ecbf2fba4068af77892' : '0x12A5103f551Fe9B659Fb40DCd4701CbE1bA0B3e6';
     let contract = new ethers.Contract(streamContractAddress, streamContractABI, provider);
-    const allowances = await contract.viewLenderAllowances(userAddress);
-    const subscriptionsData = await Promise.all(
-      allowances.map(async (allowance) => {
-        console.log(allowance);
-
-        const details = await contract.streamDetails(allowance);
-        console.log(details.token);
-        const tokenContract = new ethers.Contract(details.token, [
-          { constant: true, inputs: [], name: 'decimals', outputs: [{ name: '', type: 'uint8' }], payable: false, stateMutability: 'view', type: 'function' },
-        ], provider);
-        let dec;
-        try {
-          dec = await tokenContract.decimals();
-        } catch (error) {
-          dec = 18;
-        }
+    let allowances = await contract.viewStreamerAllowances(userAddress);
+    allowances=Array.from(allowances);
+        let [availableAmounts, decimalsArray, tokenNames, tokenSymbols, detailsArray] = await contract.getStreamDetails(allowances);
+       let subscriptionsData = await Promise.all(
+        allowances.map(async (allowance, i) => {
+        const details = detailsArray[i];
         const currentTime = Math.floor(Date.now() / 1000);
         const elapsedTime = BigInt(currentTime) - details.timestamp;
-
+let dec = decimalsArray[i];
         let allowableAmount = (details.allowable * elapsedTime) / details.window;
         if (details.once) {
           allowableAmount = (details.allowable * elapsedTime) / details.window;
@@ -394,8 +380,9 @@ console.log('3', token, subscribe, amount, window, once);
         }
         allowableAmount = Number(allowableAmount) / 10 ** Number(dec);
         return {
-          friend: details.friend,
+          friend: details.recipient,
           token: details.token,
+          show:tokenSymbols[i],
           allowable: ethers.formatUnits(details.allowable, dec),
           window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
             : `Sub until ${new Date(Number(details.timestamp) * 1000 + Number(details.window) * 1000).toLocaleString()}`,
@@ -404,25 +391,19 @@ console.log('3', token, subscribe, amount, window, once);
           outstanding: Number(allowableAmount),
           once: details.once ? 'One-time' : 'Recurring',
         };
-      })
-    );
+      }))
+
 
     setSubscriptions(subscriptionsData);
 
-    const allows = await contract.viewFriendAllowances(lenderAddress);
+    let allows = await contract.viewRecipientAllowances(lenderAddress);
+    allows=Array.from(allows);
+[availableAmounts, decimalsArray, tokenNames, tokenSymbols, detailsArray] = await contract.getStreamDetails(allows);
 
     const subsData = await Promise.all(
-      allows.map(async (allowance) => {
-        const details = await contract.streamDetails(allowance);
-        const tokenContract = new ethers.Contract(details.token, [
-          { constant: true, inputs: [], name: 'decimals', outputs: [{ name: '', type: 'uint8' }], payable: false, stateMutability: 'view', type: 'function' },
-        ], provider);
-        let dec;
-        try {
-          dec = await tokenContract.decimals();
-        } catch (error) {
-          dec = 18;
-        }
+      allows.map(async (allowance,i) => {
+        const details = detailsArray[i];
+        const dec = decimalsArray[i];
         const currentTime = Math.floor(Date.now() / 1000);
         const elapsedTime = BigInt(currentTime) - details.timestamp;
         let allowableAmount = (details.allowable * elapsedTime) / details.window;
@@ -434,9 +415,10 @@ console.log('3', token, subscribe, amount, window, once);
         }
         allowableAmount = Number(allowableAmount) / 10 ** Number(dec);
         return {
-          friend: details.friend,
-          lender: details.lender,
+          friend: details.recipient,
+          lender: details.streamer,
           token: details.token,
+          show:tokenSymbols[i],
           allowable: ethers.formatUnits(details.allowable, dec),
           window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
             : `Sub until ${new Date(Number(details.timestamp) * 1000 + Number(details.window) * 1000).toLocaleString()}`,
@@ -709,7 +691,7 @@ console.log('3', token, subscribe, amount, window, once);
           </div>
           <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">💰 Token:</span>
-            <span className="text-orange-600">{tokenOptions[ChainId]?.find((token) => token.address.toLowerCase() === subscription.token.toString().toLowerCase())?.symbol || subscription.token}</span>
+            <span className="text-orange-600">{subscription.show}</span>
           </div>
           <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">🎉 Amount:</span>
@@ -746,7 +728,7 @@ console.log('3', token, subscribe, amount, window, once);
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
         <span className="font-semibold text-gray-700">💰 Token:</span>
         <span className="text-orange-600">
-          {tokenOptions[ChainId]?.find((token) => token.address.toLowerCase() === subscription.token.toString().toLowerCase())?.symbol || subscription.token}
+          {subscription.show}
         </span>
       </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
