@@ -808,40 +808,40 @@ const handleClaim = async (token) => {
       <p className="text-center bg-orange-500 text-white font-semibold py-2 rounded-full w-32 mx-auto">
         {subs.length} Subs
       </p>
-    </>
+      <h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
+          
+          <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
+            Claim All
+          </button>
+              <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+      {Object.entries(totalClaim).map(([token, amount], index) => {
+        // Define dynamic gradients
+        const colorGradients = [
+          "from-red-400 to-yellow-400",
+          "from-blue-400 to-green-400",
+          "from-green-400 to-teal-400",
+          "from-yellow-400 to-pink-400",
+          "from-indigo-400 to-blue-400",
+          "from-teal-400 to-green-400",
+        ];
+    
+        return (
+          <button
+            key={token}
+            onClick={() => handleClaim(token)}
+            className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}>
+            <p className="text-white text-lg font-bold m-2">
+              {amount.substring(0,12)} {subs.find(sub => sub.token === token)?.show ?? token.substring(0, 20)}
+            </p>
+          </button>
+        )
+      })}
+    </div>
+    </div>
+        </>
   )}
   
-          <h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
-          
-      <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
-        Claim All
-      </button>
-          <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-  {Object.entries(totalClaim).map(([token, amount], index) => {
-    // Define dynamic gradients
-    const colorGradients = [
-      "from-red-400 to-yellow-400",
-      "from-blue-400 to-green-400",
-      "from-green-400 to-teal-400",
-      "from-yellow-400 to-pink-400",
-      "from-indigo-400 to-blue-400",
-      "from-teal-400 to-green-400",
-    ];
-
-    return (
-      <button
-        key={token}
-        onClick={() => handleClaim(token)}
-        className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}>
-        <p className="text-white text-lg font-bold m-2">
-          {amount.substring(0,12)} {subs.find(sub => sub.token === token)?.show ?? token.substring(0, 20)}
-        </p>
-      </button>
-    )
-  })}
-</div>
-</div>
   {subs.map((subscription, index) => (
     <div key={index} className="bg-yellow-100 rounded-lg p-6 shadow-lg">
       <div className="flex flex-col">
