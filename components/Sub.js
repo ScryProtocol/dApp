@@ -27,8 +27,8 @@ const config = getDefaultConfig({
   },
 });
 
-let streamContractAddress = '0x6d384bf7124b8b354ee41bc839994c4dc1de70cb';
-const streamContractABI = [{"inputs":[{"internalType":"address payable","name":"feeAddrs","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"StreamAllowed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Streamed","type":"event"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"name":"allowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"uint256[]","name":"windows","type":"uint256[]"},{"internalType":"bool[]","name":"onces","type":"bool[]"}],"name":"batchAllowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"batchStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddress","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"getAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"hashes","type":"bytes32[]"}],"name":"getStreamDetails","outputs":[{"internalType":"uint256[]","name":"availableAmounts","type":"uint256[]"},{"internalType":"uint8[]","name":"decimals","type":"uint8[]"},{"internalType":"string[]","name":"tokenNames","type":"string[]"},{"internalType":"string[]","name":"tokenSymbols","type":"string[]"},{"components":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"internalType":"struct Stream.StreamDetails[]","name":"details","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"},{"internalType":"address","name":"newFeeAddress","type":"address"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"stream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"streamDetails","outputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByRecipient","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByStreamer","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"}],"name":"viewRecipientAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"}],"name":"viewStreamerAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"}]
+let streamContractAddress = '0x7d189ce0945cb89c00516f4957d4d739279e1ccd';
+const streamContractABI = [{"inputs":[{"internalType":"address payable","name":"feeAddrs","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"StreamAllowed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"string","name":"message","type":"string"}],"name":"StreamFailure","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":true,"internalType":"address","name":"streamer","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Streamed","type":"event"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"name":"allowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"uint256[]","name":"windows","type":"uint256[]"},{"internalType":"bool[]","name":"onces","type":"bool[]"}],"name":"batchAllowStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"batchComputeHash","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"batchStream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"batchStreamAvailable","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"hashes","type":"bytes32[]"}],"name":"batchStreamAvailableAllowances","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"},{"internalType":"address[]","name":"streamers","type":"address[]"},{"internalType":"address[]","name":"recipients","type":"address[]"}],"name":"cancelStreams","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"computeHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeAddress","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"getAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"hashes","type":"bytes32[]"}],"name":"getStreamDetails","outputs":[{"internalType":"uint256[]","name":"availableAmounts","type":"uint256[]"},{"internalType":"uint8[]","name":"decimals","type":"uint8[]"},{"internalType":"string[]","name":"tokenNames","type":"string[]"},{"internalType":"string[]","name":"tokenSymbols","type":"string[]"},{"components":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"internalType":"struct Stream.StreamDetails[]","name":"details","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"hashes","type":"bytes32[]"}],"name":"getStreamable","outputs":[{"internalType":"bool[]","name":"canStream","type":"bool[]"},{"internalType":"uint256[]","name":"balances","type":"uint256[]"},{"internalType":"uint256[]","name":"allowances","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_fee","type":"uint256"},{"internalType":"address","name":"newFeeAddress","type":"address"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"}],"name":"stream","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"streamDetails","outputs":[{"internalType":"address","name":"streamer","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"totalStreamed","type":"uint256"},{"internalType":"uint256","name":"outstanding","type":"uint256"},{"internalType":"uint256","name":"allowable","type":"uint256"},{"internalType":"uint256","name":"window","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"bool","name":"once","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByRecipient","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"streamDetailsByStreamer","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"}],"name":"viewRecipientAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"streamer","type":"address"}],"name":"viewStreamerAllowances","outputs":[{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"stateMutability":"view","type":"function"}]
 let tokenABI = [
     {
       "constant": true,
@@ -415,11 +415,13 @@ let dec = decimalsArray[i];
         }
         allowableAmount = Number(allowableAmount) / 10 ** Number(dec);
         return {
+          hash: allows[i],
           friend: details.recipient,
           lender: details.streamer,
           token: details.token,
           show:tokenSymbols[i],
           allowable: ethers.formatUnits(details.allowable, dec),
+          available: ethers.formatUnits(availableAmounts[i], dec),
           window: !details.once ? `Pay every ${Math.floor(Number(details.window) / 86400)}d:${Math.floor((Number(details.window) % 86400) / 3600)}h:${Math.floor((Number(details.window) % 3600) / 60)}m:${Number(details.window) % 60}s`
             : `Sub until ${new Date(Number(details.timestamp) * 1000 + Number(details.window) * 1000).toLocaleString()}`,
           timestamp: new Date(Number(details.timestamp) * 1000).toLocaleString(),
@@ -530,7 +532,96 @@ let dec = decimalsArray[i];
         <button className="w-1/4 py-3 bg-blue-500 text-white font-semibold rounded-xl h-10 hover:bg-pink-600 transition duration-300 ease-in-out" onClick={createWallet}>
           <p className='relative bottom-1 font-bold'>Create Wallet</p>
         </button>)}
+const [totalClaim, setTotalClaim] = useState({}); // Initialize totalClaim as an empty object
+const [streamable, setStreamable] = useState({}); // Initialize streamable as an empty object
+useEffect(() => {
+  const fetchStreamableBorrows = async () => {
+    try {
+      let contract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
 
+      // Get hashes for all subs
+      const hashes = subs.map(sub => sub.hash);
+console.log(hashes);
+      // Fetch streamable data (canStreamArray, balances, allowances)
+      const [canStreamArray] = await contract.getStreamable(hashes);
+
+// Map the streamable status to the corresponding hashes
+let canStream = hashes.map((hash, index) => ({
+  hash,             // The corresponding hash
+  canStream: canStreamArray[index],  // The streamable status for this hash
+}));      setStreamable(canStream);
+
+      // Filter out subs that are not streamable
+      const streamableBorrows = subs.filter((_, index) => canStreamArray[index]);
+
+      // Calculate claimable amounts for streamable subs
+      const newClaimByToken = streamableBorrows.reduce((acc, borrow) => {
+        const { token, available, decimals } = borrow;
+
+        // Convert available to a number format
+        const availableFormatted = available
+        
+        // If the token exists in the accumulator, sum the available amounts
+        if (acc[token]) {
+          acc[token] += availableFormatted;
+        } else {
+          acc[token] = availableFormatted;
+        }
+
+        return acc;
+      }, {});
+
+      // Format the final claimable amounts to fixed decimals (e.g., 10 decimals)
+      const formattedTotalClaim = Object.fromEntries(
+        Object.entries(newClaimByToken).map(([token, amount]) => [
+          token,
+          amount // Limit to 10 decimal places
+        ])
+      );
+console.log(formattedTotalClaim);
+      // Update the totalClaim state with the calculated values
+      setTotalClaim(formattedTotalClaim);
+      
+    } catch (error) {
+      console.error('Error fetching streamable subs:', error);
+      toast.error('Error fetching streamable subs.');
+    }
+  };
+
+  if (subs.length > 0) {
+    fetchStreamableBorrows(); // Only fetch if subs exist
+  }
+}, [subs]); // Ensure signer and subs are ready 
+const handleClaim = async (token) => {
+  try {let contract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+    let relevantAllowances;
+    if (token) {
+      relevantAllowances = subs.filter( 
+        (allowance) => allowance.token === token
+      );
+    } else {
+      relevantAllowances = subs; // Use all allowances if no specific token is provided
+    }
+
+    // Compute the hashes for all relevant allowances
+    const hashes = relevantAllowances.map((allowance) => allowance.hash);
+
+    if (hashes.length === 0) {
+      toast.info('No available streams to claim.');
+      return;
+    }
+
+    // Call the smart contract function to claim the streams
+    const tx = await contract.batchStreamAvailableAllowances(hashes); // Adjust this to the contract function
+    await tx.wait();
+
+    toast.success('Claim successful');
+    fetchFriendAllowances(); // Refresh the list after claim
+  } catch (error) {
+    console.error('Error claiming:', error);
+    toast.error('Error claiming');
+  }
+};
   return (<body className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-300 text-gray-800 font-sans flex flex-col items-center py-10">
   <div className="container max-w-2xl w-11/12 p-8 bg-white rounded-3xl shadow-xl text-center transition-transform transform hover:scale-105">
 
@@ -719,6 +810,38 @@ let dec = decimalsArray[i];
       </p>
     </>
   )}
+  
+          <h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
+          
+      <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
+        Claim All
+      </button>
+          <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+  {Object.entries(totalClaim).map(([token, amount], index) => {
+    // Define dynamic gradients
+    const colorGradients = [
+      "from-red-400 to-yellow-400",
+      "from-blue-400 to-green-400",
+      "from-green-400 to-teal-400",
+      "from-yellow-400 to-pink-400",
+      "from-indigo-400 to-blue-400",
+      "from-teal-400 to-green-400",
+    ];
+
+    return (
+      <button
+        key={token}
+        onClick={() => handleClaim(token)}
+        className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}>
+        <p className="text-white text-lg font-bold m-2">
+          {amount.substring(0,12)} {subs.find(sub => sub.token === token)?.show ?? token.substring(0, 20)}
+        </p>
+      </button>
+    )
+  })}
+</div>
+</div>
   {subs.map((subscription, index) => (
     <div key={index} className="bg-yellow-100 rounded-lg p-6 shadow-lg">
       <div className="flex flex-col">
