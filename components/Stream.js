@@ -320,8 +320,7 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
       try {
         let am = await token.allowance(userAddress, ContractAddress);
         let decimals = await token.decimals();
-
-        console.log('lol', await token.balanceOf(userAddress), 'lol', am);
+if (await token.balanceOf(userAddress) < (ethers.parseUnits(amount, decimals))) {toast.error('You do not have enough tokens to stream'); return;}
         let allowance = await token.allowance(userAddress, ContractAddress);
         if (allowance < (once?ethers.parseUnits(amount, decimals):ethers.MaxUint256)) {
          
