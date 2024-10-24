@@ -291,6 +291,8 @@ subscribe = await provider._getAddress(subscribe);
     const streamContract = new ethers.Contract(streamContractAddress, streamContractABI, signer);
     const tokenContract = new ethers.Contract(token, tokenABI, signer);
     const dec = await tokenContract.decimals();
+    if (await token.balanceOf(userAddress) < (ethers.parseUnits(amount, decimals))) {toast.error('You do not have enough tokens.'); return;}
+
     console.log(tokenContract.allowance(userAddress, streamContractAddress));
     if (await tokenContract.allowance(userAddress, streamContractAddress) < (amount * 10 ** Number(dec))) {
       toast('Approving token for subscription');
