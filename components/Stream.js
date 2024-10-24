@@ -953,8 +953,8 @@ const handleClaim = async (token) => {
         {/* Borrows by Lender Section */}
         <section className="container mt-8">
           <h2 className="text-xl text-pink-600 font-bold mb-4">Friends That Have Spotted Me</h2>
-          <h2 className="text-xl text-pink-600 font-bold">Claimable</h2>
-          
+          {(allowances.length>0&&(<> <h2 className="text-xl text-pink-600 font-bold">Claimable</h2>
+         
       <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
         Claim All
       </button>
@@ -985,6 +985,7 @@ const handleClaim = async (token) => {
   })}
 </div>
 </div>
+</>))}
           {Object.entries(
             borrows.reduce((acc, borrow) => {
               if (!acc[borrow.lender]) {
