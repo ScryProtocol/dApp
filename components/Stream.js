@@ -323,7 +323,7 @@ if (!addresses.includes(allowance.lender)) {  addresses.push(allowance.lender); 
 
         console.log('lol', await token.balanceOf(userAddress), 'lol', am);
         let allowance = await token.allowance(userAddress, ContractAddress);
-        if (allowance <= once?ethers.parseUnits(amount, decimals):ethers.MaxUint256) {
+        if (allowance < (once?ethers.parseUnits(amount, decimals):ethers.MaxUint256)) {
          
         if (!once) {
           let tx = await token.approve(ContractAddress, ethers.MaxUint256);
