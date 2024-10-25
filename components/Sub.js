@@ -611,6 +611,11 @@ const handleClaim = async (token) => {
         {subscriptionLink && (
           <div className="bg-yellow-100 rounded-lg p-6 mt-8 shadow-lg">
             <p className="text-lg font-semibold text-gray-700">Subscription Link:</p>
+            <button onClick={() => {navigator.clipboard.writeText(subscriptionLink);
+              toast.success('Subscription link copied to clipboard!')}
+            } className="text-lg text-white font-semibold px-6 mt-2 rounded-full p-2 bg-orange-600 hover:bg-orange-300 transition duration-300
+            ">copy🔗</button>
+            <br/>
             <a href={subscriptionLink} className="text-red-500 underline break-all mt-2">{subscriptionLink}</a>
           </div>
         )}
