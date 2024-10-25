@@ -591,7 +591,7 @@ const handleClaim = async (token) => {
               </div>
               <div className="text-left">
                 <label htmlFor="amount" className="block font-semibold text-gray-700 mb-2">Amount:</label>
-                <input type="number" id="amount" placeholder="Enter amount of tokens" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
+                <input type="number" step={0.001} id="amount" placeholder="Enter amount of tokens" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
               </div>
               <div className="text-left">
                 <label htmlFor="window" className="block font-semibold text-gray-700 mb-2">Duration (in days):</label>
