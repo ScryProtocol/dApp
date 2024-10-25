@@ -912,7 +912,7 @@ const handleClaim = async (token) => {
                 <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
                 <span className="text-gray-600">Stream</span>
                 <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
-              </div>
+              
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -922,8 +922,8 @@ const handleClaim = async (token) => {
                   onChange={(e) => setOnce(e.target.checked)}
                   className="toggle-checkbox"
                 />
-                <span className="toggle-slider round"></span>
               </label>
+              </div>
             </div>
             {/* Action Buttons */}
             <button
