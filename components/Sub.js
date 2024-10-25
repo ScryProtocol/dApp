@@ -8,7 +8,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider } from './tl';
 import { useEthersSigner } from './tl';
 import { useAccount, useConnect, useEnsName, useChainId,writeContracts } from 'wagmi';
-
+import tokens from './tokens.js';
 import 'tailwindcss/tailwind.css';
 import { http, createConfig } from '@wagmi/core';
 import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
@@ -636,6 +636,17 @@ const handleClaim = async (token) => {
           <div className="emoji text-6xl mb-8">🍕🎉</div>
           <div className="bg-yellow-100 rounded-lg p-10 shadow-lg">
             <div className="space-y-6">
+            <div className="text-left">
+                <label htmlFor="networkSelect" className="block font-semibold text-gray-700 mb-2">Network:</label>
+                <select id="networkSelect" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
+                  <option value="1">Mainnet</option>
+                  <option value="10">holesky</option>
+                  <option value="10">Optimism</option>
+                  <option value="8453">Base</option>
+                  <option value="gnosis">Gnosis</option>
+                  <option value="534352">Scroll</option>
+                </select>
+              </div>
               <div className="text-left">
                 <label htmlFor="tokenAddress" className="block font-semibold text-gray-700 mb-2">Token Address:</label>
                 <select
@@ -678,16 +689,6 @@ const handleClaim = async (token) => {
                 <select id="once" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
                   <option value="false">Recurring</option>
                   <option value="true">One-time</option>
-                </select>
-              </div>
-              <div className="text-left">
-                <label htmlFor="networkSelect" className="block font-semibold text-gray-700 mb-2">Network:</label>
-                <select id="networkSelect" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                  <option value="1">Mainnet</option>
-                  <option value="10">holesky</option>
-                  <option value="10">Optimism</option>
-                  <option value="8453">Base</option>
-                  <option value="gnosis">Gnosis</option>
                 </select>
               </div>
             </div>
