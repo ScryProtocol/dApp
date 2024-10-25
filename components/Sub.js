@@ -103,7 +103,21 @@ let tokenABI = [
       "payable": false,
       "stateMutability": "view",
       "type": "function"
-    }]
+    },  {
+      "constant": true,
+      "inputs": [],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
 
 
 const Sub = () => {
