@@ -732,7 +732,7 @@ const handleClaim = async (token) => {
       <p className="text-center bg-orange-500 text-white font-semibold py-2 rounded-full w-32 mx-auto">
         {subs.length} Subs
       </p>
-      <h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
+      {totalClaim.length>0&&(<><h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
           
           <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
             Claim All
@@ -764,7 +764,7 @@ const handleClaim = async (token) => {
     </div>
     </div>
         </>
-  )}
+  )}</>)}
   
   {subs.map((subscription, index) => (
     <div key={index} className="bg-yellow-100 rounded-lg p-6 shadow-lg">
