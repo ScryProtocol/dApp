@@ -158,7 +158,7 @@ subscribe = await resolveENS(subscribe);
         console.log(error);
       }
 
-      if (details.lender !== '0x0000000000000000000000000000000000000000' && details.lender !== 1) {
+      if (details.streamer !== '0x0000000000000000000000000000000000000000' && details.streamer !== 1) {
         const tokenContract = new ethers.Contract(token, tokenABI, provider);
         let dec;
         try {
@@ -369,6 +369,9 @@ let dec = decimalsArray[i];
     );
 
     setSubs(subsData);
+    if(subsData.length == 0){
+      toast('No subscriptions found', {style: { borderRadius: '50px', background: 'linear-gradient(to right, #FFC107, #FF9800)', color: '#000',fontWeight: 'bold',color: '#fff',}});
+    }
   };
 
   const handleCancelSubscription = async (token, friend) => {
@@ -538,10 +541,10 @@ const handleClaim = async (token) => {
   }
 };
   return (<body className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-300 text-gray-800 font-sans flex flex-col items-center py-10">
-  <div className="container max-w-2xl w-11/12 p-8 bg-white rounded-3xl shadow-xl text-center transition-transform transform hover:scale-105">
+    <Toaster />
+    <div className="container max-w-2xl w-11/12 p-8 bg-white rounded-3xl shadow-xl text-center transition-transform transform hover:scale-105">
 
     {/* Toast and Subscription Form */}
-    <Toaster />
     {!showSubscribeForm && (
       <div>
         <form onSubmit={handleCreateSubscription} className="space-y-8">
