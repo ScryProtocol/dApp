@@ -459,12 +459,12 @@ useEffect(() => {
 console.log(hashes);
       // Fetch streamable data (canStreamArray, balances, allowances)
       const [canStreamArray] = await contract.getStreamable(hashes);
-
+setStreamable(canStreamArray);
 // Map the streamable status to the corresponding hashes
 let canStream = hashes.map((hash, index) => ({
   hash,             // The corresponding hash
   canStream: canStreamArray[index],  // The streamable status for this hash
-}));      setStreamable(canStream);
+}));
 
       // Filter out subs that are not streamable
       const streamableBorrows = subs.filter((_, index) => canStreamArray[index]);
@@ -781,7 +781,7 @@ const handleClaim = async (token) => {
       </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">💧 Available:</span>
-            <span className="text-orange-600">{subscription.outstanding}</span>
+            <span className="text-orange-600"><span className="text-xs relative" style={{bottom:'2px'}}>{streamable[index]==true ? '' : '🔴'}</span>{subscription.outstanding}</span>
           </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
         <span className="font-semibold text-gray-700">⏰ Window:</span>
