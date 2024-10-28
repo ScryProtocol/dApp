@@ -714,7 +714,11 @@ const handleClaim = async (token) => {
           </div>
           <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">💧 Available:</span>
-            <span className="text-orange-600">{subscription.outstanding}</span>
+            <span className="text-orange-600">{subscription.outstanding.toLocaleString('en', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 10,
+    useGrouping: false,
+  })}</span>
           </div>
           <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">⏰ Window:</span>
@@ -784,7 +788,11 @@ const handleClaim = async (token) => {
       </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
             <span className="font-semibold text-gray-700">💧 Available:</span>
-            <span className="text-orange-600"><span className="text-xs relative" style={{bottom:'2px'}}>{streamable[index]==true ? '' : '🔴'}</span>{subscription.outstanding}</span>
+            <span className="text-orange-600"><span className="text-xs relative" style={{bottom:'2px'}}>{streamable[index]==true ? '' : '🔴'}</span>{subscription.outstanding.toLocaleString('en', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 10,
+    useGrouping: false,
+  })}</span>
           </div>
       <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
         <span className="font-semibold text-gray-700">⏰ Window:</span>
