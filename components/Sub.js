@@ -145,6 +145,9 @@ let capabilities = null
     console.log('1', token, subscribe, amount, window, once);
     if (token && subscribe && amount && window && once) {
       tok = token;
+      
+      setSubscriptionDetails({lender: 'Connect wallet', friend: subscribe, token: token, totalStreamed: 0, outstanding: 0, allowable: amount, window: once == 'false' ? `Pay every ${Math.floor(Number(window) / 86400)}d:${Math.floor((Number(window) % 86400) / 3600)}h:${Math.floor((Number(window) % 3600) / 60)}m:${Number(window) % 60}s` : `Sub until ${new Date(Date.now() + Number(window) * 1000).toLocaleString()}`, timestamp: '', once: once,});
+      setShowSubscribeForm(true);
       let subscriptionHash;
       let details = { lender: 1 };
       try {
