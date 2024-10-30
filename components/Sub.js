@@ -82,7 +82,21 @@ let capabilities = null
 
     initializeContract();
   }, []);
-
+const [net, setNet] = useState(null);
+  useEthersProvider().addListener('network', (newNetwork, oldNetwork) => {
+    if (net != null) {
+      window.location.reload();
+    }
+    setNet(newNetwork);
+  }
+);
+const[acc, setAccounts] = useState(null);
+  window.ethereum.on('accountsChanged', (accounts) => {
+   console.log(accounts);
+    setAccounts(accounts);
+    window.location.reload();
+  }
+);
   const getQueryParams = () => {
     const params = new URLSearchParams(window.location.search);
     console.log(params, window.location.search);
