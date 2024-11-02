@@ -358,11 +358,12 @@ if (await token.balanceOf(userAddress) < (ethers.parseUnits(amount, decimals))) 
     }
   };
 
-  const handleBorrow = async (token, lender) => {
+  const handleBorrow = async (token, lender,to) => {
+    console.log('borrowing', token, lender,to);
     console.log('borrowing', token, lender, amount);
     let contract = new ethers.Contract(ContractAddress, ContractABI, signer);
     try {
-      const tx = await contract.stream(token, lender, account);
+      const tx = await contract.stream(token, lender, to?to:account);
       await tx.wait();
       toast.success('Stream successful');
       fetchFriendAllowances();
@@ -997,92 +998,54 @@ const handleClaim = async (token) => {
     lenderBorrows.length >= 2 ? 'md:grid-cols-2' : ''
   } ${lenderBorrows.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
 >                {lenderBorrows.map((borrow) => (
-                  <div key={borrow.hash} className="space-y-2 container max-w-md mx-auto">
-                    <div className="items-center justify-between mb-4">
-                      <div>
-                        <p className="item-label">🪙 Token:</p>
-                        <p className="item-value text-xl font-bold">{borrow.token.substring(0, 20)}</p>
-                      </div>
-                    </div>
-  
-                    <div className="flex space-x-4 mb-4">
-                      <div className="flex-1">
-                        <p className="item-label">💸 Allowable:</p>
-                        <p className="item-value font-semibold">{borrow.allowable}</p>
-                      </div>
-                      <div className="flex-1">
-                        <p className="item-label">💰 Available:</p>
-                        <p className="item-value font-semibold">
-                          {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
-                        </p>
-                      </div>
-                    </div>
-  
-                    <div className="mb-4">
-                      <p className="item-label">📊 Volume Streamed:</p>
-                      <p className="item-value">{borrow.totalStreamed}</p>
-                    </div>
-  
-                    <div className="flex space-x-4 mb-4">
-                      <div className="flex-1">
-                        <p className="item-label">⏳ Allowance Type:</p>
-                        <p
-                          className={`item-value font-semibold ${
-                            borrow.once ? 'text-green-500' : 'text-orange-500'
-                          }`}
-                        >
-                          {borrow.once ? 'Once only' : 'Unlimited'}
-                        </p>
-                      </div>
-                      <div className="flex-1">
-                        <p className="item-label">⌛ Remaining Time:</p>
-                        <p className="item-value">
-                          {!borrow.once ? (
-                            <span>
-                              @ {borrow.allowable} tokens per{' '}
-                              {Math.floor(borrow.window / (3600 * 24))}d{' '}
-                              {Math.floor((borrow.window % (3600 * 24)) / 3600)}h{' '}
-                              {Math.floor((borrow.window % 3600) / 60)}m{' '}
-                              {Math.floor(borrow.window % 60)}s
-                            </span>
-                          ) : (
-                            <span>
-                              ends in{' '}
-                              {Math.floor(
-                                (borrow.timestamp +
-                                  (borrow.outstanding * borrow.window) / borrow.allowable -
-                                  Date.now() / 1000) /
-                                  3600
-                              )}
-                              h{' '}
-                              {Math.floor(
-                                ((borrow.timestamp +
-                                  (borrow.outstanding * borrow.window) / borrow.allowable -
-                                  Date.now() / 1000) %
-                                  3600) /
-                                  60
-                              )}
-                              m{' '}
-                              {Math.floor(
-                                (borrow.timestamp +
-                                  (borrow.outstanding * borrow.window) / borrow.allowable -
-                                  Date.now() / 1000) %
-                                  60
-                              )}
-                              s
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-  
-                    <button
-                      onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
-                      className="bg-green-500 text-white font-semibold py-3 px-6 rounded-full hover:bg-green-600 transition duration-300 ease-in-out w-full"
-                    >
-                      Claim
-                    </button>
+                  <div key={borrow.hash} className="bg-pink-100 space-y-2 container max-w-md mx-auto">
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-orange-500">🪙 Token</p>
+                    <p className="text-orange-600 font-bold text-xl">{borrow.token.substring(0, 20)}</p>
                   </div>
+                
+                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
+                    <p className="font-semibold text-gray-700">💸 Allowable</p>
+                    <p className="text-orange-600 font-semibold">{borrow.allowable}</p>
+                  </div>
+                
+                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
+                    <p className="font-semibold text-gray-700">💰 Available</p>
+                    <p className="text-orange-600 font-semibold">
+                      {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
+                    </p>
+                  </div>
+                
+                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
+                    <p className="font-semibold text-gray-700">📊 Volume Streamed</p>
+                    <p className="text-orange-600">{borrow.totalStreamed}</p>
+                  </div>
+                
+                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
+                    <p className="font-semibold text-gray-700">⏳ Allowance Type</p>
+                    <p className={`${borrow.once ? 'text-green-500' : 'text-orange-500'} font-semibold`}>
+                      {borrow.once ? 'Once only' : 'Unlimited'}
+                    </p>
+                  </div>
+                
+                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
+                    <p className="font-semibold text-gray-700">⌛ Remaining Time</p>
+                    <p className="text-orange-600">
+                      {!borrow.once ? (
+                        `@ ${borrow.allowable} tokens per ${Math.floor(borrow.window / (3600 * 24))}d ${Math.floor((borrow.window % (3600 * 24)) / 3600)}h ${Math.floor((borrow.window % 3600) / 60)}m`
+                      ) : (
+                        `ends in ${Math.floor((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) / 3600)}h ${Math.floor(((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m`
+                      )}
+                    </p>
+                  </div>
+                
+                  <button
+                    onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
+                    className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300"
+                  >
+                    Claim
+                  </button>
+                </div>
                 ))}
               </div>
             </div>
@@ -1111,129 +1074,93 @@ const handleClaim = async (token) => {
     friendAllowances.length >= 2 ? 'md:grid-cols-2' : ''
   } ${friendAllowances.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
 >                  {friendAllowances.map((allowance, idx) => (
-                    <div key={idx} className="space-y-2 container max-w-md mx-auto">
-                      <div className="items-center justify-between mb-4">
-                        <div>
-                          <p className="item-label">🪙 Token:</p>
-                          <p className="item-value font-bold">{allowance.token.substring(0, 20)}</p>
-                        </div>
-                        <div className="flex space-x-4">
-                          <div className="flex-1">
-                            <p className="item-label">💸 Allowable:</p>
-                            <p className="item-value font-semibold">{allowance.allowable}</p>
-                          </div>
-                          <div className="flex-1">
-                            <p className="item-label">💰 Available:</p>
-                            <p className="item-value font-semibold">
-                              {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
-                            </p>
-                          </div>
-                        </div>
+                    <div key={idx} className="bg-pink-100 space-y-2 container max-w-md mx-auto">
+                      <div className="text-center">
+                        <p className="text-lg font-semibold text-orange-500">🪙 Token</p>
+                        <p className="text-orange-500 font-bold text-xl">{allowance.token.substring(0, 20)}</p>
                       </div>
-  
-                      <div className="mb-4">
-                        <p className="item-label">📊 Volume Streamed:</p>
-                        <p className="item-value">{allowance.totalStreamed}</p>
+        
+                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
+                        <p className="font-semibold text-gray-700">💸 Allowable</p>
+                        <p className="text-orange-600 font-semibold">{allowance.allowable}</p>
                       </div>
-                      <div className="flex space-x-4 mb-4">
-                        <div className="flex-1">
-                          <p className="item-label">⏳ Allowance Type:</p>
-                          <p
-                            className={`item-value font-semibold ${
-                              allowance.once ? 'text-green-500' : 'text-orange-500'
-                            }`}
-                          >
-                            {allowance.once ? 'Once only' : 'Unlimited'}
-                          </p>
-                        </div>
-                        <div className="flex-1">
-                          <p className="item-label">⌛ Remaining Time:</p>
-                          <p className="item-value">
-                            {!allowance.once ? (
-                              <span>{allowance.allowable} every {Math.floor(allowance.window / (3600 * 24))}d{' '}
-                                {Math.floor((allowance.window % (3600 * 24)) / 3600)}h{' '}
-                                {Math.floor((allowance.window % 3600) / 60)}m{' '}
-                                {Math.floor(allowance.window % 60)}s
-                              </span>
-                            ) : (
-                              <span>
-                                ends in{' '}
-                                {Math.floor(
-                                  (allowance.timestamp +
-                                    (allowance.outstanding * allowance.window) / allowance.allowable -
-                                    Date.now() / 1000) /
-                                    3600
-                                )}
-                                h{' '}
-                                {Math.floor(
-                                  ((allowance.timestamp +
-                                    (allowance.outstanding * allowance.window) / allowance.allowable -
-                                    Date.now() / 1000) %
-                                    3600) /
-                                    60
-                                )}
-                                m{' '}
-                                {Math.floor(
-                                  (allowance.timestamp +
-                                    (allowance.outstanding * allowance.window) / allowance.allowable -
-                                    Date.now() / 1000) %
-                                    60
-                                )}
-                                s
-                              </span>
-                            )}
-                          </p>
-                        </div>
+        
+                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
+                        <p className="font-semibold text-gray-700">💰 Available</p>
+                        <p className="text-orange-600 font-semibold">
+                          {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+                        </p>
                       </div>
-  
-                      <div className="flex items-center space-x-4 mb-4">
-                        <div className="flex-1">
-                          <input
-                            type="text"
-                            id="token"
-                            name="token"
-                            placeholder="Amount"
-                            onChange={(e) => setAmount(e.target.value)}
-                            className="p-3 w-full bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <input
-                            type="number"
-                            id="amount"
-                            name="amount"
-                            step="0.01"
-                            placeholder="Days"
-                            onChange={(e) => setWindow(e.target.value)}
-                            required
-                            className="p-3 w-full bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                          />
-                        </div>
+        
+                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
+                        <p className="font-semibold text-gray-700">📊 Volume Streamed</p>
+                        <p className="text-orange-600">{allowance.totalStreamed}</p>
                       </div>
-  
-                      <div className="flex items-center space-x-4 mb-4">
+        
+                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
+                        <p className="font-semibold text-gray-700">⏳ Allowance Type</p>
+                        <p className={`${allowance.once ? 'text-green-500' : 'text-orange-500'} font-semibold`}>
+                          {allowance.once ? 'Once only' : 'Unlimited'}
+                        </p>
+                      </div>
+        
+                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
+                        <p className="font-semibold text-gray-700">⌛ Remaining Time</p>
+                        <p className="text-orange-600">
+                          {!allowance.once ? (
+                            `@ ${allowance.allowable} every ${Math.floor(allowance.window / (3600 * 24))}d ${Math.floor((allowance.window % (3600 * 24)) / 3600)}h ${Math.floor((allowance.window % 3600) / 60)}m`
+                          ) : (
+                            `ends in ${Math.floor((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) / 3600)}h ${Math.floor(((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m`
+                          )}
+                        </p>
+                      </div>
+        
+                      <div className="flex items-center space-x-4 mt-4">
+                        <input
+                          type="text"
+                          placeholder="Amount"
+                          onChange={(e) => setAmount(e.target.value)}
+                          className="w-1/2 p-3 bg-white border-none rounded-full focus:ring-2 focus:ring-pink-500"
+                        />
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="Days"
+                          onChange={(e) => setWindow(e.target.value)}
+                          className="w-1/2 p-3 bg-white border-none rounded-full focus:ring-2 focus:ring-pink-500"
+                        />
+                      </div>
+        
+                      <div className="flex items-center space-x-4 mt-4">
                         <label className="flex items-center space-x-2">
-                          <span className="item-label font-semibold">{once === true ? 'Once' : 'Unlimited'}</span>
+                          <span className="font-semibold">{allowance.once ? 'Once' : 'Unlimited'}</span>
                           <label className="switch relative inline-block w-12 h-6">
                             <input
                               type="checkbox"
-                              id="once"
-                              name="once"
-                              checked={once}
+                              checked={allowance.once}
                               onChange={(e) => setOnce(e.target.checked)}
-                              className="opacity-0 w-0 h-0"
+                              className="opacity-0 w-0 h-0 peer"
                             />
-                            <span className="toggle-slider round absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 transition duration-300 ease-in-out before:absolute before:content-[''] before:h-5 before:w-5 before:bg-white before:top-0.5 before:left-0.5 before:rounded-full"></span>
+                            <span className="block relative bottom-6 bg-gray-300 w-full h-full rounded-full transition duration-300 peer-checked:bg-green-500"></span>
+                            <span className="relative left-1  bottom-6 h-4 w-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></span>
                           </label>
                         </label>
                       </div>
-  
-                      <button
-                        onClick={() => requestBorrow(allowance.token, friend, amount)}
-                        className="bg-green-500 text-white font-semibold py-3 px-6 rounded-full hover:bg-green-600 transition duration-300 ease-in-out w-full"
-                      >
-                        Set Allowance
-                      </button>
+        
+                      <div className="space-y-2 mt-6">
+                        <button
+                          onClick={() => requestBorrow(allowance.token, friend, amount)}
+                          className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600"
+                        >
+                          Set Allowance
+                        </button>
+                        <button
+                          onClick={() => handleBorrow(allowance.tokenAddrs, account, friend)}
+                          className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600"
+                        >
+                          Stream
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
