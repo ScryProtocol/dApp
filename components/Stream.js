@@ -1133,18 +1133,19 @@ const handleClaim = async (token) => {
         
                       <div className="flex items-center space-x-4 mt-4">
                         <label className="flex items-center space-x-2">
-                          <span className="font-semibold">{allowance.once ? 'Once' : 'Unlimited'}</span>
-                          <label className="switch relative inline-block w-12 h-6">
-                            <input
-                              type="checkbox"
-                              checked={allowance.once}
-                              onChange={(e) => setOnce(e.target.checked)}
-                              className="opacity-0 w-0 h-0 peer"
-                            />
-                            <span className="block relative bottom-6 bg-gray-300 w-full h-full rounded-full transition duration-300 peer-checked:bg-green-500"></span>
-                            <span className="relative left-1  bottom-6 h-4 w-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></span>
-                          </label>
-                        </label>
+                        <label className="switch relative inline-block w-12 h-6">
+  <input
+    type="checkbox"
+    checked={once}
+    onChange={(e) => setOnce(e.target.checked)}
+    className="opacity-0 w-full h-full peer"
+  />
+  <span className="block absolute inset-0 bg-gray-300 w-full h-full rounded-full transition duration-300 peer-checked:bg-green-500"></span>
+  <span className="absolute left-1 top-1 h-4 w-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></span>
+</label><span className="font-semibold">{once ? 'Once' : 'Unlimited'}</span>
+                          
+
+</label>
                       </div>
         
                       <div className="space-y-2 mt-6">
