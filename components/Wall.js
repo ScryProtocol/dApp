@@ -124,7 +124,7 @@ const Wall = () => {
           addr: wall.addr,
         }));
   console.log(wallsList);
-        setWalls(wallsList);
+        setWalls(wallsList.reverse());
       } catch (error) {
         console.error('Error fetching walls:', error);
         toast.error('Error fetching walls');
