@@ -189,6 +189,26 @@ const Wall = () => {
     }
   };
   
+  const [tipModal, setTipModal] = useState(false);
+  const [tipRecipient, setTipRecipient] = useState('');
+  const [tipAmount, setTipAmount] = useState(0);
+  const showTipModal = (recipient) => {
+    setTipRecipient(recipient);
+    setTipModal(true);
+  }
+  const handleTip = async () => {
+    try {
+      const signerContract = selectedWall.connect(ethersSigner);
+      const tx = await signerContract.tip(tipRecipient, ethers.parseEther(tipAmount));
+      toast('Sending tip...');
+      await tx.wait();
+      toast.success('Tip sent successfully');
+      setTipModal(false);
+    } catch (error) {
+      console.error('Error sending tip:', error);
+      toast.error('Error sending tip');
+    }
+  };
     const selectWall = async (wallId) => {
       try {
         const wallAddress = walls.find((wall) => wall.id === wallId).addr;
@@ -295,15 +315,16 @@ const Wall = () => {
               <div className="text-center mb-2">
                   <input type="text" placeholder="Search for a wall" className="p-3 bg-white border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => fetchWall(e.target.value)} />
           </div>
-          <button
+          <button onClick={() => fetchWall('wall')} className="mb-2 py-3 px-8 text-white font-semibold rounded-full bg-orange-400 hover:bg-pink-600 transition duration-300 ease-in-out">Wall</button>
+            <button
               onClick={() => setCreateModal(!createModal)}
-              className=" mb-2 py-3 px-6 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+              className=" mx-2 py-3 px-6 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
             >
               Deploy a New Wall
             </button>
-            <div className="text-center mb-2">    
-            <button onClick={() => fetchWall('wall')} className="mb-2 py-4 px-8 text-white font-semibold rounded-full bg-orange-400 hover:bg-pink-600 transition duration-300 ease-in-out">Wall</button>
-            </div>
+            <div className="text-center">
+              <h2 className="text-xl text-white mb-2 font-bold">New Walls</h2>
+              </div>
             <div 
               style={{backgroundColor: '#ffffff20'}}
               className="space-y-2 bg-white p-2 rounded-full ">
@@ -488,12 +509,14 @@ const Wall = () => {
   style={{backgroundColor: '#ffffff'}}
   className=" w-full p-4 rounded-full shadow-2xl mb-4"
 ><div className="flex items-center justify-between flex-wrap w-full">
-  <div className={`${window.innerWidth < 700 ? 'relative left-6': ''} flex-grow text-center text-gray-500 text-sm mt-2 sm:mt-0`}>
+  <div className={`${window.innerWidth > 700 ? 'relative left-12': ''} flex-grow text-center text-gray-500 text-sm mt-2 sm:mt-0`}>
     {tag.artist.substr(0, window.innerWidth < 700 ? 20 : 40)}
   </div>
 
   <div className="flex w-full sm:w-auto items-center justify-center sm:justify-end space-x-2 mt-2 sm:mt-0">
-    <span className="text-yellow-400">⭐</span>
+    <span className="text-yellow-400">
+      <button onClick={() => showTipModal(tag.artist)} className="bg-yellow-200 text-yellow-600 mx-2 px-2 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out font-semibold"> Tip </button>
+        ⭐</span>
     <div className="bg-yellow-100 rounded-full px-3 py-1 font-semibold text-yellow-600 text-xs text-center">
       {tag.balance} {walls.find((wall) => wall.addr === selectedWallAddress)?.symbol}
     </div>
@@ -509,6 +532,35 @@ const Wall = () => {
                 )}
               </div>
             </section>
+          )}
+          {tipModal && (
+            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center" onClick={() => setTipModal(false)}>
+              <div className="bg-white p-8 rounded-3xl shadow-2xl w-1/2">
+                <h2 className="text-2xl text-pink-600 font-bold mb-4">Send Tip <button onClick={() => setTipModal(false)} className="float-right top-0 text-red-500 font-semibold">✕</button>
+
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="tipAmount" className="block mb-2 font-semibold text-gray-600">
+                      Amount:
+                    </label>
+                    <input
+                      type="text"
+                      id="tipAmount"
+                      value={tipAmount}
+                      onChange={(e) => setTipAmount(e.target.value)}
+                      className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    />
+                  </div>
+                  <button
+                    onClick={handleTip}
+                    className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+                  >
+                    Send Tip
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
           </main>
       </div>
@@ -578,6 +630,7 @@ const [sub, setSub] = useState(0);
     </div>
   );
 };
+
   
     
 export default Wall;
