@@ -46,6 +46,9 @@ function MyApp({ Component, pageProps }) {
     if (location.includes('token')) {
       setActiveTab('sub');
     }
+    if (location.includes('wall')) {
+      setActiveTab('wall');
+    }
     
   }, [isDarkTheme]);
   const toggleTheme = () => {
