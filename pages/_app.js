@@ -13,6 +13,7 @@ import Spot from '../components/Spot';
 import Stream from "../components/Stream";
 import Sub from "../components/Sub";
 import Feed from "../components/Feed";
+import Wall from "../components/Wall";
 import App from '../components/App';
 const queryClient = new QueryClient()
 
@@ -72,6 +73,9 @@ function MyApp({ Component, pageProps }) {
           <button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
           Feed
           </button>
+      <button className={`ta ${activeTab === 'wall' ? 'tab-active' : ''}`} onClick={() => setActiveTab('wall')}>
+          Wall
+          </button>
       </div>
       </div>
     );
@@ -93,7 +97,10 @@ function MyApp({ Component, pageProps }) {
           {activeTab === 'sub' &&
           <Sub/>}
           {activeTab === 'feed' &&
-          <Feed/>}
+          <Feed/>
+          }{activeTab === 'wall' &&
+            <Wall/>
+            }
         </div>
       </RainbowKitProvider>
       </QueryClientProvider>
