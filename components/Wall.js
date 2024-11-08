@@ -321,32 +321,39 @@ const Wall = () => {
               className=" mx-2 py-3 px-6 bg-pink-400 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
             >
               Deploy a New Wall
-            </button>
-            <div className="text-center">
-              <h2 className="text-xl text-white mb-2 font-bold">New Walls</h2>
-              </div>
-            <div 
-              style={{backgroundColor: '#ffffff20'}}
-              className="space-y-2 bg-white p-2 rounded-full ">
-                {walls.length === 0 ? (
-                  <p className="text-gray-800">No walls deployed yet.</p>
-                ) : (
-                  walls.map((wall, index) => (<button
-                    key={index}
-                      onClick={() => selectWall(wall.id)}
-                      style={{
-                        backgroundColor: ["#f87171", "#60a5fa", "#fbbf24", "#34d399", "#818cf8"
+            </button><div className="text-center">
+  <h2 className="text-xl text-white mb-4 font-bold">New Walls</h2>
+</div>
+<div
+  style={{ backgroundColor: '#ffffff20', padding: '.2rem' }}
+  className="bg-white rounded-lg shadow-lg"
+>
+  {walls.length === 0 ? (
+    <p className="text-gray-800">No walls deployed yet.</p>
+  ) : (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
+      {walls.map((wall, index) => (
+        <button
+          key={index}
+          onClick={() => selectWall(wall.id)}
+          style={{
+            backgroundColor: [
+              "#f87171",
+              "#60a5fa",
+              "#fbbf24",
+              "#34d399",
+              "#818cf8",
+            ][index % 5],
+          }}
+          className="h-20 w-full text-white font-semibold shadow-sm hover:shadow-md transition duration-300 ease-in-out"
+        >
+          {wall.name}
+        </button>
+      ))}
+    </div>
+  )}
+</div>
 
-                        ][index % 5]
-                      }} // Inline color array without external declaration
-                
-                      className="m-2 py-4 px-4 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300 ease-in-out"
-                    >
-                    
-                  {wall.name}</button>
-                  ))
-                )}
-              </div>
             </div>
               <div className="text-center mb-2">
           </div>
