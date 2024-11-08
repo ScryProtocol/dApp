@@ -301,7 +301,6 @@ const Wall = () => {
             >
               Deploy a New Wall
             </button>    
-            <h2 className="text-xl text-white font-bold">New Walls</h2>
             <button onClick={() => fetchWall('wall')} className="mb-2 py-4 px-8 text-white font-semibold rounded-full bg-orange-400 hover:bg-pink-600 transition duration-300 ease-in-out">Wall</button>
             <div 
               style={{backgroundColor: '#ffffff20'}}
