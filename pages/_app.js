@@ -14,6 +14,7 @@ import Stream from "../components/Stream";
 import Sub from "../components/Sub";
 import Feed from "../components/Feed";
 import Wall from "../components/Wall";
+import Info from "../components/Info";
 import App from '../components/App';
 const queryClient = new QueryClient()
 
@@ -38,7 +39,8 @@ function MyApp({ Component, pageProps }) {
     return false;
   });
   const [activeTab, setActiveTab] = useState('vault');
-
+  const [showInfo, setShowInfo] = useState(false);
+  
   useEffect(() => {
     // Save theme preference to local storage whenever it changes
     localStorage.setItem('isDarkTheme', isDarkTheme);
@@ -49,7 +51,6 @@ function MyApp({ Component, pageProps }) {
     if (location.includes('wall')) {
       setActiveTab('wall');
     }
-    
   }, [isDarkTheme]);
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
@@ -80,6 +81,7 @@ function MyApp({ Component, pageProps }) {
           Wall
           </button>
       </div>
+      <button className="absolute right-2 top-2 w-9 rounded-full bg-white p-1 font-bold text-xl" onClick={() => setShowInfo(!showInfo)}>?</button>
       </div>
     );
   }
@@ -105,7 +107,13 @@ function MyApp({ Component, pageProps }) {
             <Wall/>
             }
         </div>
-      </RainbowKitProvider>
+
+        {showInfo && (
+            <Info
+              app={activeTab}
+              handleClose={() => setShowInfo(false)}
+            />
+          )}      </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider >
   );
