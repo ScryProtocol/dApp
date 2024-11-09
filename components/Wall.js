@@ -302,9 +302,9 @@ const Wall = () => {
         style={{maxWidth: '1000px'}}
         className="w-11/12 p-8 mx-auto py-8">
           <h1 className="text-center text-4xl text-white font-extrabold m-2">The Wall</h1>
-          <div className="align-center justify-center items-center text-center">
-            <div className="text-center mx-auto p-4 rounded-full w-1/2">
-          <ConnectButton />
+          <div className="flex align-center justify-center items-center text-center">
+            <div className="text-center mx-auto p-4 rounded-full align-center justify-center items-center ">
+          <ConnectButton className="text-center mx-auto p-4 rounded-full"/>
           </div>
           </div>
           <Toaster />
