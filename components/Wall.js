@@ -150,7 +150,7 @@ const Wall = () => {
       try {
         const signerContract = theWallFactoryContract.connect(ethersSigner);
         const tx = await signerContract.deploy(
-          name,
+          name.toLowerCase(),
           symbol,
           ethers.parseEther(price),
           multi,
