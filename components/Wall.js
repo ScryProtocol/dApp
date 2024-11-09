@@ -61,7 +61,7 @@ const Wall = () => {
     'function walls(string) external view returns (tuple(string name, string symbol, address addr, uint256 id))', // Add this line
   ];
   
-  const TheWallFactoryAddress = '0xB7Da1745DbbA72F09390491Bc0214BFf9693C279'; // Replace with your factory contract address
+  const TheWallFactoryAddress = '0xb3e0e02d4ba979c92465ada9f0338a6d4cc4aa6d'; // Replace with your factory contract address
   
     const [walls, setWalls] = useState([]);
     const [selectedWallAddress, setSelectedWallAddress] = useState('');
