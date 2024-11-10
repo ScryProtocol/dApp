@@ -527,7 +527,7 @@ const Wall = () => {
             </section>
           )}
           {tipModal && (
-            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center" onClick={() => setTipModal(false)}>
+            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center" >
               <div className="bg-white p-8 rounded-3xl shadow-2xl w-1/2">
                 <h2 className="text-2xl text-pink-600 font-bold mb-4">Send Tip <button onClick={() => setTipModal(false)} className="float-right top-0 text-red-500 font-semibold">✕</button>
 
