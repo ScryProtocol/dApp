@@ -750,7 +750,7 @@ const handleClaim = async (token) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800">
-      <a href="https://addrs.to/">
+    {0==1{  <a href="https://addrs.to/">
         <img
           className="absolute top-4 right-4 rounded-full"
           style={{ maxWidth: '50px' }}
@@ -758,7 +758,7 @@ const handleClaim = async (token) => {
           alt="Selected NFT Image"
         />
       </a>
-      <main className="mx-auto py-8 px-4 lg:px-0">
+  )} <main className="mx-auto py-8 px-4 lg:px-0">
         <h1 className="text-center text-4xl mb-2 text-white font-extrabold">
           Stream - in Alpha
         </h1>
