@@ -87,9 +87,7 @@ const Wall = () => {
     }, []);
   
     useEffect(() => {
-      if (ethersProvider) {
         fetchWalls();
-      }
     }, [ethersProvider]);
   
     const theWallFactoryContract = new ethers.Contract(
