@@ -81,21 +81,9 @@ const Wall = () => {
     const [createModal, setCreateModal] = useState(false);
   
     const { address: userAddress } = useAccount();
-  
-    // Initialize ethers provider and signer
-    const [ethersProvider, setEthersProvider] = useState(null);
-    const [ethersSigner, setEthersSigner] = useState(null);
-  
+  let ethersProvider = useEthersProvider();
+  let ethersSigner = useEthersSigner();
     useEffect(() => {
-      if (window.ethereum) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        setEthersProvider(provider);
-        provider.getSigner().then((signer) => {
-          setEthersSigner(signer);
-        });
-      } else {
-        toast.error('Please install MetaMask!');
-      }
     }, []);
   
     useEffect(() => {
