@@ -14,8 +14,8 @@ const vaultAbi = [
   "event TokenDeposited(address indexed token, uint256 amount, address indexed depositor)",
   "event TokenWithdrawn(address indexed token, uint256 amount)",
   "event NftDeposited(address indexed token, uint256 indexed tokenId, address indexed depositor)",
-  "event NftWithdrawn(address indexed token, uint256 indexed tokenId)",
-  "function depositToken(address token, uint256 amount) external payable",
+  "event NftWithdrawn(address indexed token, uint256 indexed tokenId)",  
+  "function depositAsset(address token, uint256 amountorID, uint256 ERC20orERC721) external payable",
   "function withdrawToken(address to, address token, uint256 amount) external",
   "function getLimit(address to, address token, uint256 amount) external view returns(uint)",
   "function getLimitAmount(address token) external view returns(uint)",
@@ -42,14 +42,16 @@ const vaultAbi = [
   "function lastWithdrawTimestamp(address) external view returns (uint256)",
   "function tokenLimits(address) external view returns (uint256, uint256, uint256)",
   "function queuedTransactions(uint256) external view returns (address, bytes memory, uint256, bool, uint256, uint256)",
-  "function queuedTxs() external view returns (uint)"
+  "function queuedTxs() external view returns (uint)",  "function getAssetDetails(uint256[] calldata indices) external view returns (address[] memory tokens, uint256[] memory amountsOrIDs, uint256[] memory wallet, uint256[] memory assetTypes, uint8[] memory decimals, string[] memory tokenNames, string[] memory tokenSymbols, string[] memory tokenURIs, uint256[] memory remainingLimits, uint256[] memory limitAmounts)"
+
+  
 ];
 
 // Define the VaultFactory contract ABI
 const factoryAbi = [
   "constructor()",
   "event VaultCreated(address vaultAddress, address indexed owner, string name, address recoveryAddress)",
-  "function createVault(string _name, address _recoveryAddress, address[] _whitelistedAddresses, uint256 _dailyLimit, uint256 _threshold, uint256 _delay) external returns (address)",
+  "function createVault(string _name, address _recoveryAddress, address[] _whitelistedAddresses, uint256 _dailyLimit, uint256 _threshold, uint256 _delay, uint256 _mode) external returns (address)",
   "function getVaultsByOwner(address _owner) external view returns (address[])",
   "function vaultNames(string) external view returns (address)"
 ];
@@ -95,7 +97,7 @@ const [todepositnft,settodepositnft]=useState([]);
   const provider =  useEthersProvider()//chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
    //useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress ='0x00000000000052068951aed201da868e29db48ac'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
+  const factoryAddress ='0xbe751c65D26d925D4AF90d136e2D675e29169D21'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
@@ -129,8 +131,129 @@ const [todepositnft,settodepositnft]=useState([]);
       toast.error('Failed to fetch user vaults.');
     }
   };
-
   const fetchTokenBalances = async (vault) => {
+    const chainIds = [8453, 1, 137, 534352, 42161, 10, 56, 43114, 250];
+    if (chainIds.includes(chainId)) {
+     fetchTokenBalances2(vault);
+    return;
+    }
+    setLoading(true);
+    try {
+      const contract = new ethers.Contract(vault, vaultAbi, provider);
+  
+      // Fetch assets data using getAssetDetails
+      const [
+        tokens,
+        amountsOrIDs,
+        walletBalances,
+        assetTypes,
+        decimals,
+        tokenNames,
+        tokenSymbols,
+        tokenURIs,
+        remainingLimits,
+        limitAmounts
+      ] = await contract.connect(signer).getAssetDetails([]); // Pass empty array to get all assets
+  
+      const tokenDetails = [];
+      const nftDetails = [];
+  
+      for (let i = 0; i < tokens.length; i++) {
+        const asset = {
+          address: tokens[i],
+          type: Number(assetTypes[i]),
+          decimals: Number(decimals[i]),
+          name: tokenNames[i],
+          symbol: tokenSymbols[i],
+          dailyLimit: Number(limitAmounts[i]) / Math.pow(10, Number(decimals[i])), // Adjust daily limit
+          limit: Number(remainingLimits[i]) / Math.pow(10, Number(decimals[i])), // Adjust limit
+          wallet: Number(walletBalances[i]) / Math.pow(10, Number(decimals[i]))
+        };
+  
+        if (asset.type === 0) { // ERC20 token
+          const adjustedBalance = Number(amountsOrIDs[i]) / Math.pow(10, asset.decimals);
+          asset.balance = adjustedBalance;
+          
+         
+          tokenDetails.push(asset);
+        } else if (asset.type === 1) { // ERC721 NFT
+          asset.tokenId = amountsOrIDs[i];
+          
+          // Fetch image for NFT
+          asset.imageUrl = tokenURIs[i] ? await fetchNftImage(tokenURIs[i]) : './favicon.ico';
+          if (amountsOrIDs[i] > 0) {
+          nftDetails.push(asset);
+          }
+        }
+      }
+  
+      // Retrieve ETH balance and limits separately
+      const ethBalance = await provider.getBalance(vault);
+      const ethLimit = await contract.getLimit(userAddress, ethers.ZeroAddress, 0);
+      const ethDailyLimit = await contract.getLimitAmount(ethers.ZeroAddress);
+      
+      tokenDetails.unshift({
+        name: 'Ether',
+        symbol: 'ETH',
+        balance: ethers.formatEther(ethBalance),
+        address: ethers.ZeroAddress,
+        dailyLimit: Number(ethDailyLimit) / Math.pow(10, 18),
+        limit: Number(ethLimit) / Math.pow(10, 18),
+        wallet: ethers.formatEther(await provider.getBalance(userAddress))
+      });
+  
+      // Retrieve additional vault settings
+      const name = await contract.name();
+      const recoveryAddress = await contract.recoveryAddress();
+      const dailyLimit = await contract.dailyLimit();
+      const threshold = await contract.threshold();
+      const delay = await contract.delay();
+      const owner = await contract.owner();
+  
+      // Update state
+      setTokenBalances(tokenDetails);
+      setNftAssets(nftDetails);
+      setVaultSettings({
+        name,
+        recoveryAddress,
+        dailyLimit: Number(dailyLimit),
+        threshold: Number(threshold),
+        delay: Number(delay),
+        owner
+      });
+  
+    } catch (error) {
+      console.error("Failed to fetch token balances:", error);
+      toast.error('Failed to fetch token balances.');
+    } finally {
+      setLoading(false);
+    }
+  };const fetchNftImage = async (uri) => {
+    try {
+      // Check if the URI is an IPFS URI and replace with an IPFS gateway URL if needed
+      if (uri.startsWith("ipfs://")) {
+        uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
+      }
+  
+      const response = await fetch(uri);
+      if (!response.ok) throw new Error("Failed to fetch NFT metadata");
+      const metadata = await response.json();
+      
+      // Check if the image is also an IPFS URI and convert it if necessary
+      let imageUri = metadata.image || './favicon.ico';
+      if (imageUri.startsWith("ipfs://")) {
+        imageUri = imageUri.replace("ipfs://", "https://ipfs.io/ipfs/");
+      }
+  
+      return imageUri; // Return the image URL or default icon
+    } catch (error) {
+      console.error("Error fetching NFT image:", error);
+      return './favicon.ico';
+    }
+  };
+  
+  
+  const fetchTokenBalances2 = async (vault) => {
     setLoading(true);
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
@@ -259,8 +382,11 @@ let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
       const nftsForOwner = await alchemy.nft.getNftsForOwner(vault);
       const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
         ...nft,
-        imageUrl: nft.image.cachedUrl || './favicon.ico'
+        imageUrl: nft.image.cachedUrl || './favicon.ico',
+        address:nft.contract.address
       }));
+      
+      console.log(nftDetails);
       setNftAssets(nftDetails);
     } catch (error) {
       console.error(error);
@@ -402,8 +528,47 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       fetchQueuedTransactions(selectedVault);
     }
   }, [selectedVault]);
-
-  const handleDepositToken = async (tokenAddress, amount) => {
+  const handleDepositToken = async (tokenAddress, amountOrID, assetType) => {
+    assetType=assetType?assetType:0;
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+  
+      if (tokenAddress === ethers.ZeroAddress) {
+        // For ETH deposit, send as `msg.value`
+        const tx = await contract.depositAsset(tokenAddress, ethers.parseEther(amountOrID.toString()), 0, { value: ethers.parseEther(amountOrID.toString()) });
+        await tx.wait();
+      } else if (assetType === 0) {
+        // For ERC20 token
+        const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 amount)", "function decimals() view returns (uint8)"], signer);
+  
+        // Approve the vault to spend tokens on behalf of the user if necessary
+        const approvalTx = await tokenContract.approve(selectedVault, ethers.parseUnits(amountOrID.toString(), await tokenContract.decimals()));
+        await approvalTx.wait();
+  
+        const tx = await contract.depositAsset(tokenAddress, ethers.parseUnits(amountOrID.toString(), await tokenContract.decimals()), 0);
+        await tx.wait();
+      } else if (assetType === 1) {
+        // For ERC721 token (NFT)
+        const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 tokenId)", "function decimals() view returns (uint8)"], signer);
+  
+        // Approve the vault to transfer the NFT on behalf of the user
+       let tx = await tokenContract.approve(selectedVault, amountOrID);
+  await tx.wait();
+        // Call depositAsset without needing to transfer value
+        tx = await contract.depositAsset(tokenAddress, amountOrID, 1);
+        await tx.wait();
+      }
+  
+      toast.success('Asset deposited successfully!');
+      fetchTokenBalances(selectedVault); // Refresh balances after deposit
+  
+    } catch (error) {
+      console.error("Deposit failed:", error);
+      toast.error('Failed to deposit asset.');
+    }
+  };
+  
+  const handleDepositToken2 = async (tokenAddress, amount) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
       if (tokenAddress === '0x0000000000000000000000000000000000000000') {
@@ -469,7 +634,7 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       const queryParams = new URLSearchParams(window.location.search);
       let ref = queryParams.get('ref'); // Replace 'paramName' with the actual parameter you want to retrieve
 
-      let data = iface.encodeFunctionData("createVault", [name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0)]);
+      let data = iface.encodeFunctionData("createVault", [name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0),0]);
       const tx = await signer.sendTransaction({
         to: factoryAddress,
         data: data+ethers.hexlify(ethers.toUtf8Bytes('gstagref='+ref)).toString().slice(2),
@@ -528,36 +693,32 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       if (userAddress === vaultSettings.recoveryAddress) {
         const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
         await tx.wait();
-      } else if (whitelistedAddresses != '') {
-        const data = abi.encodeFunctionData("updateWhitelistAddresses", [whitelistedAddresses]);
-        const tx = await contract.queueTransaction(selectedVault, data, 0);
-        await tx.wait();
-      } else if (dailyLimit != '') {
-        const data = abi.encodeFunctionData("updateDailyLimit", [dailyLimit]);
-        const tx = await contract.queueTransaction(selectedVault, data, 0);
-        await tx.wait();
-      } else if (threshold != '') {
-        const data = abi.encodeFunctionData("updateThreshold", [threshold]);
-        const tx = await contract.queueTransaction(selectedVault, data, 0);
-        await tx.wait();
-      } else if (delay != '') {
-        const data = abi.encodeFunctionData("updateDelay", [delay]);
-        const tx = await contract.queueTransaction(selectedVault, data, 0);
-        await tx.wait();
-      } else if (recoveryAddress != '') {
-        const data = abi.encodeFunctionData("updateRecoveryAddress", [recoveryAddress]);
-        const tx = await contract.queueTransaction(contract.address, data, 0);
-        await tx.wait();
-      } else if (selectedToken != '') {
-        fixedLimits = document.getElementById('fixed-limit').value;
-        percentageLimits = document.getElementById('percentage-limit').value;
-        useBaseLimits = document.getElementById('use-base-limit').value;
-        !fixedLimits ? fixedLimits = [0] : fixedLimits;
-        !percentageLimits ? percentageLimits = [0] : percentageLimits;
-        !useBaseLimits ? useBaseLimits = [0] : useBaseLimits;
-        const data = abi.encodeFunctionData("setTokenLimit", [[selectedToken], [fixedLimits], [percentageLimits], [useBaseLimits]]);
-        const tx = await contract.queueTransaction(selectedVault, data, 0);
-        await tx.wait();
+      } else 
+      {
+        
+    tokens.forEach((tokenAddress) => {
+      tokens.push(tokenAddress);
+      fixedLimits.push(document.getElementById(`fixed-limit-${tokenAddress}`).value || 0);
+      percentageLimits.push(document.getElementById(`percentage-limit-${tokenAddress}`).value || 0);
+      useBaseLimits.push(document.getElementById(`use-base-limit-${tokenAddress}`).value || 0);
+    });
+
+    // Encode the function data for updateSettings
+    const data = abi.encodeFunctionData("updateSettings", [
+      recoveryAddress,
+      whitelistedAddresses,
+      dailyLimit || 0,
+      threshold || 0,
+      delay*84000 || 0,
+      tokens,
+      fixedLimits,
+      percentageLimits,
+      useBaseLimits
+    ]);
+      
+    // Queue the transaction if necessary or execute it directly if allowed
+    const tx = await contract.queueTransaction(selectedVault, data, 0);
+    await tx.wait();
       }
       toast.success('Settings updated successfully!');
       fetchTokenBalances(selectedVault);
@@ -614,7 +775,7 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
         "function transferFrom(address from, address to, uint256 tokenId)"
       ]);
       const data = abi.encodeFunctionData("transferFrom", [selectedVault, userAddress, nft.tokenId]);
-      const tx = await contract.queueTransaction(nft.contract.address, data, 0);
+      const tx = await contract.queueTransaction(nft.address, data, 0);
       await tx.wait();
       toast.success('NFT withdrawal queued successfully!');
       fetchTokenBalances(selectedVault);
@@ -880,7 +1041,7 @@ const handleCancelTransaction = async (txIndex) => {
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                   <button
                     className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4 text-sm"
-                    onClick={() => handleDepositNft(nft)}
+                    onClick={() => handleDepositToken(nft.contract.address, nft.tokenId, 1)}
                   >
                     Deposit
                   </button>
@@ -1178,6 +1339,7 @@ const handleCancelTransaction = async (txIndex) => {
   function DepositModal({ handleClose, handleDepositToken }) {
     const [selectedToken, setSelectedToken] = useState('');
     const [amount, setAmount] = useState('');
+    const [nft, setNft] = useState('');
 
     const handleTokenChange = (e) => {
       setSelectedToken(e.target.value);
@@ -1188,19 +1350,25 @@ const handleCancelTransaction = async (txIndex) => {
     };
 
     const handleDeposit = () => {
-      handleDepositToken(selectedToken, amount);
+      handleDepositToken(selectedToken, amount, nft);
       handleClose();
     };
 
     return (
       <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+        <div style={{width:'400px'}}className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
           <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
           <section id="deposit-tokens">
             <div className="text-center mb-8">
               <h2 className="text-2xl text-pink-500 font-bold">Deposit Tokens</h2>
             </div>
             <div className="space-y-6">
+              
+      <div className="tab-switcher mb-4 flex justify-center space-x-4">
+        <div className={`tab ${nft ? 'tab-active' : ''}`} onClick={() => setNft(1)}>NFT</div>
+        <div className={`tab ${!nft ? 'tab-active' : ''}`} onClick={() => setNft(0)}>Token</div>
+      </div>
+            {!nft && (<>
               <div>
                 <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
                 <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)}>
@@ -1230,7 +1398,17 @@ const handleCancelTransaction = async (txIndex) => {
                 </div>
               </div>
               <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDeposit}>Deposit Tokens</button>
-            </div>
+  </>)}
+  {nft==1 && (<>
+              <div>
+                <label htmlFor="nft" className="block mb-2 font-semibold text-gray-600">NFT Address:</label>
+                <input type="text" id="nft" name="nft" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)} />
+                <label htmlFor="tokenId" className="block mb-2 font-semibold text-gray-600">Token ID:</label>
+                <input type="text" id="tokenId" name="tokenId" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setAmount(e.target.value)} />
+                <button className="w-full mt-2 py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDeposit}>Deposit NFT</button>
+  </div>
+  </>)}
+  </div>
           </section>
         </div>
       </div>
