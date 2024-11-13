@@ -1699,7 +1699,7 @@ const handleCancelTransaction = async (txIndex) => {
   }
   function CreateInfoModal({ handleClose }) {
     return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-gray-700 bg-opacity-90" onClick={handleClose}>
         <div className="modal-content bg-gray-900 p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto max-h-screen overflow-y-auto " onClick={e => e.stopPropagation()}>
           <button className="close cursor-pointer text-white text-2xl absolute top-4 right-4 focus:outline-none" onClick={handleClose}>
             &times;
