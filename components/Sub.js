@@ -557,7 +557,7 @@ const handleClaim = async (token) => {
     toast.error('Error claiming');
   }
 };
-  return (<body className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 font-sans flex flex-col items-center py-10">
+  return (<body className="min-h-screen bg-gradient-to-r from-gray-900  via-gray-800 to-gray-900 text-gray-200 font-sans flex flex-col items-center py-10">
     <Toaster />
   
     {/* Main Subscription Container */}

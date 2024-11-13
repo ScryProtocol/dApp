@@ -61,23 +61,23 @@ function MyApp({ Component, pageProps }) {
     return (
       
       <div className="tab-switcher justify-center">
-      <div className="tab-switcher absolute justify-center text-gray-500 bg-white rounded-full opacity-50 mx-1/2 mt-1">
-        <button className={`ta ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
+      <div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-1 bg-backdrop-blur-lg">
+        <button className={`ta ${activeTab === 'vault' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('vault')}>
           Vault
           </button>
-        <button className={`ta ${activeTab === 'stream' ? 'tab-active' : ''}`} onClick={() => setActiveTab('stream')}>
+        <button className={`ta ${activeTab === 'stream' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('stream')}>
           Stream
           </button>
-        <button className={`ta ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
+        <button className={`ta ${activeTab === 'spot' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('spot')}>
           Spot
           </button>
-          <button className={`ta ${activeTab === 'sub' ? 'tab-active' : ''}`} onClick={() => setActiveTab('sub')}>
+          <button className={`ta ${activeTab === 'sub' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('sub')}>
           Sub
           </button>
-          <button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
+          <button className={`ta ${activeTab === 'feed' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
           Feed
           </button>
-      <button className={`ta ${activeTab === 'wall' ? 'tab-active' : ''}`} onClick={() => setActiveTab('wall')}>
+      <button className={`ta ${activeTab === 'wall' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('wall')}>
           Wall
           </button>
       </div>

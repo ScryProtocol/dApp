@@ -1300,7 +1300,7 @@ const handleCancelTransaction = async (txIndex) => {
                   : 'Pending'}
                 {!transaction.executed && (
                   <button
-                    className="bg-pink-500 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-500 transition duration-300 ease-in-out ml-2"
+                    className="bg-pink-500 m-0.5 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-500 transition duration-300 ease-in-out ml-2"
                     onClick={() => handleConfirmTransaction(transaction.id)}
                   >
                     Sign {transaction.numConfirmations}/{transaction.threshold}
@@ -1937,7 +1937,7 @@ const handleCancelTransaction = async (txIndex) => {
   }
   
 return (
-  <div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200">
+  <div className="min-h-screen bg-gradient-to-r from-gray-900  via-gray-800 to-gray-900 text-gray-200">
     <Toaster />
     <main className="mx-auto py-8 px-4 sm:px-8">
       <Header />
