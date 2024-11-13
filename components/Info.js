@@ -826,7 +826,7 @@ deploy() }
   <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 w-full" onClick={handleClose}>
         <div
         style={{ overflowY: 'auto', scrollbarWidth: 'thin', WebkitScrollbarWidth: 'thin', WebkitScrollbarTrack: { backgroundColor: '#e5e7eb', borderRadius: '9999px', }, WebkitScrollbarThumb: { backgroundColor: '#9ca3af', borderRadius: '9999px', border: '2px solid #e5e7eb', }, }}
-      id="info-section" className="absolute top-2 bg-gray-950 bg-opacity-70 backdrop-blur-lg p-8 overflow-y-auto max-w-3xl m-4 mx-auto rounded-3xl shadow-lg justify-center inset-0">
+      id="info-section" className="absolute top-2 bg-gray-800 bg-opacity-90 backdrop-blur-lg p-8 overflow-y-auto max-w-3xl m-4 mx-auto rounded-3xl shadow-lg justify-center inset-0">
   {app == 'wall'&& <Wall />}
   {app == 'vault'&& <Vault />}
   {app == 'spot'&& <Spot />}
