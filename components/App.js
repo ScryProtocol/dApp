@@ -1699,8 +1699,9 @@ const handleCancelTransaction = async (txIndex) => {
   }
   function CreateInfoModal({ handleClose }) {
     return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-gray-700 bg-opacity-90" onClick={handleClose}>
-        <div className="modal-content bg-gray-900 p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto max-h-screen overflow-y-auto " onClick={e => e.stopPropagation()}>
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div className="modal-content bg-gray-700 bg-opacity-90 p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto m-10 max-h-screen overflow-y-auto " onClick={e => e.stopPropagation()} 
+        style={{scrollbarWidth: 'thin', WebkitScrollbarWidth: 'thin', WebkitScrollbarTrack: { backgroundColor: '#e5e7eb', borderRadius: '9999px', }, WebkitScrollbarThumb: { backgroundColor: '#9ca3af', borderRadius: '9999px', border: '2px solid #e5e7eb', }, height:'95%'}}>
           <button className="close cursor-pointer text-white text-2xl absolute top-4 right-4 focus:outline-none" onClick={handleClose}>
             &times;
           </button>
