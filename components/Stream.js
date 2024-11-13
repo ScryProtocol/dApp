@@ -748,9 +748,9 @@ const handleClaim = async (token) => {
 
 
 
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800">
-    {0==1&&(  <a href="https://addrs.to/">
+  return (<div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200">
+    {0 === 1 && (
+      <a href="https://addrs.to/">
         <img
           className="absolute top-4 right-4 rounded-full"
           style={{ maxWidth: '50px' }}
@@ -758,866 +758,933 @@ const handleClaim = async (token) => {
           alt="Selected NFT Image"
         />
       </a>
-  )} <main className="mx-auto py-8 px-4 lg:px-0">
-        <h1 className="text-center text-4xl mb-2 text-white font-extrabold">
-          Stream - in Alpha
-        </h1>
-  {/* Switch Container */}<div className="relative mx-auto flex items-center mb-8">
-  <label htmlFor="pro" className="items-center cursor-pointer mx-auto">
-    {/* Hidden Checkbox */}
-    <div className="text-white font-semibold">Pro Mode</div>
-    <div>
-    <input
-      type="checkbox"
-      id="pro"
-      name="pro"
-      checked={pro}
-      onChange={(e) => setPro(e.target.checked)}
-      className="sr-only"
-    />
-    {/* Switch Background */}
-    <div
-      className={`relative  ml-2 w-14 h-8 bg-gray-300 rounded-full p-1 transition-colors duration-300 ease-in-out ${
-        pro ? 'bg-pink-500' : ''
-      }`}
-    >
-      {/* Switch Handle */}
-      <div
-        className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-transform transform ${
-          pro ? 'translate-x-6' : ''
-        }`}
-      ></div></div>
-    </div>
-  </label>
-</div>
-
-        
-        <Toaster />
-  {!pro &&(<div className="text-center mb-8 max-w-4xl mx-auto">
-        {/* Borrow Form Section */}
-        <section className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl text-pink-600 font-bold">
-              Stream tokens from your wallet, no locking tokens, no interest, no fees.
-            </h2>
+    )}
+    <main className="mx-auto py-8 px-4 lg:px-0">
+      <h1 className="text-center text-4xl mb-2 text-white font-extrabold">
+        Stream - in Alpha
+      </h1>
+  
+      {/* Switch Container */}
+      <div className="relative mx-auto flex items-center mb-8">
+        <label htmlFor="pro" className="flex items-center cursor-pointer mx-auto">
+          <div className="text-white font-semibold">Pro Mode</div>
+          <div className="ml-2">
+            <input
+              type="checkbox"
+              id="pro"
+              name="pro"
+              checked={pro}
+              onChange={(e) => setPro(e.target.checked)}
+              className="sr-only"
+            />
+            <div
+              className={`relative w-14 h-8 bg-gray-700 rounded-full p-1 transition-colors duration-300 ease-in-out ${
+                pro ? 'bg-blue-700' : 'bg-gray-600'
+              }`}
+            >
+              <div
+                className={`absolute left-1 top-1 w-6 h-6 bg-gray-100 rounded-full transition-transform transform ${
+                  pro ? 'translate-x-6' : ''
+                }`}
+              ></div>
+            </div>
           </div>
-          {/* Form for borrowing */}
-          <div className="space-y-6">
-            {/* Token Select */}
-            <div>
-              <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">
-                Token Address:
-              </label>
-              <select
-                id="token"
-                name="token"
-                value={stoken}
-                onChange={(e) => setToken(e.target.value)}
-                required
-                className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-              >
-                <option value="">{stoken ? stoken : 'Select a token'}</option>
-                
+        </label>
+      </div>
+  
+      <Toaster />
+  
+      {/* Non-Pro Mode Section */}
+      {!pro && (
+        <div className="text-center mb-8 max-w-4xl mx-auto bg-gray-700 bg-opacity-40 p-8 rounded-3xl shadow-2xl backdrop-blur-lg">
+          {/* Borrow Form Section */}
+          <section className="p-8">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold">
+                Stream tokens from your wallet, no locking tokens, no interest, no fees.
+              </h2>
+            </div>
+            {/* Form for borrowing */}
+            <div className="space-y-6">
+              {/* Token Select */}
+              <div>
+                <label htmlFor="token" className="block mb-2 font-semibold text-white">
+                  Token Address:
+                </label>
+                <select
+                  id="token"
+                  name="token"
+                  value={stoken}
+                  onChange={(e) => setToken(e.target.value)}
+                  required
+                  className="w-full p-3 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                >
+                  <option value="">{stoken ? stoken : 'Select a token'}</option>
                   {tokenOptions[ChainId]?.map((token) => (
                     <option key={token.address} value={token.address}>
                       {token.symbol}
                     </option>
                   ))}
-                <option value="custom">Custom</option>
-              </select>
-              {stoken === 'custom' && (
-                <input
-                  type="text"
-                  id="customToken"
-                  name="customToken"
-                  onChange={(e) => setToken(e.target.value)}
-                  required
-                  className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                  placeholder="Enter custom token address"
-                />
-              )}
-            </div>
-            {/* Friend and Amount Fields */}
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <label htmlFor="friend" className="block mb-2 font-semibold text-gray-600">
-                  To Address/ENS:
-                </label>
-                <input
-                  type="text"
-                  id="friend"
-                  name="friend"
-                  value={friend}
-                  onChange={(e) => setFriend(e.target.value)}
-                  required
-                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                />
+                  <option value="custom">Custom</option>
+                </select>
+                {stoken === 'custom' && (
+                  <input
+                    type="text"
+                    id="customToken"
+                    name="customToken"
+                    onChange={(e) => setToken(e.target.value)}
+                    required
+                    className="w-full p-3 mt-2 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                    placeholder="Enter custom token address"
+                  />
+                )}
               </div>
-              <div className="flex-1">
-                <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">
-                  Stream Amount:
-                </label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  step="0.01"
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-                />
-              </div>
-            </div>
-            {/* Time Fields */}
-            <div className="flex space-x-4">
-              {!once && (
+  
+              {/* Friend and Amount Fields */}
+              <div className="flex space-x-4">
                 <div className="flex-1">
-                  <label htmlFor="days" className="block mb-2 font-semibold text-gray-600">
-                    Days to Stream Amount:
+                  <label htmlFor="friend" className="block mb-2 font-semibold text-white">
+                    To Address/ENS:
+                  </label>
+                  <input
+                    type="text"
+                    id="friend"
+                    name="friend"
+                    value={friend}
+                    onChange={(e) => setFriend(e.target.value)}
+                    required
+                    className="w-full p-3 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="amount" className="block mb-2 font-semibold text-white">
+                    Stream Amount:
                   </label>
                   <input
                     type="number"
-                    id="days"
-                    name="days"
+                    id="amount"
+                    name="amount"
                     step="0.01"
-                    onChange={(e) => setWindow(e.target.value)}
+                    onChange={(e) => setAmount(e.target.value)}
                     required
-                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    className="w-full p-3 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
                   />
                 </div>
-              )}
-              {once && (
-                <div className="flex-1">
-                  <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-600">
-                    End Date:
-                  </label>
+              </div>
+  
+              {/* Time Fields */}
+              <div className="flex space-x-4">
+                {!once && (
+                  <div className="flex-1">
+                    <label htmlFor="days" className="block mb-2 font-semibold text-white">
+                      Days to Stream Amount:
+                    </label>
+                    <input
+                      type="number"
+                      id="days"
+                      name="days"
+                      step="0.01"
+                      onChange={(e) => setWindow(e.target.value)}
+                      required
+                      className="w-full p-3 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
+                )}
+                {once && (
+                  <div className="flex-1">
+                    <label htmlFor="endDate" className="block mb-2 font-semibold text-white">
+                      End Date:
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="endDate"
+                      name="endDate"
+                      onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const currentDate = new Date();
+                        const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
+                        setWindow(windowInSeconds);
+                      }}
+                      required
+                      className="w-full p-3 bg-gray-700 bg-opacity-40 border border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
+                )}
+              </div>
+  
+              {/* Once Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
+                  <span className="text-white">Stream</span>
+                  <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
+                </div>
+                <label className="flex items-center space-x-2">
                   <input
-                    type="datetime-local"
-                    id="endDate"
-                    name="endDate"
-                    onChange={(e) => {
-                      const selectedDate = new Date(e.target.value);
-                      const currentDate = new Date();
-                      const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-                      setWindow(windowInSeconds);
-                    }}
-                    required
-                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    type="checkbox"
+                    id="once"
+                    name="once"
+                    checked={once}
+                    onChange={(e) => setOnce(e.target.checked)}
+                    className="toggle-checkbox rounded-full"
                   />
-                </div>
-              )}
-            </div>
-            {/* Once Toggle */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
-                <span className="text-gray-600">Stream</span>
-                <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
-              
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="once"
-                  name="once"
-                  checked={once}
-                  onChange={(e) => setOnce(e.target.checked)}
-                  className="toggle-checkbox"
-                />
-              </label>
+                  <span className="toggle-slider round"></span>
+                </label>
               </div>
-            </div>
-            {/* Action Buttons */}
-            <button
-              onClick={() => requestBorrow(stoken, friend, amount)}
-              className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
-            >
-              Set Allowance
-            </button>
-            <button
-              onClick={() => location.assign('https://spot.pizza/')}
-              className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300 ease-in-out"
-            >
-              Check out Spot🍕
-            </button>
-            <ConnectButton />
-          </div>
-        </section>
   
-        {/* Borrows by Lender Section */}
-        <section className="container mt-8">
-          <h2 className="text-xl text-pink-600 font-bold mb-4">Friends That Have Spotted Me</h2>
-          {(borrows.length>0&&(<> <h2 className="text-xl text-pink-600 font-bold">Claimable</h2>
-         
-      <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
-        Claim All
-      </button>
-          <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-  {Object.entries(totalClaim).map(([token, amount], index) => {
-    // Define dynamic gradients
-    const colorGradients = [
-      "from-red-400 to-yellow-400",
-      "from-blue-400 to-green-400",
-      "from-green-400 to-teal-400",
-      "from-yellow-400 to-pink-400",
-      "from-indigo-400 to-blue-400",
-      "from-teal-400 to-green-400",
-    ];
-
-    return (
-      <button
-        key={token}
-        onClick={() => handleClaim(token)}
-        className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}
-      >
-        <p className="text-white text-lg font-bold m-2">
-          {amount} {token.substring(0, 20)}
-        </p>
-      </button>
-    );
-  })}
-</div>
-</div>
-</>))}
-          {Object.entries(
-            borrows.reduce((acc, borrow) => {
-              if (!acc[borrow.lender]) {
-                acc[borrow.lender] = [];
-              }
-              acc[borrow.lender].push(borrow);
-              return acc;
-            }, {})
-          ).map(([lender, lenderBorrows]) => (
-            <div key={lender} className="bg-white p-6 rounded-xl shadow-md space-y-4 subscription-item">
-              <h3 className="text-xl text-pink-600 font-semibold text-gray-700 mb-2">
-                {ENS(lender, ENSCache, setENSCache)}
-              </h3>
-              {/* Updated grid class here */}
-              <div
-  className={`grid gap-6 grid-cols-1 ${
-    lenderBorrows.length >= 2 ? 'md:grid-cols-2' : ''
-  } ${lenderBorrows.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
->                {lenderBorrows.map((borrow) => (
-                  <div key={borrow.hash} className="bg-pink-100 space-y-2 container max-w-md mx-auto">
-                  <div className="text-center">
-                    <p className="text-lg font-semibold text-orange-500">🪙 Token</p>
-                    <p className="text-orange-600 font-bold text-xl">{borrow.token.substring(0, 20)}</p>
+              {/* Action Buttons */}
+              <button
+                onClick={() => requestBorrow(stoken, friend, amount)}
+                className="w-full py-3 bg-blue-700 bg-opacity-80 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-300 shadow-lg"
+              >
+                Set Allowance
+              </button>
+              <button
+                onClick={() => location.assign('https://spot.pizza/')}
+                className="w-full py-3 bg-blue-600 bg-opacity-70 text-white font-semibold rounded-full hover:bg-blue-700 transition duration-300 shadow-lg"
+              >
+                Check out Spot🍕
+              </button>
+              <ConnectButton />
+            </div>
+          </section>
+  
+          {/* Borrows by Lender Section */}
+          <section className="container mt-8 p-8 bg-gray-700 bg-opacity-40 rounded-3xl shadow-lg">
+            <h2 className="text-xl text-white font-bold mb-4">Friends That Have Spotted Me</h2>
+            {borrows.length > 0 && (
+              <>
+                <h2 className="text-xl text-white font-bold">Claimable</h2>
+                <button
+                  onClick={() => handleClaim()}
+                  className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto"
+                >
+                  Claim All
+                </button>
+                <div className="bg-gray-700 p-2 rounded-3xl m-6 mt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {Object.entries(totalClaim).map(([token, amount], index) => {
+                      // Define dynamic gradients
+                      const colorGradients = [
+                        'from-red-400 to-yellow-400',
+                        'from-blue-400 to-green-400',
+                        'from-green-400 to-teal-400',
+                        'from-yellow-400 to-pink-400',
+                        'from-indigo-400 to-blue-400',
+                        'from-teal-400 to-green-400',
+                      ];
+  
+                      return (
+                        <button
+                          key={token}
+                          onClick={() => handleClaim(token)}
+                          className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}
+                        >
+                          <p className="text-white text-lg font-bold m-2">
+                            {amount} {token.substring(0, 20)}
+                          </p>
+                        </button>
+                      );
+                    })}
                   </div>
-                
-                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
-                    <p className="font-semibold text-gray-700">💸 Allowable</p>
-                    <p className="text-orange-600 font-semibold">{borrow.allowable}</p>
-                  </div>
-                
-                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
-                    <p className="font-semibold text-gray-700">💰 Available</p>
-                    <p className="text-orange-600 font-semibold">
-                      {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
-                    </p>
-                  </div>
-                
-                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
-                    <p className="font-semibold text-gray-700">📊 Volume Streamed</p>
-                    <p className="text-orange-600">{borrow.totalStreamed}</p>
-                  </div>
-                
-                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
-                    <p className="font-semibold text-gray-700">⏳ Allowance Type</p>
-                    <p className={`${borrow.once ? 'text-green-500' : 'text-orange-500'} font-semibold`}>
-                      {borrow.once ? 'Once only' : 'Unlimited'}
-                    </p>
-                  </div>
-                
-                  <div className="bg-white rounded-full p-4 text-center shadow-sm">
-                    <p className="font-semibold text-gray-700">⌛ Remaining Time</p>
-                    <p className="text-orange-600">
-                      {!borrow.once ? (
-                        `@ ${borrow.allowable} tokens per ${Math.floor(borrow.window / (3600 * 24))}d ${Math.floor((borrow.window % (3600 * 24)) / 3600)}h ${Math.floor((borrow.window % 3600) / 60)}m`
-                      ) : (
-                        `ends in ${Math.floor((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) / 3600)}h ${Math.floor(((borrow.timestamp + (borrow.outstanding * borrow.window) / borrow.allowable - Date.now() / 1000) % 3600) / 60)}m`
-                      )}
-                    </p>
-                  </div>
-                
-                  <button
-                    onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
-                    className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300"
-                  >
-                    Claim
-                  </button>
                 </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </section>
-  
-        {/* Allowances to Friends Section */}
-        <section className="container mt-8">
-          <h2 className="text-xl text-pink-600 font-bold mb-4">Allowances to Friends</h2>
-          <div className="">
+              </>
+            )}
             {Object.entries(
-              allowances.reduce((acc, allowance) => {
-                if (!acc[allowance.friend]) {
-                  acc[allowance.friend] = [];
+              borrows.reduce((acc, borrow) => {
+                if (!acc[borrow.lender]) {
+                  acc[borrow.lender] = [];
                 }
-                acc[allowance.friend].push(allowance);
+                acc[borrow.lender].push(borrow);
                 return acc;
               }, {})
-            ).map(([friend, friendAllowances]) => (
-              <div key={friend} className="bg-white p-6 rounded-xl shadow-md space-y-4 subscription-item">
-                <h3 className="text-xl font-semibold text-gray-700 mb-2 text-pink-600">
-                  {ENS(friend, ENSCache, setENSCache)}
+            ).map(([lender, lenderBorrows]) => (
+              <div key={lender} className="bg-gray-800 p-6 rounded-xl shadow-md space-y-4 opacity-90 bg-backdrop-blur-lg">
+                <h3 className="text-xl text-white font-semibold mb-2">
+                  {ENS(lender, ENSCache, setENSCache)}
                 </h3>
                 <div
-  className={`grid gap-6 grid-cols-1 ${
-    friendAllowances.length >= 2 ? 'md:grid-cols-2' : ''
-  } ${friendAllowances.length >= 3 ? 'lg:grid-cols-3' : ''} center-items`}
->                  {friendAllowances.map((allowance, idx) => (
-                    <div key={idx} className="bg-pink-100 space-y-2 container max-w-md mx-auto">
+                  className={`grid gap-6 grid-cols-1 ${
+                    lenderBorrows.length >= 2 ? 'md:grid-cols-2' : ''
+                  } ${lenderBorrows.length >= 3 ? 'lg:grid-cols-3' : ''}`}
+                >
+                  {lenderBorrows.map((borrow) => (
+                    <div key={borrow.hash} className="bg-gray-700 space-y-2 rounded-lg p-4">
                       <div className="text-center">
-                        <p className="text-lg font-semibold text-orange-500">🪙 Token</p>
-                        <p className="text-orange-500 font-bold text-xl">{allowance.token.substring(0, 20)}</p>
+                        <p className="text-lg font-semibold text-white">🪙 Token</p>
+                        <p className="text-white font-bold text-xl">{borrow.token.substring(0, 20)}</p>
                       </div>
-        
-                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
-                        <p className="font-semibold text-gray-700">💸 Allowable</p>
-                        <p className="text-orange-600 font-semibold">{allowance.allowable}</p>
+  
+                      <div className="bg-gray-700 rounded-full p-4 text-center shadow-sm">
+                        <p className="font-semibold text-white">💸 Allowable</p>
+                        <p className="text-white font-semibold">{borrow.allowable}</p>
                       </div>
-        
-                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
-                        <p className="font-semibold text-gray-700">💰 Available</p>
-                        <p className="text-orange-600 font-semibold">
-                          {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+  
+                      <div className="bg-gray-700 rounded-full p-4 text-center shadow-sm">
+                        <p className="font-semibold text-white">💰 Available</p>
+                        <p className="text-white font-semibold">
+                          {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
                         </p>
                       </div>
-        
-                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
-                        <p className="font-semibold text-gray-700">📊 Volume Streamed</p>
-                        <p className="text-orange-600">{allowance.totalStreamed}</p>
+  
+                      <div className="bg-gray-700 rounded-full p-4 text-center shadow-sm">
+                        <p className="font-semibold text-white">📊 Volume Streamed</p>
+                        <p className="text-white">{borrow.totalStreamed}</p>
                       </div>
-        
-                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
-                        <p className="font-semibold text-gray-700">⏳ Allowance Type</p>
-                        <p className={`${allowance.once ? 'text-green-500' : 'text-orange-500'} font-semibold`}>
-                          {allowance.once ? 'Once only' : 'Unlimited'}
+  
+                      <div className="bg-gray-700 rounded-full p-4 text-center shadow-sm">
+                        <p className="font-semibold text-white">⏳ Allowance Type</p>
+                        <p className={`${borrow.once ? 'text-green-500' : 'text-white'} font-semibold`}>
+                          {borrow.once ? 'Once only' : 'Unlimited'}
                         </p>
                       </div>
-        
-                      <div className="bg-white rounded-full p-3 text-center shadow-sm">
-                        <p className="font-semibold text-gray-700">⌛ Remaining Time</p>
-                        <p className="text-orange-600">
-                          {!allowance.once ? (
-                            `@ ${allowance.allowable} every ${Math.floor(allowance.window / (3600 * 24))}d ${Math.floor((allowance.window % (3600 * 24)) / 3600)}h ${Math.floor((allowance.window % 3600) / 60)}m`
+  
+                      <div className="bg-gray-700 rounded-full p-4 text-center shadow-sm">
+                        <p className="font-semibold text-white">⌛ Remaining Time</p>
+                        <p className="text-white">
+                          {!borrow.once ? (
+                            `@ ${borrow.allowable} tokens per ${Math.floor(borrow.window / (3600 * 24))}d ${Math.floor(
+                              (borrow.window % (3600 * 24)) / 3600
+                            )}h ${Math.floor((borrow.window % 3600) / 60)}m`
                           ) : (
-                            `ends in ${Math.floor((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) / 3600)}h ${Math.floor(((allowance.timestamp + (allowance.outstanding * allowance.window) / allowance.allowable - Date.now() / 1000) % 3600) / 60)}m`
+                            `ends in ${Math.floor(
+                              (borrow.timestamp +
+                                (borrow.outstanding * borrow.window) / borrow.allowable -
+                                Date.now() / 1000) /
+                                3600
+                            )}h ${Math.floor(
+                              ((borrow.timestamp +
+                                (borrow.outstanding * borrow.window) / borrow.allowable -
+                                Date.now() / 1000) %
+                                3600) /
+                                60
+                            )}m`
                           )}
                         </p>
                       </div>
-        
-                      <div className="flex items-center space-x-4 mt-4">
-                        <input
-                          type="text"
-                          placeholder="Amount"
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="w-1/2 p-3 bg-white border-none rounded-full focus:ring-2 focus:ring-pink-500"
-                        />
-                        <input
-                          type="number"
-                          step="0.01"
-                          placeholder="Days"
-                          onChange={(e) => setWindow(e.target.value)}
-                          className="w-1/2 p-3 bg-white border-none rounded-full focus:ring-2 focus:ring-pink-500"
-                        />
-                      </div>
-        
-                      <div className="flex items-center space-x-4 mt-4">
-                        <label className="flex items-center space-x-2">
-                        <label className="switch relative inline-block w-12 h-6">
-  <input
-    type="checkbox"
-    checked={once}
-    onChange={(e) => setOnce(e.target.checked)}
-    className="opacity-0 w-full h-full peer"
-  />
-  <span className="block absolute inset-0 bg-gray-300 w-full h-full rounded-full transition duration-300 peer-checked:bg-green-500"></span>
-  <span className="absolute left-1 top-1 h-4 w-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></span>
-</label><span className="font-semibold">{once ? 'Once' : 'Unlimited'}</span>
-                          
-
-</label>
-                      </div>
-        
-                      <div className="space-y-2 mt-6">
-                        <button
-                          onClick={() => requestBorrow(allowance.token, friend, amount)}
-                          className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600"
-                        >
-                          Set Allowance
-                        </button>
-                        <button
-                          onClick={() => handleBorrow(allowance.tokenAddrs, account, friend)}
-                          className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600"
-                        >
-                          Stream
-                        </button>
-                      </div>
+  
+                      <button
+                        onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
+                        className="w-full py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300"
+                      >
+                        Claim
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
             ))}
-          </div>
-        </section></div>)}{pro && (
-  <>
-    {/* Batch Stream Section */}<section className="bg-white p-8 rounded-3xl shadow-2xl mb-8 mx-auto max-w-4xl">
-  <div className="text-center mb-8">
-    <h2 className="text-2xl text-pink-600 font-bold">Stream tokens to multiple recipients</h2>
-  </div>
-
-  {/* Recipient Addresses Input */}
-  <div>
-    <label htmlFor="recipients" className="block mb-2 font-semibold text-gray-600">
-      Recipient Addresses (Comma-separated):
-    </label>
-    <textarea
-      id="recipients"
-      name="recipients"
-      placeholder="Enter recipient addresses, separated by commas"
-      onChange={(e) => setRecipients(e.target.value.split(','))}
-      className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-    ></textarea>
-  </div>
-
-  {/* Switches */}
-  <div className="flex items-center space-x-4 my-6">
-    <label className="text-lg font-semibold">Use Single Token for All</label>
-    <input
-      type="checkbox"
-      checked={useSingleToken}
-      onChange={() => setUseSingleToken(!useSingleToken)}
-      className="toggle-slider rounded-full"
-    />
-  </div>
-
-  {/* Form for Batch Allow Stream */}
-  <div className="space-y-6">
-    {useSingleToken ? (
-      <div>
-        <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">
-          Token Address:
-        </label>
-        <input
-          type="text"
-          id="token"
-          name="token"
-          placeholder="Enter token address"
-          onChange={(e) => setToken(e.target.value)}
-          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-        />
-      </div>
-    ) : (
-      <div>
-        <label htmlFor="tokens" className="block mb-2 font-semibold text-gray-600">
-          Token Addresses (Comma-separated):
-        </label>
-        <textarea
-          id="tokens"
-          name="tokens"
-          placeholder="Enter token addresses, separated by commas"
-          onChange={(e) => setTokens(e.target.value.split(','))}
-          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-        ></textarea>
-      </div>
-    )}
-
-    <div className="flex items-center space-x-4 my-6">
-      <label className="text-lg font-semibold">Use Same Amount for All</label>
-      <input
-        type="checkbox"
-        checked={useSameAmount}
-        onChange={() => setUseSameAmount(!useSameAmount)}
-        className="toggle-checkbox rounded-full"
-      />
-    </div>
-
-    {useSameAmount ? (
-      <div>
-        <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">
-          Stream Amount (Same for All):
-        </label>
-        <input
-          type="text"
-          id="amount"
-          name="amount"
-          placeholder="Enter stream amount"
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-        />
-      </div>
-    ) : (
-      <div>
-        <label htmlFor="amounts" className="block mb-2 font-semibold text-gray-600">
-          Stream Amounts (Comma-separated):
-        </label>
-        <textarea
-          id="amounts"
-          name="amounts"
-          placeholder="Enter stream amounts, separated by commas"
-          onChange={(e) => setAmounts(e.target.value.split(','))}
-          className="w-full p-3 bg-pink-100 border-none rounded-3xl focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-        ></textarea>
-      </div>
-    )}
-
-    <div className="flex space-x-4">
-      {!once && (
-        <div className="flex-1">
-          <label htmlFor="days" className="block mb-2 font-semibold text-gray-600">
-            Days to Stream Amount:
-          </label>
-          <input
-            type="number"
-            id="days"
-            name="days"
-            step="0.01"
-            onChange={(e) => setWindow(e.target.value)}
-            required
-            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-          />
-        </div>
-      )}
-      {once && (
-        <div className="flex-1">
-          <label htmlFor="endDate" className="block mb-2 font-semibold text-gray-600">
-            End Date:
-          </label>
-          <input
-            type="datetime-local"
-            id="endDate"
-            name="endDate"
-            onChange={(e) => {
-              const selectedDate = new Date(e.target.value);
-              const currentDate = new Date();
-              const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
-              setWindow(windowInSeconds);
-            }}
-            required
-            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
-          />
-        </div>
-      )}
-    </div>
-
-    {/* Once Toggle */}
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
-        <span className="text-gray-600">Stream</span>
-        <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
-      </div>
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          id="once"
-          name="once"
-          checked={once}
-          onChange={(e) => setOnce(e.target.checked)}
-          className="toggle-checkbox"
-        />
-        <span className="toggle-slider round"></span>
-      </label>
-    </div>
-
-    <button
-      className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
-      onClick={() => batchStream()}
-    >
-      Set Batch Allowance
-    </button>
-    <ConnectButton />
-  </div>
-</section>
-
-
-    {/* Borrows by Lender Section */}
-    <section className="mt-8 mx-auto bg-white p-8 rounded-3xl shadow-2xl w-11/12">
-      <h2 className="text-xl text-pink-600 font-bold mb-4">Friends That Have Spotted Me</h2>
-      <h2 className="text-xl text-pink-600 font-bold">Claimable</h2>
-          
-              <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto w-full">
-            Claim All
-          </button>
-          {Object.entries(totalClaim).map(([token, amount], index) => {
-        // Define dynamic gradients
-        const colorGradients = [
-          "from-red-400 to-yellow-400",
-          "from-blue-400 to-green-400",
-          "from-green-400 to-teal-400",
-          "from-yellow-400 to-pink-400",
-          "from-indigo-400 to-blue-400",
-          "from-teal-400 to-green-400",
-        ];
-    
-        return (
-          <button
-            key={token}
-            onClick={() => handleClaim(token)}
-            className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}
-          >
-            <p className="text-white text-lg font-bold m-2">
-              {amount} {token.substring(0, 20)}
-            </p>
-          </button>
-        );
-      })}
-    </div>
-    </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow overflow-hidden">
-          <thead>
-            <tr className="bg-pink-500 text-white text-left">
-              <th className="px-6 py-3 font-semibold text-sm">Lender</th>
-              <th className="px-6 py-3 font-semibold text-sm">Token</th>
-              <th className="px-6 py-3 font-semibold text-sm">Allowable</th>
-              <th className="px-6 py-3 font-semibold text-sm">Available</th>
-              <th className="px-6 py-3 font-semibold text-sm">Volume Streamed</th>
-              <th className="px-6 py-3 font-semibold text-sm">Allowance Type</th>
-              <th className="px-6 py-3 font-semibold text-sm">Remaining Time</th>
-              <th className="px-6 py-3 font-semibold text-sm">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {borrows.map((borrow, idx) => (
-              <tr key={borrow.hash} className={idx % 2 === 0 ? 'bg-pink-100' : 'bg-white'}>
-                <td className="px-6 py-4">{borrow.lender}</td>
-                <td className="px-6 py-4">{borrow.token.substring(0, 20)}</td>
-                <td className="px-6 py-4">{borrow.allowable}</td>
-                <td className="px-6 py-4">{streamable.find(item => item.hash === borrow.hash).canStream === true?'': '🔴'}{(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}</td>
-                <td className="px-6 py-4">{borrow.totalStreamed}</td>
-                <td className="px-6 py-4">
-                  <span className={`font-semibold ${borrow.once ? 'text-green-500' : 'text-orange-500'}`}>
-                    {borrow.once ? 'Once only' : 'Unlimited'}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  {!borrow.once ? (
-                    <span>
-                      @ {borrow.allowable} tokens per{' '}
-                      {Math.floor(borrow.window / (3600 * 24))}d{' '}
-                      {Math.floor((borrow.window % (3600 * 24)) / 3600)}h{' '}
-                      {Math.floor((borrow.window % 3600) / 60)}m{' '}
-                      {Math.floor(borrow.window % 60)}s
-                    </span>
-                  ) : (
-                    <span>
-                      ends in{' '}
-                      {Math.floor(
-                        (borrow.timestamp +
-                          (borrow.outstanding * borrow.window) / borrow.allowable -
-                          Date.now() / 1000) /
-                          3600
-                      )}
-                      h{' '}
-                      {Math.floor(
-                        ((borrow.timestamp +
-                          (borrow.outstanding * borrow.window) / borrow.allowable -
-                          Date.now() / 1000) %
-                          3600) /
-                          60
-                      )}
-                      m{' '}
-                      {Math.floor(
-                        (borrow.timestamp +
-                          (borrow.outstanding * borrow.window) / borrow.allowable -
-                          Date.now() / 1000) %
-                          60
-                      )}
-                      s
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
-                    className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
+          </section>
+  
+          {/* Allowances to Friends Section */}
+          <section className="container mt-8 p-8 bg-gray-900 bg-opacity-40 rounded-3xl shadow-lg">
+            <h2 className="text-xl text-white font-bold mb-4">Allowances to Friends</h2>
+            <div className="">
+              {Object.entries(
+                allowances.reduce((acc, allowance) => {
+                  if (!acc[allowance.friend]) {
+                    acc[allowance.friend] = [];
+                  }
+                  acc[allowance.friend].push(allowance);
+                  return acc;
+                }, {})
+              ).map(([friend, friendAllowances]) => (
+                <div key={friend} className="bg-gray-700 p-6 rounded-xl shadow-md space-y-4 bg-opacity-40 m-4">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    {ENS(friend, ENSCache, setENSCache)}
+                  </h3>
+                  <div
+                    className={`grid gap-6 grid-cols-1 ${
+                      friendAllowances.length >= 2 ? 'md:grid-cols-2' : ''
+                    } ${friendAllowances.length >= 3 ? 'lg:grid-cols-3' : ''}`}
                   >
-                    Claim
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    {/* Allowances to Friends Section */}
-    <section className="mt-8 mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 w-11/12">
-      <h2 className="text-xl text-pink-600 font-bold mb-4">Allowances to Friends</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow overflow-hidden">
-          <thead>
-            <tr className="bg-pink-500 text-white text-left">
-              <th className="px-6 py-3 font-semibold text-sm">Friend</th>
-              <th className="px-6 py-3 font-semibold text-sm">Token</th>
-              <th className="px-6 py-3 font-semibold text-sm">Allowable</th>
-              <th className="px-6 py-3 font-semibold text-sm">Available</th>
-              <th className="px-6 py-3 font-semibold text-sm">Volume Streamed</th>
-              <th className="px-6 py-3 font-semibold text-sm">Allowance Type</th>
-              <th className="px-6 py-3 font-semibold text-sm">Remaining Time</th>
-              <th className="px-6 py-3 font-semibold text-sm">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allowances.sort((a, b) => a.friend.localeCompare(b.friend)).map((allowance, idx) => (
-              <tr key={allowance.hash} className={idx % 2 === 0 ? 'bg-pink-100' : 'bg-white'}>
-                {editingRow === allowance.hash ? (
-                  <>
-                    <td className="px-6 py-4">{allowance.friend.substring(0, 20)}</td>
-                    <td className="px-6 py-4">{allowance.token.substring(0, 20)}</td>
-                    
-                    {/* Editable Allowable Field */}
-                    <td className="px-6 py-4">
-                      <input
-                        type="text"
-                        name="allowable"
-                        value={editedAllowance.allowable}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      />
-                    </td>
-                    
-                    {/* Display Available */}
-                    <td className="px-6 py-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
-                    
-                    <td className="px-6 py-4">{allowance.totalStreamed}</td>
-
-                    {/* Editable Allowance Type Field */}
-                    <td className="px-6 py-4">
-                      <select
-                        name="once"
-                        value={editedAllowance.once ? 'Once only' : 'Unlimited'}
-                        onChange={(e) => setOnce(e.target.value === 'Once only')}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="Unlimited">Unlimited</option>
-                        <option value="Once only">Once only</option>
-                      </select>
-                    </td>
-
-                    {/* Editable Remaining Time Field */}
-                    <td className="px-6 py-4">
-                      <input
-                        type="number"
-                        name="window"
-                        value={editedAllowance.window}
-                        onChange={(e) => setWindow(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                        placeholder="Enter remaining time (in seconds)"
-                      />
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend)}
-                        className="bg-green-500 text-white font-semibold py-2 px-4 m-1 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300 ease-in-out"
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td className="px-6 py-4">{allowance.friend}</td>
-                    <td className="px-6 py-4">{allowance.token.substring(0, 20)}</td>
-                    <td className="px-6 py-4">{allowance.allowable}</td>
-                    <td className="px-6 py-4">{(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}</td>
-                    <td className="px-6 py-4">{allowance.totalStreamed}</td>
-                    <td className="px-6 py-4">
-                      <span className={`font-semibold ${allowance.once ? 'text-green-500' : 'text-orange-500'}`}>
-                        {allowance.once ? 'Once only' : 'Unlimited'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {!allowance.once ? (
-                        <span>{allowance.allowable} tokens every {Math.floor(allowance.window / (3600 * 24))}d{' '}
-                          {Math.floor((allowance.window % (3600 * 24)) / 3600)}h{' '}
-                          {Math.floor((allowance.window % 3600) / 60)}m{' '}
-                          {Math.floor(allowance.window % 60)}s
-                        </span>
-                      ) : (
-                        <span>
-                          ends in{' '}
-                          {Math.floor(
-                            (allowance.timestamp +
-                              (allowance.outstanding * allowance.window) / allowance.allowable -
-                              Date.now() / 1000) /
-                              3600
-                          )}
-                          h{' '}
-                          {Math.floor(
-                            ((allowance.timestamp +
-                              (allowance.outstanding * allowance.window) / allowance.allowable -
-                              Date.now() / 1000) %
-                              3600) /
-                              60
-                          )}
-                          m{' '}
-                          {Math.floor(
-                            (allowance.timestamp +
-                              (allowance.outstanding * allowance.window) / allowance.allowable -
-                              Date.now() / 1000) %
-                              60
-                          )}
-                          s
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleEditClick(allowance)}
-                        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out"
-                      >
-                        Modify
-                      </button>
-                      <button
-                        onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend,0)}
-                        className="bg-red-300 text-white font-semibold py-2 px-2 rounded-full hover:bg-red-600 transition duration-300 ease-in-out ml-2"
-                      >
-                      🗑️
-                      </button>
-                    </td>
-                  </>
+                    {friendAllowances.map((allowance, idx) => (
+                      <div key={idx} className="bg-gray-700 space-y-2 rounded-lg p-4">
+                        <div className="text-center">
+                          <p className="text-lg font-semibold text-white">🪙 Token</p>
+                          <p className="text-white font-bold text-xl">{allowance.token.substring(0, 20)}</p>
+                        </div>
+  
+                        <div className="bg-gray-700 rounded-full p-3 text-center shadow-sm">
+                          <p className="font-semibold text-white">💸 Allowable</p>
+                          <p className="text-white font-semibold">{allowance.allowable}</p>
+                        </div>
+  
+                        <div className="bg-gray-700 rounded-full p-3 text-center shadow-sm">
+                          <p className="font-semibold text-white">💰 Available</p>
+                          <p className="text-white font-semibold">
+                            {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+                          </p>
+                        </div>
+  
+                        <div className="bg-gray-700 rounded-full p-3 text-center shadow-sm">
+                          <p className="font-semibold text-white">📊 Volume Streamed</p>
+                          <p className="text-white">{allowance.totalStreamed}</p>
+                        </div>
+  
+                        <div className="bg-gray-700 rounded-full p-3 text-center shadow-sm">
+                          <p className="font-semibold text-white">⏳ Allowance Type</p>
+                          <p className={`${allowance.once ? 'text-green-500' : 'text-white'} font-semibold`}>
+                            {allowance.once ? 'Once only' : 'Unlimited'}
+                          </p>
+                        </div>
+  
+                        <div className="bg-gray-700 rounded-full p-3 text-center shadow-sm">
+                          <p className="font-semibold text-white">⌛ Remaining Time</p>
+                          <p className="text-white">
+                            {!allowance.once ? (
+                              `@ ${allowance.allowable} every ${Math.floor(allowance.window / (3600 * 24))}d ${Math.floor(
+                                (allowance.window % (3600 * 24)) / 3600
+                              )}h ${Math.floor((allowance.window % 3600) / 60)}m`
+                            ) : (
+                              `ends in ${Math.floor(
+                                (allowance.timestamp +
+                                  (allowance.outstanding * allowance.window) / allowance.allowable -
+                                  Date.now() / 1000) /
+                                  3600
+                              )}h ${Math.floor(
+                                ((allowance.timestamp +
+                                  (allowance.outstanding * allowance.window) / allowance.allowable -
+                                  Date.now() / 1000) %
+                                  3600) /
+                                  60
+                              )}m`
+                            )}
+                          </p>
+                        </div>
+  
+                        {/* Editable Fields for Allowance */}
+                        {editingRow === allowance.hash ? (
+                          <>
+                            <div className="px-6 py-4">
+                              <input
+                                type="text"
+                                name="allowable"
+                                value={editedAllowance.allowable}
+                                onChange={handleChange}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                                placeholder="Allowable"
+                              />
+                            </div>
+                            <div className="px-6 py-4">
+                              <select
+                                name="once"
+                                value={editedAllowance.once ? 'Once only' : 'Unlimited'}
+                                onChange={(e) => setOnce(e.target.value === 'Once only')}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="Unlimited">Unlimited</option>
+                                <option value="Once only">Once only</option>
+                              </select>
+                            </div>
+                            <div className="px-6 py-4">
+                              <input
+                                type="number"
+                                name="window"
+                                value={editedAllowance.window}
+                                onChange={(e) => setWindow(e.target.value)}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                                placeholder="Remaining Time (in seconds)"
+                              />
+                            </div>
+                            <div className="px-6 py-4 flex space-x-2">
+                              <button
+                                onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend)}
+                                className="w-1/2 py-2 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="w-1/2 py-2 bg-gray-500 text-white font-semibold rounded-full hover:bg-gray-600 transition duration-300"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(allowance)}
+                              className="w-full py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300"
+                            >
+                              Modify
+                            </button>
+                            <button
+                              onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend, 0)}
+                              className="w-full py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition duration-300 mt-2"
+                            >
+                              🗑️
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+  
+      {/* Pro Mode Section */}
+      {pro && (
+        <>
+          {/* Batch Stream Section */}
+          <section className="bg-gray-700 p-8 rounded-3xl shadow-2xl mb-8 mx-auto max-w-4xl bg-opacity-40">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-white font-bold">Stream tokens to multiple recipients</h2>
+            </div>
+  
+            {/* Recipient Addresses Input */}
+            <div>
+              <label htmlFor="recipients" className="block mb-2 font-semibold text-white">
+                Recipient Addresses (Comma-separated):
+              </label>
+              <textarea
+                id="recipients"
+                name="recipients"
+                placeholder="Enter recipient addresses, separated by commas"
+                onChange={(e) => setRecipients(e.target.value.split(','))}
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-3xl focus:ring-2 focus:ring-blue-500 text-white"
+              ></textarea>
+            </div>
+  
+            {/* Switches */}
+            <div className="flex items-center space-x-4 my-6">
+              <label className="text-lg font-semibold text-white">Use Single Token for All</label>
+              <input
+                type="checkbox"
+                checked={useSingleToken}
+                onChange={() => setUseSingleToken(!useSingleToken)}
+                className="toggle-slider rounded-full"
+              />
+            </div>
+  
+            {/* Form for Batch Allow Stream */}
+            <div className="space-y-6">
+              {useSingleToken ? (
+                <div>
+                  <label htmlFor="token" className="block mb-2 font-semibold text-white">
+                    Token Address:
+                  </label>
+                  <input
+                    type="text"
+                    id="token"
+                    name="token"
+                    placeholder="Enter token address"
+                    onChange={(e) => setToken(e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-3xl focus:ring-2 focus:ring-blue-500 text-white"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="tokens" className="block mb-2 font-semibold text-white">
+                    Token Addresses (Comma-separated):
+                  </label>
+                  <textarea
+                    id="tokens"
+                    name="tokens"
+                    placeholder="Enter token addresses, separated by commas"
+                    onChange={(e) => setTokens(e.target.value.split(','))}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-3xl focus:ring-2 focus:ring-blue-500 text-white"
+                  ></textarea>
+                </div>
+              )}
+  
+              <div className="flex items-center space-x-4 my-6">
+                <label className="text-lg font-semibold text-white">Use Same Amount for All</label>
+                <input
+                  type="checkbox"
+                  checked={useSameAmount}
+                  onChange={() => setUseSameAmount(!useSameAmount)}
+                  className="toggle-checkbox rounded-full"
+                />
+              </div>
+  
+              {useSameAmount ? (
+                <div>
+                  <label htmlFor="amount" className="block mb-2 font-semibold text-white">
+                    Stream Amount (Same for All):
+                  </label>
+                  <input
+                    type="text"
+                    id="amount"
+                    name="amount"
+                    placeholder="Enter stream amount"
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-3xl focus:ring-2 focus:ring-blue-500 text-white"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="amounts" className="block mb-2 font-semibold text-white">
+                    Stream Amounts (Comma-separated):
+                  </label>
+                  <textarea
+                    id="amounts"
+                    name="amounts"
+                    placeholder="Enter stream amounts, separated by commas"
+                    onChange={(e) => setAmounts(e.target.value.split(','))}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-3xl focus:ring-2 focus:ring-blue-500 text-white"
+                  ></textarea>
+                </div>
+              )}
+  
+              <div className="flex space-x-4">
+                {!once && (
+                  <div className="flex-1">
+                    <label htmlFor="days" className="block mb-2 font-semibold text-white">
+                      Days to Stream Amount:
+                    </label>
+                    <input
+                      type="number"
+                      id="days"
+                      name="days"
+                      step="0.01"
+                      onChange={(e) => setWindow(e.target.value)}
+                      required
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
                 )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <div className="flex items-center justify-center">
-    <button
+                {once && (
+                  <div className="flex-1">
+                    <label htmlFor="endDate" className="block mb-2 font-semibold text-white">
+                      End Date:
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="endDate"
+                      name="endDate"
+                      onChange={(e) => {
+                        const selectedDate = new Date(e.target.value);
+                        const currentDate = new Date();
+                        const windowInSeconds = Math.floor((selectedDate - currentDate) / 1000);
+                        setWindow(windowInSeconds);
+                      }}
+                      required
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 text-white"
+                    />
+                  </div>
+                )}
+              </div>
+  
+              {/* Once Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-orange-400 font-semibold">{!once && 'Unlimited'}</span>
+                  <span className="text-white">Stream</span>
+                  <span className="text-green-400 font-semibold">{once && 'Once only'}</span>
+                </div>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="once"
+                    name="once"
+                    checked={once}
+                    onChange={(e) => setOnce(e.target.checked)}
+                    className="toggle-checkbox rounded-full"
+                  />
+                  <span className="toggle-slider round"></span>
+                </label>
+              </div>
+  
+              <button
+                className="w-full py-3 bg-blue-700 bg-opacity-80 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-300 shadow-lg"
+                onClick={() => batchStream()}
+              >
+                Set Batch Allowance
+              </button>
+              <ConnectButton />
+            </div>
+          </section>
+  
+          {/* Borrows by Lender Section */}
+          <section className="mt-8 mx-auto bg-gray-700 p-8 rounded-3xl shadow-2xl w-11/12 bg-opacity-40">
+            <h2 className="text-xl text-white font-bold mb-4">Friends That Have Spotted Me</h2>
+            <h2 className="text-xl text-white font-bold">Claimable</h2>
+  
+            <div className="bg-white p-2 rounded-3xl m-6 mt-2 bg-opacity-10">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <button
+                  onClick={() => handleClaim()}
+                  className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto w-full"
+                >
+                  Claim All
+                </button>
+                {Object.entries(totalClaim).map(([token, amount], index) => {
+                  // Define dynamic gradients
+                  const colorGradients = [
+                    'from-red-400 to-yellow-400',
+                    'from-blue-400 to-green-400',
+                    'from-green-400 to-teal-400',
+                    'from-yellow-400 to-pink-400',
+                    'from-indigo-400 to-blue-400',
+                    'from-teal-400 to-green-400',
+                  ];
+  
+                  return (
+                    <button
+                      key={token}
+                      onClick={() => handleClaim(token)}
+                      className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}
+                    >
+                      <p className="text-white text-lg font-bold m-2">
+                        {amount} {token.substring(0, 20)}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-gray-700 rounded-lg shadow overflow-hidden">
+                <thead>
+                  <tr className="bg-blue-700 text-white text-left">
+                    <th className="px-6 py-3 font-semibold text-sm">Lender</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Token</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Allowable</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Available</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Volume Streamed</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Allowance Type</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Remaining Time</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {borrows.map((borrow, idx) => (
+                    <tr key={borrow.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-700'}>
+                      <td className="px-6 py-4">{borrow.lender}</td>
+                      <td className="px-6 py-4">{borrow.token.substring(0, 20)}</td>
+                      <td className="px-6 py-4">{borrow.allowable}</td>
+                      <td className="px-6 py-4">
+                        {streamable.find((item) => item.hash === borrow.hash)?.canStream ? '' : '🔴'}
+                        {(displayedAvailableBorrowAmounts[borrow.hash] || 0).toFixed(6)}
+                      </td>
+                      <td className="px-6 py-4">{borrow.totalStreamed}</td>
+                      <td className="px-6 py-4">
+                        <span className={`font-semibold ${borrow.once ? 'text-green-500' : 'text-white'}`}>
+                          {borrow.once ? 'Once only' : 'Unlimited'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {!borrow.once ? (
+                          <span>
+                            @ {borrow.allowable} tokens per {Math.floor(borrow.window / (3600 * 24))}d{' '}
+                            {Math.floor((borrow.window % (3600 * 24)) / 3600)}h {Math.floor((borrow.window % 3600) / 60)}m{' '}
+                            {Math.floor(borrow.window % 60)}s
+                          </span>
+                        ) : (
+                          <span>
+                            ends in {Math.floor(
+                              (borrow.timestamp +
+                                (borrow.outstanding * borrow.window) / borrow.allowable -
+                                Date.now() / 1000) /
+                                3600
+                            )}
+                            h {Math.floor(
+                              ((borrow.timestamp +
+                                (borrow.outstanding * borrow.window) / borrow.allowable -
+                                Date.now() / 1000) %
+                                3600) /
+                                60
+                            )}
+                            m {Math.floor(
+                              (borrow.timestamp +
+                                (borrow.outstanding * borrow.window) / borrow.allowable -
+                                Date.now() / 1000) %
+                                60
+                            )}
+                            s
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleBorrow(borrow.tokenAddrs, borrow.lender)}
+                          className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
+                        >
+                          Claim
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+  
+          {/* Allowances to Friends Section */}
+          <section className="mt-8 mx-auto bg-gray-700 p-8 rounded-3xl shadow-2xl mb-8 w-11/12 bg-opacity-40">
+            <h2 className="text-xl text-white font-bold mb-4">Allowances to Friends</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-gray-700 rounded-lg shadow overflow-hidden">
+                <thead>
+                  <tr className="bg-blue-700 text-white text-left">
+                    <th className="px-6 py-3 font-semibold text-sm">Friend</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Token</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Allowable</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Available</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Volume Streamed</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Allowance Type</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Remaining Time</th>
+                    <th className="px-6 py-3 font-semibold text-sm">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allowances
+                    .sort((a, b) => a.friend.localeCompare(b.friend))
+                    .map((allowance, idx) => (
+                      <tr key={allowance.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-700'}>
+                        {editingRow === allowance.hash ? (
+                          <>
+                            <td className="px-6 py-4">{allowance.friend.substring(0, 20)}</td>
+                            <td className="px-6 py-4">{allowance.token.substring(0, 20)}</td>
+  
+                            {/* Editable Allowable Field */}
+                            <td className="px-6 py-4">
+                              <input
+                                type="text"
+                                name="allowable"
+                                value={editedAllowance.allowable}
+                                onChange={handleChange}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                              />
+                            </td>
+  
+                            {/* Display Available */}
+                            <td className="px-6 py-4">
+                              {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+                            </td>
+  
+                            <td className="px-6 py-4">{allowance.totalStreamed}</td>
+  
+                            {/* Editable Allowance Type Field */}
+                            <td className="px-6 py-4">
+                              <select
+                                name="once"
+                                value={editedAllowance.once ? 'Once only' : 'Unlimited'}
+                                onChange={(e) => setOnce(e.target.value === 'Once only')}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="Unlimited">Unlimited</option>
+                                <option value="Once only">Once only</option>
+                              </select>
+                            </td>
+  
+                            {/* Editable Remaining Time Field */}
+                            <td className="px-6 py-4">
+                              <input
+                                type="number"
+                                name="window"
+                                value={editedAllowance.window}
+                                onChange={(e) => setWindow(e.target.value)}
+                                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter remaining time (in seconds)"
+                              />
+                            </td>
+  
+                            <td className="px-6 py-4 flex space-x-2">
+                              <button
+                                onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend)}
+                                className="bg-green-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300 ease-in-out"
+                              >
+                                Cancel
+                              </button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-6 py-4">{allowance.friend}</td>
+                            <td className="px-6 py-4">{allowance.token.substring(0, 20)}</td>
+                            <td className="px-6 py-4">{allowance.allowable}</td>
+                            <td className="px-6 py-4">
+                              {(displayedAvailableAmounts[allowance.hash] || 0).toFixed(6)}
+                            </td>
+                            <td className="px-6 py-4">{allowance.totalStreamed}</td>
+                            <td className="px-6 py-4">
+                              <span className={`font-semibold ${allowance.once ? 'text-green-500' : 'text-white'}`}>
+                                {allowance.once ? 'Once only' : 'Unlimited'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {!allowance.once ? (
+                                <span>
+                                  {allowance.allowable} tokens every {Math.floor(allowance.window / (3600 * 24))}d{' '}
+                                  {Math.floor((allowance.window % (3600 * 24)) / 3600)}h{' '}
+                                  {Math.floor((allowance.window % 3600) / 60)}m{' '}
+                                  {Math.floor(allowance.window % 60)}s
+                                </span>
+                              ) : (
+                                <span>
+                                  ends in {Math.floor(
+                                    (allowance.timestamp +
+                                      (allowance.outstanding * allowance.window) / allowance.allowable -
+                                      Date.now() / 1000) /
+                                      3600
+                                  )}
+                                  h {Math.floor(
+                                    ((allowance.timestamp +
+                                      (allowance.outstanding * allowance.window) / allowance.allowable -
+                                      Date.now() / 1000) %
+                                      3600) /
+                                      60
+                                  )}
+                                  m {Math.floor(
+                                    (allowance.timestamp +
+                                      (allowance.outstanding * allowance.window) / allowance.allowable -
+                                      Date.now() / 1000) %
+                                      60
+                                  )}
+                                  s
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 flex space-x-2">
+                              <button
+                                onClick={() => handleEditClick(allowance)}
+                                className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out"
+                              >
+                                Modify
+                              </button>
+                              <button
+                                onClick={() => requestBorrow(allowance.tokenAddrs, allowance.friend, 0)}
+                                className="bg-red-500 text-white font-semibold py-2 px-2 rounded-full hover:bg-red-600 transition duration-300 ease-in-out"
+                              >
+                                🗑️
+                              </button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+  
+          {/* Deploy Button */}
+          <div className="flex items-center justify-center">
+            <button
               onClick={() => handledepoly()}
               className="p-3 mx-auto bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 ease-in-out"
             >
               Deploy to Current Network
-              </button>
-              </div>
-  </>
-)}
-
-
-      </main>
-    </div>
+            </button>
+          </div>
+        </>
+      )}
+    </main>
+  </div>
+  
   );
   
 };

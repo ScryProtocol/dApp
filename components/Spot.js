@@ -471,250 +471,328 @@ const MULTICALL_ABI = [
       { address: '0x5300000000000000000000000000000000000004', symbol: 'WETH' },   
     ],
   };
-  return (
-    <div className="main-container">
-      <div className="container lg:w-1/2">
-        <h1 className="main-title">🍕 Spot a Friend 🚀</h1>
-        <label className="subtitle">
-          🌈 Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees! 🎉
-        </label>
-
-        <div>
-          <Toaster />
-          <div className="form-container">
-            <div className="form-group">
-              <label htmlFor="token" className="form-label">
-                🪙 Token Address:
-              </label>
-              <select
-                id="token"
-                name="token"
-                value={stoken}
-                onChange={(e) => setToken(e.target.value)}
-                required
-                className="form-input"
-              >
-                <option value="">{stoken ? stoken : 'Select a token'}</option>
-                {tokenOptions[ChainId]?.map((token) => (
-                  <option key={token.address} value={token.address}>
-                    {token.symbol}
-                  </option>
-                ))}
-                <option value="custom">Custom</option>
-              </select>
-              {stoken === 'custom' && (
-                <input
-                  type="text"
-                  id="customToken"
-                  name="customToken"
+  return (<body className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-200 font-sans flex flex-col items-center py-10">
+    <Toaster />
+  
+    {/* Main Container */}
+    <div className="">
+  
+      {/* Flex Container for Forms and Sections */}
+      <div className="flex flex-col gap-2"> {/* Removed lg:flex-row */}
+  
+        {/* Spot a Friend Form */}
+        <div className="container w-full bg-gray-700 bg-opacity-50 rounded-3xl p-6 shadow-lg">
+          <h1 className="text-4xl font-extrabold text-pink-500 mb-4">🍕 Spot a Friend 🚀</h1>
+          <label className="block mb-6 text-lg">
+            🌈 Allow friends to borrow tokens from your wallet, no locking tokens, no interest, no fees! 🎉
+          </label>
+  
+          <div>
+            <Toaster />
+            <div className="form-container space-y-6">
+  
+              {/* Token Address Selection */}
+              <div className="form-group text-left">
+                <label htmlFor="token" className=" block font-semibold mb-2">
+                  🪙 Token Address:
+                </label>
+                <select
+                  id="token"
+                  name="token"
+                  value={stoken}
                   onChange={(e) => setToken(e.target.value)}
                   required
-                  placeholder="Enter custom token address"
-                  className="form-input"
+                  className="form-input w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                >
+                  <option value="">{stoken ? stoken : 'Select a token'}</option>
+                  {tokenOptions[ChainId]?.map((token) => (
+                    <option key={token.address} value={token.address}>
+                      {token.symbol}
+                    </option>
+                  ))}
+                  <option value="custom">Custom</option>
+                </select>
+                {stoken === 'custom' && (
+                  <input
+                    type="text"
+                    id="customToken"
+                    name="customToken"
+                    onChange={(e) => { 
+                      setToken(e.target.value); 
+                      toast.success('Custom token set'); 
+                    }}
+                    required
+                    placeholder="Enter custom token address"
+                    className="form-input mt-4 w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                  />
+                )}
+              </div>
+  
+              {/* Borrower Address/ENS */}
+              <div className="form-group text-left">
+                <label htmlFor="friend" className=" block font-semibold mb-2">
+                  👥 Borrower Address/ENS:
+                </label>
+                <input
+                  type="text"
+                  id="friend"
+                  name="friend"
+                  value={friend}
+                  onChange={(e) => setFriend(e.target.value)}
+                  required
+                  className="form-input w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
                 />
-              )}
+              </div>
+  
+              {/* Borrow Amount */}
+              <div className="form-group text-left">
+                <label htmlFor="amount" className=" block font-semibold mb-2">
+                  💸 Borrow Amount:
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  step="0.01"
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                  className="form-input w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                />
+              </div>
+  
+              {/* Duration */}
+              <div className="form-group text-left">
+                <label htmlFor="window" className=" block font-semibold mb-2">
+                  ⏰ Duration (in days):
+                </label>
+                <input
+                  type="number"
+                  id="window"
+                  name="window"
+                  placeholder="Enter duration in days"
+                  className="form-input w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                />
+              </div>
+  
+              {/* Subscription Type */}
+              <div className="form-group text-left">
+                <label htmlFor="once" className=" block font-semibold mb-2">
+                  Subscription Type:
+                </label>
+                <select 
+                  id="once" 
+                  className="form-input w-full p-4 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                >
+                  <option value="false">Recurring</option>
+                  <option value="true">One-time</option>
+                </select>
+              </div>
+  
+              {/* Submit Button */}
+              <button
+                onClick={() => requestBorrow(stoken, friend, amount)}
+                className="submit-button w-full py-4 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300"
+              >
+                Set Allowance
+              </button>
+  
+              {/* Connect Button */}
+              <div className="mt-4">
+                <ConnectButton />
+              </div>
+  
             </div>
-            <div className="form-group">
-              <label htmlFor="friend" className="form-label">
-                👥 Borrower Address/ENS:
-              </label>
-              <input
-                type="text"
-                id="friend"
-                name="friend"
-                value={friend}
-                onChange={(e) => setFriend(e.target.value)}
-                required
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="amount" className="form-label">
-                💸 Borrow Amount:
-              </label>
-              <input
-                type="number"
-                id="amount"
-                name="amount"
-                step="0.01"
-                onChange={(e) => setAmount(e.target.value)}
-                required
-                className="form-input"
-              />
-            </div>
-            <button
-              onClick={() => requestBorrow(stoken, friend, amount)}
-              className="submit-button"
-            >
-              Set Allowance
-            </button>
-            <div style={{marginTop:'16px'}}>
-
-            <ConnectButton style={{margin:'10px'}}/>
-            </div>
-
           </div>
         </div>
-      </div>
-
-      <div className="container lg:w-1/2" id="subscriptionsContainer">
-        <h1 className="section-title">🤝 Allowances to Friends</h1>
-        <div id="allowances">
-          {Object.entries(
-            allowances
-              .filter((allowance) => allowance.lender === userAddress)
-              .reduce((acc, allowance) => {
-                if (!acc[allowance.friend]) {
-                  acc[allowance.friend] = [];
-                }
-                acc[allowance.friend].push(allowance);
-                return acc;
-              }, {})
-          ).map(([friend, friendAllowances]) => (
-            <div key={friend} className="subscription-item">
-              <h3 className="subscription-title">{map(friend).toString().substring(0,20)}{friend.show}</h3>
-              <div className="token-grid">
-                {friendAllowances.map((allowance) => (
-                  <div key={allowance.hash} className="token-card">
-                    <div className="allowance-item  grid">
-                      <p className="item-label">🪙 Token:</p>
-                      <p className="token">
-                        {tokenOptions[ChainId]?.find(
-                          (token) =>
-                            token.address.toLowerCase() ===
-                            allowance.token.toString().toLowerCase()
-                        )?.symbol || allowance.token}
-                      </p>
-                      <div className="item-row">
-                      <div className="item-column">
-                      <p className="item-label">🎯 Limit:</p>
-                      <p className="item-value">{allowance.allowable}</p>    </div>
-  <div className="item-column">
-
-
-                      <p className="item-label">💸 Owed:</p>
-                      <p className="item-value">{allowance.outstanding}</p>
-
-                      </div>
-</div>
-                      <p className="item-label">📊 Volume Borrowed:</p>
-                      <p className="item-value">{allowance.totalBorrowed}</p>
-                      <div className="progress-bar">
-                        <div
-                          className="progress-bar-inner"
-                          style={{
-                            width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
-                          }}
-                        >
-                          {((allowance.outstanding / allowance.allowable) * 100).toFixed(2)}%
+  
+        {/* Allowances to Friends */}
+        <div className="container w-full bg-gray-700 bg-opacity-50 rounded-3xl p-6 shadow-lg">
+          <h1 className="section-title text-4xl font-extrabold text-pink-500 mb-4">🤝 Allowances to Friends</h1>
+          <div id="allowances" className="space-y-6">
+  
+            {Object.entries(
+              allowances
+                .filter((allowance) => allowance.lender === userAddress)
+                .reduce((acc, allowance) => {
+                  if (!acc[allowance.friend]) {
+                    acc[allowance.friend] = [];
+                  }
+                  acc[allowance.friend].push(allowance);
+                  return acc;
+                }, {})
+            ).map(([friend, friendAllowances]) => (
+              <div key={friend} className=" bg-gray-800 bg-opacity-50 rounded-3xl p-6 shadow-inner">
+                <h3 className="subscription-title text-2xl font-bold text-pink-500 mb-4">
+                  {map(friend).toString().substring(0, 20)}{friend.show}
+                </h3>
+                <div className="token-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {friendAllowances.map((allowance) => (
+                    <div key={allowance.hash} className="token-card bg-gray-700 bg-opacity-50 rounded-3xl p-4 shadow-md flex flex-col">
+                      
+                      {/* Allowance Details */}
+                      <div className="allowance-item space-y-2">
+                        <p className="item-label font-semibold">🪙 Token:</p>
+                        <p className="token text-white">
+                          {tokenOptions[ChainId]?.find(
+                            (token) =>
+                              token.address.toLowerCase() ===
+                              allowance.token.toString().toLowerCase()
+                          )?.symbol || allowance.token}
+                        </p>
+                        
+                        {/* Limit and Owed */}
+                        <div className="item-row flex flex-col sm:flex-row sm:space-x-6">
+                          <div className="item-column bg-gray-800 bg-opacity-50">
+                            <p className="item-label font-semibold">🎯 Limit:</p>
+                            <p className="item-value text-white">{allowance.allowable}</p>
+                          </div>
+                          <div className="item-column bg-gray-800 bg-opacity-50">
+                            <p className="item-label font-semibold">💸 Owed:</p>
+                            <p className="item-value text-white">{allowance.outstanding}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Volume Borrowed */}
+                        <p className="item-label font-semibold">📊 Volume Borrowed:</p>
+                        <p className="item-value text-white">{allowance.totalBorrowed}</p>
+                        
+                        {/* Progress Bar */}
+                        <div className="progress-bar w-full bg-gray-600 rounded-full h-3 mt-2">
+                          <div
+                            className="progress-bar-inner bg-pink-500 h-3 rounded-full"
+                            style={{
+                              width: `${(allowance.outstanding / allowance.allowable) * 100}%`,
+                            }}
+                          ></div>
                         </div>
                       </div>
+                      
+                      {/* Amount Input */}
+                      <input
+                        type="text"
+                        id={`token-${allowance.hash}`}
+                        name={`token-${allowance.hash}`}
+                        placeholder="Amount"
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                        className="form-input mt-4 w-full p-2 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                      />
+  
+                      {/* Set Allowance Button */}
+                      <button
+                        onClick={() => requestBorrow(allowance.token, friend, amount)}
+                        className="submit-button mt-4 w-full py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300"
+                      >
+                        Set Allowance
+                      </button>
                     </div>
-                    <input
-                      type="text"
-                      id="token"
-                      name="token"
-                      placeholder="Amount"
-                      onChange={(e) => setAmount(e.target.value)}
-                      required
-                      className="form-input"
-                    />
-                    <button
-                      onClick={() => requestBorrow(allowance.token, friend, amount)}
-                      className="submit-button"
-                    >
-                      Set Allowance
-                    </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div className="container lg:w-1/2" id="subscriptionsContainer">
-        <h1 className="section-title">🙌 Friends That Have Spotted Me</h1>
-        <div id="borrows">
-          {Object.entries(
-            borrows
-              .filter((borrow) => borrow.friend === userAddress)
-              .reduce((acc, borrow) => {
-                if (!acc[borrow.lender]) {
-                  acc[borrow.lender] = [];
-                }
-                acc[borrow.lender].push(borrow);
-                return acc;
-              }, {})
-          ).map(([lender, lenderBorrows]) => (
-            <div key={lender} className="subscription-item">
-              <h3 className="subscription-title">{map(lender).toString().substring(0,20)}</h3>
-              <div className="token-grid">
-                {lenderBorrows.map((borrow) => (
-                  <div key={borrow.hash} className="token-card">
-                    <div className="borrow-item">
-                      <p className="item-label">🪙 Token:</p>
-                      <p className="token">
-                        {tokenOptions[ChainId]?.find(
-                          (token) =>
-                            token.address.toLowerCase() ===
-                            borrow.token.toString().toLowerCase()
-                        )?.symbol || borrow.token}
-                      </p>
-                      <div className="item-row">
-                      <div className="item-column">
-                      <p className="item-label">💸 Amount:</p>
-                      <p className="item-value">{borrow.allowable}</p>
-                      </div>
-                      <div className="item-column">
-                      <p className="item-label">🏦 Outstanding:</p>
-                      <p className="item-value">{borrow.outstanding}</p>
-                      </div>
-                      </div>
-                      <p className="item-label">📊 Volume Borrowed:</p>
-                      <p className="item-value">{borrow.totalBorrowed}</p>
-                      <div className="progress-bar">
-                        <div
-                          className="progress-bar-inner"
-                          style={{
-                            width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
-                          }}
-                        >
-                          {((borrow.outstanding / borrow.allowable) * 100).toFixed(2)}%
+  
+        {/* Friends That Have Spotted Me */}
+        <div className="container w-full bg-gray-700 bg-opacity-50 rounded-3xl p-6 shadow-lg">
+          <h1 className="section-title text-4xl font-extrabold text-pink-500 mb-4">🙌 Friends That Have Spotted Me</h1>
+          <div id="borrows" className="space-y-6">
+  
+            {Object.entries(
+              borrows
+                .filter((borrow) => borrow.friend === userAddress)
+                .reduce((acc, borrow) => {
+                  if (!acc[borrow.lender]) {
+                    acc[borrow.lender] = [];
+                  }
+                  acc[borrow.lender].push(borrow);
+                  return acc;
+                }, {})
+            ).map(([lender, lenderBorrows]) => (
+              <div key={lender} className=" bg-gray-800 bg-opacity-50 rounded-3xl p-6 shadow-inner">
+                <h3 className="subscription-title text-2xl font-bold text-pink-500 mb-4">
+                  {map(lender).toString().substring(0, 20)}
+                </h3>
+                <div className="token-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {lenderBorrows.map((borrow) => (
+                    <div key={borrow.hash} className="token-card bg-gray-700 bg-opacity-50 rounded-3xl p-4 shadow-md flex flex-col">
+                      
+                      {/* Borrow Details */}
+                      <div className="borrow-item space-y-2">
+                        <p className="item-label font-semibold">🪙 Token:</p>
+                        <p className="token text-white">
+                          {tokenOptions[ChainId]?.find(
+                            (token) =>
+                              token.address.toLowerCase() ===
+                              borrow.token.toString().toLowerCase()
+                          )?.symbol || borrow.token}
+                        </p>
+                        
+                        {/* Amount and Outstanding */}
+                        <div className="item-row flex flex-col sm:flex-row sm:space-x-6">
+                          <div className="item-column bg-gray-800 bg-opacity-50 p-2">
+                            <p className="item-label font-semibold">💸 Amount:</p>
+                            <p className="item-value text-white">{borrow.allowable}</p>
+                          </div>
+                          <div className="item-column bg-gray-800 bg-opacity-50 p-2">
+                            <p className="item-label font-semibold">🏦 Outstanding:</p>
+                            <p className="item-value text-white">{borrow.outstanding}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Volume Borrowed */}
+                        <p className="item-label font-semibold">📊 Volume Borrowed:</p>
+                        <p className="item-value text-white">{borrow.totalBorrowed}</p>
+                        
+                        {/* Progress Bar */}
+                        <div className="progress-bar w-full bg-gray-600 rounded-full h-3 mt-2">
+                          <div
+                            className="progress-bar-inner bg-pink-500 h-3 rounded-full"
+                            style={{
+                              width: `${(borrow.outstanding / borrow.allowable) * 100}%`,
+                            }}
+                          ></div>
                         </div>
                       </div>
+                      
+                      {/* Amount Input */}
+                      <input
+                        type="text"
+                        id={`token-borrow-${borrow.hash}`}
+                        name={`token-borrow-${borrow.hash}`}
+                        placeholder="Amount"
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                        className="form-input mt-4 w-full p-2 bg-gray-600 bg-opacity-50 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                      />
+  
+                      {/* Borrow and Repay Buttons */}
+                      <div className="button-group flex space-x-4 mt-4">
+                        <button
+                          onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
+                          className="borrow-button w-full py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300"
+                        >
+                          Borrow
+                        </button>
+                        <button
+                          onClick={() => handleRepay(borrow.token, borrow.lender, amount)}
+                          className="repay-button w-full py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300"
+                        >
+                          Repay
+                        </button>
+                      </div>
                     </div>
-                    <input
-                      type="text"
-                      id="token"
-                      name="token"
-                      placeholder="Amount"
-                      onChange={(e) => setAmount(e.target.value)}
-                      required
-                      className="form-input"
-                    />
-                    <div className="button-group">
-                      <button
-                        onClick={() => handleBorrow(borrow.token, borrow.lender, amount)}
-                        className="borrow-button"
-                      >
-                        Borrow
-                      </button>
-                      <button
-                        onClick={() => handleRepay(borrow.token, borrow.lender, amount)}
-                        className="repay-button"
-                      >
-                        Repay
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+  
       </div>
     </div>
+  </body>
+  
   );
 };
 export default Spot;

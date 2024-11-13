@@ -557,285 +557,416 @@ const handleClaim = async (token) => {
     toast.error('Error claiming');
   }
 };
-  return (<body className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-300 text-gray-800 font-sans flex flex-col items-center py-10">
+  return (<body className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 font-sans flex flex-col items-center py-10">
     <Toaster />
-    <div className="container max-w-2xl w-11/12 p-8 bg-white rounded-3xl shadow-xl text-center transition-transform transform hover:scale-105">
-
-    {/* Toast and Subscription Form */}
-    {!showSubscribeForm && (
-      <div>
-        <form onSubmit={handleCreateSubscription} className="space-y-8">
-          <h1 className="text-5xl font-extrabold text-orange-700 mb-8">🍕 Create Subscription</h1>
-          <div className="emoji text-6xl mb-8">🍕🎉</div>
-          <div className="bg-yellow-100 rounded-lg p-10 shadow-lg">
-            <div className="space-y-6">
-            <div className="text-left">
-                <label htmlFor="networkSelect" className="block font-semibold text-gray-700 mb-2">Network:</label>
-                <select id="networkSelect" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                  <option value="1">Mainnet</option>
-                  <option value="10">holesky</option>
-                  <option value="10">Optimism</option>
-                  <option value="8453">Base</option>
-                  <option value="gnosis">Gnosis</option>
-                  <option value="534352">Scroll</option>
-                </select>
-              </div>
-              <div className="text-left">
-                <label htmlFor="tokenAddress" className="block font-semibold text-gray-700 mb-2">Token Address:</label>
-                <select
-                  id="tokenAddress"
-                  onChange={(e) => setselectedToken(e.target.value)}
-                  className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-                >
-                  <option value="">Select a token</option>
-                  {tokenOptions[ChainId]?.map((token) => (
-                    <option key={token.address} value={token.address}>
-                      {token.symbol}
-                    </option>
-                  ))}
-                  <option value="custom">Custom Token</option>
-                </select>
-                {selectedToken === 'custom' && (
-                  <input
-                    type="text"
-                    id="customTokenAddress"
-                    onChange={(e) => { setselectedToken(e.target.value); toast.success('Custom token set'); }}
-                    placeholder="Enter custom token address"
-                    className="w-full p-4 mt-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+  
+    {/* Main Subscription Container */}
+    <div className="container max-w-2xl w-11/12 p-8 bg-gray-800 bg-opacity-60 backdrop-blur-lg rounded-3xl shadow-2xl text-center transition-transform transform hover:scale-105">
+      
+      {/* Toast and Subscription Form */}
+      {!showSubscribeForm && (
+        <div>
+          <form onSubmit={handleCreateSubscription} className="space-y-8">
+            
+            {/* Form Header */}
+            <h1 className="text-5xl font-extrabold text-pink-400 mb-8">🍕 Create Subscription</h1>
+            <div className="emoji text-6xl mb-8">🍕🎉</div>
+            
+            {/* Form Container */}
+            <div className="bg-gray-700 bg-opacity-50 rounded-lg p-10 shadow-lg">
+              <div className="space-y-6">
+                
+                {/* Network Selection */}
+                <div className="text-left">
+                  <label htmlFor="networkSelect" className="block font-semibold mb-2">Network:</label>
+                  <select id="networkSelect" className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
+                    <option value="1">Mainnet</option>
+                    <option value="10">Holesky</option>
+                    <option value="10">Optimism</option>
+                    <option value="8453">Base</option>
+                    <option value="gnosis">Gnosis</option>
+                    <option value="534352">Scroll</option>
+                  </select>
+                </div>
+                
+                {/* Token Address Selection */}
+                <div className="text-left">
+                  <label htmlFor="tokenAddress" className="block font-semibold mb-2">Token Address:</label>
+                  <select
+                    id="tokenAddress"
+                    onChange={(e) => setselectedToken(e.target.value)}
+                    className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                  >
+                    <option value="">Select a token</option>
+                    {tokenOptions[ChainId]?.map((token) => (
+                      <option key={token.address} value={token.address}>
+                        {token.symbol}
+                      </option>
+                    ))}
+                    <option value="custom">Custom Token</option>
+                  </select>
+                  {selectedToken === 'custom' && (
+                    <input
+                      type="text"
+                      id="customTokenAddress"
+                      onChange={(e) => { 
+                        setselectedToken(e.target.value); 
+                        toast.success('Custom token set'); 
+                      }}
+                      placeholder="Enter custom token address"
+                      className="w-full p-4 mt-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+                    />
+                  )}
+                </div>
+                
+                {/* Subscribe To Address */}
+                <div className="text-left">
+                  <label htmlFor="subscriber" className="block font-semibold mb-2">Subscribe To Address:</label>
+                  <input 
+                    type="text" 
+                    id="subscriber" 
+                    placeholder="Enter subscribe address (blank for own address)" 
+                    className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition" 
                   />
-                )}
+                </div>
+                
+                {/* Amount */}
+                <div className="text-left">
+                  <label htmlFor="amount" className="block font-semibold mb-2">Amount:</label>
+                  <input 
+                    type="number" 
+                    step="0.001" 
+                    id="amount" 
+                    placeholder="Enter amount of tokens" 
+                    className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition" 
+                  />
+                </div>
+                
+                {/* Duration */}
+                <div className="text-left">
+                  <label htmlFor="window" className="block font-semibold mb-2">Duration (in days):</label>
+                  <input 
+                    type="number" 
+                    id="window" 
+                    placeholder="Enter duration in days" 
+                    className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition" 
+                  />
+                </div>
+                
+                {/* Subscription Type */}
+                <div className="text-left">
+                  <label htmlFor="once" className="block font-semibold mb-2">Subscription Type:</label>
+                  <select id="once" className="w-full p-4 bg-gray-600 bg-opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition">
+                    <option value="false">Recurring</option>
+                    <option value="true">One-time</option>
+                  </select>
+                </div>
               </div>
-              <div className="text-left">
-                <label htmlFor="subscriber" className="block font-semibold text-gray-700 mb-2">Subscribe To Address:</label>
-                <input type="text" id="subscriber" placeholder="Enter subscribe address (blank for own address)" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
-              </div>
-              <div className="text-left">
-                <label htmlFor="amount" className="block font-semibold text-gray-700 mb-2">Amount:</label>
-                <input type="number" step={0.001} id="amount" placeholder="Enter amount of tokens" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
-              </div>
-              <div className="text-left">
-                <label htmlFor="window" className="block font-semibold text-gray-700 mb-2">Duration (in days):</label>
-                <input type="number" id="window" placeholder="Enter duration in days" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition" />
-              </div>
-              <div className="text-left">
-                <label htmlFor="once" className="block font-semibold text-gray-700 mb-2">Subscription Type:</label>
-                <select id="once" className="w-full p-4 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                  <option value="false">Recurring</option>
-                  <option value="true">One-time</option>
-                </select>
+              
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                className="w-full py-4 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 mt-8"
+              >
+                Create Subscription Link
+              </button>
+            </div>
+          </form>
+  
+          {/* Display Subscription Link */}
+          {subscriptionLink && (
+            <div className="bg-gray-700 bg-opacity-50 rounded-lg p-6 mt-8 shadow-lg">
+              <p className="text-lg font-semibold">Subscription Link:</p>
+              <div className="mt-2 flex items-center justify-center space-x-4">
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(subscriptionLink);
+                    toast.success('Subscription link copied to clipboard!');
+                  }} 
+                  className="text-lg font-semibold px-6 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition duration-300"
+                >
+                  Copy 🔗
+                </button>
+                <a 
+                  href={subscriptionLink} 
+                  className="text-pink-300 underline break-all" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  {subscriptionLink}
+                </a>
               </div>
             </div>
-            <button type="submit" className="w-full py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition duration-300 mt-8">Create Subscription Link</button>
-          </div>
-        </form>
-        {subscriptionLink && (
-          <div className="bg-yellow-100 rounded-lg p-6 mt-8 shadow-lg">
-            <p className="text-lg font-semibold text-gray-700">Subscription Link:</p>
-            <button onClick={() => {navigator.clipboard.writeText(subscriptionLink);
-              toast.success('Subscription link copied to clipboard!')}
-            } className="text-lg text-white font-semibold px-6 mt-2 rounded-full p-2 bg-orange-600 hover:bg-orange-300 transition duration-300
-            ">copy🔗</button>
-            <br/>
-            <a href={subscriptionLink} className="text-red-500 underline break-all mt-2">{subscriptionLink}</a>
-          </div>
-        )}
-      </div>
-    )}
-
-    {/* Subscription Details Section */}
-    {showSubscribeForm && (
-      <div className="p-2 text-center mt-2">
-            <h1 className="font-semibold text-orange-500 text-4xl mb-2">Subscribe</h1>
-        <div className="bg-yellow-100 rounded-lg p-6 shadow-lg">
-          <div className="flex flex-col mb-6">
-            <span className="font-semibold text-gray-700">🍕 Subscription to:</span>
-            <span className="text-orange-600 font-semibold text-xl">{subscriptionDetails.friend}</span>
-          </div>
-
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">📬 My Address:</span>
-            <span className="text-orange-600 font-semibold">{subscriptionDetails.lender}</span>
-          </div>
-
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">💰 Token:</span>
-            <span className="text-orange-600 font-semibold">{subscriptionDetails.token}</span>
-          </div>
-
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">🎉 Amount:</span>
-            <span className="text-orange-600">{subscriptionDetails.allowable}</span>
-          </div>
-
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">⏰ Window:</span>
-            <span className="text-orange-600">{subscriptionDetails.window}</span>
-          </div>
-
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">Once:</span>
-            <span className="text-orange-600">{subscriptionDetails.once === 'true' ? 'One-time' : 'Recurring'}</span>
-          </div>
+          )}
         </div>
-
-        <div className="mt-6">
-          <button onClick={handleSubscribe} className="w-full py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition duration-300">Subscribe</button>
-        </div>
-      </div>
-    )}
-
-    {/* Subscription Success Message */}
-    {showSubscribedMessage && (
-      <div className="bg-yellow-100 rounded-lg p-8 mt-8 shadow-lg">
-        <div className="emoji text-6xl mb-4">🎉🍕</div>
-        <h2 className="text-4xl font-bold text-orange-700 mb-4">Congratulations!</h2>
-        <p className="text-lg font-semibold text-gray-700 mb-4">Your subscription is cooking!</p>
-        <div className="subscribed-animation relative w-64 h-64 mx-auto mt-6">
-          <div className="absolute top-0 left-0 w-full h-full bg-yellow-400 rounded-full animate-pulse"></div>
-          <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '20%', left: '15%' }}></div>
-          <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '30%', right: '20%' }}></div>
-          <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '60%', left: '30%' }}></div>
-          <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '60%', right: '10%' }}></div>
-          <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '30%', left: '40%' }}></div>
-          <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '50%', right: '30%' }}></div>
-          <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '70%', left: '20%' }}></div>
-        </div>
-      
-  </div>
-)}
-<div className="flex items-center mt-2 gap-2">
-    <ConnectButton />
-    {!userAddress && <BlueCreateWalletButton />}
-  </div>
-  </div>
-
-  {/* Subscriptions Section */}
-  <div className="container max-w-2xl w-11/12 p-8 bg-white rounded-3xl shadow-xl text-center mt-12">
-    <h1 className="text-5xl font-extrabold text-orange-700 mb-8">My Subscriptions</h1>
-    <button onClick={fetchSubscriptions} className="w-full py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition duration-300 mt-8">Check Subscriptions</button>
-
-    <div className="space-y-6 mt-8">
-      {subscriptions.map((subscription, index) => (
-        <div key={index} className="bg-yellow-100 rounded-lg p-6 shadow-lg">
-          <div className="flex flex-col">
-            <span className="font-semibold text-orange-500">🍕 Subscription to:</span>
-            <span className="text-orange-600 font-semibold text-xl">{subscription.friend}</span>
-          </div>
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">💰 Token:</span>
-            <span className="text-orange-600">{subscription.show}</span>
-          </div>
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">🎉 Amount:</span>
-            <span className="text-orange-600">{subscription.allowable}</span>
-          </div>
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">💧 Available:</span>
-            <span className="text-orange-600">{subscription.outstanding.toLocaleString('en', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 10,
-    useGrouping: false,
-  })}</span>
-          </div>
-          <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">⏰ Window:</span>
-            <span className="text-orange-600">{subscription.window}</span>
-          </div>
-          <div className="mt-6">
-            <button className="w-full py-4 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition duration-300" onClick={() => handleCancelSubscription(subscription.token, subscription.friend)}>Cancel Subscription</button>
-          </div>
-        </div>
-      ))}
-      <div id="subsList" className="space-y-6 mt-8">
-  {subs.length > 0 && (
-    <>
-      <h1 className="text-4xl font-extrabold text-orange-600 mb-6">Subscribed To Me</h1>
-      <p className="text-center bg-orange-500 text-white font-semibold py-2 rounded-full w-32 mx-auto">
-        {subs.length} Subs
-      </p>
-      {totalClaim.toString().length>0&&(<><h2 className="text-2xl text-orange-600 font-bold">Claimable</h2>
-          
-          <button onClick={()=>handleClaim()} className="bg-gradient-to-r from-red-400 to-yellow-400 text-white font-semibold px-12 p-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto">
-            Claim All
-          </button>
-              <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl m-6 mt-2">
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-      {Object.entries(totalClaim).map(([token, amount], index) => {
-        // Define dynamic gradients
-        const colorGradients = [
-          "from-red-400 to-yellow-400",
-          "from-blue-400 to-green-400",
-          "from-green-400 to-teal-400",
-          "from-yellow-400 to-pink-400",
-          "from-indigo-400 to-blue-400",
-          "from-teal-400 to-green-400",
-        ];
-    
-        return (
-          <button
-            key={token}
-            onClick={() => handleClaim(token)}
-            className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}>
-            <p className="text-white text-lg font-bold m-2">
-              {amount.substring(0,12)} {subs.find(sub => sub.token === token)?.show ?? token.substring(0, 20)}
-            </p>
-          </button>
-        )
-      })}
-    </div>
-    </div>
-        </>
-  )}</>)}
+      )}
   
-  {subs.map((subscription, index) => (
-    <div key={index} className="bg-yellow-100 rounded-lg p-6 shadow-lg">
-      <div className="flex flex-col">
-        <span className="font-semibold text-orange-500">🍕 Subscription from:</span>
-        <span className="text-orange-600 font-semibold text-xl">{subscription.lender}</span>
-      </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-        <span className="font-semibold text-gray-700">💰 Token:</span>
-        <span className="text-orange-600">
-          {subscription.show}
-        </span>
-      </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-        <span className="font-semibold text-gray-700">🎉 Amount:</span>
-        <span className="text-orange-600">{subscription.allowable}</span>
-      </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-            <span className="font-semibold text-gray-700">💧 Available:</span>
-            <span className="text-orange-600"><span className="text-xs relative" style={{bottom:'2px'}}>{streamable[index]==true ? '' : '🔴'}</span>{subscription.outstanding.toLocaleString('en', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 10,
-    useGrouping: false,
-  })}</span>
+      {/* Subscription Details Section */}
+      {showSubscribeForm && (
+        <div className="p-6 text-center mt-2 bg-gray-700 bg-opacity-20 backdrop-blur-lg rounded-3xl">
+          <h1 className="font-semibold text-pink-400 text-4xl mb-4">Subscribe</h1>
+          <div className="">
+            
+            {/* Subscription Information */}
+            <div className="flex flex-col mb-6">
+              <span className="font-semibold">🍕 Subscription to:</span>
+              <span className="text-white font-semibold text-xl">{subscriptionDetails.friend}</span>
+            </div>
+            
+            {/* My Address */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">📬 My Address:</span>
+              <span className="text-white font-semibold">{subscriptionDetails.lender}</span>
+            </div>
+            
+            {/* Token */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">💰 Token:</span>
+              <span className="text-white font-semibold">{subscriptionDetails.token}</span>
+            </div>
+            
+            {/* Amount */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">🎉 Amount:</span>
+              <span className="text-white">{subscriptionDetails.allowable}</span>
+            </div>
+            
+            {/* Window */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">⏰ Window:</span>
+              <span className="text-white">{subscriptionDetails.window}</span>
+            </div>
+            
+            {/* Subscription Type */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">Once:</span>
+              <span className="text-white">{subscriptionDetails.once === 'true' ? 'One-time' : 'Recurring'}</span>
+            </div>
           </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-        <span className="font-semibold text-gray-700">⏰ Window:</span>
-        <span className="text-orange-600">{subscription.window}</span>
-      </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-        <span className="font-semibold text-gray-700">📅 Timestamp:</span>
-        <span className="text-orange-600">{subscription.timestamp}</span>
-      </div>
-      <div className="flex flex-col rounded-full p-2 m-2" style={{ backgroundColor: '#ffffffaa' }}>
-        <span className="font-semibold text-gray-700">🔄 Type:</span>
-        <span className="text-orange-600">{subscription.once}</span>
-      </div>
-      <div className="mt-6">
-        <button className="w-full py-4 bg-orange-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300" onClick={() => handleClaimSubscription(subscription.token, subscription.lender)}>
-          Claim Subscription
-        </button>
+          
+          {/* Subscribe Button */}
+          <div className="mt-6">
+            <button 
+              onClick={handleSubscribe} 
+              className="w-full py-4 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+      )}
+  
+      {/* Subscription Success Message */}
+      {showSubscribedMessage && (
+        <div className="bg-gray-800 bg-opacity-60 rounded-lg p-8 mt-8 shadow-2xl flex flex-col items-center">
+          <div className="emoji text-6xl mb-4">🎉🍕</div>
+          <h2 className="text-4xl font-bold text-pink-400 mb-4">Congratulations!</h2>
+          <p className="text-lg font-semibold mb-4">Your subscription is cooking!</p>
+          
+          {/* Animated Success Graphic */}
+          <div className="relative w-64 h-64">
+            <div className="absolute top-0 left-0 w-full h-full bg-pink-400 rounded-full animate-pulse"></div>
+            <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '20%', left: '15%' }}></div>
+            <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '30%', right: '20%' }}></div>
+            <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '60%', left: '30%' }}></div>
+            <div className="absolute w-10 h-10 bg-red-600 rounded-full" style={{ top: '60%', right: '10%' }}></div>
+            <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '30%', left: '40%' }}></div>
+            <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '50%', right: '30%' }}></div>
+            <div className="absolute w-8 h-8 bg-gray-300 rounded-full" style={{ top: '70%', left: '20%' }}></div>
+          </div>
+        </div>
+      )}
+  
+      {/* Connection Buttons */}
+      <div className="flex items-center mt-2 gap-4">
+        <ConnectButton />
+        {!userAddress && <BlueCreateWalletButton />}
       </div>
     </div>
-  ))}
-</div>
-
+  
+    {/* Subscriptions Section */}
+    <div className="container max-w-2xl w-11/12 p-8 bg-gray-800 bg-opacity-60 backdrop-blur-lg rounded-3xl shadow-2xl text-center mt-12">
+      <h1 className="text-5xl font-extrabold text-pink-400 mb-8">My Subscriptions</h1>
+      <button 
+        onClick={fetchSubscriptions} 
+        className="w-full py-4 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 mt-8"
+      >
+        Check Subscriptions
+      </button>
+  
+      <div className="space-y-6 mt-8">
+        
+        {/* Display Each Subscription */}
+        {subscriptions.map((subscription, index) => (
+          <div key={index} className="bg-gray-700 bg-opacity-50 rounded-lg p-6 shadow-lg">
+            <div className="flex flex-col mb-4">
+              <span className="font-semibold text-white">🍕 Subscription to:</span>
+              <span className="text-pink-400 font-semibold text-xl">{subscription.friend}</span>
+            </div>
+            
+            {/* Token Information */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">💰 Token:</span>
+              <span className="text-white">{subscription.show}</span>
+            </div>
+            
+            {/* Amount */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">🎉 Amount:</span>
+              <span className="text-white">{subscription.allowable}</span>
+            </div>
+            
+            {/* Available */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">💧 Available:</span>
+              <span className="text-white">
+                {subscription.outstanding.toLocaleString('en', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 10,
+                  useGrouping: false,
+                })}
+              </span>
+            </div>
+            
+            {/* Window */}
+            <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+              <span className="font-semibold">⏰ Window:</span>
+              <span className="text-white">{subscription.window}</span>
+            </div>
+            
+            {/* Cancel Subscription Button */}
+            <div className="mt-6">
+              <button 
+                className="w-full py-4 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition duration-300" 
+                onClick={() => handleCancelSubscription(subscription.token, subscription.friend)}
+              >
+                Cancel Subscription
+              </button>
+            </div>
+          </div>
+        ))}
+  
+        {/* Subscribed To Me Section */}
+        <div id="subsList" className="space-y-6 mt-8">
+          {subs.length > 0 && (
+            <>
+              <h1 className="text-4xl font-extrabold text-pink-400 mb-6">Subscribed To Me</h1>
+              <p className="text-center bg-pink-500 text-white font-semibold py-2 rounded-full w-32 mx-auto">
+                {subs.length} Subs
+              </p>
+              
+              {/* Claimable Section */}
+              {totalClaim.toString().length > 0 && (
+                <>
+                  <h2 className="text-2xl text-pink-400 font-bold">Claimable</h2>
+                  <button 
+                    onClick={() => handleClaim()} 
+                    className="bg-gradient-to-r from-red-400 to-pink-500 text-white font-semibold px-12 py-2 rounded-full hover:bg-green-600 transition duration-300 ease-in-out mx-auto"
+                  >
+                    Claim All
+                  </button>
+                  
+                  {/* Claimable Tokens */}
+                  <div className="bg-gray-700 bg-opacity-40 p-4 rounded-3xl m-6 mt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+                      {Object.entries(totalClaim).map(([token, amount], index) => {
+                        // Define dynamic gradients
+                        const colorGradients = [
+                          "from-red-400 to-pink-500",
+                          "from-blue-400 to-green-500",
+                          "from-green-400 to-teal-500",
+                          "from-yellow-400 to-pink-500",
+                          "from-indigo-400 to-blue-500",
+                          "from-teal-400 to-green-500",
+                        ];
+                        
+                        return (
+                          <button
+                            key={token}
+                            onClick={() => handleClaim(token)}
+                            className={`text-center flex items-center justify-center text-white bg-gradient-to-r ${colorGradients[index % colorGradients.length]} rounded-full transform transition-all duration-300 hover:scale-105`}
+                          >
+                            <p className="text-white text-lg font-bold m-2">
+                              {amount.substring(0,12)} {subs.find(sub => sub.token === token)?.show ?? token.substring(0, 20)}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Subscriptions From Others */}
+              {subs.map((subscription, index) => (
+                <div key={index} className="bg-gray-700 bg-opacity-50 rounded-lg p-6 shadow-lg">
+                  <div className="flex flex-col mb-4">
+                    <span className="font-semibold text-white">🍕 Subscription from:</span>
+                    <span className="text-pink-400 font-semibold text-xl">{subscription.lender}</span>
+                  </div>
+                  
+                  {/* Token Information */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">💰 Token:</span>
+                    <span className="text-white">{subscription.show}</span>
+                  </div>
+                  
+                  {/* Amount */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">🎉 Amount:</span>
+                    <span className="text-white">{subscription.allowable}</span>
+                  </div>
+                  
+                  {/* Available */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">💧 Available:</span>
+                    <span className="text-white">
+                      <span className="text-xs relative" style={{ bottom: '2px' }}>
+                        {streamable[index] === true ? '' : '🔴'}
+                      </span>
+                      {subscription.outstanding.toLocaleString('en', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 10,
+                        useGrouping: false,
+                      })}
+                    </span>
+                  </div>
+                  
+                  {/* Window */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">⏰ Window:</span>
+                    <span className="text-white">{subscription.window}</span>
+                  </div>
+                  
+                  {/* Timestamp */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">📅 Timestamp:</span>
+                    <span className="text-white">{subscription.timestamp}</span>
+                  </div>
+                  
+                  {/* Subscription Type */}
+                  <div className="flex flex-col rounded-full p-4 m-2 bg-gray-600 bg-opacity-40">
+                    <span className="font-semibold">🔄 Type:</span>
+                    <span className="text-white">{subscription.once}</span>
+                  </div>
+                  
+                  {/* Claim Subscription Button */}
+                  <div className="mt-6">
+                    <button 
+                      className="w-full py-4 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300" 
+                      onClick={() => handleClaimSubscription(subscription.token, subscription.lender)}
+                    >
+                      Claim Subscription
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
     </div>
-  </div>
-</body>
-
+  </body>
   );
 };
 
