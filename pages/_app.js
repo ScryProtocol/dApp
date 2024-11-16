@@ -74,7 +74,12 @@ function MyApp({ Component, pageProps }) {
           <button className={`ta ${activeTab === 'sub' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('sub')}>
           Sub
           </button>
-          <button className={`ta ${activeTab === 'feed' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
+          <button className={`ta ${activeTab === 'fun' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
+          Fun
+          </button>
+      </div>
+      <div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-10 bg-backdrop-blur-lg">
+      <button className={`ta ${activeTab === 'feed' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
           Feed
           </button>
       <button className={`ta ${activeTab === 'wall' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('wall')}>

@@ -1009,7 +1009,7 @@ const handleClaim = async (token) => {
                   } ${lenderBorrows.length >= 3 ? 'lg:grid-cols-3' : ''}`}
                 >
                   {lenderBorrows.map((borrow) => (
-                    <div key={borrow.hash} className="bg-gray-700 space-y-2 rounded-lg p-4">
+                    <div key={borrow.hash} className="bg-gray-700 space-y-2 rounded-lg p-4 bg-opacity-40">
                       <div className="text-center">
                         <p className="text-lg font-semibold text-white">🪙 Token</p>
                         <p className="text-white font-bold text-xl">{borrow.token.substring(0, 20)}</p>
@@ -1099,7 +1099,7 @@ const handleClaim = async (token) => {
                     } ${friendAllowances.length >= 3 ? 'lg:grid-cols-3' : ''}`}
                   >
                     {friendAllowances.map((allowance, idx) => (
-                      <div key={idx} className="bg-gray-700 space-y-2 rounded-lg p-4">
+                      <div key={idx} className="bg-gray-700 space-y-2 rounded-lg p-4  bg-opacity-40">
                         <div className="text-center">
                           <p className="text-lg font-semibold text-white">🪙 Token</p>
                           <p className="text-white font-bold text-xl">{allowance.token.substring(0, 20)}</p>
@@ -1455,7 +1455,7 @@ const handleClaim = async (token) => {
                 </thead>
                 <tbody>
                   {borrows.map((borrow, idx) => (
-                    <tr key={borrow.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-700'}>
+                    <tr key={borrow.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-800 bg-opacity-40'}>
                       <td className="px-6 py-4">{borrow.lender}</td>
                       <td className="px-6 py-4">{borrow.token.substring(0, 20)}</td>
                       <td className="px-6 py-4">{borrow.allowable}</td>
@@ -1537,7 +1537,7 @@ const handleClaim = async (token) => {
                   {allowances
                     .sort((a, b) => a.friend.localeCompare(b.friend))
                     .map((allowance, idx) => (
-                      <tr key={allowance.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-700'}>
+                      <tr key={allowance.hash} className={idx % 2 === 0 ? 'bg-gray-700' : 'bg-gray-800  bg-opacity-40'}>
                         {editingRow === allowance.hash ? (
                           <>
                             <td className="px-6 py-4">{allowance.friend.substring(0, 20)}</td>
