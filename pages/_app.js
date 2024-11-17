@@ -39,6 +39,7 @@ function MyApp({ Component, pageProps }) {
     return false;
   });
   const [activeTab, setActiveTab] = useState('vault');
+  const [activeTabs, setActiveTabs] = useState('0');
   const [showInfo, setShowInfo] = useState(false);
   
   useEffect(() => {
@@ -61,7 +62,8 @@ function MyApp({ Component, pageProps }) {
     return (
       
       <div className="tab-switcher justify-center">
-      <div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-1 bg-backdrop-blur-lg">
+      {activeTabs=='0' && (
+       <div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-1 bg-backdrop-blur-lg">
         <button className={`ta ${activeTab === 'vault' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('vault')}>
           Vault
           </button>
@@ -74,18 +76,21 @@ function MyApp({ Component, pageProps }) {
           <button className={`ta ${activeTab === 'sub' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('sub')}>
           Sub
           </button>
-          <button className={`ta ${activeTab === 'fun' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
+          <button className={`ta ${activeTab === 'fun' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTabs('1')}>
           Fun
           </button>
-      </div>
-      <div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-10 bg-backdrop-blur-lg">
+      </div> )}
+      {activeTabs === '1'&&(<div className="tab-switcher absolute justify-center text-gray-500 bg-gray-700 rounded-full bg-opacity-60 mx-1/2 mt-1 bg-backdrop-blur-lg">
       <button className={`ta ${activeTab === 'feed' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('feed')}>
           Feed
           </button>
       <button className={`ta ${activeTab === 'wall' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTab('wall')}>
           Wall
           </button>
-      </div>
+          <button className={`ta ${activeTab === '' ? 'tab-active text-pink-500' : ''}`} onClick={() => setActiveTabs('0')}>
+          Back
+          </button>
+      </div>)}
       <button className="absolute right-2 top-2 w-9 rounded-full bg-white p-1 font-bold text-xl" onClick={() => setShowInfo(!showInfo)}>?</button>
       </div>
     );
