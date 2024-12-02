@@ -89,31 +89,8 @@ function MyApp({ Component, pageProps }) {
     <WagmiProvider  config={config}>
       <QueryClientProvider client={queryClient}>
       <RainbowKitProvider>
-        <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
-          <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
-         ><a href={0!==1?'https://twitter.com/spotdotpizza':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
-          <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} className="bg-gradient-to-r from-blue-100 via-blue-300 to-green-300" />
-          {activeTab === 'vault' && 
-          <App /> }
-          {activeTab === 'stream' &&
-          <Stream/>}
-          {activeTab === 'spot' &&
-          <Spot/>}
-          {activeTab === 'sub' &&
-          <Sub/>}
-          {activeTab === 'feed' &&
-          <Feed/>
-          }{activeTab === 'wall' &&
-            <Wall/>
-            }
-        </div>
-
-        {showInfo && (
-            <Info
-              app={activeTab}
-              handleClose={() => setShowInfo(false)}
-            />
-          )}      </RainbowKitProvider>
+        
+          <App/>    </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider >
   );
