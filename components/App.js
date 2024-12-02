@@ -342,7 +342,7 @@ setWikiViewTitle('home');
     if (!contract) return;
     try {
       setWikiStatus('Pending...');
-      const tx = await contract.createPage(pageTitle, pageContent);
+      const tx = await contract.createPage(pageTitle.toLowerCase(), pageContent);
       await tx.wait();
       setWikiStatus('Page Created!');
       toast.success('Wiki page created successfully!');
@@ -480,7 +480,7 @@ setWikiViewTitle('home');
       { name: 'Dashboard', section: 'dashboard' },
       { name: 'Wiki', section: 'wiki' },        
     ];
-  
+  const topwikiPages = ['home', 'source', 'ethereum','dev','base'];
     // Maintenance Navigation Items
     const maintNavigation = [
       { name: 'Role Management', section: 'roles' },
@@ -572,6 +572,25 @@ setWikiViewTitle('home');
                 </li>
               ))}
             </ul>
+            <h3 className="text-lg font-semibold text-white bg-blue-400 p-2 rounded-full w-1/2 mx-auto mt-4 text-center">
+            Top Pages</h3>
+            {topwikiPages.length > 0 && (
+              <div className="mt-4">
+                <ul className="mt-4">
+                  {topwikiPages.map((page, index) => (
+                    <li
+                      key={index}
+                      className={`items-center p-3 my-2 rounded-full ${
+                        index % 10 === 0 ? 'bg-blue-200' : index % 10 === 1 ? 'bg-pink-200' : index % 10 === 2 ? 'bg-green-200' : index % 10 === 3 ? 'bg-yellow-200' : index % 10 === 4 ? 'bg-red-200' : index % 10 === 5 ? 'bg-indigo-200' : index % 10 === 6 ? 'bg-purple-200' : index % 10 === 7 ? 'bg-blue-200' : index % 10 === 8 ? 'bg-yellow-200' : 'bg-green-200'
+                      } cursor-pointer transition-colors duration-200 text-center`}
+                                            onClick={() => {toast.success('Loading');setWikiViewTitle(page); viewPage(page);}}
+                    >
+                      <span className="text-lg">{page}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <h3 className="text-lg font-semibold text-white bg-blue-400 p-2 rounded-full w-1/2 mx-auto mt-4 text-center">
             Latest Pages</h3>
             {wikiPages.length > 0 && (
