@@ -378,10 +378,10 @@ setPageTitle('home');
   };
 
   // View Wiki Page Function
-  const viewPage = async (page) => {
+  const viewPage = async (pa) => {
     if (!contract) return;
     try {
-      const page = await contract.getPage(page?page:wikiViewTitle);
+      const page = await contract.getPage(pa?pa:wikiViewTitle);
       setWikiViewContent(page[0]);
       setWikiEditors(page[1]);
       setWikiTimestamps(page[2]);
