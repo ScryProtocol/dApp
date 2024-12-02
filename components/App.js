@@ -148,7 +148,7 @@ const App = () => {
       if (provider && signer) {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
         setContract(tempContract);
-
+setPageTitle('home');
       const page = await tempContract.getPage('home');
       setWikiViewContent(page[0]);
       setWikiEditors(page[1]);
