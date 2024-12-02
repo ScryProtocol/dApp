@@ -149,6 +149,7 @@ const App = () => {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
         setContract(tempContract);
 setPageTitle('home');
+setWikiViewTitle('home');
       const page = await tempContract.getPage('home');
       setWikiViewContent(page[0]);
       setWikiEditors(page[1]);
@@ -183,7 +184,7 @@ setPageTitle('home');
         const MAINT_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MAINT_ROLE"));
         const hasMaintRole = await tempContract.hasRole(MAINT_ROLE, account);
         setIsMaint(hasMaintRole);
-        setWikiViewTitle('home');
+//        setWikiViewTitle('home');
         setTotalSupply({totalSupply,totalTips,claimed})
 
         // Fetch existing wiki pages
@@ -348,8 +349,10 @@ setPageTitle('home');
       setPageTitle('');
       setPageContent('');
       // Refresh wiki pages
+      setWikiViewTitle(pageTitle);
       viewPage(pageTitle);
       fetchWikiPages(contract);
+      setModal(false);
     } catch (error) {
       console.error(error);
       setWikiStatus('Failed!');
@@ -379,6 +382,7 @@ setPageTitle('home');
 
   // View Wiki Page Function
   const viewPage = async (pa) => {
+    console.log(pa)
     if (!contract) return;
     try {
       const page = await contract.getPage(pa?pa:wikiViewTitle);
@@ -621,7 +625,7 @@ setPageTitle('home');
                     className="flex-1 p-3 border border-blue-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
-                    onClick={viewPage}
+                    onClick={() => viewPage()}
                     className="bg-blue-600 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 transition-colors duration-200"
                   >
                     👁️ View
@@ -718,6 +722,9 @@ setPageTitle('home');
                       ✏️ Edit Page
                     </button>
                     {wikiStatus && <p className="mt-2 text-sm text-orange-600">{wikiStatus}</p>}
+                    
+            </div>
+              )}
               {pageContent!='' && (
                 <div className="bg-white p-8 rounded-2xl shadow-lg mt-2">
                   <div className="mt-2">
@@ -732,9 +739,7 @@ setPageTitle('home');
                     )}
                   </div>
                 </div>
-                )}
-            </div>
-              )}</div>
+                )}</div>
                 </div>
               )}
             </section>
