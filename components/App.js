@@ -193,8 +193,22 @@ setWikiViewTitle('home');
 
         // Fetch existing wiki pages
         fetchWikiPages(tempContract);
+        
       }
-    };
+      else {
+        
+        const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
+        setContract(tempContract);
+setPageTitle('home');
+setWikiViewTitle('home');
+      const page = await tempContract.getPage('home');
+      setWikiViewContent(page[0]);
+      let editors=[...page[1]].reverse()
+      let timestamps=[...page[2]].reverse()
+      setWikiEditors(editors);
+      setWikiTimestamps(timestamps);
+      fetchWikiPages(tempContract);
+    };}
     init();
   }, [provider, signer, account]);
 
