@@ -152,8 +152,12 @@ setPageTitle('home');
 setWikiViewTitle('home');
       const page = await tempContract.getPage('home');
       setWikiViewContent(page[0]);
-      setWikiEditors(page[1]);
-      setWikiTimestamps(page[2]);
+      let editors=[...page[1]].reverse()
+      let timestamps=[...page[2]].reverse()
+      setWikiEditors(editors);
+      setWikiTimestamps(timestamps);
+//      setWikiEditors(page[1]);
+  //    setWikiTimestamps(page[2]);
         // Fetch network
         const tempNetwork = await provider.getNetwork();
         setNetwork(tempNetwork.name);
@@ -372,7 +376,9 @@ setWikiViewTitle('home');
       setPageTitle('');
       setPageContent('');
       // Refresh wiki pages
-      fetchWikiPages(contract);
+      setWikiViewTitle(wikiViewTitle);
+      viewPage(wikiViewTitle);
+setModal(false);
     } catch (error) {
       console.error(error);
       setWikiStatus('Failed!');
@@ -386,9 +392,11 @@ setWikiViewTitle('home');
     if (!contract) return;
     try {
       const page = await contract.getPage(pa?pa:wikiViewTitle);
+      let editors=[...page[1]].reverse()
+      let timestamps=[...page[2]].reverse()
       setWikiViewContent(page[0]);
-      setWikiEditors(page[1]);
-      setWikiTimestamps(page[2]);
+      setWikiEditors(editors);
+      setWikiTimestamps(timestamps);
     } catch (error) {
       console.error(error);
       setWikiViewContent('Page does not exist.');
