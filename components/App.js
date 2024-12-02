@@ -149,6 +149,10 @@ const App = () => {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
         setContract(tempContract);
 
+      const page = await tempContract.getPage('home');
+      setWikiViewContent(page[0]);
+      setWikiEditors(page[1]);
+      setWikiTimestamps(page[2]);
         // Fetch network
         const tempNetwork = await provider.getNetwork();
         setNetwork(tempNetwork.name);
@@ -181,10 +185,6 @@ const App = () => {
         setIsMaint(hasMaintRole);
         setWikiViewTitle('home');
         setTotalSupply({totalSupply,totalTips,claimed})
-      const page = await tempContract.getPage('home');
-      setWikiViewContent(page[0]);
-      setWikiEditors(page[1]);
-      setWikiTimestamps(page[2]);
 
         // Fetch existing wiki pages
         fetchWikiPages(tempContract);
