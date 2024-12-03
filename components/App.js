@@ -1043,7 +1043,7 @@ const App = () => {
         )}
   
         {currentSection === 'dashboard' && (
-          <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+          <section className="bg-white dark:bg-gray-700/50 p-8 rounded-2xl shadow-lg">
             <h2 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-8">📊 Dashboard</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {/* Balance Card */}
@@ -1170,7 +1170,7 @@ const App = () => {
                   Total Stake
                 </h4>
                 <h4 className="text-white font-semibold bg-purple-500 dark:bg-purple-600 p-2 rounded-full text-center">
-                  {totalSupply.claimed}% SOURCE
+                  {totalSupply.claimed*100}% SOURCE
                 </h4>
               </div>
   
