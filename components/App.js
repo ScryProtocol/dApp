@@ -684,7 +684,7 @@ const App = () => {
         <aside className="w-72 bg-gradient-to-b from-blue-300 to-blue-500 dark:from-gray-700/50 dark:to-gray-800 text-white flex flex-col relative transition-transform duration-300">
           {/* Logo Section */}
           <div className="flex items-center justify-center h-20 bg-blue-500 dark:bg-blue-700">
-            <h1 className="text-3xl font-bold">Source</h1>
+            <h1 className="text-3xl font-bold">💧Source</h1>
           </div>
   
           {/* Close Sidebar Button */}
