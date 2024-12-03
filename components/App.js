@@ -821,7 +821,7 @@ const App = () => {
                       key={index}
                       className={`items-center p-3 my-2 rounded-full ${
                         index % 10 === 0
-                          ? 'bg-blue-200 dark:bg-blue-300/40'
+                          ? 'bg-blue-300 dark:bg-blue-300/40'
                           : index % 10 === 1
                           ? 'bg-pink-200 dark:bg-pink-300/40'
                           : index % 10 === 2
@@ -1311,7 +1311,8 @@ const App = () => {
           </section>
         )}
 {currentSection === 'explore' && (
-  <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+  <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+    <h2 className="text-3xl font-bold text-blue-500 dark:text-blue-300 mb-8">🔍 Explore Latest Wiki Pages</h2>
     {wikiPages.length === 0 ? (
       <p className="text-gray-800 dark:text-gray-200">
         No pages available yet.
