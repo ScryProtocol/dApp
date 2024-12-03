@@ -8,6 +8,8 @@ import { useAccount, useChainId } from 'wagmi';
 import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl'; // Ensure these hooks are correctly defined
 import { Alchemy, Network } from 'alchemy-sdk';
+import remarkGfm from 'remark-gfm';
+
 import ReactMarkdown from 'react-markdown';
 
 // Define your contract address and ABI
@@ -618,6 +620,45 @@ const App = () => {
         </a>
       );
     },
+
+    table: ({ node, ...props }) => (
+      <div
+        style={{
+          overflowX: 'auto',
+          borderRadius: '12px',
+        }}
+      >
+        <table
+          {...props}
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+            borderRadius: '12px',
+            overflow: 'hidden',
+          }}
+        />
+      </div>
+    ),
+    th: ({ node, ...props }) => (
+      <th
+        {...props}
+        style={{
+          border: '1px solid #ddd',
+          padding: '12px',
+          backgroundColor: '#f2f2f2',
+          textAlign: 'left',
+        }}
+      />
+    ),
+    td: ({ node, ...props }) => (
+      <td
+        {...props}
+        style={{
+          border: '1px solid #ddd',
+          padding: '12px',
+        }}
+      />
+    ),
   };
 
   return (
@@ -872,7 +913,7 @@ const App = () => {
   
                 {wikiViewContent ? (
                   <div className="prose max-w-none dark:prose-invert">
-                    <ReactMarkdown components={components}>{wikiViewContent}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{wikiViewContent}</ReactMarkdown>
                   </div>
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400">No content available.</p>
@@ -988,7 +1029,7 @@ const App = () => {
                         </h3>
                         {pageContent ? (
                           <div className="prose max-w-none dark:prose-invert">
-                            <ReactMarkdown components={components}>{pageContent}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{pageContent}</ReactMarkdown>
                           </div>
                         ) : (
                           <p className="text-gray-500 dark:text-gray-400">No content available.</p>
