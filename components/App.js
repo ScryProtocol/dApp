@@ -645,9 +645,8 @@ const App = () => {
         style={{
           border: '1px solid #ddd',
           padding: '12px',
-          backgroundColor: '#f2f2f2',
           textAlign: 'left',
-        }}
+        }} className='bg-blue-200 dark:bg-blue-400'
       />
     ),
     td: ({ node, ...props }) => (
@@ -656,7 +655,7 @@ const App = () => {
         style={{
           border: '1px solid #ddd',
           padding: '12px',
-        }}
+        }} className='dark:bg-blue-400/20 dark:text-white'
       />
     ),
   };
