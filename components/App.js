@@ -517,10 +517,11 @@ setModal(false);
         if (containsAtSymbol) {
           // Render a button if the link contains "@"
           let page = href.split("@")[1];
+         page = page.replace('%20',' ')
           return (
             <button
               onClick={() => {toast.success('Loading');setWikiViewTitle(page); viewPage(page);}}
-              className="bg-blue-400 text-white px-2 rounded-full shadow hover:bg-blue-600 transition duration-200"
+              className="bg-blue-400 text-white p-2 rounded-full shadow hover:bg-blue-600 transition duration-200"
               {...props}
             >
               {children}
