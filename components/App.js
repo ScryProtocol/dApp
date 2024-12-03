@@ -658,6 +658,13 @@ const App = () => {
         }} className='dark:bg-blue-400/20 dark:text-white'
       />
     ),
+    hr: ({ node, ...props }) => (
+      <hr
+        {...props}
+        style={{
+        }} className='dark:border-white/20'
+      /> 
+    ),
   };
 
   return (
@@ -895,7 +902,7 @@ const App = () => {
             </div>
   
             {/* Wiki Content Display */}
-            <div className="bg-white dark:bg-gray-700/50 p-8 rounded-2xl shadow-lg relative items-center justify-center">
+            <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg relative items-center justify-center">
               {/* Create/Edit Page Button */}
               <button
                 onClick={() => setModal(!modal ? 'create' : '')}
@@ -1121,7 +1128,7 @@ const App = () => {
                     placeholder="Amount"
                     value={unstakeAmount}
                     onChange={(e) => setUnstakeAmount(e.target.value)}
-                    className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white"
                   />
                   <button
                     onClick={requestUnstake}
