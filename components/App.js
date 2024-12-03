@@ -182,14 +182,14 @@ setWikiViewTitle('home');
         let totalTips=Number(ethers.formatEther(await tempContract.totalTips()))
         let balance=Number(ethers.formatEther(userBalance))
         console.log('totalSupply',totalSupply,'totalTips',totalTips,'balance',balance,'staked',staked)
-        rewards=(totalTips-claimed)*(balance+staked)/totalSupply
+        rewards=(totalTips-claimed)*(balance+staked)/totalSupply+Number(ethers.formatEther(await tempContract.rewards(account)))
         setRewards(rewards)
         // Check if user has MAINT_ROLE
         const MAINT_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MAINT_ROLE"));
         const hasMaintRole = await tempContract.hasRole(MAINT_ROLE, account);
         setIsMaint(hasMaintRole);
 //        setWikiViewTitle('home');
-        setTotalSupply({totalSupply,totalTips,claimed})
+        setTotalSupply({totalSupply,totalTips,claimed:(balance+staked)/totalSupply});
 
         // Fetch existing wiki pages
         fetchWikiPages(tempContract);
@@ -569,7 +569,7 @@ setModal(false);
               {navigation.map((item) => (
                 <li
                   key={item.section}
-                  className={`flex items-center p-3 my-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                  className={`flex items-center p-3 my-2 rounded-lg cursor-pointer transition-colors duration-200 bg-blue-400 ${
                     currentSection === item.section
                       ? 'bg-blue-600'
                       : 'hover:bg-blue-600 hover:bg-opacity-75'
@@ -827,7 +827,7 @@ setModal(false);
           </div>
           <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
             <div
-              style={{ width: `${(totalSupply.totalSupply / 100000000) * 1000000}%` }}
+              style={{ width: `${(totalSupply.totalSupply / 10000000) * 1000000}%` }}
               className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
             ></div>
           </div>
@@ -894,9 +894,9 @@ setModal(false);
       <h4 className="text-purple-600 font-semibold text-center mt-4 mb-2">Total Tips</h4>
       <h4 className="text-white font-semibold bg-purple-400 p-2 rounded-full text-center">
       {totalSupply.totalTips} SOURCE</h4>
-      <h4 className="text-purple-600 font-semibold text-center mt-4 mb-2">Total Claimed</h4>
+      <h4 className="text-purple-600 font-semibold text-center mt-4 mb-2">Total Stake</h4>
       <h4 className="text-white font-semibold bg-purple-500 p-2 rounded-full text-center">
-      {totalSupply.claimed} SOURCE</h4>
+      {totalSupply.claimed}% SOURCE</h4>
     </div>
     {/* Total Tips Card */}
     <div className="bg-yellow-100 p-6 rounded-xl shadow-md">
