@@ -646,7 +646,7 @@ const App = () => {
           border: '1px solid #ddd',
           padding: '12px',
           backgroundColor: '#f2f2f2',
-          textAlign: 'center',
+          textAlign: 'left',
         }}
       />
     ),
@@ -655,7 +655,7 @@ const App = () => {
         {...props}
         style={{
           border: '1px solid #ddd',
-          padding: '12px', textAlign: 'center',
+          padding: '12px',
         }}
       />
     ),
