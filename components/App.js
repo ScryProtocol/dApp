@@ -277,7 +277,7 @@ const App = () => {
   const fetchWikiPages = async (contractInstance) => {
     try {
       setWikiPages(['home', 'about', 'contact']);
-      const pages = await contractInstance.getLatestPages(20);
+      const pages = await contractInstance.getLatestPages(2000);
       setWikiPages(pages.filter(page => page !== '')); // Filter out empty pages
     } catch (error) {
       console.error('Error fetching wiki pages:', error);
@@ -557,12 +557,13 @@ const App = () => {
   // Filtered Wiki Pages based on search
   const filteredWikiPages = wikiPages.filter(page =>
     page.toLowerCase().includes(wikiSearch.toLowerCase())
-  );
+  ).slice(0, 20);
 
   // Navigation Arrays
   const navigation = [
     { name: 'Dashboard', section: 'dashboard' },
     { name: 'Wiki', section: 'wiki' },
+    { name: 'Explore', section: 'explore' },
     // Add more navigation items if needed
   ];
 
@@ -656,7 +657,7 @@ const App = () => {
                   className={`flex items-center p-3 my-2 rounded-lg cursor-pointer transition-colors duration-200 ${
                     currentSection === item.section
                       ? 'bg-blue-600 dark:bg-blue-800'
-                      : 'hover:bg-blue-600 hover:bg-opacity-75 dark:hover:bg-blue-700 dark:hover:bg-opacity-75 dark:bg-gray-700'
+                      : 'hover:bg-blue-600 hover:bg-opacity-75 dark:hover:bg-blue-700 dark:hover:bg-opacity-75 dark:bg-gray-700 bg-blue-400'
                   }`}
                   onClick={() => setCurrentSection(item.section)}
                 >
@@ -1142,7 +1143,7 @@ const App = () => {
                   placeholder="Amount to tip"
                   value={tipAmount}
                   onChange={(e) => setTipAmount(e.target.value)}
-                  className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white"
                 />
                 <button
                   onClick={tipDAO}
@@ -1269,6 +1270,37 @@ const App = () => {
             </div>
           </section>
         )}
+{currentSection === 'explore' && (
+  <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+    {wikiPages.length === 0 ? (
+      <p className="text-gray-800 dark:text-gray-200">
+        No pages available yet.
+      </p>
+    ) : (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
+        {wikiPages.map((page, index) => (
+          <button
+            key={index}
+            onClick={() => {setCurrentSection('wiki'); setWikiViewTitle(page); viewPage(page);}}
+            style={{
+              backgroundColor: [
+                "#f87171", // Red
+                "#60a5fa", // Blue
+                "#fbbf24", // Yellow
+                "#34d399", // Green
+                "#818cf8", // Indigo
+              ][index % 5], // Cycle through colors
+            }}
+            className="h-20 w-full text-white font-semibold shadow-sm hover:shadow-md transition duration-300 ease-in-out"
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+            
       </main>
   
       {/* Toast Notifications */}
