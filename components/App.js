@@ -44,7 +44,7 @@ const SourceABI = [
   "function requestUnstake(uint256 amount) external",
   "function unstake() external",
   "function setStakingAmount(uint256 newAmount) external",
-  "function slash(address user, uint256 amount) external",
+  "function slash(address user, uint256 amount,string memory reason) external",
   "function tip(uint256 amount) external",
   "function claimReward() external",
   "function grantEditRole(address user) external",
@@ -540,7 +540,7 @@ const App = () => {
     if (!contract) return;
     try {
       setSlashStatus('Pending...');
-      const tx = await contract.slash(slashUser, ethers.parseUnits(slashAmount, 18));
+      const tx = await contract.slash(slashUser, ethers.parseUnits(slashAmount, 18), 'Reason');
       await tx.wait();
       setSlashStatus('User Slashed!');
       toast.success('User slashed successfully!');
