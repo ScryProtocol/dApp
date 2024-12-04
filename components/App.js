@@ -410,6 +410,8 @@ const App = () => {
       await tx.wait();
       setClaimStatus('Rewards Claimed!');
       toast.success('Rewards claimed successfully!');
+      setRewards(0);
+    setBalance(Number(ethers.formatEther(await contract.balanceOf(account))))
       // Update rewards balance if needed
     } catch (error) {
       console.error(error);
