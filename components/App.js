@@ -13,7 +13,7 @@ import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 
 // Define your contract address and ABI
-const CONTRACT_ADDRESS = '0xDf03EB30985730dED095FB9FE38F10d214f46076',//0x1c4B48FF835d86f597a967a571aA9cB1fF91822F'; // Replace with your contract address
+const CONTRACT_ADDRESS = '0xDf03EB30985730dED095FB9FE38F10d214f46076'//0x1c4B48FF835d86f597a967a571aA9cB1fF91822F'; // Replace with your contract address
 
 const SourceABI = [
   // ... [Your existing ABI remains unchanged]
