@@ -670,6 +670,7 @@ const App = () => {
   return (
     <div className="flex min-h-screen bg-blue-100 text-gray-900 dark:bg-gray-800 dark:text-white">
       {/* Sidebar Toggle Button (Visible when sidebar is hidden) */}
+      <title>Source</title>
       {!nav && (
         <button
           onClick={() => setNav(!nav)}
