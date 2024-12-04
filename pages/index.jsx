@@ -11,12 +11,12 @@ export default function Home() {
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="A simple, safe place for your assets.
+      content="A fully public, immutable, transparent and onchain knowledge base where anyone can contribute and information's backed by real stake
       "
     />
     <link rel="apple-touch-icon" href="/sl.png" />
     
-    <title>Vault</title>
+    <title>Source</title>
   </head>
   
   <script
