@@ -1099,7 +1099,7 @@ const App = () => {
                     </div>
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200 dark:bg-blue-600">
                       <div
-                        style={{ width: `${(totalSupply.totalSupply / 10000000) * 100}%` }}
+                        style={{ width: `${(totalSupply.totalSupply / 100000000) * 100}%` }}
                         className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 dark:bg-blue-300"
                       ></div>
                     </div>
