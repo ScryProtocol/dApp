@@ -476,6 +476,7 @@ const App = () => {
       setWikiViewContent(page[0]);
       setWikiEditors(editors);
       setWikiTimestamps(timestamps);
+      window.history.pushState({}, '', `?@=${pa ? pa : wikiViewTitle}`);
     } catch (error) {
       console.error(error);
       setWikiViewContent('Page does not exist.');
