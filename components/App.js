@@ -613,6 +613,7 @@ const App = () => {
               setWikiViewTitle(page);
               viewPage(page);
             }}
+            style={{margin: '1px'}}
             className={`bg-blue-400 text-white p-2 rounded-full shadow hover:bg-blue-600 transition duration-200 ${bgColors[page.charCodeAt(0) % bgColors.length]}`}
             {...props}
           >
