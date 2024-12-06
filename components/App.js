@@ -800,24 +800,24 @@ const App = () => {
                       key={index}
                       className={`items-center p-3 my-2 rounded-full ${
                         index % 10 === 0
-                          ? 'bg-blue-200 dark:bg-blue-300/40'
+                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
                           : index % 10 === 1
-                          ? 'bg-pink-200 dark:bg-pink-300/40'
+                          ? 'bg-pink-400/70 dark:bg-pink-300/40'
                           : index % 10 === 2
-                          ? 'bg-green-200 dark:bg-green-300/40'
+                          ? 'bg-green-400/70 dark:bg-green-300/40'
                           : index % 10 === 3
-                          ? 'bg-yellow-200 dark:bg-yellow-300/40'
+                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
                           : index % 10 === 4
-                          ? 'bg-red-200 dark:bg-red-300/40'
+                          ? 'bg-red-400/70 dark:bg-red-300/40'
                           : index % 10 === 5
-                          ? 'bg-indigo-200 dark:bg-indigo-300/40'
+                          ? 'bg-indigo-400/70 dark:bg-indigo-300/40'
                           : index % 10 === 6
-                          ? 'bg-purple-200 dark:bg-purple-300/40'
+                          ? 'bg-purple-400/70 dark:bg-purple-300/40'
                           : index % 10 === 7
-                          ? 'bg-blue-200 dark:bg-blue-300/40'
+                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
                           : index % 10 === 8
-                          ? 'bg-yellow-200 dark:bg-yellow-300/40'
-                          : 'bg-green-200 dark:bg-green-300/40'
+                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
+                          : 'bg-green-400/70 dark:bg-green-300/40'
                       } cursor-pointer transition-colors duration-200 text-center`}
                       onClick={() => {
                         toast.success('Loading');
@@ -844,24 +844,24 @@ const App = () => {
                       key={index}
                       className={`items-center p-3 my-2 rounded-full ${
                         index % 10 === 0
-                          ? 'bg-blue-300 dark:bg-blue-300/40'
+                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
                           : index % 10 === 1
-                          ? 'bg-pink-200 dark:bg-pink-300/40'
+                          ? 'bg-pink-400/70 dark:bg-pink-300/40'
                           : index % 10 === 2
-                          ? 'bg-green-200 dark:bg-green-300/40'
+                          ? 'bg-green-400/70 dark:bg-green-300/40'
                           : index % 10 === 3
-                          ? 'bg-yellow-200 dark:bg-yellow-300/40'
+                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
                           : index % 10 === 4
-                          ? 'bg-red-200 dark:bg-red-300/40'
+                          ? 'bg-red-400/70 dark:bg-red-300/40'
                           : index % 10 === 5
-                          ? 'bg-indigo-200 dark:bg-indigo-300/40'
+                          ? 'bg-indigo-400/70 dark:bg-indigo-300/40'
                           : index % 10 === 6
-                          ? 'bg-purple-200 dark:bg-purple-300/40'
+                          ? 'bg-purple-400/70 dark:bg-purple-300/40'
                           : index % 10 === 7
-                          ? 'bg-blue-200 dark:bg-blue-300/40'
+                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
                           : index % 10 === 8
-                          ? 'bg-yellow-200 dark:bg-yellow-300/40'
-                          : 'bg-green-200 dark:bg-green-300/40'
+                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
+                          : 'bg-green-400/70 dark:bg-green-300/40'
                       } cursor-pointer transition-colors duration-200 text-center`}
                       onClick={() => {
                         toast.success('Loading');
