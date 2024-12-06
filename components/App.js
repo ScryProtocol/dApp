@@ -572,7 +572,7 @@ const App = () => {
     // Add more navigation items if needed
   ];
 
-  const topwikiPages = ['home', 'source', 'ethereum', 'dev', 'directory']
+  const topwikiPages = ['home', 'source', 'ethereum', 'dev', 'base'];
 
   // Maintenance Navigation Items
   const maintNavigation = [
@@ -591,6 +591,17 @@ const App = () => {
       // Check if the href contains an "@" symbol
       const containsAtSymbol = href.includes("@");
 
+      const bgColors = [
+        'bg-red-300 dark:bg-red-500/70', 'bg-pink-300 dark:bg-pink-500/70', 'bg-purple-300 dark:bg-purple-500/70', 'bg-indigo-300 dark:bg-indigo-500/70',
+        'bg-blue-300 dark:bg-blue-500/70', 'bg-cyan-300 dark:bg-cyan-500/70', 'bg-teal-300 dark:bg-teal-500/70', 'bg-green-300 dark:bg-green-500/70',
+        'bg-lime-300 dark:bg-lime-500/70', 'bg-yellow-300 dark:bg-yellow-500/70', 'bg-amber-300 dark:bg-amber-500/70', 'bg-blue-300 dark:bg-blue-500/70',
+        'bg-rose-300 dark:bg-rose-500/70', 'bg-fuchsia-300 dark:bg-fuchsia-500/70', 'bg-sky-300 dark:bg-sky-500/70', 'bg-violet-300 dark:bg-violet-500/70',
+        'bg-red-400 dark:bg-red-600/70', 'bg-pink-400 dark:bg-pink-600/70', 'bg-blue-400 dark:bg-blue-600/70', 'bg-indigo-400 dark:bg-indigo-600/70',
+        'bg-blue-400 dark:bg-blue-600/70', 'bg-cyan-400 dark:bg-cyan-600/70', 'bg-teal-400 dark:bg-teal-600/70', 'bg-green-400 dark:bg-green-600/70',
+        'bg-lime-400 dark:bg-lime-600/70', 'bg-yellow-400 dark:bg-yellow-600/70'
+            
+        
+      ];
       if (containsAtSymbol) {
         // Render a button if the link contains "@"
         let page = href.split("@")[1];
@@ -602,7 +613,7 @@ const App = () => {
               setWikiViewTitle(page);
               viewPage(page);
             }}
-            className="bg-blue-400 text-white p-2 rounded-full shadow hover:bg-blue-600 transition duration-200"
+            className={`bg-blue-400 text-white p-2 rounded-full shadow hover:bg-blue-600 transition duration-200 ${bgColors[page.charCodeAt(0) % bgColors.length]}`}
             {...props}
           >
             {children}
