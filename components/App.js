@@ -572,7 +572,7 @@ const App = () => {
     // Add more navigation items if needed
   ];
 
-  const topwikiPages = ['home', 'source', 'directory', 'crypto101', 'how%20to'];
+  const topwikiPages = ['home', 'source', 'directory', 'crypto101', 'how to'];
 
   // Maintenance Navigation Items
   const maintNavigation = [
