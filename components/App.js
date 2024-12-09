@@ -271,8 +271,13 @@ const App = () => {
           }
         }
       }
+          window.addEventListener('popstate', handlePopState);
     };
     init();
+    
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
   }, [provider, signer, account]);
 
   // Fetch Wiki Pages
@@ -558,7 +563,23 @@ const App = () => {
   const handleWikiSearch = (e) => {
     setWikiSearch(e.target.value);
   };
-
+  const handlePopState = () => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.toString();
+    const atIndex = query.indexOf('@');
+    
+    let pageParam = 'home'; // default page
+  
+    if (atIndex !== -1) {
+      const extractedParam = query.substring(atIndex + 1).split('=')[1];
+      pageParam = extractedParam || 'home'; 
+    }
+  
+    // Now update state and view the page
+    setWikiViewTitle(pageParam);
+    viewPage(pageParam);
+  };
+  
   // Filtered Wiki Pages based on search
   const filteredWikiPages = wikiPages.filter(page =>
     page.toLowerCase().includes(wikiSearch.toLowerCase())
