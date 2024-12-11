@@ -604,7 +604,7 @@ const App = () => {
   // Modal and Navigation State
   const [modal, setModal] = useState(false);
   const [nav, setNav] = useState(true);
-
+const [showEditors, setShowEditors] = useState(false);
   // Components for Markdown Links
   const components = {
     // Custom renderer for link nodes
@@ -965,13 +965,19 @@ const App = () => {
                 {/* Edit History */}
                 {wikiEditors.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="font-semibold text-lg text-blue-600 dark:text-blue-300 mb-2">📜 Edit History:</h4>
+                    <h4 className="font-semibold text-lg text-blue-600 dark:text-blue-300 mb-2">📜 Edit History: <button onClick={() => setShowEditors(!showEditors)} className="bg-blue-400 dark:bg-blue-600 text-white text-xs px-2 py-1 rounded-full hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200">
+                      {!showEditors ? '▼' : '▲'}
+                    </button></h4>
+                     
                     <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-                      {wikiEditors.map((editor, index) => (
+                      {wikiEditors.map((editor, index) => {
+                        
+                       if ( showEditors == 1 || index == 0 ) {
+                        return(
                         <li key={index}>
                           {editor} at {new Date(Number(wikiTimestamps[index]) * 1000).toLocaleString()}
                         </li>
-                      ))}
+                      )}})}
                     </ul>
                   </div>
                 )}
