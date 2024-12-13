@@ -9,7 +9,7 @@ import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl'; // Ensure these hooks are correctly defined
 import { Alchemy, Network } from 'alchemy-sdk';
 import remarkGfm from 'remark-gfm';
-
+import rehypeSlug from 'rehype-slug';
 import ReactMarkdown from 'react-markdown';
 
 // Define your contract address and ABI
@@ -600,7 +600,16 @@ const App = () => {
     { name: 'Role Management', section: 'roles' },
     { name: 'Admin Panel', section: 'admin' },
   ];
-
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.getElementById(hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView();
+      }
+    }
+  }, []);
+  
   // Modal and Navigation State
   const [modal, setModal] = useState(false);
   const [nav, setNav] = useState(true);
@@ -649,7 +658,7 @@ const [showEditors, setShowEditors] = useState(false);
           href={href}
           {...props}
           className="text-blue-600 underline px-1 rounded hover:bg-blue-200 transition-colors duration-200"
-          target="_blank" // Opens link in a new tab
+         // target="_blank" // Opens link in a new tab
           rel="noopener noreferrer" // Security best practices
         >
           {children}
@@ -956,7 +965,7 @@ const [showEditors, setShowEditors] = useState(false);
   
                 {wikiViewContent ? (
                   <div className="prose max-w-none dark:prose-invert">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{wikiViewContent}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]} components={components}>{wikiViewContent}</ReactMarkdown>
                   </div>
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400">No content available.</p>
