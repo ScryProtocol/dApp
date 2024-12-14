@@ -563,10 +563,10 @@ const App = () => {
   const handleWikiSearch = (e) => {
     setWikiSearch(e.target.value);
   };
-  const handlePopState = () => {
+  const handlePopState =async() => {
     const params = new URLSearchParams(window.location.search);
     const query = params.toString();
-    const atIndex = query.indexOf('@');
+    const atIndex = query.indexOf('%40');
     
     let pageParam = 'home'; // default page
   
@@ -577,7 +577,17 @@ const App = () => {
   
     // Now update state and view the page
     setWikiViewTitle(pageParam);
-    viewPage(pageParam);
+    
+let contract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
+    const page = await contract.getPage(pageParam);
+    let editors = [...page[1]].reverse();
+    let timestamps = [...page[2]].reverse();
+    setWikiViewContent(page[0]);
+    setWikiEditors(editors);
+    setWikiTimestamps(timestamps);
+       console.log('hash', window.location);
+   window.location.hash!=='' && window.location.hash!==undefined && document.getElementById(window.location.hash.substring(1)).scrollIntoView();
+  
   };
   
   // Filtered Wiki Pages based on search
