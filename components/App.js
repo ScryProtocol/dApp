@@ -585,7 +585,7 @@ let contract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
     setWikiViewContent(page[0]);
     setWikiEditors(editors);
     setWikiTimestamps(timestamps);
-       console.log('hash', window.location);
+       console.log('hash', window.location);//
    window.location.hash!=='' && window.location.hash!==undefined && document.getElementById(window.location.hash.substring(1)).scrollIntoView();
   
   };
