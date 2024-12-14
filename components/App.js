@@ -482,6 +482,8 @@ const App = () => {
       setWikiEditors(editors);
       setWikiTimestamps(timestamps);
       window.history.pushState({}, '', `?@=${pa ? pa : wikiViewTitle}`);
+      document.documentElement.scrollTop = 0; // Scroll to the top
+      document.body.scrollTop = 0;
     } catch (error) {
       console.error(error);
       setWikiViewContent('Page does not exist.');
@@ -667,7 +669,7 @@ const [showEditors, setShowEditors] = useState(false);
         <a
           href={href}
           {...props}
-          className="text-blue-600 underline rounded hover:bg-blue-200 transition-colors duration-200"
+          className="text-blue-600 underline px-1 rounded hover:bg-blue-200 transition-colors duration-200"
          // target="_blank" // Opens link in a new tab
           rel="noopener noreferrer" // Security best practices
         >
