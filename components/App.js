@@ -667,7 +667,7 @@ const [showEditors, setShowEditors] = useState(false);
         <a
           href={href}
           {...props}
-          className="text-blue-600 dark:text-blue-400 underline px-1 rounded hover:bg-blue-200 transition-colors duration-200"
+          className="text-blue-600 dark:text-blue-400 underline rounded hover:bg-blue-200 transition-colors duration-200"
          // target="_blank" // Opens link in a new tab
           rel="noopener noreferrer" // Security best practices
         >
