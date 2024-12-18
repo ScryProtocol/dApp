@@ -197,14 +197,15 @@ const App = () => {
   // Initialize Ethers.js and Contract
   useEffect(() => {
     const init = async () => {
-      if (provider && signer) {
+      if (provider && account) {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
-        console.log(signer);
+        console.log(tempContract);
         setContract(tempContract);
         setPageTitle('home');
         setWikiViewTitle('home');
         const page = await tempContract.getPage('home');
         setWikiViewContent(page[0]);
+        console.log('page', page);
         let editors = [...page[1]].reverse();
         let timestamps = [...page[2]].reverse();
         setWikiEditors(editors);
@@ -269,6 +270,7 @@ const App = () => {
         setWikiViewTitle('home');
         const page = await tempContract.getPage('home');
         setWikiViewContent(page[0]);
+        console.log('page', page);
         let editors = [...page[1]].reverse();
         let timestamps = [...page[2]].reverse();
         setWikiEditors(editors);
@@ -543,6 +545,7 @@ const App = () => {
       let editors = [...page[1]].reverse();
       let timestamps = [...page[2]].reverse();
       setWikiViewContent(page[0]);
+      console.log('page', page);
       setWikiEditors(editors);
       setWikiTimestamps(timestamps);
       window.history.pushState({}, '', `?@=${pa ? pa : wikiViewTitle}`);
