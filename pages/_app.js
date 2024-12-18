@@ -32,8 +32,8 @@ const inkchain = {
     public: 'https://rpc-qnd.inkonchain.com/',
   },
   blockExplorers: {
-    default: { name: 'InKon Explorer', url: 'https://explorer.inkonchain.com/' },
-    etherscan: { name: 'InKon Explorer', url: 'https://explorer.inkonchain.com/' },
+    default: { name: 'Ink Explorer', url: 'https://explorer.inkonchain.com/' },
+    etherscan: { name: 'Ink Explorer', url: 'https://explorer.inkonchain.com/' },
   },
   testnet: false, // Set to true if this is a testnet
 };

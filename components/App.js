@@ -199,6 +199,7 @@ const App = () => {
     const init = async () => {
       if (provider && signer) {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
+        console.log(signer);
         setContract(tempContract);
         setPageTitle('home');
         setWikiViewTitle('home');
