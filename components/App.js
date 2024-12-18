@@ -783,6 +783,17 @@ const [showEditors, setShowEditors] = useState(false);
         }} className='dark:border-white/20'
       /> 
     ),
+    img: ({ node, ...props }) => (
+      <div className="flex justify-center">
+      <img
+        {...props}
+        style={{
+          maxWidth: '100%',
+          borderRadius: '12px',
+        }}
+      />
+      </div>
+    ),
   };
 
   return (
