@@ -519,8 +519,8 @@ const App = () => {
       }
       else {
       const tx = await contract.editPage(wikiViewTitle, pageContent);
-      }
       await tx.wait();
+    }
       setWikiStatus('Page Edited!');
       toast.success('Wiki page edited successfully!');
       setPageTitle('');
