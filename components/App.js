@@ -203,7 +203,7 @@ const App = () => {
         setContract(tempContract);
         setPageTitle('home');
         setWikiViewTitle('home');
-        const page = await tempContract.getPage('home');
+        const page = await tempContract.connect(provider).getPage('home');
         setWikiViewContent(page[0]);
         console.log('page', page);
         let editors = [...page[1]].reverse();
@@ -216,7 +216,7 @@ const App = () => {
           const params = new URLSearchParams(window.location.search);
           const query = params.toString();
           const atIndex = query.indexOf('@');
-          const pageParam = query.substring(atIndex + 1).split('=')[1];
+          const pageParam = query.substring(atIndex + 1).split('=')[1].replace('+', ' ');
           console.log("Page parameter found after '@':", pageParam);
           if (pageParam) {
             setWikiViewTitle(pageParam);
@@ -285,7 +285,7 @@ const App = () => {
           const pageParam = query.substring(atIndex + 1).split('=')[1];
           console.log("Page parameter found after '@':", pageParam);
           if (pageParam) {
-            let pa = await tempContract.getPage(pageParam);
+            let pa = await tempContract.getPage(pageParam.replace('+', ' '));
             let editors = [...pa[1]].reverse();
             let timestamps = [...pa[2]].reverse();
             setWikiViewContent(pa[0]);
@@ -538,10 +538,10 @@ const App = () => {
 
   // View Wiki Page Function
   const viewPage = async (pa) => {
-    console.log(pa);
+  pa=pa.replace('+', ' ')
     if (!contract) return;
     try {
-      const page = await contract.getPage(pa ? pa : wikiViewTitle);
+      const page = await contract.connect(provider).getPage(pa ? pa : wikiViewTitle);
       let editors = [...page[1]].reverse();
       let timestamps = [...page[2]].reverse();
       setWikiViewContent(page[0]);
