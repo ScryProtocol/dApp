@@ -216,7 +216,7 @@ const App = () => {
           const params = new URLSearchParams(window.location.search);
           const query = params.toString();
           const atIndex = query.indexOf('@');
-          const pageParam = query.substring(atIndex + 1).split('=')[1].replace('+', ' ');
+          const pageParam = query.substring(atIndex + 1).split('=')[1].replaceAll('+', ' ');
           console.log("Page parameter found after '@':", pageParam);
           if (pageParam) {
             setWikiViewTitle(pageParam);
@@ -285,7 +285,7 @@ const App = () => {
           const pageParam = query.substring(atIndex + 1).split('=')[1];
           console.log("Page parameter found after '@':", pageParam);
           if (pageParam) {
-            let pa = await tempContract.getPage(pageParam.replace('+', ' '));
+            let pa = await tempContract.getPage(pageParam.replaceAll('+', ' '));
             let editors = [...pa[1]].reverse();
             let timestamps = [...pa[2]].reverse();
             setWikiViewContent(pa[0]);
