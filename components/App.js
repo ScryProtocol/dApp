@@ -712,7 +712,7 @@ const [showEditors, setShowEditors] = useState(false);
       if (containsAtSymbol) {
         // Render a button if the link contains "@"
         let page = href.split("@")[1];
-        page = page.replace('%20', ' ');
+        page = page.replaceAll('%20', ' ');
         return (
           <button
             onClick={() => {
