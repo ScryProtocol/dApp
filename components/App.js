@@ -538,7 +538,7 @@ const App = () => {
 
   // View Wiki Page Function
   const viewPage = async (pa) => {
-  pa=pa.replace('+', ' ')
+  pa=pa?pa.replace('+', ' '):null
     if (!contract) return;
     try {
       const page = await contract.connect(provider).getPage(pa ? pa : wikiViewTitle);
