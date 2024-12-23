@@ -38,13 +38,13 @@ const inkchain = {
   testnet: false, // Set to true if this is a testnet
 };
 const config = getDefaultConfig({
-  chains: [base,inkchain],//],//base, //holesky,mainnet,optimism, polygon,scroll,arbitrum],// sepolia, holesky, base, optimism],
+  chains: [inkchain,base, holesky,mainnet,optimism, polygon,scroll,arbitrum],// sepolia, holesky, base, optimism],
   projectId: '97d417268e5bd5a42151f0329e544898',
 
   transports: {
  //   [mainnet.id]: http(),
 //    [holesky.id]: http(),
- [inkchain.id]: http(), [base.id]: http(), //[optimism.id]: http(),[mainnet.id]: http(),[polygon.id]: http(),[sepolia.id]: http(), [scroll.id]: http(),[arbitrum.id]: http(),
+ [inkchain.id]: http(), [base.id]: http(), [optimism.id]: http(),[mainnet.id]: http(),[polygon.id]: http(),[sepolia.id]: http(), [scroll.id]: http(),[arbitrum.id]: http(),
 //  [optimism.id]: http(),
   //  [mainnet.id]: http(),
   },

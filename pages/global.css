@@ -328,3 +328,24 @@ html, body {
     font-size: 1.75rem;
   }
 }
+/* snowflake.css */
+
+/* Keyframe: flake starts from above top (-10%), drifts to bottom (110%),
+   with a 360° rotation for whimsical effect, and fades out. */
+   @keyframes fall {
+    0% {
+      transform: translateY(-10%) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  
+  .animate-fall {
+    position: absolute;
+    animation: fall 10s linear infinite;
+    top: 0; /* Start from top edge */
+  }
+  

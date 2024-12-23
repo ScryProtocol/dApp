@@ -1,1501 +1,733 @@
 // src/App.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useChainId } from 'wagmi';
+import axios from 'axios';
 import 'tailwindcss/tailwind.css';
-import { useEthersProvider, useEthersSigner } from './tl'; // Ensure these hooks are correctly defined
-import { Alchemy, Network } from 'alchemy-sdk';
-import remarkGfm from 'remark-gfm';
-import rehypeSlug from 'rehype-slug';
-import ReactMarkdown from 'react-markdown';
+import { useEthersProvider } from './tl'
+import { useEthersSigner } from './tl'
 
-import { http, createConfig } from '@wagmi/core';
-import { base, holesky, mainnet, optimism, sepolia } from 'wagmi/chains';
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { useCapabilities,useWriteContracts } from 'wagmi/experimental'
-
-const config = getDefaultConfig({
-  chains: [mainnet, sepolia, holesky, base, optimism],
-  projectId: '97d417268e5bd5a42151f0329e544898',
-
-  transports: {
-    [mainnet.id]: http(),
-    [holesky.id]: http(),
-    [base.id]: http(),
-    [optimism.id]: http(),
-    [mainnet.id]: http(),
-  },
-});
 
 // Define your contract address and ABI
-const CONTRACT_ADDRESS = '0x00da7a00A10161407DF57Ab3C82Dc20849FB00cb'; // Replace with your contract address
+const CONTRACT_ADDRESS = '0xa27d545ff0c5e80e87d077eaf60e391f4d625dba'; // Replace with your updated contract address
 
-const SourceABI = [
-  // ... [Your existing ABI remains unchanged]
-  // ERC20 Functions
-  "function name() external view returns (string)",
-  "function symbol() external view returns (string)",
-  "function decimals() external view returns (uint8)",
-  "function totalSupply() external view returns (uint256)",
-  "function balanceOf(address account) external view returns (uint256)",
-  "function allowance(address owner, address spender) external view returns (uint256)",
-
-  // ERC20 Token Transfer Functions
-  "function transfer(address recipient, uint256 amount) external returns (bool)",
-  "function approve(address spender, uint256 amount) external returns (bool)",
-  "function transferFrom(address sender, address recipient, uint256 amount) external returns (bool)",
-
-  // AccessControl Functions
-  "function hasRole(bytes32 role, address account) external view returns (bool)",
-  "function getRoleAdmin(bytes32 role) external view returns (bytes32)",
-  "function grantRole(bytes32 role, address account) external",
-  "function revokeRole(bytes32 role, address account) external",
-  "function renounceRole(bytes32 role, address account) external",
-
-  // Custom Functions
-  "function buyTokens(uint256 amount) external payable",
-  "function withdraw() external",
-  "function stake(uint256 amount) external",
-  "function requestUnstake(uint256 amount) external",
-  "function unstake() external",
-  "function setStakingAmount(uint256 newAmount) external",
-  "function slash(address user, uint256 amount,string memory reason) external",
-  "function tip(uint256 amount) external",
-  "function claimReward() external",
-  "function grantEditRole(address user) external",
-  "function revokeEditRole(address user) external",
-  "function createPage(string calldata title, string calldata content) external",
-  "function editPage(string calldata title, string calldata content) external",
-  "function getPage(string calldata title) external view returns (string memory, address[] memory, uint256[] memory)",
-  "function getLatestPages(uint256 count) external view returns (string[] memory)",
-
-  // Public Variables (Getters)
-  "function stakingAmount() external view returns (uint256)",
-  "function stakedBalances(address) external view returns (uint256 amount, uint256 unstakeTimestamp, uint256 unstakedBalances)",
-  "function totalTips() external view returns (uint256)",
-  "function claimed(address) external view returns (uint256)",
-  "function rewards(address) external view returns (uint256)",
-  "function pages(string) external view returns (string title, string content, address[] editors, uint256[] timestamps)",
-  "function pageExists(string) external view returns (bool)",
-
+const CONTRACT_ABI = [
+  // Constructor
+  "constructor()",
+  
+  // Functions
+  "function mintCard(address to, string memory _tokenURI) public",
+  "function totalCards() public view returns (uint256)",
+  "function tokenURI(uint256 tokenId) public view returns (string memory)",
+  "function owner() public view returns (address)",
+  
   // Events
-  "event Staked(address indexed user, uint256 amount)",
-  "event UnstakeRequested(address indexed user, uint256 amount, uint256 unstakeTime)",
-  "event Unstaked(address indexed user, uint256 amount)",
-  "event Slashed(address indexed user, uint256 amount)",
-  "event TipReceived(address indexed user, uint256 amount)",
-  "event RewardClaimed(address indexed user, uint256 amount)",
-  "event PageCreated(string indexed title, address indexed creator)",
-  "event PageEdited(string indexed title, address indexed editor)",
+  "event CardMinted(address indexed sender, uint256 tokenId, string tokenURI)",
+  "event CardTransferred(address indexed from, address indexed to, uint256 tokenId)",
 
-  // ERC20 Events
-  "event Transfer(address indexed from, address indexed to, uint256 value)",
-  "event Approval(address indexed owner, address indexed spender, uint256 value)",
+  // Inherited ERC721 Functions (optional)
+  "function balanceOf(address owner) external view returns (uint256 balance)",
+  "function ownerOf(uint256 tokenId) external view returns (address owner)",
+  "function safeTransferFrom(address from, address to, uint256 tokenId) external",
+  "function transferFrom(address from, address to, uint256 tokenId) external",
+  "function approve(address to, uint256 tokenId) external",
+  "function getApproved(uint256 tokenId) external view returns (address operator)",
+  "function setApprovalForAll(address operator, bool _approved) external",
+  "function isApprovedForAll(address owner, address operator) external view returns (bool)",
 
-  // AccessControl Events
-  "event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)",
-  "event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)",
-  "event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)"
+  // Inherited ERC721 Events (optional)
+  "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
+  "event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)",
+  "event ApprovalForAll(address indexed owner, address indexed operator, bool approved)"
 ];
 
 const App = () => {
-  // Dark Mode State
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Handle Dark Mode Toggle
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (!darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
-
-  // On initial load, check for saved theme preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setDarkMode(false);
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  // Hooks for Ethereum interaction
-  const provider = useEthersProvider();
-  const signer = useEthersSigner();
-  const account = useAccount().address;
-  const chainId = useChainId();
-
-  // State variables
   const [contract, setContract] = useState(null);
-  const [network, setNetwork] = useState('');
-  const [balance, setBalance] = useState(0);
-  const [staked, setStaked] = useState({ amount: 0, unstakeTimestamp: 0, unstakedBalances: 0 });
+  const [account, setAccount] = useState(1);
+  const [tokenCounter, setTokenCounter] = useState(0);
+  const [cards, setCards] = useState([]);
 
-  // UI State
-  const [currentSection, setCurrentSection] = useState('wiki'); // 'wiki', 'dashboard', 'buy', 'stake', etc.
+  const [recipient, setRecipient] = useState('');
+  const [customMessage, setCustomMessage] = useState('');
 
-  // Buy Tokens
-  const [buyAmount, setBuyAmount] = useState('');
-  const [buyStatus, setBuyStatus] = useState('');
+  // For preview vs. final mint
+  const [fileForUpload, setFileForUpload] = useState(null);
+  const [previewSrc, setPreviewSrc] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [uploading, setUploading] = useState(false);
+let signer = useEthersSigner()
+let provider = useEthersProvider()
+  // Reference to the canvas element
+  const canvasRef = useRef(null);
 
-  // Stake Tokens
-  const [stakeAmount, setStakeAmount] = useState('');
-  const [stakeStatus, setStakeStatus] = useState('');
-  const [rewards, setRewards] = useState(0);
-  const [totalSupply, setTotalSupply] = useState(0);
-
-  // Unstake Tokens
-  const [unstakeAmount, setUnstakeAmount] = useState('');
-  const [unstakeStatus, setUnstakeStatus] = useState('');
-  const [unstakeRequested, setUnstakeRequested] = useState(false);
-  const [unstakeTime, setUnstakeTime] = useState(null);
-
-  // Tip DAO
-  const [tipAmount, setTipAmount] = useState('');
-  const [tipStatus, setTipStatus] = useState('');
-
-  // Claim Rewards
-  const [claimStatus, setClaimStatus] = useState('');
-
-  // Wiki Management
-  const [pageTitle, setPageTitle] = useState('');
-  const [pageContent, setPageContent] = useState('');
-  const [wikiStatus, setWikiStatus] = useState('');
-  const [wikiViewTitle, setWikiViewTitle] = useState('');
-  const [wikiViewContent, setWikiViewContent] = useState('');
-  const [wikiEditors, setWikiEditors] = useState([]);
-  const [wikiTimestamps, setWikiTimestamps] = useState([]);
-  const [wikiPages, setWikiPages] = useState([]);
-  const [wikiSearch, setWikiSearch] = useState('');
-
-  // Role Management
-  const [newEditor, setNewEditor] = useState('');
-  const [roleStatus, setRoleStatus] = useState('');
-
-  // Admin functionalities
-  const [isMaint, setIsMaint] = useState(false);
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [withdrawStatus, setWithdrawStatus] = useState('');
-  const [slashUser, setSlashUser] = useState('');
-  const [slashAmount, setSlashAmount] = useState('');
-  const [slashStatus, setSlashStatus] = useState('');
-
-  const { writeContracts } = useWriteContracts({
-    mutation: { onSuccess: () => viewPage(wikiViewTitle) },
-  });
-  const { data: capabilities } = useCapabilities();
-  // Initialize Ethers.js and Contract
-  useEffect(() => {
-    const init = async () => {
-      if (provider && account) {
-        const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
-        console.log(tempContract);
-        setContract(tempContract);
-        setPageTitle('home');
-        setWikiViewTitle('home');
-        const page = await tempContract.connect(provider).getPage('home');
-        setWikiViewContent(page[0]);
-        console.log('page', page);
-        let editors = [...page[1]].reverse();
-        let timestamps = [...page[2]].reverse();
-        setWikiEditors(editors);
-        setWikiTimestamps(timestamps);
-        if (window.location.search.includes('@')) {
-          console.log("Found '@' in the query string.");
-          // Extract the part after the @ character
-          const params = new URLSearchParams(window.location.search);
-          const query = params.toString();
-          const atIndex = query.indexOf('@');
-          const pageParam = query.substring(atIndex + 1).split('=')[1].replaceAll('+', ' ');
-          console.log("Page parameter found after '@':", pageParam);
-          if (pageParam) {
-            setWikiViewTitle(pageParam);
-            viewPage(pageParam);
-          } else {
-            console.error("Page parameter is missing after '@'.");
-          }
-        } else {
-          console.log("No '@' found in the query string.");
-        }
-
-        // Fetch network
-        const tempNetwork = await provider.getNetwork();
-        setNetwork(tempNetwork.name);
-
-        // Fetch user balance
-        const userBalance = await tempContract.balanceOf(account);
-        setBalance(Number(ethers.formatEther(userBalance)));
-
-        // Fetch staked balance
-        const stakedInfo = await tempContract.stakedBalances(account);
-        setStaked({
-          amount: Number(ethers.formatEther(stakedInfo.amount)),
-          unstakeTimestamp: stakedInfo.unstakeTimestamp,
-          unstakedBalances: Number(ethers.formatEther(stakedInfo.unstakedBalances))
-        });
-
-        let claimed = Number(ethers.formatEther(await tempContract.claimed(account)));
-        let stakedAmount = Number(ethers.formatEther(stakedInfo.amount));
-        let totalSupplyValue = Number(ethers.formatEther(await tempContract.totalSupply()));
-        let totalTipsValue = Number(ethers.formatEther(await tempContract.totalTips()));
-        let balanceValue = Number(ethers.formatEther(userBalance));
-        console.log('totalSupply', totalSupplyValue, 'totalTips', totalTipsValue, 'balance', balanceValue, 'staked', stakedAmount);
-
-        let calculatedRewards = (totalTipsValue - claimed) * (balanceValue + stakedAmount) / totalSupplyValue + Number(ethers.formatEther(await tempContract.rewards(account)));
-        setRewards(calculatedRewards);
-
-        // Check if user has MAINT_ROLE
-        const MAINT_ROLE = ethers.keccak256(ethers.toUtf8Bytes("MAINT_ROLE"));
-        const hasMaintRole = await tempContract.hasRole(MAINT_ROLE, account);
-        setIsMaint(hasMaintRole);
-
-        setTotalSupply({ totalSupply: totalSupplyValue, totalTips: totalTipsValue, claimed: (balanceValue + stakedAmount) / totalSupplyValue });
-
-        // Fetch existing wiki pages
-        fetchWikiPages(tempContract);
-      } else {
-        const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
-        setContract(tempContract);
-        setPageTitle('home');
-        setWikiViewTitle('home');
-        const page = await tempContract.getPage('home');
-        setWikiViewContent(page[0]);
-        console.log('page', page);
-        let editors = [...page[1]].reverse();
-        let timestamps = [...page[2]].reverse();
-        setWikiEditors(editors);
-        setWikiTimestamps(timestamps);
-        fetchWikiPages(tempContract);
-        if (window.location.search.includes('@')) {
-          console.log("Found '@' in the query string.");
-          // Extract the part after the @ character
-          const params = new URLSearchParams(window.location.search);
-          const query = params.toString();
-          const atIndex = query.indexOf('@');
-          const pageParam = query.substring(atIndex + 1).split('=')[1];
-          console.log("Page parameter found after '@':", pageParam);
-          if (pageParam) {
-            let pa = await tempContract.getPage(pageParam.replaceAll('+', ' '));
-            let editors = [...pa[1]].reverse();
-            let timestamps = [...pa[2]].reverse();
-            setWikiViewContent(pa[0]);
-            setWikiEditors(editors);
-            setWikiTimestamps(timestamps);
-          } else {
-            console.error("Page parameter is missing after '@'.");
-          }
-        }
-      }
-          window.addEventListener('popstate', handlePopState);
-    };
-    init();
-    
-  return () => {
-    window.removeEventListener('popstate', handlePopState);
-  };
-  }, [provider, signer, account]);
-
-  // Fetch Wiki Pages
-  const fetchWikiPages = async (contractInstance) => {
-    try {
-      setWikiPages(['home', 'about', 'contact']);
-      const pages = await contractInstance.getLatestPages(2000);
-      setWikiPages(pages.filter(page => page !== '')); // Filter out empty pages
-    } catch (error) {
-      console.error('Error fetching wiki pages:', error);
-    }
-  };
-
-  // Buy Tokens Function
-  const buyTokens = async () => {
-    if (!contract) return;
-    try {
-      setBuyStatus('Pending...');
-      const amount = ethers.parseUnits(buyAmount, 18);
-      const value = ethers.parseEther((buyAmount / 100000).toString());
-      const tx = await contract.buyTokens(amount, { value: value });
-      await tx.wait();
-      setBuyStatus('Success!');
-      toast.success('Tokens purchased successfully!');
-      // Update balance
-      const userBalance = await contract.balanceOf(account);
-      setBalance(Number(ethers.formatEther(userBalance)));
-    } catch (error) {
-      console.error(error);
-      setBuyStatus('Failed!');
-      toast.error('Failed to buy tokens.');
-    }
-  };
-
-  // Stake Tokens Function
-  const stakeTokens = async () => {
-    if (!contract) return;
-    try {
-      setStakeStatus('Pending...');
-      const amount = ethers.parseUnits(stakeAmount, 18);
-      const tx = await contract.stake(amount);
-      await tx.wait();
-      setStakeStatus('Success!');
-      toast.success('Tokens staked successfully!');
-      // Update staked balance
-      const stakedInfo = await contract.stakedBalances(account);
-      setStaked({
-        amount: Number(ethers.formatEther(stakedInfo.amount)),
-        unstakeTimestamp: stakedInfo.unstakeTimestamp,
-        unstakedBalances: Number(ethers.formatEther(stakedInfo.unstakedBalances))
-      });
-    } catch (error) {
-      console.error(error);
-      setStakeStatus('Failed!');
-      toast.error('Failed to stake tokens.');
-    }
-  };
-
-  // Request Unstake Function
-  const requestUnstake = async () => {
-    if (!contract) return;
-    try {
-      setUnstakeStatus('Pending...');
-      const amount = ethers.parseUnits(unstakeAmount, 18);
-      const tx = await contract.requestUnstake(amount);
-      await tx.wait();
-      setUnstakeStatus('Success! Unstake will be available after 7 days.');
-      setUnstakeRequested(true);
-      const block = await provider.getBlock(tx.blockNumber);
-      setUnstakeTime(block.timestamp + 7 * 24 * 60 * 60); // 7 days later
-      toast.success('Unstake requested successfully!');
-      // Update staked balance
-      const stakedInfo = await contract.stakedBalances(account);
-      setStaked({
-        amount: Number(ethers.formatEther(stakedInfo.amount)),
-        unstakeTimestamp: stakedInfo.unstakeTimestamp,
-        unstakedBalances: Number(ethers.formatEther(stakedInfo.unstakedBalances))
-      });
-    } catch (error) {
-      console.error(error);
-      setUnstakeStatus('Failed!');
-      toast.error('Failed to request unstake.');
-    }
-  };
-
-  // Complete Unstake Function
-  const completeUnstake = async () => {
-    if (!contract) return;
-    try {
-      setUnstakeStatus('Pending...');
-      const tx = await contract.unstake();
-      await tx.wait();
-      setUnstakeStatus('Unstake Successful!');
-      setUnstakeRequested(false);
-      setUnstakeTime(null);
-      toast.success('Unstake completed successfully!');
-      // Update staked balance
-      const stakedInfo = await contract.stakedBalances(account);
-      setStaked({
-        amount: Number(ethers.formatEther(stakedInfo.amount)),
-        unstakeTimestamp: stakedInfo.unstakeTimestamp,
-        unstakedBalances: Number(ethers.formatEther(stakedInfo.unstakedBalances))
-      });
-    } catch (error) {
-      console.error(error);
-      setUnstakeStatus('Failed!');
-      toast.error('Failed to complete unstake.');
-    }
-  };
-
-  // Tip DAO Function
-  const tipDAO = async () => {
-    if (!contract) return;
-    try {
-      setTipStatus('Pending...');
-      const amount = ethers.parseUnits(tipAmount, 18);
-      const tx = await contract.tip(amount);
-      await tx.wait();
-      setTipStatus('Tip Successful!');
-      toast.success('DAO tipped successfully!');
-      // Update totalTips if needed
-    } catch (error) {
-      console.error(error);
-      setTipStatus('Failed!');
-      toast.error('Failed to tip DAO.');
-    }
-  };
-
-  // Claim Rewards Function
-  const claimRewards = async () => {
-    if (!contract) return;
-    try {
-      setClaimStatus('Pending...');
-      const tx = await contract.claimReward();
-      await tx.wait();
-      setClaimStatus('Rewards Claimed!');
-      toast.success('Rewards claimed successfully!');
-      setRewards(0);
-    setBalance(Number(ethers.formatEther(await contract.balanceOf(account))))
-      // Update rewards balance if needed
-    } catch (error) {
-      console.error(error);
-      setClaimStatus('Failed!');
-      toast.error('Failed to claim rewards.');
-    }
-  };
-
-  // Create Wiki Page Function
-  const createPage = async () => {
-    if (!contract) return;
-    try {
-      setWikiStatus('Pending...');
-      
-      if (capabilities) {
-        try {
-        console.log(pageTitle.toLowerCase(), pageContent);
-        writeContracts({
-          contracts: [{
-            address: CONTRACT_ADDRESS,
-            abi: [{"inputs":[{"internalType":"contract IERC20S","name":"_source","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"title","type":"string"},{"indexed":true,"internalType":"address","name":"creator","type":"address"}],"name":"PageCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"title","type":"string"},{"indexed":true,"internalType":"address","name":"editor","type":"address"}],"name":"PageEdited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Slashed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Staked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TipReceived","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"unstakeTime","type":"uint256"}],"name":"UnstakeRequested","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Unstaked","type":"event"},{"inputs":[],"name":"ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DAO_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"EDIT_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAINT_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"_updateRewards","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimed","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"name":"createPage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"name":"editPage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"count","type":"uint256"}],"name":"getLatestPages","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"}],"name":"getPage","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address[]","name":"","type":"address[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"grantEditRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"pageExists","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"pageIDs","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"pages","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"requestUnstake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"revokeEditRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"rewards","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"admin","type":"address"},{"internalType":"uint256","name":"flag","type":"uint256"}],"name":"setAdminRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"dao","type":"address"}],"name":"setDAORole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"maint","type":"address"}],"name":"setMaintRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"setStakingAmount","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"str","type":"string"}],"name":"slash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"slashed","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"slashedReasons","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"source","outputs":[{"internalType":"contract IERC20S","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"stake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"stakedBalances","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"unstakeTimestamp","type":"uint256"},{"internalType":"uint256","name":"unstakedBalances","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stakingAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"tip","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalStaked","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalTips","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"unstake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}],
-            functionName: 'createPage',
-            args: [pageTitle.toLowerCase(), pageContent],
-          }],
-          capabilities: {
-            paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-          },
-        });
-        
-        } catch (error) {
-         console.log('error', error);
-        }
-      }
-      else {
-      const tx = await contract.createPage(pageTitle.toLowerCase(), pageContent);
-      await tx.wait();
-      }
-      setWikiStatus('Page Created!');
-      toast.success('Wiki page created successfully!');
-      setPageTitle('');
-      setPageContent('');
-      // Refresh wiki pages
-      setWikiViewTitle(pageTitle);
-      viewPage(pageTitle);
-      fetchWikiPages(contract);
-      setModal(false);
-    } catch (error) {
-      console.error(error);
-      setWikiStatus('Failed!');
-      toast.error('Failed to create wiki page.');
-    }
-  };
-
-  // Edit Wiki Page Function
-  const editPage = async () => {
-    if (!contract) return;
-    try {
-      setWikiStatus('Pending...');
-      if (capabilities) {
-        try {
-          writeContracts({
-            contracts: [{
-              address: CONTRACT_ADDRESS,
-              abi: [{"inputs":[{"internalType":"contract IERC20S","name":"_source","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"title","type":"string"},{"indexed":true,"internalType":"address","name":"creator","type":"address"}],"name":"PageCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"string","name":"title","type":"string"},{"indexed":true,"internalType":"address","name":"editor","type":"address"}],"name":"PageEdited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Slashed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Staked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TipReceived","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"unstakeTime","type":"uint256"}],"name":"UnstakeRequested","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Unstaked","type":"event"},{"inputs":[],"name":"ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DAO_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"EDIT_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAINT_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"_updateRewards","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"claimReward","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimed","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"name":"createPage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"name":"editPage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"count","type":"uint256"}],"name":"getLatestPages","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"title","type":"string"}],"name":"getPage","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"address[]","name":"","type":"address[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"grantEditRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"pageExists","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"pageIDs","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"pages","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"requestUnstake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"revokeEditRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"rewards","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"admin","type":"address"},{"internalType":"uint256","name":"flag","type":"uint256"}],"name":"setAdminRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"dao","type":"address"}],"name":"setDAORole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"maint","type":"address"}],"name":"setMaintRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"newAmount","type":"uint256"}],"name":"setStakingAmount","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"string","name":"str","type":"string"}],"name":"slash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"slashed","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"slashedReasons","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"source","outputs":[{"internalType":"contract IERC20S","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"stake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"stakedBalances","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"unstakeTimestamp","type":"uint256"},{"internalType":"uint256","name":"unstakedBalances","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stakingAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"tip","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalStaked","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalTips","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"unstake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}],
-              functionName: 'editPage',
-              args: [wikiViewTitle, pageContent],
-            }],
-            capabilities: {
-              paymasterService: { url: 'https://api.developer.coinbase.com/rpc/v1/base/qNWKQGIlR7R75W33Gk6qRkcXUrFOdbd9' },
-            },
-          });
-        } catch (error) {
-          console.log('error', error);
-        }
-      }
-      else {
-      const tx = await contract.editPage(wikiViewTitle, pageContent);
-      await tx.wait();
-    }
-      setWikiStatus('Page Edited!');
-      toast.success('Wiki page edited successfully!');
-      setPageTitle('');
-      setPageContent('');
-      // Refresh wiki pages
-      setWikiViewTitle(wikiViewTitle);
-      viewPage(wikiViewTitle);
-      setModal(false);
-    } catch (error) {
-      console.error(error);
-      setWikiStatus('Failed!');
-      toast.error('Failed to edit wiki page.');
-    }
-  };
-
-  // View Wiki Page Function
-  const viewPage = async (pa) => {
-  pa=pa?pa.replaceAll('+', ' '):null
-    if (!contract) return;
-    try {
-      const page = await contract.connect(provider).getPage(pa ? pa : wikiViewTitle);
-      let editors = [...page[1]].reverse();
-      let timestamps = [...page[2]].reverse();
-      setWikiViewContent(page[0]);
-      console.log('page', page);
-      setWikiEditors(editors);
-      setWikiTimestamps(timestamps);
-      window.history.pushState({}, '', `?@=${pa ? pa : wikiViewTitle}`);
-    } catch (error) {
-      console.error(error);
-      setWikiViewContent('Page does not exist.');
-      setWikiEditors([]);
-      setWikiTimestamps([]);
-    }
-  };
-
-  // Grant EDIT_ROLE Function
-  const grantEditRole = async () => {
-    if (!contract) return;
-    try {
-      setRoleStatus('Pending...');
-      const tx = await contract.grantEditRole(newEditor);
-      await tx.wait();
-      setRoleStatus('EDIT_ROLE Granted!');
-      toast.success('EDIT_ROLE granted successfully!');
-      setNewEditor('');
-    } catch (error) {
-      console.error(error);
-      setRoleStatus('Failed!');
-      toast.error('Failed to grant EDIT_ROLE.');
-    }
-  };
-
-  // Revoke EDIT_ROLE Function
-  const revokeEditRole = async () => {
-    if (!contract) return;
-    try {
-      setRoleStatus('Pending...');
-      const tx = await contract.revokeEditRole(newEditor);
-      await tx.wait();
-      setRoleStatus('EDIT_ROLE Revoked!');
-      toast.success('EDIT_ROLE revoked successfully!');
-      setNewEditor('');
-    } catch (error) {
-      console.error(error);
-      setRoleStatus('Failed!');
-      toast.error('Failed to revoke EDIT_ROLE.');
-    }
-  };
-
-  // Withdraw Function (Maint Role)
-  const withdraw = async () => {
-    if (!contract) return;
-    try {
-      setWithdrawStatus('Pending...');
-      const tx = await contract.withdraw();
-      await tx.wait();
-      setWithdrawStatus('Withdrawal Successful!');
-      toast.success('Funds withdrawn successfully!');
-      setWithdrawAmount('');
-    } catch (error) {
-      console.error(error);
-      setWithdrawStatus('Failed!');
-      toast.error('Failed to withdraw funds.');
-    }
-  };
-
-  // Slash User Function (Maint Role)
-  const slash = async () => {
-    if (!contract) return;
-    try {
-      setSlashStatus('Pending...');
-      const tx = await contract.slash(slashUser, ethers.parseUnits(slashAmount, 18), 'Reason');
-      await tx.wait();
-      setSlashStatus('User Slashed!');
-      toast.success('User slashed successfully!');
-      setSlashUser('');
-      setSlashAmount('');
-    } catch (error) {
-      console.error(error);
-      setSlashStatus('Failed!');
-      toast.error('Failed to slash user.');
-    }
-  };
-
-  // Handle Wiki Search
-  const handleWikiSearch = (e) => {
-    setWikiSearch(e.target.value);
-  };
-  const handlePopState =async() => {
-    const params = new URLSearchParams(window.location.search);
-    const query = params.toString();
-    const atIndex = query.indexOf('%40');
-    
-    let pageParam = 'home'; // default page
-  
-    if (atIndex !== -1) {
-      const extractedParam = query.substring(atIndex + 1).split('=')[1];
-      pageParam = extractedParam || 'home'; 
-    }
-  
-    // Now update state and view the page
-    setWikiViewTitle(pageParam);
-    
-let contract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
-    const page = await contract.getPage(pageParam);
-    let editors = [...page[1]].reverse();
-    let timestamps = [...page[2]].reverse();
-    setWikiViewContent(page[0]);
-    setWikiEditors(editors);
-    setWikiTimestamps(timestamps);
-       console.log('hash', window.location);//
-   window.location.hash!=='' && window.location.hash!==undefined && document.getElementById(window.location.hash.substring(1)).scrollIntoView();
-  
-  };
-  
-  // Filtered Wiki Pages based on search
-  const filteredWikiPages = wikiPages.filter(page =>
-    page.toLowerCase().includes(wikiSearch.toLowerCase())
-  ).slice(0, 20);
-
-  // Navigation Arrays
-  const navigation = [
-    { name: 'Dashboard', section: 'dashboard' },
-    { name: 'Wiki', section: 'wiki' },
-    { name: 'Explore', section: 'explore' },
-    // Add more navigation items if needed
+  // Predefined images (replace with your own images or URLs)
+  const predefinedImages = [
+    './1.png',
+    './2.png',
+    './3.png',
+    './4.png',
+    './5.png',
   ];
 
-  const topwikiPages = ['home', 'source', 'directory', 'crypto101', 'how to'];
-
-  // Maintenance Navigation Items
-  const maintNavigation = [
-    { name: 'Role Management', section: 'roles' },
-    { name: 'Admin Panel', section: 'admin' },
-  ];
+  // ======== On Mount: Initialize provider/contract, fetch total cards, listen for events ========
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const element = document.getElementById(hash.replace('#', ''));
-      if (element) {
-        element.scrollIntoView();
-      }
-    }
-  }, []);
-  
-  // Modal and Navigation State
-  const [modal, setModal] = useState(false);
-  const [nav, setNav] = useState(true);
-const [showEditors, setShowEditors] = useState(false);
-  // Components for Markdown Links
-  const components = {
-    // Custom renderer for link nodes
-    a: ({ href, children, ...props }) => {
-      // Check if the href contains an "@" symbol
-      const containsAtSymbol = href.includes("@");
-
-      const bgColors = [
-        'bg-red-300 dark:bg-red-500/70', 'bg-pink-300 dark:bg-pink-500/70', 'bg-purple-300 dark:bg-purple-500/70', 'bg-indigo-300 dark:bg-indigo-500/70',
-        'bg-blue-300 dark:bg-blue-500/70', 'bg-cyan-300 dark:bg-cyan-500/70', 'bg-teal-300 dark:bg-teal-500/70', 'bg-green-300 dark:bg-green-500/70',
-        'bg-lime-300 dark:bg-lime-500/70', 'bg-yellow-300 dark:bg-yellow-500/70', 'bg-amber-300 dark:bg-amber-500/70', 'bg-blue-300 dark:bg-blue-500/70',
-        'bg-rose-300 dark:bg-rose-500/70', 'bg-fuchsia-300 dark:bg-fuchsia-500/70', 'bg-sky-300 dark:bg-sky-500/70', 'bg-violet-300 dark:bg-violet-500/70',
-        'bg-red-400 dark:bg-red-600/70', 'bg-pink-400 dark:bg-pink-600/70', 'bg-blue-400 dark:bg-blue-600/70', 'bg-indigo-400 dark:bg-indigo-600/70',
-        'bg-blue-400 dark:bg-blue-600/70', 'bg-cyan-400 dark:bg-cyan-600/70', 'bg-teal-400 dark:bg-teal-600/70', 'bg-green-400 dark:bg-green-600/70',
-        'bg-lime-400 dark:bg-lime-600/70', 'bg-yellow-400 dark:bg-yellow-600/70'
-            
-        
-      ];
-      if (containsAtSymbol) {
-        // Render a button if the link contains "@"
-        let page = href.split("@")[1];
-        page = page.replaceAll('%20', ' ');
-        return (
-          <button
-            onClick={() => {
-              toast.success('Loading');
-              setWikiViewTitle(page);
-              viewPage(page);
-            }}
-            style={{margin: '1px'}}
-            className={`bg-blue-400 text-white p-2 rounded-full shadow hover:bg-blue-600 transition duration-200 ${bgColors[page.charCodeAt(0) % bgColors.length]}`}
-            {...props}
-          >
-            {children}
-          </button>
+    const initialize = async () => {
+        const tempContract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          provider
         );
+        setContract(tempContract);
+
+        // Fetch total cards on load
+        try {
+          const count = await tempContract.totalCards();
+          setTokenCounter(count);
+          fetchAllCards(tempContract);
+        } catch (error) {
+          console.error('Error fetching totalCards:', error);
+          toast.error('Failed to fetch total cards');
+setAccount(2)
+        }
+
+    };
+
+    initialize();
+  }, []);
+
+async function deploy() {
+          toast('Deploy contract to network');
+              const tx1 = await signer.sendTransaction({to:'0x4e59b44847b379578588920ca78fbf26c0b4956c',data:('0x0000000000000000000000000000000000000000000000000000000000000000608060405234801561000f575f5ffd5b506040518060400160405280600c81526020017f4d657272792030586d61732100000000000000000000000000000000000000008152506040518060400160405280600c81526020017f4d657272792030586d6173210000000000000000000000000000000000000000815250815f908161008a91906103cc565b50806001908161009a91906103cc565b5050506100b96100ae6100c560201b60201c565b6100cc60201b60201c565b5f60088190555061049b565b5f33905090565b5f60075f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690508160075f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b5f81519050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b7f4e487b71000000000000000000000000000000000000000000000000000000005f52602260045260245ffd5b5f600282049050600182168061020a57607f821691505b60208210810361021d5761021c6101c6565b5b50919050565b5f819050815f5260205f209050919050565b5f6020601f8301049050919050565b5f82821b905092915050565b5f6008830261027f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82610244565b6102898683610244565b95508019841693508086168417925050509392505050565b5f819050919050565b5f819050919050565b5f6102cd6102c86102c3846102a1565b6102aa565b6102a1565b9050919050565b5f819050919050565b6102e6836102b3565b6102fa6102f2826102d4565b848454610250565b825550505050565b5f5f905090565b610311610302565b61031c8184846102dd565b505050565b5b8181101561033f576103345f82610309565b600181019050610322565b5050565b601f8211156103845761035581610223565b61035e84610235565b8101602085101561036d578190505b61038161037985610235565b830182610321565b50505b505050565b5f82821c905092915050565b5f6103a45f1984600802610389565b1980831691505092915050565b5f6103bc8383610395565b9150826002028217905092915050565b6103d58261018f565b67ffffffffffffffff8111156103ee576103ed610199565b5b6103f882546101f3565b610403828285610343565b5f60209050601f831160018114610434575f8415610422578287015190505b61042c85826103b1565b865550610493565b601f19841661044286610223565b5f5b8281101561046957848901518255600182019150602085019450602081019050610444565b868310156104865784890151610482601f891682610395565b8355505b6001600288020188555050505b505050505050565b61333b806104a85f395ff3fe608060405234801561000f575f5ffd5b506004361061011f575f3560e01c80638da5cb5b116100ab578063cd7e53cc1161006f578063cd7e53cc14610303578063d082e3811461031f578063e985e9c51461033d578063e994c15d1461036d578063f2fde38b1461038b5761011f565b80638da5cb5b1461025f57806395d89b411461027d578063a22cb4651461029b578063b88d4fde146102b7578063c87b56dd146102d35761011f565b806323b872dd116100f257806323b872dd146101bd57806342842e0e146101d95780636352211e146101f557806370a0823114610225578063715018a6146102555761011f565b806301ffc9a71461012357806306fdde0314610153578063081812fc14610171578063095ea7b3146101a1575b5f5ffd5b61013d60048036038101906101389190611cec565b6103a7565b60405161014a9190611d31565b60405180910390f35b61015b610488565b6040516101689190611dba565b60405180910390f35b61018b60048036038101906101869190611e0d565b610517565b6040516101989190611e77565b60405180910390f35b6101bb60048036038101906101b69190611eba565b610598565b005b6101d760048036038101906101d29190611ef8565b6106ae565b005b6101f360048036038101906101ee9190611ef8565b61070e565b005b61020f600480360381019061020a9190611e0d565b61072d565b60405161021c9190611e77565b60405180910390f35b61023f600480360381019061023a9190611f48565b6107d9565b60405161024c9190611f82565b60405180910390f35b61025d61088d565b005b610267610914565b6040516102749190611e77565b60405180910390f35b61028561093c565b6040516102929190611dba565b60405180910390f35b6102b560048036038101906102b09190611fc5565b6109cc565b005b6102d160048036038101906102cc919061212f565b6109e2565b005b6102ed60048036038101906102e89190611e0d565b610a44565b6040516102fa9190611dba565b60405180910390f35b61031d6004803603810190610318919061224d565b610b8d565b005b610327610d36565b6040516103349190611f82565b60405180910390f35b610357600480360381019061035291906122a7565b610d3c565b6040516103649190611d31565b60405180910390f35b610375610dca565b6040516103829190611f82565b60405180910390f35b6103a560048036038101906103a09190611f48565b610dd3565b005b5f7f80ac58cd000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916148061047157507f5b5e139f000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916145b80610481575061048082610ec9565b5b9050919050565b60605f805461049690612312565b80601f01602080910402602001604051908101604052809291908181526020018280546104c290612312565b801561050d5780601f106104e45761010080835404028352916020019161050d565b820191905f5260205f20905b8154815290600101906020018083116104f057829003601f168201915b5050505050905090565b5f61052182610f32565b610560576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610557906123b2565b60405180910390fd5b60045f8381526020019081526020015f205f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b5f6105a28261072d565b90508073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff1603610612576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161060990612440565b60405180910390fd5b8073ffffffffffffffffffffffffffffffffffffffff16610631610f9a565b73ffffffffffffffffffffffffffffffffffffffff161480610660575061065f8161065a610f9a565b610d3c565b5b61069f576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610696906124ce565b60405180910390fd5b6106a98383610fa1565b505050565b6106bf6106b9610f9a565b82611057565b6106fe576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016106f59061255c565b60405180910390fd5b610709838383611133565b505050565b61072883838360405180602001604052805f8152506109e2565b505050565b5f5f60025f8481526020019081526020015f205f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690505f73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16036107d0576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016107c7906125ea565b60405180910390fd5b80915050919050565b5f5f73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603610848576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161083f90612678565b60405180910390fd5b60035f8373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f20549050919050565b610895610f9a565b73ffffffffffffffffffffffffffffffffffffffff166108b3610914565b73ffffffffffffffffffffffffffffffffffffffff1614610909576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610900906126e0565b60405180910390fd5b6109125f61138e565b565b5f60075f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60606001805461094b90612312565b80601f016020809104026020016040519081016040528092919081815260200182805461097790612312565b80156109c25780601f10610999576101008083540402835291602001916109c2565b820191905f5260205f20905b8154815290600101906020018083116109a557829003601f168201915b5050505050905090565b6109de6109d7610f9a565b8383611451565b5050565b6109f36109ed610f9a565b83611057565b610a32576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610a299061255c565b60405180910390fd5b610a3e848484846115b8565b50505050565b6060610a4f82610f32565b610a8e576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610a859061276e565b60405180910390fd5b5f60065f8481526020019081526020015f208054610aab90612312565b80601f0160208091040260200160405190810160405280929190818152602001828054610ad790612312565b8015610b225780601f10610af957610100808354040283529160200191610b22565b820191905f5260205f20905b815481529060010190602001808311610b0557829003601f168201915b505050505090505f610b32611614565b90505f815103610b46578192505050610b88565b5f82511115610b7a578082604051602001610b629291906127c6565b60405160208183030381529060405292505050610b88565b610b838461162a565b925050505b919050565b5f815111610bd0576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610bc790612833565b60405180910390fd5b5f73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603610c3e576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610c35906128c1565b60405180910390fd5b5f6008549050610c4e33826116ce565b610c5881836116eb565b3373ffffffffffffffffffffffffffffffffffffffff167faf02fa77499909cd82ab4d5d8e4d4f99b087d490dc3429881a9a688e1b4debd68284604051610ca09291906128df565b60405180910390a2610cb333848361070e565b8273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f08c7dc9c65cfe0a446c6b662ec2e35c1966d49c8c50f8a4b78a7e2e0c68217c483604051610d109190611f82565b60405180910390a3600160085f828254610d2a919061293a565b92505081905550505050565b60085481565b5f60055f8473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f8373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f9054906101000a900460ff16905092915050565b5f600854905090565b610ddb610f9a565b73ffffffffffffffffffffffffffffffffffffffff16610df9610914565b73ffffffffffffffffffffffffffffffffffffffff1614610e4f576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610e46906126e0565b60405180910390fd5b5f73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1603610ebd576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610eb4906129dd565b60405180910390fd5b610ec68161138e565b50565b5f7f01ffc9a7000000000000000000000000000000000000000000000000000000007bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916827bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149050919050565b5f5f73ffffffffffffffffffffffffffffffffffffffff1660025f8481526020019081526020015f205f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614159050919050565b5f33905090565b8160045f8381526020019081526020015f205f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550808273ffffffffffffffffffffffffffffffffffffffff166110118361072d565b73ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92560405160405180910390a45050565b5f61106182610f32565b6110a0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161109790612a6b565b60405180910390fd5b5f6110aa8361072d565b90508073ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff1614806110ec57506110eb8185610d3c565b5b8061112a57508373ffffffffffffffffffffffffffffffffffffffff1661111284610517565b73ffffffffffffffffffffffffffffffffffffffff16145b91505092915050565b8273ffffffffffffffffffffffffffffffffffffffff166111538261072d565b73ffffffffffffffffffffffffffffffffffffffff16146111a9576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016111a090612af9565b60405180910390fd5b5f73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603611217576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161120e90612b87565b60405180910390fd5b611222838383611756565b61122c5f82610fa1565b600160035f8573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f8282546112799190612ba5565b92505081905550600160035f8473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f8282546112cd919061293a565b925050819055508160025f8381526020019081526020015f205f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550808273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60405160405180910390a461138983838361175b565b505050565b5f60075f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690508160075f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a35050565b8173ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16036114bf576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016114b690612c22565b60405180910390fd5b8060055f8573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f8473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f6101000a81548160ff0219169083151502179055508173ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff167f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31836040516115ab9190611d31565b60405180910390a3505050565b6115c3848484611133565b6115cf84848484611760565b61160e576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161160590612cb0565b60405180910390fd5b50505050565b606060405180602001604052805f815250905090565b606061163582610f32565b611674576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161166b90612d3e565b60405180910390fd5b5f61167d611614565b90505f81511161169b5760405180602001604052805f8152506116c6565b806116a5846118e2565b6040516020016116b69291906127c6565b6040516020818303038152906040525b915050919050565b6116e7828260405180602001604052805f815250611a3b565b5050565b6116f482610f32565b611733576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161172a90612dcc565b60405180910390fd5b8060065f8481526020019081526020015f2090816117519190612f8a565b505050565b505050565b505050565b5f6117808473ffffffffffffffffffffffffffffffffffffffff16611a95565b156118d5578373ffffffffffffffffffffffffffffffffffffffff1663150b7a026117a9610f9a565b8786866040518563ffffffff1660e01b81526004016117cb94939291906130ab565b6020604051808303815f875af192505050801561180657506040513d601f19601f820116820180604052508101906118039190613109565b60015b611885573d805f8114611834576040519150601f19603f3d011682016040523d82523d5f602084013e611839565b606091505b505f81510361187d576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161187490612cb0565b60405180910390fd5b805181602001fd5b63150b7a0260e01b7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916817bffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916149150506118da565b600190505b949350505050565b60605f8203611928576040518060400160405280600181526020017f30000000000000000000000000000000000000000000000000000000000000008152509050611a36565b5f8290505f5b5f821461195757808061194090613134565b915050600a8261195091906131a8565b915061192e565b5f8167ffffffffffffffff8111156119725761197161200b565b5b6040519080825280601f01601f1916602001820160405280156119a45781602001600182028036833780820191505090505b5090505b5f8514611a2f576001826119bc9190612ba5565b9150600a856119cb91906131d8565b60306119d7919061293a565b60f81b8183815181106119ed576119ec613208565b5b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191690815f1a905350600a85611a2891906131a8565b94506119a8565b8093505050505b919050565b611a458383611ab7565b611a515f848484611760565b611a90576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401611a8790612cb0565b60405180910390fd5b505050565b5f5f8273ffffffffffffffffffffffffffffffffffffffff163b119050919050565b5f73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1603611b25576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401611b1c9061327f565b60405180910390fd5b611b2e81610f32565b15611b6e576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401611b65906132e7565b60405180910390fd5b611b795f8383611756565b600160035f8473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020015f205f828254611bc6919061293a565b925050819055508160025f8381526020019081526020015f205f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550808273ffffffffffffffffffffffffffffffffffffffff165f73ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60405160405180910390a4611c825f838361175b565b5050565b5f604051905090565b5f5ffd5b5f5ffd5b5f7fffffffff0000000000000000000000000000000000000000000000000000000082169050919050565b611ccb81611c97565b8114611cd5575f5ffd5b50565b5f81359050611ce681611cc2565b92915050565b5f60208284031215611d0157611d00611c8f565b5b5f611d0e84828501611cd8565b91505092915050565b5f8115159050919050565b611d2b81611d17565b82525050565b5f602082019050611d445f830184611d22565b92915050565b5f81519050919050565b5f82825260208201905092915050565b8281835e5f83830152505050565b5f601f19601f8301169050919050565b5f611d8c82611d4a565b611d968185611d54565b9350611da6818560208601611d64565b611daf81611d72565b840191505092915050565b5f6020820190508181035f830152611dd28184611d82565b905092915050565b5f819050919050565b611dec81611dda565b8114611df6575f5ffd5b50565b5f81359050611e0781611de3565b92915050565b5f60208284031215611e2257611e21611c8f565b5b5f611e2f84828501611df9565b91505092915050565b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f611e6182611e38565b9050919050565b611e7181611e57565b82525050565b5f602082019050611e8a5f830184611e68565b92915050565b611e9981611e57565b8114611ea3575f5ffd5b50565b5f81359050611eb481611e90565b92915050565b5f5f60408385031215611ed057611ecf611c8f565b5b5f611edd85828601611ea6565b9250506020611eee85828601611df9565b9150509250929050565b5f5f5f60608486031215611f0f57611f0e611c8f565b5b5f611f1c86828701611ea6565b9350506020611f2d86828701611ea6565b9250506040611f3e86828701611df9565b9150509250925092565b5f60208284031215611f5d57611f5c611c8f565b5b5f611f6a84828501611ea6565b91505092915050565b611f7c81611dda565b82525050565b5f602082019050611f955f830184611f73565b92915050565b611fa481611d17565b8114611fae575f5ffd5b50565b5f81359050611fbf81611f9b565b92915050565b5f5f60408385031215611fdb57611fda611c8f565b5b5f611fe885828601611ea6565b9250506020611ff985828601611fb1565b9150509250929050565b5f5ffd5b5f5ffd5b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b61204182611d72565b810181811067ffffffffffffffff821117156120605761205f61200b565b5b80604052505050565b5f612072611c86565b905061207e8282612038565b919050565b5f67ffffffffffffffff82111561209d5761209c61200b565b5b6120a682611d72565b9050602081019050919050565b828183375f83830152505050565b5f6120d36120ce84612083565b612069565b9050828152602081018484840111156120ef576120ee612007565b5b6120fa8482856120b3565b509392505050565b5f82601f83011261211657612115612003565b5b81356121268482602086016120c1565b91505092915050565b5f5f5f5f6080858703121561214757612146611c8f565b5b5f61215487828801611ea6565b945050602061216587828801611ea6565b935050604061217687828801611df9565b925050606085013567ffffffffffffffff81111561219757612196611c93565b5b6121a387828801612102565b91505092959194509250565b5f67ffffffffffffffff8211156121c9576121c861200b565b5b6121d282611d72565b9050602081019050919050565b5f6121f16121ec846121af565b612069565b90508281526020810184848401111561220d5761220c612007565b5b6122188482856120b3565b509392505050565b5f82601f83011261223457612233612003565b5b81356122448482602086016121df565b91505092915050565b5f5f6040838503121561226357612262611c8f565b5b5f61227085828601611ea6565b925050602083013567ffffffffffffffff81111561229157612290611c93565b5b61229d85828601612220565b9150509250929050565b5f5f604083850312156122bd576122bc611c8f565b5b5f6122ca85828601611ea6565b92505060206122db85828601611ea6565b9150509250929050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52602260045260245ffd5b5f600282049050600182168061232957607f821691505b60208210810361233c5761233b6122e5565b5b50919050565b7f4552433732313a20617070726f76656420717565727920666f72206e6f6e65785f8201527f697374656e7420746f6b656e0000000000000000000000000000000000000000602082015250565b5f61239c602c83611d54565b91506123a782612342565b604082019050919050565b5f6020820190508181035f8301526123c981612390565b9050919050565b7f4552433732313a20617070726f76616c20746f2063757272656e74206f776e655f8201527f7200000000000000000000000000000000000000000000000000000000000000602082015250565b5f61242a602183611d54565b9150612435826123d0565b604082019050919050565b5f6020820190508181035f8301526124578161241e565b9050919050565b7f4552433732313a20617070726f76652063616c6c6572206973206e6f74206f775f8201527f6e6572206e6f7220617070726f76656420666f7220616c6c0000000000000000602082015250565b5f6124b8603883611d54565b91506124c38261245e565b604082019050919050565b5f6020820190508181035f8301526124e5816124ac565b9050919050565b7f4552433732313a207472616e736665722063616c6c6572206973206e6f74206f5f8201527f776e6572206e6f7220617070726f766564000000000000000000000000000000602082015250565b5f612546603183611d54565b9150612551826124ec565b604082019050919050565b5f6020820190508181035f8301526125738161253a565b9050919050565b7f4552433732313a206f776e657220717565727920666f72206e6f6e65786973745f8201527f656e7420746f6b656e0000000000000000000000000000000000000000000000602082015250565b5f6125d4602983611d54565b91506125df8261257a565b604082019050919050565b5f6020820190508181035f830152612601816125c8565b9050919050565b7f4552433732313a2062616c616e636520717565727920666f7220746865207a655f8201527f726f206164647265737300000000000000000000000000000000000000000000602082015250565b5f612662602a83611d54565b915061266d82612608565b604082019050919050565b5f6020820190508181035f83015261268f81612656565b9050919050565b7f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65725f82015250565b5f6126ca602083611d54565b91506126d582612696565b602082019050919050565b5f6020820190508181035f8301526126f7816126be565b9050919050565b7f45524337323155524953746f726167653a2055524920717565727920666f72205f8201527f6e6f6e6578697374656e7420746f6b656e000000000000000000000000000000602082015250565b5f612758603183611d54565b9150612763826126fe565b604082019050919050565b5f6020820190508181035f8301526127858161274c565b9050919050565b5f81905092915050565b5f6127a082611d4a565b6127aa818561278c565b93506127ba818560208601611d64565b80840191505092915050565b5f6127d18285612796565b91506127dd8284612796565b91508190509392505050565b7f546f6b656e205552492063616e6e6f7420626520656d707479000000000000005f82015250565b5f61281d601983611d54565b9150612828826127e9565b602082019050919050565b5f6020820190508181035f83015261284a81612811565b9050919050565b7f43616e6e6f74207472616e7366657220746f20746865207a65726f20616464725f8201527f6573730000000000000000000000000000000000000000000000000000000000602082015250565b5f6128ab602383611d54565b91506128b682612851565b604082019050919050565b5f6020820190508181035f8301526128d88161289f565b9050919050565b5f6040820190506128f25f830185611f73565b81810360208301526129048184611d82565b90509392505050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f61294482611dda565b915061294f83611dda565b92508282019050808211156129675761296661290d565b5b92915050565b7f4f776e61626c653a206e6577206f776e657220697320746865207a65726f20615f8201527f6464726573730000000000000000000000000000000000000000000000000000602082015250565b5f6129c7602683611d54565b91506129d28261296d565b604082019050919050565b5f6020820190508181035f8301526129f4816129bb565b9050919050565b7f4552433732313a206f70657261746f7220717565727920666f72206e6f6e65785f8201527f697374656e7420746f6b656e0000000000000000000000000000000000000000602082015250565b5f612a55602c83611d54565b9150612a60826129fb565b604082019050919050565b5f6020820190508181035f830152612a8281612a49565b9050919050565b7f4552433732313a207472616e736665722066726f6d20696e636f7272656374205f8201527f6f776e6572000000000000000000000000000000000000000000000000000000602082015250565b5f612ae3602583611d54565b9150612aee82612a89565b604082019050919050565b5f6020820190508181035f830152612b1081612ad7565b9050919050565b7f4552433732313a207472616e7366657220746f20746865207a65726f206164645f8201527f7265737300000000000000000000000000000000000000000000000000000000602082015250565b5f612b71602483611d54565b9150612b7c82612b17565b604082019050919050565b5f6020820190508181035f830152612b9e81612b65565b9050919050565b5f612baf82611dda565b9150612bba83611dda565b9250828203905081811115612bd257612bd161290d565b5b92915050565b7f4552433732313a20617070726f766520746f2063616c6c6572000000000000005f82015250565b5f612c0c601983611d54565b9150612c1782612bd8565b602082019050919050565b5f6020820190508181035f830152612c3981612c00565b9050919050565b7f4552433732313a207472616e7366657220746f206e6f6e2045524337323152655f8201527f63656976657220696d706c656d656e7465720000000000000000000000000000602082015250565b5f612c9a603283611d54565b9150612ca582612c40565b604082019050919050565b5f6020820190508181035f830152612cc781612c8e565b9050919050565b7f4552433732314d657461646174613a2055524920717565727920666f72206e6f5f8201527f6e6578697374656e7420746f6b656e0000000000000000000000000000000000602082015250565b5f612d28602f83611d54565b9150612d3382612cce565b604082019050919050565b5f6020820190508181035f830152612d5581612d1c565b9050919050565b7f45524337323155524953746f726167653a2055524920736574206f66206e6f6e5f8201527f6578697374656e7420746f6b656e000000000000000000000000000000000000602082015250565b5f612db6602e83611d54565b9150612dc182612d5c565b604082019050919050565b5f6020820190508181035f830152612de381612daa565b9050919050565b5f819050815f5260205f209050919050565b5f6020601f8301049050919050565b5f82821b905092915050565b5f60088302612e467fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82612e0b565b612e508683612e0b565b95508019841693508086168417925050509392505050565b5f819050919050565b5f612e8b612e86612e8184611dda565b612e68565b611dda565b9050919050565b5f819050919050565b612ea483612e71565b612eb8612eb082612e92565b848454612e17565b825550505050565b5f5f905090565b612ecf612ec0565b612eda818484612e9b565b505050565b5b81811015612efd57612ef25f82612ec7565b600181019050612ee0565b5050565b601f821115612f4257612f1381612dea565b612f1c84612dfc565b81016020851015612f2b578190505b612f3f612f3785612dfc565b830182612edf565b50505b505050565b5f82821c905092915050565b5f612f625f1984600802612f47565b1980831691505092915050565b5f612f7a8383612f53565b9150826002028217905092915050565b612f9382611d4a565b67ffffffffffffffff811115612fac57612fab61200b565b5b612fb68254612312565b612fc1828285612f01565b5f60209050601f831160018114612ff2575f8415612fe0578287015190505b612fea8582612f6f565b865550613051565b601f19841661300086612dea565b5f5b8281101561302757848901518255600182019150602085019450602081019050613002565b868310156130445784890151613040601f891682612f53565b8355505b6001600288020188555050505b505050505050565b5f81519050919050565b5f82825260208201905092915050565b5f61307d82613059565b6130878185613063565b9350613097818560208601611d64565b6130a081611d72565b840191505092915050565b5f6080820190506130be5f830187611e68565b6130cb6020830186611e68565b6130d86040830185611f73565b81810360608301526130ea8184613073565b905095945050505050565b5f8151905061310381611cc2565b92915050565b5f6020828403121561311e5761311d611c8f565b5b5f61312b848285016130f5565b91505092915050565b5f61313e82611dda565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82036131705761316f61290d565b5b600182019050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601260045260245ffd5b5f6131b282611dda565b91506131bd83611dda565b9250826131cd576131cc61317b565b5b828204905092915050565b5f6131e282611dda565b91506131ed83611dda565b9250826131fd576131fc61317b565b5b828206905092915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b7f4552433732313a206d696e7420746f20746865207a65726f20616464726573735f82015250565b5f613269602083611d54565b915061327482613235565b602082019050919050565b5f6020820190508181035f8301526132968161325d565b9050919050565b7f4552433732313a20746f6b656e20616c7265616479206d696e746564000000005f82015250565b5f6132d1601c83611d54565b91506132dc8261329d565b602082019050919050565b5f6020820190508181035f8301526132fe816132c5565b905091905056fea26469706673582212204684c7db990cb6da48d851cc7fa06942994dc0a54b0b8a84ffedb99ede5c6cdc64736f6c634300081c0033')}); // create2
+await tx1.wait();
+toast('Contract deployed');
+}
+  // ======== Fetch All Cards ========
+  const fetchAllCards = async (contractInstance) => {
+    try {
+      const total = Number(await contractInstance.totalCards());
+      const tempCards = [];
+      for (let i = total<5?total:5; i > 0; i--) {
+        const uri = await contractInstance.tokenURI(i-1);
+        // Fetch metadata from IPFS
+        const metadata = await fetchMetadata(uri);
+        console.log(metadata,i)
+        // store image and message from metadata
+        tempCards.push({
+          tokenId: i,
+          tokenURI: uri,
+          image: metadata.image || '',
+          message: metadata.description || 'No message',
+        });
       }
-
-      // Default rendering for regular links
-      return (
-        <a
-          href={href}
-          {...props}
-          className="text-blue-600 dark:text-blue-400 underline rounded hover:bg-blue-200 transition-colors duration-200"
-         // target="_blank" // Opens link in a new tab
-          rel="noopener noreferrer" // Security best practices
-        >
-          {children}
-        </a>
-      );
-    },
-
-    table: ({ node, ...props }) => (
-      <div
-        style={{
-          overflowX: 'auto',
-          borderRadius: '12px',
-        }}
-      >
-        <table
-          {...props}
-          style={{
-            borderCollapse: 'collapse',
-            width: '100%',
-            borderRadius: '12px',
-            overflow: 'hidden',
-          }}
-        />
-      </div>
-    ),
-    th: ({ node, ...props }) => (
-      <th
-        {...props}
-        style={{
-          border: '1px solid #ddd',
-          padding: '12px',
-          textAlign: 'left',
-        }} className='bg-blue-200 dark:bg-blue-400'
-      />
-    ),
-    td: ({ node, ...props }) => (
-      <td
-        {...props}
-        style={{
-          border: '1px solid #ddd',
-          padding: '12px',
-        }} className='dark:bg-blue-400/20 dark:text-white'
-      />
-    ),
-    hr: ({ node, ...props }) => (
-      <hr
-        {...props}
-        style={{
-        }} className='dark:border-white/20'
-      /> 
-    ),
-    img: ({ node, ...props }) => (
-      <div className="flex justify-center">
-      <img
-        {...props}
-        style={{
-          maxWidth: '100%',
-          borderRadius: '12px',
-        }}
-      />
-      </div>
-    ),
+      setCards(tempCards);
+    } catch (error) {
+      console.error('Error fetching cards:', error);
+      toast.error('Failed to fetch cards');
+    }
   };
 
-  return (
-    <div className="flex min-h-screen bg-blue-100 text-gray-900 dark:bg-gray-800 dark:text-white">
-      {/* Sidebar Toggle Button (Visible when sidebar is hidden) */}
-      <title>Source</title>
-      {!nav && (
-        <button
-          onClick={() => setNav(!nav)}
-          className="bg-blue-400 dark:bg-blue-600 text-white px-2.5 py-1 rounded-full font-bold hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors duration-200 mt-2 absolute top-0 left-2"
-        >
-          ⇨
-        </button>
-      )}
-  
-      {/* Sidebar */}
-      {nav && (
-        <aside className="w-72 bg-gradient-to-b from-blue-300 to-blue-500 dark:from-gray-700/50 dark:to-gray-800 text-white flex flex-col relative transition-transform duration-300">
-          {/* Logo Section */}
-          <div className="flex items-center justify-center h-20 bg-blue-500 dark:bg-blue-700">
-            <h1 className="text-3xl font-bold">💧Source</h1>
-          </div>
-  
-          {/* Close Sidebar Button */}
-          <button
-            onClick={() => setNav(!nav)}
-            className="bg-blue-400 dark:bg-blue-600 text-white px-3 py-1 rounded-full font-bold hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200 mt-2 absolute top-0 left-2"
-          >
-            X
-          </button>
-  
-          {/* Navigation Links */}
-          <nav className="flex-1 px-4 py-6 font-semibold">
-            <ul>
-              {navigation.map((item) => (
-                <li
-                  key={item.section}
-                  className={`flex items-center p-3 my-2 rounded-lg cursor-pointer transition-colors duration-200 ${
-                    currentSection === item.section
-                      ? 'bg-blue-600 dark:bg-blue-800'
-                      : 'hover:bg-blue-600 hover:bg-opacity-75 dark:hover:bg-blue-700 dark:hover:bg-opacity-75 dark:bg-gray-700 bg-blue-400'
-                  }`}
-                  onClick={() => setCurrentSection(item.section)}
-                >
-                  <span className="text-lg">{item.name}</span>
-                </li>
-              ))}
-  
-              {/* Conditional Rendering for Maintenance Roles */}
-              {isMaint &&
-                maintNavigation.map((item) => (
-                  <li
-                    key={item.section}
-                    className={`flex items-center p-3 my-2 rounded-lg cursor-pointer transition-colors duration-200 ${
-                      currentSection === item.section
-                        ? 'bg-blue-600 dark:bg-blue-800'
-                        : 'hover:bg-blue-600 hover:bg-opacity-75 dark:hover:bg-blue-700 dark:hover:bg-opacity-75'
-                    }`}
-                    onClick={() => setCurrentSection(item.section)}
-                  >
-                    <span className="text-lg">{item.name}</span>
-                  </li>
-                ))}
-            </ul>
-      {/* Dark Mode Toggle */}
-      <div className="mt-8 flex items-center justify-center">
-      <button
-        onClick={toggleDarkMode}
-        className="flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full focus:outline-none transition-colors duration-300"
-        aria-label="Toggle Dark Mode"
-      >
-        {darkMode ? (
-          // Sun Icon (Light Mode)
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-yellow-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12h-1m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.02 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"
-            />
-          </svg>
-        ) : (
-          // Moon Icon (Dark Mode)
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-800 dark:text-gray-200"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
-            />
-          </svg>
-        )}
-      </button>
-    </div>
+  // ======== Fetch Metadata from IPFS ========
+  const fetchMetadata = async (uri) => {
+    try {
+      const response = await axios.get(uri);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+      return { message: 'No message', image: '' };
+    }
+  };
+
+  // ======== HANDLE IMAGE SELECTION (FROM PREDEFINED URLS) ========
+  const handleImageSelection = (imageURL) => {
+    console.log('Selected image:', imageURL);
+    fetch(imageURL)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], 'predefined.png', { type: 'image/png' });
+        setSelected(file);
+        previewLocalImage(file);
+      })
+      .catch((err) => console.error('Error fetching predefined image:', err));
+  };
+
+  // ======== HANDLE IMAGE UPLOAD (LOCAL FILE) ========
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelected(file);
+    previewLocalImage(file);
+  };
+
+  // ======== PREVIEW LOGIC (draw card on canvas with line breaks) ========
+  const previewLocalImage = async (file) => {
+    setUploading(true);
+    toast.loading('Generating preview...', { id: 'preview' });
+
+    try {
+      // Store the raw file for later "Mint" use
+      setFileForUpload(file);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result;
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+
+          // Let's define final card size:
+          const margin = 20;
+          const textAreaWidth = img.width;  
+          const cardWidth = img.width + textAreaWidth;
+          const cardHeight = img.height;
+
+          canvas.width = cardWidth;
+          canvas.height = cardHeight;
+
+          // Fill background with white (optional)
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, cardWidth, cardHeight);
+
+          // Draw the image on the left
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          ctx.beginPath();
+          ctx.moveTo(img.width, 0);            // x=img.width, y=0 (top)
+          ctx.lineTo(img.width, cardHeight);   // x=img.width, y=cardHeight (bottom)
+          
+          ctx.lineWidth = .1;                   // Thickness
+          ctx.strokeStyle = 'black';           // Line color
+          ctx.stroke();
+          ctx.closePath();
+          
+          // Now we draw the message on the right,
+          // including line breaks from \n.
+          ctx.fillStyle = 'black';
+          ctx.font = '40px Bradley Hand, cursive';
+          ctx.textBaseline = 'top';
+
+          const paragraphs = (customMessage.trim() || 'No message provided')
+            .split(/\r?\n/);
+
+          let y = margin;
+          const lineHeight = 28; 
+          const maxWidth = textAreaWidth - margin * 2; 
+
+          // For each paragraph
+          paragraphs.forEach((paragraph) => {
+            // Word-wrap each paragraph
+            const words = paragraph.split(' ');
+            let line = '';
+
+            words.forEach((word) => {
+              const testLine = line + word + ' ';
+              const { width: testWidth } = ctx.measureText(testLine);
+
+              if (testWidth > maxWidth) {
+                // Draw the current line
+                ctx.fillText(line, img.width + margin, y);
+                line = word + ' ';
+                y += lineHeight;
+              } else {
+                line = testLine;
+              }
+            });
+
+            // Draw what's left
+            ctx.fillText(line, img.width + margin, y);
+            y += lineHeight; // space after each paragraph
+          });
+
+          const dataUrl = canvas.toDataURL('image/png');
+          setPreviewSrc(dataUrl);
+
+          toast.success('Preview generated!', { id: 'preview' });
+          setUploading(false);
+        };
+        img.onerror = () => {
+          toast.error('Failed to load image');
+          setUploading(false);
+        };
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read file');
+        setUploading(false);
+      };
+    } catch (err) {
+      console.error('Error generating preview:', err);
+      toast.error('Failed to generate preview');
+      setUploading(false);
+    }
+  };
+
+  // Re-generate preview if user edits the customMessage
+  useEffect(() => {
+    if (selected) {
+      previewLocalImage(selected);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customMessage]);
+
+  // ======== MINT CARD (uses final overlay with line breaks) ========
+  const mintCard = async () => {
+    if (!contract || !provider) {
+      toast.error('Wallet not connected');
+      return;
+    }
+    let pro = new ethers.JsonRpcProvider('https://eth.llamarpc.com')
+    let rec = await pro._getAddress(recipient)
+    if (!recipient || !ethers.isAddress(rec)) {
+      toast.error('Invalid recipient address');
+      return;
+    }
+    if (!fileForUpload) {
+      toast.error('No image selected');
+      return;
+    }
+
+    setUploading(true);
+    toast.loading('Uploading to IPFS...', { id: 'mint-flow' });
+
+    try {
+      // Re-draw final "card" layout for IPFS (same as preview, but we do it fresh to get the Blob)
+      const finalBlob = await generateFinalOverlay(fileForUpload);
+      const finalFile = new File([finalBlob], `merry0xmas_${Date.now()}.png`, {
+        type: 'image/png',
+      });
+
+      // 1. Upload finalFile to Pinata
+      const formData = new FormData();
+      formData.append('file', finalFile);
+
+      const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+        maxBodyLength: "Infinity",
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+          Authorization: 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI2ODlmMmRjYy04ZTNmLTQ1MzYtOWFlOS0zN2YxNmNkMWUyY2EiLCJlbWFpbCI6Im1vam93ZWxyeUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZWI5ZTVlMDJjNTAyMjUwN2YyYmMiLCJzY29wZWRLZXlTZWNyZXQiOiI5NDM3MTMzMzIzNjcxMzcxODU3YzZjZjNkOWMwNmIwNTA2ZjY5ODdkMTg0Y2I4MTg2M2ZiZmNlZjllYmNiM2EwIiwiZXhwIjoxNzY2NTIyMTA3fQ.4TGTYIvIM6wMA9VD27fJOIbVXO7yeYGPQFq8aRchii4'
+        }
+      });
+      console.log(res.data.IpfsHash);
 
 
-            {/* Top Pages */}
-            <h3 className="text-lg font-semibold text-white dark:text-gray-200 bg-blue-400 dark:bg-blue-600 p-2 rounded-full w-1/2 mx-auto mt-4 text-center">
-              Top Pages
-            </h3>
-            {topwikiPages.length > 0 && (
-              <div className="mt-4">
-                <ul className="mt-4">
-                  {topwikiPages.map((page, index) => (
-                    <li
-                      key={index}
-                      className={`items-center p-3 my-2 rounded-full ${
-                        index % 10 === 0
-                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
-                          : index % 10 === 1
-                          ? 'bg-pink-400/70 dark:bg-pink-300/40'
-                          : index % 10 === 2
-                          ? 'bg-green-400/70 dark:bg-green-300/40'
-                          : index % 10 === 3
-                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
-                          : index % 10 === 4
-                          ? 'bg-red-400/70 dark:bg-red-300/40'
-                          : index % 10 === 5
-                          ? 'bg-indigo-400/70 dark:bg-indigo-300/40'
-                          : index % 10 === 6
-                          ? 'bg-purple-400/70 dark:bg-purple-300/40'
-                          : index % 10 === 7
-                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
-                          : index % 10 === 8
-                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
-                          : 'bg-green-400/70 dark:bg-green-300/40'
-                      } cursor-pointer transition-colors duration-200 text-center`}
-                      onClick={() => {
-                        toast.success('Loading');
-                        setWikiViewTitle(page);
-                        viewPage(page);
-                      }}
-                    >
-                      <span className="text-lg">{page}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+      const imageHash = res.data.IpfsHash;
+      const imageURI = `https://gateway.pinata.cloud/ipfs/${imageHash}`;
+
+      // 2. Upload metadata JSON
+      const metadata = {
+        name: `Merry 0Xmas Card #${tokenCounter}`,
+        description: customMessage.trim() || 'A festive Merry 0Xmas card!',
+        image: imageURI,
+        attributes: [
+          {
+            trait_type: "Message",
+            value: customMessage.trim() || "No message provided",
+          },
+        ],
+      };
+      // Convert JSON metadata to a Blob
+      const blob = new Blob([JSON.stringify(metadata)], {
+        type: "application/json",
+      });
+      
+      const formDat = new FormData();
+      // Then append to FormData
+      formDat.append("file", blob, "metadata.json");
+      
+      const m = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formDat, {
+        maxBodyLength: "Infinity",
+        headers: {
+          Authorization: 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI2ODlmMmRjYy04ZTNmLTQ1MzYtOWFlOS0zN2YxNmNkMWUyY2EiLCJlbWFpbCI6Im1vam93ZWxyeUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZWI5ZTVlMDJjNTAyMjUwN2YyYmMiLCJzY29wZWRLZXlTZWNyZXQiOiI5NDM3MTMzMzIzNjcxMzcxODU3YzZjZjNkOWMwNmIwNTA2ZjY5ODdkMTg0Y2I4MTg2M2ZiZmNlZjllYmNiM2EwIiwiZXhwIjoxNzY2NTIyMTA3fQ.4TGTYIvIM6wMA9VD27fJOIbVXO7yeYGPQFq8aRchii4'
+        }
+      });
+      console.log(m.data.IpfsHash);
+
+      const metadataHash = m.data.IpfsHash;
+      const metadataURI = `https://gateway.pinata.cloud/ipfs/${metadataHash}`;
+
+      // 3. Mint on blockchain
+      const contractWithSigner = contract.connect(signer);
+
+      toast.loading('Minting card...', { id: 'mint-flow' });
+      const tx = await contractWithSigner.mintCard(rec, metadataURI);
+      await tx.wait();
+      toast.success('✨ Card minted successfully!', { id: 'mint-flow' });
+
+      // Reset
+      setRecipient('');
+      setCustomMessage('');
+      setFileForUpload(null);
+      setPreviewSrc(null);
+
+      // Re-fetch cards
+      fetchAllCards(contract);
+    } catch (err) {
+      console.error('Error minting card:', err);
+      toast.error('Failed to mint card', { id: 'mint-flow' });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ======== Helper to re-draw final overlay (card-style) with line breaks ========
+  const generateFinalOverlay = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result;
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+
+          // Let's define final card size:
+          const margin = 20;
+          const textAreaWidth = img.width;  
+          const cardWidth = img.width + textAreaWidth;
+          const cardHeight = img.height;
+
+          canvas.width = cardWidth;
+          canvas.height = cardHeight;
+
+          // Fill background with white (optional)
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, cardWidth, cardHeight);
+
+          // Draw the image on the left
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          ctx.beginPath();
+          ctx.moveTo(img.width, 0);            // x=img.width, y=0 (top)
+          ctx.lineTo(img.width, cardHeight);   // x=img.width, y=cardHeight (bottom)
+          
+          ctx.lineWidth = .1;                   // Thickness
+          ctx.strokeStyle = 'black';           // Line color
+          ctx.stroke();
+          ctx.closePath();
+          
+          // Now we draw the message on the right,
+          // including line breaks from \n.
+          ctx.fillStyle = 'black';
+          ctx.font = '40px Bradley Hand, cursive';
+          ctx.textBaseline = 'top';
+
+          const paragraphs = (customMessage.trim() || 'No message provided')
+            .split(/\r?\n/);
+
+          let y = margin;
+          const lineHeight = 28; 
+          const maxWidth = textAreaWidth - margin * 2; 
+
+          // For each paragraph
+          paragraphs.forEach((paragraph) => {
+            // Word-wrap each paragraph
+            const words = paragraph.split(' ');
+            let line = '';
+
+            words.forEach((word) => {
+              const testLine = line + word + ' ';
+              const { width: testWidth } = ctx.measureText(testLine);
+
+              if (testWidth > maxWidth) {
+                // Draw the current line
+                ctx.fillText(line, img.width + margin, y);
+                line = word + ' ';
+                y += lineHeight;
+              } else {
+                line = testLine;
+              }
+            });
+
+            // Draw what's left
+            ctx.fillText(line, img.width + margin, y);
+            y += lineHeight; // space after each paragraph
+          });
+
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              return reject(new Error('Failed to generate final blob'));
+            }
+            resolve(blob);
+          }, 'image/png');
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+    });
+  };
+  const Snowfall = () => {
+    return (
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        {[...Array(20)].map((_, i) => {
+          const leftPos = Math.random() * 100; 
+          const delay = Math.random() * 10;     
+          const size = 1 + Math.random() * 1.5; 
+          const snowIcons = ['❄️', '❅', '❆'];
+          const icon = snowIcons[Math.floor(Math.random() * snowIcons.length)];
   
-            {/* Latest Pages */}
-            <h3 className="text-lg font-semibold text-white dark:text-gray-200 bg-blue-400 dark:bg-blue-600 p-2 rounded-full w-1/2 mx-auto mt-4 text-center">
-              Latest Pages
-            </h3>
-            {wikiPages.length > 0 && (
-              <div className="mt-4">
-                <ul className="mt-4">
-                  {filteredWikiPages.map((page, index) => (
-                    <li
-                      key={index}
-                      className={`items-center p-3 my-2 rounded-full ${
-                        index % 10 === 0
-                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
-                          : index % 10 === 1
-                          ? 'bg-pink-400/70 dark:bg-pink-300/40'
-                          : index % 10 === 2
-                          ? 'bg-green-400/70 dark:bg-green-300/40'
-                          : index % 10 === 3
-                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
-                          : index % 10 === 4
-                          ? 'bg-red-400/70 dark:bg-red-300/40'
-                          : index % 10 === 5
-                          ? 'bg-indigo-400/70 dark:bg-indigo-300/40'
-                          : index % 10 === 6
-                          ? 'bg-purple-400/70 dark:bg-purple-300/40'
-                          : index % 10 === 7
-                          ? 'bg-blue-400/70 dark:bg-blue-300/40'
-                          : index % 10 === 8
-                          ? 'bg-yellow-400/70 dark:bg-yellow-300/40'
-                          : 'bg-green-400/70 dark:bg-green-300/40'
-                      } cursor-pointer transition-colors duration-200 text-center`}
-                      onClick={() => {
-                        toast.success('Loading');
-                        setWikiViewTitle(page);
-                        viewPage(page);
-                      }}
-                    >
-                      <span className="text-lg">{page}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </nav>
-  
-          {/* Footer */}
-          <div className="p-4 text-center text-sm">
-            © {new Date().getFullYear()} Source DAO. All rights reserved.
-          </div>
-        </aside>
-      )}
-  
-      {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-semibold text-blue-500 dark:text-blue-300">
-            Welcome, {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Guest'}
-          </h1>
-          <ConnectButton />
-        </div>
-  
-        {/* Dynamic Sections */}
-        {currentSection === 'wiki' && (
-          <section className="">
-            {/* Search Wiki Pages */}
-            <div className="mb-8 max-w-2xl align-middle mx-auto">
-              <h2 className="text-2xl font-bold text-blue-500 dark:text-blue-300 mb-4">🔍 Search Wiki Pages</h2>
-              <div className="flex flex-col md:flex-row items-stretch">
-                <input
-                  type="text"
-                  placeholder="Page Title to View"
-                  value={wikiViewTitle}
-                  onChange={(e) => setWikiViewTitle(e.target.value)}
-                  className="flex-1 p-3 border border-blue-300 dark:border-blue-500 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={() => viewPage()}
-                  className="bg-blue-600 dark:bg-blue-500 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
-                >
-                  👁️ View
-                </button>
-              </div>
+          return (
+            <div
+              key={i}
+              className="animate-fall text-white"
+              style={{
+                left: `${leftPos}%`,
+                animationDelay: `${delay}s`,
+                fontSize: `${size}rem`,
+              }}
+            >
+              {icon}
             </div>
-  
-            {/* Wiki Content Display */}
-            <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg relative items-center justify-center">
-              {/* Create/Edit Page Button */}
-              <button
-                onClick={() => setModal(!modal ? 'create' : '')}
-                className="bg-blue-400 dark:bg-blue-600 text-white px-3 mx-auto py-1 md:px-6 md:py-3 left-20 right-20 md:left-auto mt-0 rounded-full hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200 md:mt-4 absolute top-0 md:right-4 mx-auto"
-              >
-                📝 Create/Edit Page
-              </button>
-  
-              {/* Wiki Content */}
-              <div className="mt-2">
-                <h3 className="text-3xl font-semibold text-white dark:text-gray-200 mb-2 text-center bg-blue-400 dark:bg-blue-600 p-2 rounded-full w-[fit-content] px-6 mx-auto">
-                  {wikiViewTitle.toLocaleUpperCase()}
-                </h3>
-  
-                {wikiViewContent ? (
-                  <div className="prose max-w-none dark:prose-invert">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]} components={components}>{wikiViewContent}</ReactMarkdown>
-                  </div>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400">No content available.</p>
-                )}
-  
-                {/* Edit History */}
-                {wikiEditors.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="font-semibold text-lg text-blue-600 dark:text-blue-300 mb-2">📜 Edit History: <button onClick={() => setShowEditors(!showEditors)} className="bg-blue-400 dark:bg-blue-600 text-white text-xs w-6 h-6 rounded-full hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200">
-                      {!showEditors ? '▼' : '▲'}
-                    </button></h4>
-                     
-                    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-                      {wikiEditors.map((editor, index) => {
-                        
-                       if ( showEditors == 1 || index == 0 ) {
-                        return(
-                        <li key={index}>
-                          {editor} at {new Date(Number(wikiTimestamps[index]) * 1000).toLocaleString()}
-                        </li>
-                      )}})}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-  
-            {/* Wiki Management Modal */}
-            {modal && (
-              <div className="bg-black bg-opacity-50 fixed top-0 left-0 w-full h-full flex items-center justify-center">
-                <div
-                  className="bg-blue-200 dark:bg-gray-800 md:max-w-5xl md:w-3/4 mx-auto p-8 rounded-2xl shadow-lg mt-8 overflow-y-auto relative max-h-full"
-                  style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none'
-                  }}
-                >
-                  {/* Close Modal Button */}
-                  <button
-                    onClick={() => setModal(false)}
-                    className="absolute top-4 right-4 bg-red-400 dark:bg-red-600 text-white font-bold px-4 py-2 rounded-full hover:bg-red-600 dark:hover:bg-red-800 transition-colors duration-200"
-                  >
-                    X
-                  </button>
-  
-                  {/* Modal Header */}
-                  <h4 className="font-bold bg-orange-400 dark:bg-orange-600 text-white p-1 rounded-3xl max-w-xl mx-auto text-center">
-                    Creating/Editing Pages Stakes 100 SOURCE
-                  </h4>
-                  <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-6">📖 Wiki Management</h2>
-  
-                  {/* Toggle Create/Edit */}
-                  <button
-                    onClick={() => setModal(modal === 'create' ? 'edit' : 'create')}
-                    className="bg-blue-400 dark:bg-blue-600 text-white px-6 py-3 mx-auto rounded-full hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200 mb-4"
-                  >
-                    {modal === 'create' ? '✏️ Edit Page' : '🆕 Create Page'}
-                  </button>
-  
-                  {/* Create Page Form */}
-                  {modal === 'create' && (
-                    <div className="bg-gray-50 dark:bg-gray-600 p-6 rounded-xl shadow-md">
-                      <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mb-4">🆕 Create Page</h3>
-                      <input
-                        type="text"
-                        placeholder="Page Title"
-                        value={pageTitle}
-                        onChange={(e) => setPageTitle(e.target.value)}
-                        className="w-full p-3 border border-blue-300 dark:border-blue-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                      <textarea
-                        placeholder="Page Content (Markdown Supported)"
-                        value={pageContent}
-                        onChange={(e) => setPageContent(e.target.value)}
-                        className="w-full p-3 border border-blue-300 dark:border-blue-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                        rows="6"
-                      />
-                      <button
-                        onClick={createPage}
-                        className="w-full bg-green-600 dark:bg-green-500 text-white py-3 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200"
-                      >
-                        🆕 Create Page
-                      </button>
-                      {wikiStatus && (
-                        <p className="mt-2 text-sm text-green-600 dark:text-green-300">{wikiStatus}</p>
-                      )}
-                    </div>
-                  )}
-  
-                  {/* Edit Page Form */}
-                  {modal === 'edit' && (
-                    <div className="bg-white dark:bg-gray-600 p-6 rounded-xl shadow-md">
-                      <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mb-4">✏️ Edit Page</h3>
-                      <textarea
-                        placeholder="New Page Content (Markdown Supported)"
-                        value={pageContent !== '' ? pageContent : wikiViewContent}
-                        onChange={(e) => setPageContent(e.target.value)}
-                        className="w-full p-3 border border-blue-300 dark:border-blue-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                        rows="6"
-                      />
-                      <button
-                        onClick={editPage}
-                        className="w-full bg-orange-600 dark:bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors duration-200"
-                      >
-                        ✏️ Edit Page
-                      </button>
-                      {wikiStatus && (
-                        <p className="mt-2 text-sm text-orange-600 dark:text-orange-300">{wikiStatus}</p>
-                      )}
-                    </div>
-                  )}
-  
-                  {/* Preview Section */}
-                  {pageContent !== '' && (
-                    <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg mt-2">
-                      <div className="mt-2">
-                        <h3 className="text-3xl font-semibold text-white dark:text-gray-200 mb-2 text-center bg-blue-400 dark:bg-blue-600 p-2 rounded-full w-[fit-content] px-4 mx-auto">
-                          Preview
-                        </h3>
-                        {pageContent ? (
-                          <div className="prose max-w-none dark:prose-invert">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{pageContent}</ReactMarkdown>
-                          </div>
-                        ) : (
-                          <p className="text-gray-500 dark:text-gray-400">No content available.</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-  
-        {currentSection === 'dashboard' && (
-          <section className="bg-white dark:bg-gray-700/50 p-8 rounded-2xl shadow-lg">
-            <h2 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-8">📊 Dashboard</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Balance Card */}
-              <div className="bg-blue-100 dark:bg-blue-700/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">Balance</h3>
-                <p className="text-3xl font-bold">{balance} SOURCE</p>
-                <div className="mt-4">
-                  <h4 className="text-blue-600 dark:text-blue-300 font-semibold text-sm mb-2">🛒 Buy Tokens</h4>
-                  <input
-                    type="number"
-                    placeholder="Amount to buy"
-                    value={buyAmount}
-                    onChange={(e) => setBuyAmount(e.target.value)}
-                    className="w-full p-3 border border-blue-300 dark:border-blue-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  />
-                  <button
-                    onClick={buyTokens}
-                    className="w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200"
-                  >
-                    🆕 Buy SOURCE
-                  </button>
-                  {buyStatus && (
-                    <p className="mt-2 text-sm text-green-600 dark:text-green-300">{buyStatus}</p>
-                  )}
-                  <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
-                    Price: 0.01 ETH per 1000 SOURCE
-                  </p>
-                  <h2 className="font-bold text-blue-500 dark:text-blue-300 mb-2 mt-4 text-center">
-                    SOURCE left
-                  </h2>
-                  <div className="relative pt-1">
-                    <div className="flex mb-2 items-center justify-between">
-                      <div>
-                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 dark:text-blue-200 bg-blue-200 dark:bg-blue-600">
-                          SOURCE
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs font-semibold inline-block text-blue-600 dark:text-blue-200">
-                          {totalSupply.totalSupply} bought / 100,000,000 SOURCE
-                        </span>
-                      </div>
-                    </div>
-                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200 dark:bg-blue-600">
-                      <div
-                        style={{ width: `${(totalSupply.totalSupply / 100000000) * 100}%` }}
-                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 dark:bg-blue-300"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-  
-              {/* Staked Card */}
-              <div className="bg-green-100 dark:bg-green-700/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">Staked</h3>
-                <p className="text-3xl font-bold">{staked.amount} SOURCE</p>
-                <div className="mt-4">
-                  <h4 className="text-green-600 dark:text-green-300 font-semibold text-sm mb-2">⛓️ Manage Staking</h4>
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    value={stakeAmount}
-                    onChange={(e) => setStakeAmount(e.target.value)}
-                    className="w-full p-3 border border-green-300 dark:border-green-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
-                  />
-                  <button
-                    onClick={stakeTokens}
-                    className="w-full bg-green-600 dark:bg-green-500 text-white py-2 rounded-lg hover:bg-green-800 dark:hover:bg-green-600 transition-colors duration-200"
-                  >
-                    ⛓️ Stake
-                  </button>
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    value={unstakeAmount}
-                    onChange={(e) => setUnstakeAmount(e.target.value)}
-                    className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white"
-                  />
-                  <button
-                    onClick={requestUnstake}
-                    className="w-full bg-orange-500 dark:bg-orange-400 text-white py-2 rounded-lg hover:bg-yellow-600 dark:hover:bg-yellow-500 transition-colors duration-200 mt-2"
-                  >
-                    🔓 Unstake
-                  </button>
-                  <h4 className="text-green-600 dark:text-green-300 font-semibold text-sm mt-4 mb-2">
-                    Unstaking {staked.unstakedBalances} SOURCE
-                  </h4>
-                  <h4 className="text-green-600 dark:text-green-300 font-semibold text-sm mb-2">
-                    Unstake Time {unstakeTime ? new Date(unstakeTime * 1000).toLocaleString() : 'N/A'}
-                  </h4>
-                  <button
-                    onClick={completeUnstake}
-                    className="w-full bg-yellow-500 dark:bg-yellow-400 text-white py-2 rounded-lg hover:bg-yellow-600 dark:hover:bg-yellow-500 transition-colors duration-200 mt-2"
-                  >
-                    🔓 Withdraw
-                  </button>
-                </div>
-              </div>
-  
-              {/* Rewards Card */}
-              <div className="bg-purple-100 dark:bg-purple-700/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-200 mb-2">Rewards</h3>
-                <p className="text-3xl font-bold">{rewards} SOURCE</p>
-                <div className="mt-4">
-                  <h4 className="text-purple-600 dark:text-purple-300 font-semibold text-sm mb-2">🎁 Claim Rewards</h4>
-                  <button
-                    onClick={claimRewards}
-                    className="w-full bg-pink-500 dark:bg-pink-400 text-white py-2 rounded-lg hover:bg-pink-700 dark:hover:bg-pink-600 transition-colors duration-200"
-                  >
-                    🎉 Claim
-                  </button>
-                  {claimStatus && (
-                    <p className="mt-2 text-sm text-pink-600 dark:text-pink-300">{claimStatus}</p>
-                  )}
-                </div>
-                <h4 className="text-purple-600 dark:text-purple-300 font-semibold text-center mt-4 mb-2">
-                  Total Tips
-                </h4>
-                <h4 className="text-white font-semibold bg-purple-400 dark:bg-purple-600 p-2 rounded-full text-center">
-                  {totalSupply.totalTips} SOURCE
-                </h4>
-                <h4 className="text-purple-600 dark:text-purple-300 font-semibold text-center mt-4 mb-2">
-                  Total Stake
-                </h4>
-                <h4 className="text-white font-semibold bg-purple-500 dark:bg-purple-600 p-2 rounded-full text-center">
-                  {totalSupply.claimed*100}% SOURCE
-                </h4>
-              </div>
-  
-              {/* Total Tips Card */}
-              <div className="bg-yellow-100 dark:bg-yellow-700/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Total Tips</h3>
-                <p className="text-3xl font-bold">{totalSupply.totalTips} SOURCE</p>
-                <input
-                  type="number"
-                  placeholder="Amount to tip"
-                  value={tipAmount}
-                  onChange={(e) => setTipAmount(e.target.value)}
-                  className="w-full p-3 border border-yellow-300 dark:border-yellow-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={tipDAO}
-                  className="w-full bg-yellow-500 dark:bg-yellow-400 text-white py-2 rounded-lg hover:bg-yellow-600 dark:hover:bg-yellow-500 transition-colors duration-200"
-                >
-                  💸 Tip DAO
-                </button>
-              </div>
-            </div>
-          </section>
-        )}
-  
-        {/* Conditional Sections for Maintainers */}
-        {currentSection === 'roles' && isMaint && (
-          <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-            <h2 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-8">👥 Role Management</h2>
-            <div className="flex flex-col md:flex-row items-stretch gap-8">
-              {/* Grant Edit Role */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-md flex-1">
-                <h3 className="text-xl font-semibold text-green-600 dark:text-green-300 mb-4">
-                  ➕ Grant EDIT_ROLE
-                </h3>
-                <input
-                  type="text"
-                  placeholder="Editor Address"
-                  value={newEditor}
-                  onChange={(e) => setNewEditor(e.target.value)}
-                  className="w-full p-3 border border-green-300 dark:border-green-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={grantEditRole}
-                  className="w-full bg-green-600 dark:bg-green-500 text-white py-3 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200"
-                >
-                  Grant EDIT_ROLE
-                </button>
-              </div>
-  
-              {/* Revoke Edit Role */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-md flex-1">
-                <h3 className="text-xl font-semibold text-red-600 dark:text-red-300 mb-4">
-                  ➖ Revoke EDIT_ROLE
-                </h3>
-                <input
-                  type="text"
-                  placeholder="Editor Address"
-                  value={newEditor}
-                  onChange={(e) => setNewEditor(e.target.value)}
-                  className="w-full p-3 border border-red-300 dark:border-red-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={revokeEditRole}
-                  className="w-full bg-red-600 dark:bg-red-500 text-white py-3 rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200"
-                >
-                  Revoke EDIT_ROLE
-                </button>
-              </div>
-            </div>
-            {roleStatus && (
-              <p className="mt-4 text-sm text-blue-600 dark:text-blue-300">{roleStatus}</p>
-            )}
-          </section>
-        )}
-  
-        {currentSection === 'admin' && isMaint && (
-          <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-            <h2 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-8">🔧 Admin Panel</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Withdraw Funds */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-md">
-                <h3 className="text-xl font-semibold text-purple-600 dark:text-purple-300 mb-4">
-                  💰 Withdraw Funds
-                </h3>
-                <input
-                  type="number"
-                  placeholder="Amount to withdraw (ETH)"
-                  value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(e.target.value)}
-                  className="w-full p-3 border border-purple-300 dark:border-purple-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={withdraw}
-                  className="w-full bg-purple-600 dark:bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors duration-200"
-                >
-                  💸 Withdraw
-                </button>
-                {withdrawStatus && (
-                  <p className="mt-2 text-sm text-purple-600 dark:text-purple-300">
-                    {withdrawStatus}
-                  </p>
-                )}
-              </div>
-  
-              {/* Slash User */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-md">
-                <h3 className="text-xl font-semibold text-red-600 dark:text-red-300 mb-4">
-                  🛑 Slash User
-                </h3>
-                <input
-                  type="text"
-                  placeholder="User Address to Slash"
-                  value={slashUser}
-                  onChange={(e) => setSlashUser(e.target.value)}
-                  className="w-full p-3 border border-red-300 dark:border-red-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                />
-                <input
-                  type="number"
-                  placeholder="Amount to Slash"
-                  value={slashAmount}
-                  onChange={(e) => setSlashAmount(e.target.value)}
-                  className="w-full p-3 border border-red-300 dark:border-red-500 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={slash}
-                  className="w-full bg-black dark:bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200"
-                >
-                  🚫 Slash
-                </button>
-                {slashStatus && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-300">
-                    {slashStatus}
-                  </p>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
-{currentSection === 'explore' && (
-  <div className="bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
-    <h2 className="text-3xl font-bold text-blue-500 dark:text-blue-300 mb-8">🔍 Explore Latest Wiki Pages</h2>
-    {wikiPages.length === 0 ? (
-      <p className="text-gray-800 dark:text-gray-200">
-        No pages available yet.
-      </p>
-    ) : (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
-        {wikiPages.map((page, index) => (
-          <button
-            key={index}
-            onClick={() => {setCurrentSection('wiki'); setWikiViewTitle(page); viewPage(page);}}
-            style={{
-              backgroundColor: [
-                "#f87171", // Red
-                "#60a5fa", // Blue
-                "#fbbf24", // Yellow
-                "#34d399", // Green
-                "#818cf8", // Indigo
-              ][index % 5], // Cycle through colors
-            }}
-            className="h-20 w-full text-white font-semibold shadow-sm hover:shadow-md transition duration-300 ease-in-out"
-          >
-            {page}
-          </button>
-        ))}
+          );
+        })}
       </div>
-    )}
-  </div>
-)}
-            
-      </main>
+    );
+  };
   
-      {/* Toast Notifications */}
-      <Toaster position="top-center" reverseOrder={false} />
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-red-50 via-pink-100 to-blue-50 text-gray-900 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 relative">
+      {/* Cute Snowflake Animation */}    
+      <Snowfall />
+
+
+      {/* Hidden Canvas for Image Processing */}
+      <canvas ref={canvasRef} className="hidden"></canvas>
+
+      <Toaster />
+        <div className="flex items-center justify-center">
+          <h1 className="text-5xl font-bold text-red-500 text-center relative top-10
+          ">Merry 0Xmas!<span className="animate-pulse">🎄</span>
+          </h1>
+          
+        </div>
+        <div className="flex items-center relative bottom-8 left-2">
+          
+        <ConnectButton
+          showBalance={false}
+          chainStatus="icon"
+          label="Connect Wallet"
+        />
+        </div>
+
+      <main className="p-6 relative z-10">
+        {!account ? (
+          <div className="flex flex-col items-center justify-center mt-20">
+            <button
+              onClick={connectWallet}
+              className="bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center"
+            >
+              {/* Gift Icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 mr-2 animate-bounce"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              Connect Wallet
+            </button>
+          </div>
+        ) : (
+          <div>
+            {/* Mint Section */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-semibold mb-6 text-center text-red-400">
+                🎁 Merry 0Xmas Cards Minted: {tokenCounter.toString()}
+              </h2>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+                <h3 className="text-xl font-semibold mb-4 text-center">
+                  ✨ Mint a New Merry 0Xmas Card
+                </h3>
+                {account==2&&<button onClick={deploy} className="w-1/2 bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-full shadow-md transition-colors duration-300 flex items-center justify-center mt-2 disabled:opacity-50 disabled:cursor-not-allowed mx-auto">
+                  🚀 Deploy Contract
+                </button>}
+
+                {/* Recipient Address Input */}
+                <div className="mb-4">
+                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
+                    Recipient Address:
+                  </label>
+                  <input
+                    type="text"
+                    value={recipient}
+                    onChange={(e) => setRecipient(e.target.value)}
+                    className="w-full p-3 border border-pink-300 dark:border-pink-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="0x1234...ABCD"
+                  />
+                </div>
+
+                {/* Image Selection */}
+                <div className="mb-6">
+                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
+                    Choose an Image:
+                  </label>
+                  <div className="flex flex-wrap gap-4">
+                    {/* Predefined Images */}
+                    {predefinedImages.map((url, index) => (
+                      <img
+                        key={index}
+                        src={url}
+                        alt={`Predefined ${index + 1}`}
+                        className="w-20 h-20 object-cover rounded-lg cursor-pointer border-4 border-transparent hover:border-green-300 transition-colors duration-300"
+                        onClick={() => handleImageSelection(url)}
+                      />
+                    ))}
+
+                    {/* Or Upload Your Own */}
+                    <div className="flex flex-col items-center">
+                      <label className="flex flex-col items-center justify-center w-20 h-20 bg-pink-100 dark:bg-pink-800 rounded-lg border-4 border-dashed border-pink-500 hover:border-green-500 cursor-pointer transition-colors duration-300">
+                        <span className="text-center text-sm text-pink-500 dark:text-pink-200">
+                          Upload
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                      {uploading && (
+                        <p className="text-sm text-gray-500 mt-2">Processing...</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Custom Message Input */}
+                <div className="mb-6">
+                  <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
+                    Your Message:
+                  </label>
+                  <textarea
+                    value={customMessage}
+                    onChange={(e) => setCustomMessage(e.target.value)}
+                    className="w-full p-3 border border-pink-300 dark:border-pink-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="Write your festive message here... (You can use \n for line breaks.)"
+                    rows={3}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    *Line breaks (e.g., “Hello\nWorld”) will be respected in the final image.
+                  </p>
+                </div>
+
+                {/* Preview Section */}
+              </div>
+            </section>
+            
+            {previewSrc && (
+                  <div className="">
+                    <h3 className="text-xl font-semibold mb-4 text-center text-red-400">
+                      📜 Preview Your Merry 0Xmas Card
+                    </h3>
+                    <div className="flex justify-center">
+                      <img
+                        src={previewSrc}
+                        alt="Preview"
+                        className="w-full max-w-7xl h-auto object-cover shadow-md"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/300?text=No+Image';
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Mint Button */}
+                <button
+                  onClick={mintCard}
+                  className="w-1/2 bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-full shadow-md transition-colors duration-300 flex items-center justify-center mt-6 disabled:opacity-50 disabled:cursor-not-allowed mx-auto"
+                  disabled={uploading}
+                >
+                  🌟 Mint Card
+                </button>
+
+            {/* Display Minted Cards */}
+            <section className="mt-12">
+              <h2 className="text-2xl font-semibold mb-6 text-center text-red-400">
+                🌟 All Minted Merry 0Xmas Cards
+              </h2>
+              {cards.length === 0 ? (
+                <p className="text-center text-gray-600 dark:text-gray-300">
+                  No cards minted yet. Be the first to mint one!
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                  {cards.map((card) => (
+                    <div
+                      key={card.tokenId}
+                      className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                    >
+                      <div className="border-4 border-pink-300 dark:border-pink-600 rounded-lg p-1">
+                        <img
+                          src={card.image}
+                          alt={`Merry0Xmas #${card.tokenId}`}
+                          className="w-full object-cover rounded-lg"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+                          }}
+                        />
+                      </div>
+                      <h3 className="mt-4 text-lg font-semibold text-center">
+                        🎅 Card #{card.tokenId}
+                      </h3>
+                      {/* Note: whitespace-pre-wrap to preserve new lines in the metadata message */}
+                      <p className="text-center text-sm mt-2 italic whitespace-pre-wrap break-words">
+                        {card.message}
+                      </p>
+                      <a
+                        href={card.tokenURI}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-pink-500 hover:underline flex items-center justify-center mt-2"
+                      >
+                        View Metadata
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 ml-1 animate-bounce"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
+      </main>
+
+      <footer className="p-6 text-white mt-2">
+        <div className="mt-2 flex justify-center space-x-4">
+          {/* Social Media Icons */}
+          <a
+            href="https://twitter.com/not_pr0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors duration-300"
+          >
+            <img src="https://simpleicons.org/icons/x.svg" alt="Twitter" className="h-6 w-6" />
+          </a>
+          <a
+            href="https://discord.gg/vrV4YpUccq"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-500 transition-colors duration-300"
+          >
+            <img src="https://simpleicons.org/icons/discord.svg" alt="Discord" className="h-6 w-6" />
+          </a>
+        </div>
+      </footer>
     </div>
   );
-  
 };
 
 export default App;
