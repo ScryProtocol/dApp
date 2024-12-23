@@ -490,7 +490,10 @@ toast('Contract deployed');
     <div className="min-h-screen bg-gradient-to-b from-red-50 via-pink-100 to-blue-50 text-gray-900 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 relative">
       {/* Cute Snowflake Animation */}    
       <Snowfall />
-
+<head>
+        <title>🎄Merry 0Xmas</title>
+        <meta name="description" content="Mint Merry 0Xmas Cards" />
+        </head>
 
       {/* Hidden Canvas for Image Processing */}
       <canvas ref={canvasRef} className="hidden"></canvas>
