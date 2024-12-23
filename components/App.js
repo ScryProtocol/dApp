@@ -549,7 +549,7 @@ toast('Contract deployed');
                 {/* Recipient Address Input */}
                 <div className="mb-4">
                   <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
-                    Recipient Address:
+                    Recipient Address / ENS:
                   </label>
                   <input
                     type="text"
@@ -606,7 +606,7 @@ toast('Contract deployed');
                     value={customMessage}
                     onChange={(e) => setCustomMessage(e.target.value)}
                     className="w-full p-3 border border-pink-300 dark:border-pink-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Write your festive message here... (You can use \n for line breaks.)"
+                    placeholder="Write your festive message here...)"
                     rows={3}
                   />
                   <p className="text-xs text-gray-400 mt-1">
