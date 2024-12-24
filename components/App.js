@@ -609,7 +609,7 @@ toast('Contract deployed');
                     value={customMessage}
                     onChange={(e) => setCustomMessage(e.target.value)}
                     className="w-full p-3 border border-pink-300 dark:border-pink-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Write your festive message here...)"
+                    placeholder="Write your festive message here..."
                     rows={3}
                   />
                 </div>
@@ -680,12 +680,12 @@ toast('Contract deployed');
                         {card.message}
                       </p>
                       <a
-                        href={card.tokenURI}
+                        href={card.image}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-pink-500 hover:underline flex items-center justify-center mt-2"
                       >
-                        View Metadata
+                        View Card
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 ml-1 animate-bounce"
