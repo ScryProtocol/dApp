@@ -612,9 +612,6 @@ toast('Contract deployed');
                     placeholder="Write your festive message here...)"
                     rows={3}
                   />
-                  <p className="text-xs text-gray-400 mt-1">
-                    *Line breaks (e.g., “Hello\nWorld”) will be respected in the final image.
-                  </p>
                 </div>
 
                 {/* Preview Section */}
