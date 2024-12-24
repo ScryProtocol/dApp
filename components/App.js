@@ -206,7 +206,7 @@ toast('Contract deployed');
           // Now we draw the message on the right,
           // including line breaks from \n.
           ctx.fillStyle = 'black';
-          ctx.font = '40px Bradley Hand, cursive';
+          ctx.font = "40px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
           ctx.textBaseline = 'top';
 
           const paragraphs = (customMessage.trim() || 'No message provided')
