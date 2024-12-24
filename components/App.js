@@ -241,6 +241,14 @@ toast('Contract deployed');
             y += lineHeight; // space after each paragraph
           });
 
+          ctx.fillStyle = 'red';
+          ctx.textAlign = 'center'; // Center the text
+          ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
+          ctx.fillText(
+            'Made with ♥ at 0xmas.com',
+            (cardWidth * 3) / 4, // Center horizontally
+            cardHeight - margin // Place near the bottom, with some padding
+          );
           const dataUrl = canvas.toDataURL('image/png');
           setPreviewSrc(dataUrl);
 
@@ -445,6 +453,15 @@ toast('Contract deployed');
             ctx.fillText(line, img.width + margin, y);
             y += lineHeight; // space after each paragraph
           });
+
+          ctx.fillStyle = 'red';
+          ctx.textAlign = 'center'; // Center the text
+          ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
+          ctx.fillText(
+            'Made with ♥ at 0xmas.com',
+            (cardWidth * 3) / 4, // Center horizontally
+            cardHeight - margin // Place near the bottom, with some padding
+          );
 
           canvas.toBlob((blob) => {
             if (!blob) {
