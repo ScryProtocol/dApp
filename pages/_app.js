@@ -3,7 +3,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { http, createConfig } from 'wagmi'
-import { base, holesky, mainnet, optimism, polygon, sepolia,scroll,arbitrum } from 'wagmi/chains'
+import { base, holesky, mainnet, optimism, polygon, sepolia,scroll,arbitrum,ink} from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
@@ -17,34 +17,14 @@ import Wall from "../components/Wall";
 import Info from "../components/Info";
 import App from '../components/App';
 const queryClient = new QueryClient()
-const inkchain = {
-  id: 57073,
-  name: 'Ink',
-  network: 'inkchain',
-  iconUrl: 'https://pbs.twimg.com/profile_images/1851260672354480128/K6ZudYbl_400x400.jpg',
-  nativeCurrency: {
-    name: 'ETH',
-    symbol: 'ETH',
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: 'https://rpc-qnd.inkonchain.com/', // Updated RPC URL
-    public: 'https://rpc-qnd.inkonchain.com/',
-  },
-  blockExplorers: {
-    default: { name: 'Ink Explorer', url: 'https://explorer.inkonchain.com/' },
-    etherscan: { name: 'Ink Explorer', url: 'https://explorer.inkonchain.com/' },
-  },
-  testnet: false, // Set to true if this is a testnet
-};
 const config = getDefaultConfig({
-  chains: [inkchain,base, holesky,mainnet,optimism, polygon,scroll,arbitrum],// sepolia, holesky, base, optimism],
+  chains: [ink,base, holesky,mainnet,optimism, polygon,scroll,arbitrum],// sepolia, holesky, base, optimism],
   projectId: '97d417268e5bd5a42151f0329e544898',
 
   transports: {
  //   [mainnet.id]: http(),
 //    [holesky.id]: http(),
- [inkchain.id]: http(), [base.id]: http(), [optimism.id]: http(),[mainnet.id]: http(),[polygon.id]: http(),[sepolia.id]: http(), [scroll.id]: http(),[arbitrum.id]: http(),
+ [ink.id]: http(), [base.id]: http(), [optimism.id]: http(),[mainnet.id]: http(),[polygon.id]: http(),[sepolia.id]: http(), [scroll.id]: http(),[arbitrum.id]: http(),
 //  [optimism.id]: http(),
   //  [mainnet.id]: http(),
   },
