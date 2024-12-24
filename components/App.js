@@ -8,7 +8,7 @@ import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
-
+import { useChainId } from 'wagmi'
 
 // Define your contract address and ABI
 const CONTRACT_ADDRESS = '0xa27d545ff0c5e80e87d077eaf60e391f4d625dba'; // Replace with your updated contract address
@@ -57,8 +57,10 @@ const App = () => {
   const [previewSrc, setPreviewSrc] = useState(null);
   const [selected, setSelected] = useState(null);
   const [uploading, setUploading] = useState(false);
+  let chainid=useChainId()
 let signer = useEthersSigner()
 let provider = useEthersProvider()
+chainid==1?provider=new ethers.JsonRpcProvider('https://eth.llamarpc.com'):{}
   // Reference to the canvas element
   const canvasRef = useRef(null);
 
