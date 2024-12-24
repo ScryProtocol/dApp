@@ -8,7 +8,7 @@ import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
-import { useChainId } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 
 // Define your contract address and ABI
 const CONTRACT_ADDRESS = '0xa27d545ff0c5e80e87d077eaf60e391f4d625dba'; // Replace with your updated contract address
@@ -63,7 +63,7 @@ let provider = useEthersProvider()
 chainid==1?provider=new ethers.JsonRpcProvider('https://eth.llamarpc.com'):{}
   // Reference to the canvas element
   const canvasRef = useRef(null);
-
+let addrs = useAccount().address
   // Predefined images (replace with your own images or URLs)
   const predefinedImages = [
     './1.png',
@@ -247,7 +247,7 @@ toast('Contract deployed');
           ctx.textAlign = 'center'; // Center the text
           ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
           ctx.fillText(
-            'Made with ♥ at 0xmas.com',
+            'From: '+addrs+' ~ Made with ♥ at 0xmas.com',
             (cardWidth * 3) / 4, // Center horizontally
             cardHeight - margin // Place near the bottom, with some padding
           );
@@ -460,7 +460,7 @@ toast('Contract deployed');
           ctx.textAlign = 'center'; // Center the text
           ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
           ctx.fillText(
-            'Made with ♥ at 0xmas.com',
+            'From: '+addrs+' ~ Made with ♥ at 0xmas.com',
             (cardWidth * 3) / 4, // Center horizontally
             cardHeight - margin // Place near the bottom, with some padding
           );
