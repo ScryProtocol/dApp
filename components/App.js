@@ -112,7 +112,7 @@ toast('Contract deployed');
     try {
       const total = Number(await contractInstance.totalCards());
       const tempCards = [];
-      for (let i = total<5?total:5; i > 0; i++) {
+      for (let i = 0; i < 5; i++) {
         const uri = await contractInstance.tokenURI(total-i-1);
         // Fetch metadata from IPFS
         const metadata = await fetchMetadata(uri);
