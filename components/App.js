@@ -61,6 +61,8 @@ const App = () => {
 let signer = useEthersSigner()
 let provider = useEthersProvider()
 chainid==1?provider=new ethers.JsonRpcProvider('https://eth.llamarpc.com'):{}
+let pro = new ethers.JsonRpcProvider('https://eth.llamarpc.com')
+const [address, setAddress] = useState(null)
   // Reference to the canvas element
   const canvasRef = useRef(null);
 let addrs = useAccount().address
@@ -166,11 +168,13 @@ toast('Contract deployed');
   const previewLocalImage = async (file) => {
     setUploading(true);
     toast.loading('Generating preview...', { id: 'preview' });
-
+    if(!address){
+      let ad=(await pro.lookupAddress(addrs))
+    setAddress(ad?ad:addrs)
+  }
     try {
       // Store the raw file for later "Mint" use
       setFileForUpload(file);
-
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
@@ -247,7 +251,7 @@ toast('Contract deployed');
           ctx.textAlign = 'center'; // Center the text
           ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
           ctx.fillText(
-            'From: '+addrs+' ~ Made with ♥ at 0xmas.com',
+            'From: '+address+' ~ Made with ♥ at 0xmas.com',
             (cardWidth * 3) / 4, // Center horizontally
             cardHeight - margin // Place near the bottom, with some padding
           );
@@ -460,7 +464,7 @@ toast('Contract deployed');
           ctx.textAlign = 'center'; // Center the text
           ctx.font = "20px 'Bradley Hand', cursive"//'40px Bradley Hand, cursive';
           ctx.fillText(
-            'From: '+addrs+' ~ Made with ♥ at 0xmas.com',
+            'From: '+address+' ~ Made with ♥ at 0xmas.com',
             (cardWidth * 3) / 4, // Center horizontally
             cardHeight - margin // Place near the bottom, with some padding
           );
