@@ -97,11 +97,11 @@ const [todepositnft,settodepositnft]=useState([]);
   const provider =  useEthersProvider()//chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
    //useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress ='0xbe751c65D26d925D4AF90d136e2D675e29169D21'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
+  const factoryAddress ='0x50DBFd1caB49D231cc5FA2F17597891444199e25'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
 
   const alchemyConfig = {
     apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
-    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:chainId==534352 ?Network.SCROLL_MAINNET:chainId == 42161 ? Network.ARB_MAINNET :  Network.OPT_MAINNET,
+    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:chainId==534352 ?Network.SCROLL_MAINNET:chainId == 42161 ? Network.ARB_MAINNET : chainId==57073 ?Network.INK: Network.OPT_MAINNET,
   };
   const alchemy = new Alchemy(alchemyConfig);
   const [net, setNet] = useState(null);
@@ -132,7 +132,7 @@ const [todepositnft,settodepositnft]=useState([]);
     }
   };
   const fetchTokenBalances = async (vault) => {
-    const chainIds = [8453, 1, 137, 534352, 42161, 10, 56, 43114, 250];
+    const chainIds = [8453, 1, 137, 534352, 42161, 10, 56, 43114, 250,57073 ];
     if (chainIds.includes(chainId)) {
      fetchTokenBalances2(vault);
     return;
@@ -269,7 +269,7 @@ const [todepositnft,settodepositnft]=useState([]);
       const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => !symbols.includes(token.contractAddress));
 
       const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
-
+console.log(nonZeroBalances);
       const calls = nonZeroBalances.map(token => ({
         target: token.contractAddress,
         callData: new ethers.Interface(["function decimals() view returns (uint8)"]).encodeFunctionData('decimals')
@@ -315,7 +315,8 @@ const [todepositnft,settodepositnft]=useState([]);
         const balance = token.tokenBalance;
         let mybals = await alchemy.core.getTokenBalances(userAddress);
         console.log(mybals);
-        console.log(returnData[index]);
+        console.log(returnData);
+        try {
         const decimals = Number(returnData[index] ? Number(returnData[index]) : 18); // Default to 18 decimals if undefined
         const adjustedBalance = balance / Math.pow(10, decimals);
         const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, 0);
@@ -332,7 +333,10 @@ const [todepositnft,settodepositnft]=useState([]);
           : 0
         
         };
-      }));
+      
+        } catch (error) {
+          
+        }}));
 
       const ethBalance = await provider.getBalance(vault);
       const adjustedEthBalance = ethers.formatEther(ethBalance);
@@ -348,7 +352,8 @@ const [todepositnft,settodepositnft]=useState([]);
         limit: (Number(ethLimit) / Math.pow(10, 18)),
         wallet: ethers.formatEther( await provider.getBalance(userAddress))
       });
-let tokenDetail =tokenDetails.filter(token => token.symbol.length <10)
+      console.log(tokenDetails);
+let tokenDetail =tokenDetails.filter(token => token).filter(token => token.symbol.length <10)
       setTokenBalances(tokenDetail);//tokenDetails);
       console.log(tokenDetails);
 
