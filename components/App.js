@@ -199,13 +199,28 @@ const App = () => {
     const init = async () => {
     async function w() {
     if (window.location.hash) {
-    let hash = window.location.hash;  
+    let hash = window.location.hash; 
     async function wait(ms) {
       return new Promise(resolve => {
         setTimeout(resolve, ms);
       });
     }
-    await wait(5000)
+    await wait(3000)
+      const element = document.getElementById(hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView();
+      }
+    }}
+    w();
+    async function w() {
+    if (window.location.hash) {
+    let hash = window.location.hash; 
+    async function wait(ms) {
+      return new Promise(resolve => {
+        setTimeout(resolve, ms);
+      });
+    }
+    await wait(3000)
       const element = document.getElementById(hash.replace('#', ''));
       if (element) {
         element.scrollIntoView();
