@@ -197,6 +197,21 @@ const App = () => {
   // Initialize Ethers.js and Contract
   useEffect(() => {
     const init = async () => {
+    async function w() {
+    if (window.location.hash) {
+    let hash = window.location.hash;  
+    async function wait(ms) {
+      return new Promise(resolve => {
+        setTimeout(resolve, ms);
+      });
+    }
+    await wait(5000)
+      const element = document.getElementById(hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView();
+      }
+    }}
+    w();
       if (provider && account) {
         const tempContract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, signer);
         console.log(tempContract);
