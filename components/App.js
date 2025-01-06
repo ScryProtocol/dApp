@@ -729,12 +729,17 @@ const [showEditors, setShowEditors] = useState(false);
     // Filtered pages that match the user’s input
     const [filteredWikiPages, setFilteredWikiPages] = useState([]);
     useEffect(() => {
+      try {
     setFilteredWikiPages(wikiPages.filter((page) =>
         page.toLowerCase().includes(wikiSearch.toLowerCase())
       )
       .sort((a, b) => a.length - b.length) // sort by length
       .slice(0, 5)); // limit suggestions to 5
       console.log('filteredWikiPages', filteredWikiPages);
+      
+    } catch (error) {
+        
+    }
     }, [wikiSearch]);
   
   
