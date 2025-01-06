@@ -746,7 +746,7 @@ const [showEditors, setShowEditors] = useState(false);
       <div className="w-full mx-auto relative">
   
         {/* Suggestions Dropdown (only show if user typed something) */}
-        {wikiSearch && filteredWikiPages.length > 0 && (
+        {wikiSearch && filteredWikiPages.length > 0 &&window.location.href.split('@=')[1]!=wikiSearch&& (
           <ul className="absolute bg-white border border-blue-200 rounded mt-1 w-full max-h-60 overflow-y-auto shadow-lg z-10">
             {filteredWikiPages.map((page, index) => (
               <button
@@ -778,6 +778,7 @@ const [showEditors, setShowEditors] = useState(false);
         }
 useEffect(() => {
     getPages();
+    window.innerWidth > 500 ? setNav(true) : setNav(false);
   }, []);  
   const components = {
     // Custom renderer for link nodes
