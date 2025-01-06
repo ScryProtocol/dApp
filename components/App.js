@@ -722,6 +722,58 @@ let contract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
   const [nav, setNav] = useState(true);
 const [showEditors, setShowEditors] = useState(false);
   // Components for Markdown Links
+  const WikiSearch = () => {
+    // Example array of wiki page titles.
+    // In practice, you’d get this from your contract or server.
+  
+    // Filtered pages that match the user’s input
+    const [filteredWikiPages, setFilteredWikiPages] = useState([]);
+    useEffect(() => {
+    setFilteredWikiPages(wikiPages.filter((page) =>
+        page.toLowerCase().includes(wikiSearch.toLowerCase())
+      )
+      .slice(0, 5)); // limit suggestions to 5
+      console.log('filteredWikiPages', filteredWikiPages);
+    }, [wikiSearch]);
+  
+  
+    return (
+      <div className="w-full mx-auto relative">
+  
+        {/* Suggestions Dropdown (only show if user typed something) */}
+        {wikiSearch && filteredWikiPages.length > 0 && (
+          <ul className="absolute bg-white border border-blue-200 rounded mt-1 w-full max-h-60 overflow-y-auto shadow-lg z-10">
+            {filteredWikiPages.map((page, index) => (
+              <button
+                key={index}
+                className="p-2 hover:bg-blue-100 cursor-pointer w-full text-left"
+                onClick={() => {
+                  setWikiSearch(page);  // fill the input with the clicked suggestion
+                  setWikiViewTitle(page); // optional: set the page title
+                  viewPage(page);       // optional: immediately load the page
+                }}
+              >
+                {page}
+              </button>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
+  async function getPages(){  
+    let provider = new ethers.JsonRpcProvider('https://base.meowrpc.com/base');
+        let contract = new ethers.Contract(CONTRACT_ADDRESS, SourceABI, provider);
+        console.log('boop');
+        let pages= (await contract.getLatestPages(10000));
+        console.log('pages', pages);
+        pages=pages.filter(page=>page!=='');
+        console.log('pages', pages);
+        setWikiPages(pages);
+        }
+useEffect(() => {
+    getPages();
+  }, []);  
   const components = {
     // Custom renderer for link nodes
     a: ({ href, children, ...props }) => {
@@ -1053,7 +1105,9 @@ const [showEditors, setShowEditors] = useState(false);
                   type="text"
                   placeholder="Page Title to View"
                   value={wikiViewTitle}
-                  onChange={(e) => setWikiViewTitle(e.target.value)}
+                  onChange={(e) => {setWikiViewTitle(e.target.value)
+                    setWikiSearch(e.target.value)}
+                  }
                   className="flex-1 p-3 border border-blue-300 dark:border-blue-500 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 />
                 <button
@@ -1063,6 +1117,7 @@ const [showEditors, setShowEditors] = useState(false);
                   👁️ View
                 </button>
               </div>
+              <WikiSearch />
             </div>
   
             {/* Wiki Content Display */}
