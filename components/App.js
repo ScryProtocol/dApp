@@ -730,7 +730,7 @@ const [showEditors, setShowEditors] = useState(false);
     const [filteredWikiPages, setFilteredWikiPages] = useState([]);
     useEffect(() => {
       try {
-    setFilteredWikiPages(wikiPages.filter((page) =>
+    setFilteredWikiPages([...wikiPages].filter((page) =>
         page.toLowerCase().includes(wikiSearch.toLowerCase())
       )
       .sort((a, b) => a.length - b.length) // sort by length
