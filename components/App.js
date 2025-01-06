@@ -732,6 +732,7 @@ const [showEditors, setShowEditors] = useState(false);
     setFilteredWikiPages(wikiPages.filter((page) =>
         page.toLowerCase().includes(wikiSearch.toLowerCase())
       )
+      .sort((a, b) => a.length - b.length) // sort by length
       .slice(0, 5)); // limit suggestions to 5
       console.log('filteredWikiPages', filteredWikiPages);
     }, [wikiSearch]);
