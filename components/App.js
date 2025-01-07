@@ -10,6 +10,7 @@ import { useEthersProvider, useEthersSigner } from './tl'; // Ensure these hooks
 import { Alchemy, Network } from 'alchemy-sdk';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
+import DiffViewer from 'react-diff-viewer';
 import ReactMarkdown from 'react-markdown';
 
 import { http, createConfig } from '@wagmi/core';
@@ -1546,6 +1547,7 @@ useEffect(() => {
                 )}
               </div>
             </div>
+            <DataComparator contract={contract} />
           </section>
         )}
 {currentSection === 'explore' && (
@@ -1588,5 +1590,308 @@ useEffect(() => {
   );
   
 };
+// src/DataComparator.js
+
+// Define your ABI outside the component to prevent re-creation on each render
+const ABI = ["function editPage(string title, string content)"];
+
+// Create an Interface Instance
+const iface = new ethers.Interface(ABI);
+
+const DataComparator = ({ contract }) => {
+  // State for Transaction Data Inputs
+  const [txData1, setTxData1] = useState('');
+  const [txData2, setTxData2] = useState('');
+  const [diffOnly, setDiffOnly] = useState(false);
+
+  // State for Decoded Data
+  const [decodedData1, setDecodedData1] = useState(null);
+  const [decodedData2, setDecodedData2] = useState(null);
+
+  // State to Trigger Diff Display
+  const [showDiff, setShowDiff] = useState(false);
+
+  // State for Loading Indicators
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+  const [loadingRestore1, setLoadingRestore1] = useState(false);
+  const [loadingRestore2, setLoadingRestore2] = useState(false);
+
+  // Handler to Decode Transaction Data 1
+  const handleDecode1 = async () => {
+    if (!txData1.trim()) {
+      toast.error('Please enter Transaction Data 1.');
+      return;
+    }
+    setLoading1(true);
+    try {
+      const decoded = iface.parseTransaction({ data: txData1 });
+      setDecodedData1(decoded.args);
+      toast.success('Transaction Data 1 decoded successfully!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to decode Transaction Data 1. Please ensure it is valid.');
+      setDecodedData1(null);
+    }
+    setLoading1(false);
+  };
+
+  // Handler to Decode Transaction Data 2
+  const handleDecode2 = async () => {
+    if (!txData2.trim()) {
+      toast.error('Please enter Transaction Data 2.');
+      return;
+    }
+    setLoading2(true);
+    try {
+      const decoded = iface.parseTransaction({ data: txData2 });
+      setDecodedData2(decoded.args);
+      toast.success('Transaction Data 2 decoded successfully!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to decode Transaction Data 2. Please ensure it is valid.');
+      setDecodedData2(null);
+    }
+    setLoading2(false);
+  };
+
+  // Handler to Compare Decoded Data
+  const handleCompare = () => {
+    if (!decodedData1 || !decodedData2) {
+      toast.error('Please decode both Transaction Data 1 and Transaction Data 2 before comparing.');
+      return;
+    }
+    setShowDiff(true);
+  };
+
+  // Handler to Restore Page
+  const restore = async (title, content, isFirst) => {
+    if (!contract) {
+      toast.error('Contract not initialized.');
+      return;
+    }
+
+    try {
+      if (isFirst) {
+        setLoadingRestore1(true);
+      } else {
+        setLoadingRestore2(true);
+      }
+      const tx = await contract.editPage(title, content);
+      await tx.wait();
+      toast.success(`Page ${isFirst ? '1' : '2'} restored successfully!`);
+    } catch (error) {
+      console.error(error);
+      toast.error(`Failed to restore Page ${isFirst ? '1' : '2'}.`);
+    } finally {
+      if (isFirst) {
+        setLoadingRestore1(false);
+      } else {
+        setLoadingRestore2(false);
+      }
+    }
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg space-y-16">
+      {/* Decoding Section */}
+      <div>
+        <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-8 flex items-center">
+          <span className="mr-2">🔍</span> Transaction Data Comparator
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Transaction Data 1 */}
+          <div className="flex flex-col">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Transaction Data 1</h3>
+            <textarea
+              value={txData1}
+              onChange={(e) => setTxData1(e.target.value)}
+              placeholder="Enter Transaction Data 1 here..."
+              className="w-full p-3 border border-blue-300 dark:border-blue-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="5"
+            />
+            <button
+              onClick={handleDecode1}
+              className={`flex items-center justify-center bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 ${
+                loading1 ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+              disabled={loading1}
+              aria-label="Decode Transaction Data 1"
+            >
+              {loading1 ? (
+                <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              ) : (
+                <span>Decode Data 1</span>
+              )}
+            </button>
+            {decodedData1 && (
+              <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner prose dark:prose-dark">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Decoded Data 1:</h4>
+                  <button
+                    onClick={() => restore(decodedData1[0], decodedData1[1], true)}
+                    className={`flex items-center bg-green-600 dark:bg-green-500 text-white py-1 px-3 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200 ${
+                      loadingRestore1 ? 'cursor-not-allowed opacity-50' : ''
+                    }`}
+                    disabled={loadingRestore1}
+                    aria-label="Restore Page 1"
+                  >
+                    {loadingRestore1 ? (
+                      <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                    ) : (
+                      <span>Restore</span>
+                    )}
+                  </button>
+                </div>
+                <p className="mb-2"><strong>Title:</strong> {decodedData1[0]}</p>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeSlug]}
+                  className="prose dark:prose-dark"
+                >
+                  {decodedData1[1]}
+                </ReactMarkdown>
+              </div>
+            )}
+          </div>
+
+          {/* Transaction Data 2 */}
+          <div className="flex flex-col">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Transaction Data 2</h3>
+            <textarea
+              value={txData2}
+              onChange={(e) => setTxData2(e.target.value)}
+              placeholder="Enter Transaction Data 2 here..."
+              className="w-full p-3 border border-blue-300 dark:border-blue-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="5"
+            />
+            <button
+              onClick={handleDecode2}
+              className={`flex items-center justify-center bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 ${
+                loading2 ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+              disabled={loading2}
+              aria-label="Decode Transaction Data 2"
+            >
+              {loading2 ? (
+                <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              ) : (
+                <span>Decode Data 2</span>
+              )}
+            </button>
+            {decodedData2 && (
+              <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner prose dark:prose-dark">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Decoded Data 2:</h4>
+                  <button
+                    onClick={() => restore(decodedData2[0], decodedData2[1], false)}
+                    className={`flex items-center bg-green-600 dark:bg-green-500 text-white py-1 px-3 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200 ${
+                      loadingRestore2 ? 'cursor-not-allowed opacity-50' : ''
+                    }`}
+                    disabled={loadingRestore2}
+                    aria-label="Restore Page 2"
+                  >
+                    {loadingRestore2 ? (
+                      <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                    ) : (
+                      <span>Restore Page</span>
+                    )}
+                  </button>
+                </div>
+                <p className="mb-2"><strong>Title:</strong> {decodedData2[0]}</p>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeSlug]}
+                  className="prose dark:prose-dark"
+                >
+                  {decodedData2[1]}
+                </ReactMarkdown>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Toggle Diff Only */}
+        <div className="flex justify-center">
+          <label className="inline-flex items-center text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-green-600 dark:text-green-400"
+              checked={diffOnly}
+              onChange={() => setDiffOnly(!diffOnly)}
+            />
+            <span className="ml-2">Show Differences Only</span>
+          </label>
+        </div>
+
+        {/* Compare Button */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={handleCompare}
+            className={`flex items-center justify-center bg-green-600 dark:bg-green-500 text-white px-6 py-3 rounded-full hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200 ${
+              (!decodedData1 || !decodedData2) ? 'cursor-not-allowed opacity-50' : ''
+            }`}
+            disabled={!decodedData1 || !decodedData2}
+            aria-label="Compare Decoded Data"
+          >
+            Compare Decoded Data
+          </button>
+        </div>
+
+        {/* Diff Display Section */}
+        {showDiff && decodedData1 && decodedData2 && (
+          <div>
+            <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center">
+              <span className="mr-2">📊</span> Differences:
+            </h3>
+            <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 overflow-auto">
+              <DiffViewer
+                oldValue={`Title: ${decodedData1[0]}\nContent: ${decodedData1[1]}`}
+                newValue={`Title: ${decodedData2[0]}\nContent: ${decodedData2[1]}`}
+                splitView={true}
+                showDiffOnly={diffOnly}
+                styles={{
+                  variables: {
+                    light: {
+                      diffViewerBackground: '#f5f5f5',
+                      addedBackground: '#acf2bd', // Light green for additions
+                      addedColor: '#24292e',
+                      removedBackground: '#ffeef0', // Light red for removals
+                      removedColor: '#24292e',
+                      wordAddedBackground: '#acf2bd',
+                      wordRemovedBackground: '#ffeef0',
+                    },
+                    dark: {
+                      diffViewerBackground: '#2d2d2d',
+                      addedBackground: '#3a5d31',
+                      addedColor: '#c9d1d9',
+                      removedBackground: '#5a1e1e',
+                      removedColor: '#c9d1d9',
+                      wordAddedBackground: '#58a55c',
+                      wordRemovedBackground: '#e06c75',
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+    );
+};
+
 
 export default App;
