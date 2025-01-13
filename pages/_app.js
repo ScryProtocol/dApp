@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }) {
     if (location.includes('token')) {
       setActiveTab('sub');
     }
-    if (location.includes('spot')) {
+    if (location.includes('?spot')) {
       setActiveTab('spot');
     }
   }, [isDarkTheme]);
