@@ -1684,8 +1684,8 @@ const DataComparator = ({ contract }) => {
     if (edit) {
       try {
         // Ensure 'iface' is defined and imported correctly
-        const decoded = iface.parseTransaction({ data: edit.data });
-        setDecodedData1(decoded.args);
+        const decoded = edit.content
+        setDecodedData1([edit.title,decoded]);
         toast.success(`Edit 1 (${edit.title}) decoded successfully!`);
       } catch (error) {
         console.error(error);
@@ -1703,8 +1703,8 @@ const DataComparator = ({ contract }) => {
     if (edit) {
       try {
         // Ensure 'iface' is defined and imported correctly
-        const decoded = iface.parseTransaction({ data: edit.data });
-        setDecodedData2(decoded.args);
+        const decoded = edit.content
+        setDecodedData2([edit.title,decoded]);
         toast.success(`Edit 2 (${edit.title}) decoded successfully!`);
       } catch (error) {
         console.error(error);
