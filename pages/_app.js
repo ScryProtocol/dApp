@@ -75,12 +75,12 @@ function MyApp({ Component, pageProps }) {
           <button className={`ta ${activeTab === 'sub' ? 'tab-active' : ''}`} onClick={() => setActiveTab('sub')}>
           Sub
           </button>
-          <button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
+          {1==0&&(<><button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
           Feed
           </button>
       <button className={`ta ${activeTab === 'wall' ? 'tab-active' : ''}`} onClick={() => setActiveTab('wall')}>
           Wall
-          </button>
+          </button></>)}
       </div>
       <button className="absolute right-2 top-2 w-9 rounded-full bg-white p-1 font-bold text-xl" onClick={() => setShowInfo(!showInfo)}>?</button>
       </div>
