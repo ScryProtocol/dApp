@@ -32,7 +32,7 @@ let provider;
 /**
  * Replace with your new contract address & updated ABI.
  */
-const ContractAddress = '0x1faa3b933df705ee40490316220b60febfdb1ac9';
+const ContractAddress = '0x6b8dcac6af8e93438cdb8eaeef2da95b8e9d372d';
 
 // NEW Contract ABI (with getSpotInfo, interestRate, etc.)
 const ContractABI = [
@@ -44,8 +44,7 @@ const ContractABI = [
   'function setFeeAddress(address newFeeAddress)',
 
   // The important function we’re using now
-  'function getSpotInfo(bytes32 hash) view returns (address, address, address, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, string, string)',
-
+  'function getSpotInfo(bytes32[] memory hashes) view returns ( (address lender, address friend, address token, uint256 totalBorrowed, uint256 outstanding, uint256 allowable, uint256 interestRate, uint256 lastAccrualTimestamp, uint256 interestAccrued)[] details, uint256[] updatedInterest, uint256[] updatedTotalOwed, uint256[] decimalsArr, string[] names, string[] symbols )',
   'function viewLenderAllowances(address lender) view returns (bytes32[])',
   'function viewFriendAllowances(address friend) view returns (bytes32[])',
   'function borrowDetails(bytes32) view returns (address, address, address, uint256, uint256, uint256, uint256)',
@@ -144,74 +143,60 @@ const Spot = () => {
   const fetchLenderAllowances = async () => {
     if (!contract || !userAddress) return;
 
-    const lenderAllowances = await contract.viewLenderAllowances(userAddress);
+    let lenderAllowances = await contract.viewLenderAllowances(userAddress);
     if (!lenderAllowances?.length) {
       setAllowances([]);
       return;
     }
-
-    const multicallContract = new ethers.Contract(MULTICALL_ADDRESS, MULTICALL_ABI, provider);
-
-    // Step 1: decode each allowance’s (lender, friend, token) from borrowDetails
-    const calls = lenderAllowances.map((hash) => ({
-      target: ContractAddress,
-      callData: contract.interface.encodeFunctionData('getSpotInfo', [hash])
-    }));
-    const { returnData: spotData } = await multicallContract.aggregate(calls);
-
-    // Decode each getSpotInfo result
-    const spotResults = spotData.map((data) => {
-      // getSpotInfo => (address lender, address friend, address token, uint256 totalBorrowed, uint256 outstanding, uint256 allowable, uint256 interestRate, uint256 fee, uint256 outstandingFee, uint256 interestRateFee)
-      const decoded = contract.interface.decodeFunctionResult('getSpotInfo', data);
-      const [
-        lender,
-        friend,
-        token,
-        totalBorrowed,
-        outstanding,
-        allowable,
-        interestRate,
-        fee,
-        outstandingFee,
-        interestRateFee,
-        decimals,
-        name,
-        symbol
-      ] = decoded;
-      return {
-        lender,
-        friend,
-        token,
-        totalBorrowed,
-        outstanding,
-        allowable,
-        interestRate,
-        fee,
-        outstandingFee,
-        interestRateFee,
-        decimals,
-        name,
-        symbol
-      };
-    });
-
+    
+lenderAllowances=[...lenderAllowances]
+console.log(lenderAllowances);
+let spotResult = await contract.getSpotInfo(lenderAllowances);
+console.log(spotResult);
     // Step 4: final UI array
+let spotResults=await Promise.all(
+  spotResult.details.map(async (info, idx) => {
+    const [
+      lender,
+      friend,
+      token,
+      totalBorrowed,
+      outstanding,
+      allowable,
+      interestRate,
+      lastAccrualTimestamp,
+      interestAccrued
+    ] = info;
+const decimals = spotResult.decimalsArr[idx];
+const name = spotResult.names[idx];
+const symbol = spotResult.symbols[idx];
+const fee = spotResult.updatedTotalOwed[idx];
+const interestRateFee = spotResult.updatedInterest[idx];
+const outstandingFee = fee;
+    return {
+      lender,
+      friend,
+      token,
+      totalBorrowed,
+      outstanding,
+      allowable,
+      interestRate,
+      lastAccrualTimestamp,
+      interestAccrued,
+      fee,
+      outstandingFee,
+      interestRateFee,
+      decimals,
+      name,
+      symbol
+    };
+  }))
+     
     const finalAllowances = await Promise.all(
       spotResults.map(async (info, idx) => {
-        const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-        const getAddressENS = async (address) => {
-          if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
-        try {
-           const ensName = await pr.lookupAddress(address);
-          if (ensName) addMapping(address, ensName);
-          return ensName || address;
-           
-        } catch (error) {
-          return address;
-        }
-        };
+        console.log(info);
 
-        const friendENS = await getAddressENS(info.friend);
+        const friendENS = info.friend.toLowerCase();
 let dec=info.decimals; 
         // Parse out the numeric fields
         return {
@@ -242,64 +227,56 @@ let dec=info.decimals;
   const fetchFriendAllowances = async () => {
     if (!contract || !userAddress) return;
 
-    const friendAllowances = await contract.viewFriendAllowances(userAddress);
+    let friendAllowances = await contract.viewFriendAllowances(userAddress);
     if (!friendAllowances?.length) {
       setBorrows([]);
       return;
     }
-
+friendAllowances=[...friendAllowances];
     const multicallContract = new ethers.Contract(MULTICALL_ADDRESS, MULTICALL_ABI, provider);
-
-    const calls = friendAllowances.map((hash) => ({
-      target: ContractAddress,
-      callData: contract.interface.encodeFunctionData('getSpotInfo', [hash])
-    }));
-    const { returnData: spotData } = await multicallContract.aggregate(calls);
-    const spotResults = spotData.map((data) => {
-      const decoded = contract.interface.decodeFunctionResult('getSpotInfo', data);
-      const [
-        lender,
-        friend,
-        token,
-        totalBorrowed,
-        outstanding,
-        allowable,
-        interestRate,
-        fee,
-        outstandingFee,
-        interestRateFee,
-        decimals,
-        name,
-        symbol
-      ] = decoded;
-      return {
-        lender,
-        friend,
-        token,
-        totalBorrowed,
-        outstanding,
-        allowable,
-        interestRate,
-        fee,
-        outstandingFee,
-        interestRateFee,
-        decimals,
-        name,
-        symbol
-      };
-    })
-
+const spotResult=await contract.getSpotInfo(friendAllowances);
+let spotResults=await Promise.all(
+  spotResult.details.map(async (info, idx) => {
+    const [
+      lender,
+      friend,
+      token,
+      totalBorrowed,
+      outstanding,
+      allowable,
+      interestRate,
+      lastAccrualTimestamp,
+      interestAccrued
+    ] = info;
+const decimals = spotResult.decimalsArr[idx];
+const name = spotResult.names[idx];
+const symbol = spotResult.symbols[idx];
+const fee = spotResult.updatedTotalOwed[idx];
+const interestRateFee = spotResult.updatedInterest[idx];
+const outstandingFee = fee;
+    return {
+      lender,
+      friend,
+      token,
+      totalBorrowed,
+      outstanding,
+      allowable,
+      interestRate,
+      lastAccrualTimestamp,
+      interestAccrued,
+      fee,
+      outstandingFee,
+      interestRateFee,
+      decimals,
+      name,
+      symbol
+    };
+  })
+);
     // Step 4: final UI array
     const finalBorrows = await Promise.all(
       spotResults.map(async (info, idx) => {
-        const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-        const getAddressENS = async (address) => {
-          if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
-          const ensName = await pr.lookupAddress(address);
-          if (ensName) addMapping(address, ensName);
-          return ensName || address;
-        };
-        const lenderENS = await getAddressENS(info.lender);
+        const lenderENS = info.lender.toLowerCase();
 let dec=info.decimals;
         return {
           lender: info.lender,
@@ -322,6 +299,35 @@ let dec=info.decimals;
 
     setBorrows(finalBorrows);
   };
+  const [ENS, setENS] = useState('');
+useEffect(() => {
+  const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
+  const getAddressENS = async (address) => {
+    if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
+  try {
+     const ensName = await pr.lookupAddress(address);
+    if (ensName) addMapping(address, ensName);
+    return ensName || address;
+     
+  } catch (error) {
+    return address;
+  }
+  };
+  for (const allowance of allowances) {
+  if (!ENS[allowance.friend]) {
+    getAddressENS(allowance.friend).then((ens) => {
+      setENS((prev) => ({ ...prev, [allowance.friend]: ens }));
+    });
+  }
+  }
+  for (const borrow of borrows) {
+  if (!ENS[borrow.lender]) {
+    getAddressENS(borrow.lender).then((ens) => {
+      setENS((prev) => ({ ...prev, [borrow.lender]: ens }));
+    });
+  }
+  }
+}, [allowances, borrows]);
 
   // --------------------------------
   // allowBorrow => sets allowance w/ interestRate
@@ -628,7 +634,7 @@ const [showModal, setShowModal] = useState(false);
           ).map(([friendAddr, friendAllowances]) => (
             <div key={friendAddr} className="subscription-item">
               <h3 className="subscription-title">
-                {map(friendAddr).substring(0, 20)}{" "}
+                {ENS[friendAddr] || map(friendAddr).substring(0, 20)}{" "}
               </h3>
               <div className="token-grid">
                 {friendAllowances.map((allowance) => (
@@ -728,7 +734,7 @@ const [showModal, setShowModal] = useState(false);
           ).map(([lender, lenderBorrows]) => (
             <div key={lender} className="subscription-item">
               <h3 className="subscription-title">
-                {map(lender).substring(0, 20)}{" "}
+                {ENS[lender] || map(lender).substring(0, 20)}{" "}
               </h3>
               <div className="token-grid">
                 {lenderBorrows.map((borrow) => (
