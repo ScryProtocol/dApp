@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, use } from 'react'; 
 import { ethers } from 'ethers';
 const FormData = require('form-data');
 import axios from 'axios';
@@ -201,9 +201,14 @@ const Spot = () => {
         const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
         const getAddressENS = async (address) => {
           if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
-          const ensName = await pr.lookupAddress(address);
+        try {
+           const ensName = await pr.lookupAddress(address);
           if (ensName) addMapping(address, ensName);
           return ensName || address;
+           
+        } catch (error) {
+          return address;
+        }
         };
 
         const friendENS = await getAddressENS(info.friend);
@@ -440,10 +445,74 @@ let dec=info.decimals;
     { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
     ],
     534352: [],
-  };
+  };    useEffect(() => {
+    let params = new URLSearchParams(window.location.search);
+    setToken(params.get('token'));
+    setFriend(params.get('friend'));
+  setAmount(params.get('amount'));
+  setInterestRate(params.get('interest'));
+  console.log(params.get('token'),params.get('friend'),params.get('amount'),params.get('interest'));
+  console.log(params);
+  if (params.get('token')) {
+    setShowModal(true);
+  }}, []);
+
+const [showModal, setShowModal] = useState(false);
+  const LoanModal = ({}) => {
+    return (<>{showModal && (
+      <div className={`bg-black bg-opacity-50 fixed top-0 left-0 w-full h-full z-50`}>
+      <div className="container lg:w-1/2 mx-auto">
+        <h1 className="section-title mb-2">📝 Loan Request</h1>
+        <button onClick={() => setShowModal(!showModal)} className='bg-red-500 text-white p-2 rounded-full px-3 py-1 top-2 right-2 fixed'>X</button>
+        <label className="subtitle">
+          🌈 Lend a friend tokens from your wallet, with optional interest!
+        </label>
+        <div className="form-container">
+        <div className="form-group">
+        <label htmlFor="token" className="form-label">🪙 Token Address:</label>
+        {stoken&&<p className="form-input">{stoken}</p>}
+        <label htmlFor="friend" className="form-label">👥 Borrower Address/ENS:</label>
+        {friend&&<p className="form-input">{friend}</p>}
+        {!friend&&(<><input
+          type="text"
+          id="friend"
+          name="friend"
+          value={friend}
+          onChange={(e) => setFriend(e.target.value)}
+          required
+          className="form-input"
+        /></>)}
+        <label htmlFor="amount" className="form-label">💸 Loan Limit:</label>
+<input
+          type="number"
+          id="amount"
+          value={amount}
+          name="amount"
+          step="0.01"
+          onChange={(e) => setAmount(e.target.value)}
+          required
+          className="form-input"
+        />
+        <label htmlFor="interestRate" className="form-label">
+          🏦 Interest Rate (e.g. 50 = 5%):
+        </label>
+<input type="number" id="interestRate" name="interestRate" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} required className="form-input" />
+        <button onClick={() => requestBorrow(stoken, friend, amount)} className="submit-button">
+          Set Allowance
+        </button>
+        <div style={{ marginTop: '16px' }}>
+          <ConnectButton style={{ margin: '10px' }} />
+        </div>
+        </div>
+        </div>
+        </div>
+      </div>)}</>
+    );
+  }
 
   return (
-    <div className="main-container font-sans">
+    <div className="main-container font-sans">          <Toaster />
+          <LoanModal className=" top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 float" />
       <div className="container lg:w-1/2">
         <h1 className="main-title">🍕 Spot a Friend 🚀</h1>
         <label className="subtitle">
@@ -451,7 +520,6 @@ let dec=info.decimals;
         </label>
 
         <div>
-          <Toaster />
           <div className="form-container">
             <div className="form-group">
               <label htmlFor="token" className="form-label">🪙 Token Address:</label>
@@ -533,6 +601,9 @@ let dec=info.decimals;
             >
               Set Allowance
             </button>
+            <button className="submit-button" onClick={() => {
+              if(!stoken||!friend||!amount||!interestRate){toast.error('Please fill all fields!');return;}
+              navigator.clipboard.writeText('https://spot.pizza'+'?spot&token='+stoken+'&friend='+friend+'&amount='+amount+'&interest='+interestRate);toast.success('Loan request link copied to clipboard!');}}>Request Loan</button>
 
             <div style={{ marginTop: '16px' }}>
               <ConnectButton style={{ margin: '10px' }} />
