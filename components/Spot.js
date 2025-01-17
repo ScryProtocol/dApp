@@ -601,12 +601,13 @@ const [showModal, setShowModal] = useState(false);
             >
               Set Allowance
             </button>
-            <button className="submit-button" onClick={() => {
-              if(!stoken||!friend||!amount||!interestRate){toast.error('Please fill all fields!');return;}
-              navigator.clipboard.writeText('https://spot.pizza'+'?spot&token='+stoken+'&friend='+friend+'&amount='+amount+'&interest='+interestRate);toast.success('Loan request link copied to clipboard!');}}>Request Loan</button>
-
-            <div style={{ marginTop: '16px' }}>
+            <div style={{ marginTop: '16px' }} className="flex justify-between">
               <ConnectButton style={{ margin: '10px' }} />
+              <button className="submit-button w-1/4 bg-blue-400 m-0
+              " onClick={() => {
+              if(!stoken||!friend||!amount||!interestRate){toast.error('Please fill all fields!');return;}
+              navigator.clipboard.writeText('https://spot.pizza'+'?spot=1&token='+stoken+'&friend='+friend+'&amount='+amount+'&interest='+interestRate);toast.success('Loan request link copied to clipboard!');}}>📃Request</button>
+
             </div>
           </div>
         </div>
