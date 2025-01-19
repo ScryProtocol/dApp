@@ -820,7 +820,7 @@ const SpotIOUFactory = () => {
       {/* All Loans */}
       <div className="max-w-2xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                      ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105">
-        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">💼 All Loans</h1>
+        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">All Loans</h1>
         {allLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
         {allLoans.map((info) => {
