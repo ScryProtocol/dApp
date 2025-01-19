@@ -5,7 +5,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0x5100062BC5cB67F7A7d59b265827ABC78E3bDb29';
+// Your IOUMint factory address
+const IOUMintAddress = '0xF721090A0048B0265ce758ab57074d778DB68AAd';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
@@ -23,6 +24,7 @@ const IOUMintABI = [
       uint256 annualInterestRate, \
       uint256 platformFeeRate, \
       address feeAddress, \
+      uint256 totalSupply, \
       string iouName, \
       string iouSymbol, \
       address underlying, \
@@ -33,7 +35,7 @@ const IOUMintABI = [
       uint256 updatedTotalOwed, \
       uint256 myIOUs, \
       uint256 repayments, \
-      uint256 interestrepayments \
+      uint256 interestrepayments, \
     )[] memory)'
 ];
 
@@ -67,7 +69,7 @@ const SpotIOUFactory = () => {
   const [myIOUs, setMyIOUs] = useState([]);
   const [allLoans, setAllLoans] = useState([]);
 
-  // Deployment fields
+  // Deploy fields
   const [loanToken, setLoanToken] = useState('');
   const [borrower, setBorrower] = useState('');
   const [loanGoal, setLoanGoal] = useState('');
@@ -77,10 +79,9 @@ const SpotIOUFactory = () => {
   const [iouName, setIouName] = useState('');
   const [iouSymbol, setIouSymbol] = useState('');
 
-  // Single input for fund/repay/redeem
+  // Single input for user actions
   const [actionAmount, setActionAmount] = useState('');
 
-  // Contract
   const IOUMintContract = new ethers.Contract(IOUMintAddress, IOUMintABI, provider);
 
   useEffect(() => {
@@ -88,7 +89,7 @@ const SpotIOUFactory = () => {
     fetchAllData();
   }, [provider, userAddress]);
 
-  // Fetch arrays & info
+  // Grab arrays & map details
   const fetchAllData = async () => {
     try {
       const [...myLoansArr] = await IOUMintContract.getUserLoans(userAddress);
@@ -136,7 +137,8 @@ const SpotIOUFactory = () => {
           : '0',
         interestrepayments: info.interestrepayments
           ? ethers.formatUnits(info.interestrepayments, info.underlyingDecimals)
-          : '0'
+          : '0',
+          totalSupply: ethers.formatUnits(info.totalSupply, 18)
       }));
     } catch (err) {
       console.error(err);
@@ -159,6 +161,7 @@ const SpotIOUFactory = () => {
     try {
       const factoryWithSigner = IOUMintContract.connect(signer);
 
+      // Resolve borrower if ENS
       let finalBorrower = borrower;
       if (!ethers.isAddress(borrower)) {
         const resolved = await provider.resolveName(borrower);
@@ -182,7 +185,7 @@ const SpotIOUFactory = () => {
           const token = new ethers.Contract(loanToken, tokenABI, provider);
           decimals = await token.decimals();
         } catch {
-          console.log('Error fetching decimals, defaulting to 18');
+          console.log('Default 18 decimals');
         }
       }
 
@@ -210,7 +213,7 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // Actions
+  // SpotIOULoan interactions
   const getLoanContract = (loanAddress) =>
     new ethers.Contract(loanAddress, SpotIOULoanABI, signer || provider);
 
@@ -232,6 +235,7 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
+        // check allowance
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -244,7 +248,7 @@ const SpotIOUFactory = () => {
         toast.success('Funded loan successfully');
         fetchAllData();
       } else {
-        toast.error('Native asset not handled.');
+        toast.error('Native asset not handled in this snippet.');
       }
     } catch (err) {
       console.error(err);
@@ -300,6 +304,7 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
+        // approve if needed
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -309,7 +314,7 @@ const SpotIOUFactory = () => {
         const tx = await loan.repayLoan(parsed);
         await tx.wait();
 
-        toast.success('Repayment successful!');
+        toast.success('Repayment successful');
         fetchAllData();
       } else {
         toast.error('Native asset flow not handled.');
@@ -346,24 +351,27 @@ const SpotIOUFactory = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-r from-blue-100 via-cyan-300 to-green-200 text-gray-800 font-sans flex flex-col items-center pb-10">
+    <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
       <Toaster />
 
-      {/* Deploy New IOU */}
-      <div className="max-w-xl w-11/12 mt-12 p-6 md:p-8 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl md:text-3xl font-bold mt-2 mb-4">
+      {/* Deploy a new IOU */}
+      <div className="max-w-xl w-full mt-10 p-6 md:p-8 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
+                      ring-1 ring-[#36444c] hover:scale-105 transform transition duration-300">
+        <h1 className="text-blue-400 text-3xl font-bold mt-2 mb-4 uppercase tracking-wide">
           Mint an IOU
         </h1>
+
         <div className="w-full space-y-4 text-left">
-          {/* ERC20 Token */}
+          {/* Loan Token */}
           <div>
-            <label className="block font-semibold text-gray-700 mb-1">
+            <label className="block font-semibold text-gray-200 mb-1">
               🪙 ERC20 Token Address:
             </label>
             <input
               type="text"
               placeholder="0x..."
-              className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               value={loanToken}
               onChange={(e) => setLoanToken(e.target.value)}
             />
@@ -371,13 +379,14 @@ const SpotIOUFactory = () => {
 
           {/* Borrower */}
           <div>
-            <label className="block font-semibold text-gray-700 mb-1">
+            <label className="block font-semibold text-gray-200 mb-1">
               🤝 Borrower Address / ENS:
             </label>
             <input
               type="text"
               placeholder="0x... or user.eth"
-              className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               value={borrower}
               onChange={(e) => setBorrower(e.target.value)}
             />
@@ -385,68 +394,74 @@ const SpotIOUFactory = () => {
 
           {/* Loan Goal */}
           <div>
-            <label className="block font-semibold text-gray-700 mb-1">
+            <label className="block font-semibold text-gray-200 mb-1">
               🎯 Loan Goal:
             </label>
             <input
               type="text"
               placeholder="1000"
-              className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               value={loanGoal}
               onChange={(e) => setLoanGoal(e.target.value)}
             />
           </div>
 
+          {/* Annual + Fee */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-200 mb-1">
                 📊 Annual Interest Rate (bps):
               </label>
               <input
                 type="text"
                 placeholder="500 = 5%"
-                className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 value={annualInterestRate}
                 onChange={(e) => setAnnualInterestRate(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-200 mb-1">
                 💹 Platform Fee (bps):
               </label>
               <input
                 type="text"
                 placeholder="50 = 0.5%"
-                className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 value={platformFeeRate}
                 onChange={(e) => setPlatformFeeRate(e.target.value)}
               />
             </div>
           </div>
 
-          {/* IOU Name, Symbol */}
+          {/* IOU name/symbol */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-200 mb-1">
                 🏷 IOU Name:
               </label>
               <input
                 type="text"
                 placeholder="SpotIOU"
-                className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 value={iouName}
                 onChange={(e) => setIouName(e.target.value)}
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-200 mb-1">
                 🔖 IOU Symbol:
               </label>
               <input
                 type="text"
                 placeholder="IOU"
-                className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 value={iouSymbol}
                 onChange={(e) => setIouSymbol(e.target.value)}
               />
@@ -455,7 +470,8 @@ const SpotIOUFactory = () => {
 
           <button
             onClick={deployNewLoan}
-            className="w-full py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition"
+            className="w-full py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold rounded-full transition
+                       focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             Deploy Loan
           </button>
@@ -466,14 +482,14 @@ const SpotIOUFactory = () => {
         </div>
       </div>
 
-      {/* My Loans (Borrower) */}
-      <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl font-bold mb-4">🌟 My Loans</h1>
-        {myLoans.length === 0 && <p className="text-gray-600">No loans found.</p>}
+      {/* My Loans */}
+      <div className="max-w-2xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
+                     ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105">
+        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">🌟 My Loans</h1>
+        {myLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
         {myLoans.map((info) => {
-          const isBorrower =
-            userAddress?.toLowerCase() === info.borrower.toLowerCase();
+          const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -486,109 +502,121 @@ const SpotIOUFactory = () => {
           return (
             <div
               key={info.loanAddress}
-              className="max-w-xl w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
+              className="max-w-xl w-full mx-auto bg-blue-300/20 p-6 rounded-3xl shadow-md mt-8
+                         hover:scale-[1.02] transform transition border border-blue-300/20"
             >
-              <h2 className="text-center text-pink-600 text-xl font-bold mb-3">
+              <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
                 {info.borrower.substring(0, 6)}...
                 {info.borrower.substring(info.borrower.length - 4)}
               </h2>
 
-              <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
+              <div className="bg-gray-800 rounded-2xl p-4 md:p-6 flex flex-col items-center border border-gray-700">
+                {/* IOU name/symbol */}
                 <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
-                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-400 py-1 px-2 rounded-full">
                     {info.iouName || 'SpotIOU'}
                   </h2>
-                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-300/20 py-1 px-2 rounded-full">
                     {info.iouSymbol || 'IOU'}
                   </h2>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-600">🪙 Loan Token:</p>
-                  <p className="text-pink-500 text-lg font-semibold">
+                  <p className="text-gray-400">🪙 Loan Token:</p>
+                  <p className="text-[#A5CAE1] text-lg font-semibold">
                     {info.underlyingSymbol || 'TOKEN'}
                   </p>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-500">🎯 Loan Goal:</p>
-                  <p className="bg-green-50 px-3 py-1 rounded-full text-green-600 font-bold">
+                  <p className="text-gray-400">🎯 Loan Goal:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#94C7DA] font-bold">
                     {info.loanGoal}
                   </p>
                 </div>
 
                 <div className="m-2 text-center">
-                  <p className="text-gray-500 text-sm mb-1">💰 Total Funded:</p>
-                  <p className="bg-blue-50 px-3 py-1 rounded-full text-blue-600 font-bold">
+                  <p className="text-gray-400 text-sm mb-1">💰 Total Funded:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#78ADC3] font-bold">
                     {info.totalFunded}
                   </p>
                 </div>
 
-                <div className="relative w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-2">
+                {/* progress bar */}
+                <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
                   <div
-                    className="absolute left-0 top-0 h-full bg-pink-400"
+                    className="absolute left-0 top-0 h-full bg-blue-400"
                     style={{ width: `${progressPercent.toFixed(2)}%` }}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 w-full">
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">🤝 Borrowed:</p>
-                    <p className="bg-yellow-50 px-3 py-1 rounded-full text-yellow-600 font-bold">
+                    <p className="text-gray-400 text-sm">🤝 Borrowed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#C7D3DB] font-bold">
                       {info.totalDrawnDown || '0'}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">💎 Owed:</p>
-                    <p className="bg-orange-50 px-3 py-1 rounded-full text-orange-600 font-bold">
+                    <p className="text-gray-400 text-sm">💎 Owed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#E1CBA5] font-bold">
                       {info.updatedTotalOwed || '0'}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-center mb-2 mt-2">
-                  <p className="text-gray-500 text-sm">📊 Annual Interest:</p>
+                  <p className="text-gray-400 text-sm">📊 Annual Interest:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       {(info.annualInterestRate / 100).toFixed(2)}%
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Accrued: {info.updatedInterest || '0'}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">Repayments:</p>
+                  <p className="text-gray-400 text-sm">Repayments:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Total: {info.repayments || '0'}
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Interest: {info.interestrepayments || '0'}
                     </span>
                   </div>
                 </div>
 
-                <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">👛 Your IOUs:</p>
-                  <p className="bg-gray-50 px-3 py-1 rounded-full text-gray-600 font-bold">
-                    {info.myIOUs || '0'}
+                <div className="text-center mb-4">
+                  <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
+                  <div className="flex items-center gap-2">
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                    {info.myIOUs || '0'} {info.iouSymbol}
                   </p>
+                  <p className="bg-orange-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
+                    Redeemable: {info.myIOUs/info.totalSupply*info.repayments}
+                  </p>
+                  </div>
                 </div>
 
+                {/* Action input */}
                 <input
                   type="text"
                   placeholder="Amount"
                   value={actionAmount}
                   onChange={(e) => setActionAmount(e.target.value)}
-                  className="w-full mb-3 px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                  className="w-full mb-3 px-4 py-2 bg-blue-300/20 blue-300/20gray-200 rounded-full placeholder-gray-400
+                             focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 />
 
+                {/* Buttons */}
                 <div className="w-full flex flex-wrap justify-center gap-3">
                   <button
                     onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
+                    className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] blue-300/20white font-semibold rounded-full 
+                               transition focus:outline-none text-sm"
                   >
                     Fund
                   </button>
@@ -597,13 +625,15 @@ const SpotIOUFactory = () => {
                     <>
                       <button
                         onClick={() => drawDown(info.loanAddress, actionAmount)}
-                        className="flex-1 p-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-yellow-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E3B23C]"
                       >
                         Draw Down
                       </button>
                       <button
                         onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                        className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-red-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E85A4F]"
                       >
                         Repay
                       </button>
@@ -612,8 +642,8 @@ const SpotIOUFactory = () => {
 
                   <button
                     onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
-                    style={{ backgroundColor: '#4A90E2' }}
+                    className="flex-1 py-2 bg-[#206a5d] hover:scale-105 text-white font-semibold 
+                               rounded-full transition text-sm"
                   >
                     Redeem
                   </button>
@@ -625,13 +655,13 @@ const SpotIOUFactory = () => {
       </div>
 
       {/* My IOUs */}
-      <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl font-bold mb-4">👛 My IOUs</h1>
-        {myIOUs.length === 0 && <p className="text-gray-600">No IOUs found.</p>}
+      <div className="max-w-2xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
+                     ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105">
+        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">👛 My IOUs</h1>
+        {myIOUs.length === 0 && <p className="text-gray-400">No IOUs found.</p>}
 
         {myIOUs.map((info) => {
-          const isBorrower =
-            userAddress?.toLowerCase() === info.borrower.toLowerCase();
+          const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -644,95 +674,94 @@ const SpotIOUFactory = () => {
           return (
             <div
               key={info.loanAddress}
-              className="max-w-xl w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
+              className="max-w-xl w-full mx-auto bg-blue-300/20 p-6 rounded-3xl shadow-md mt-8
+                         hover:scale-[1.02] transform transition border border-blue-300/20"
             >
-              <h2 className="text-center text-pink-600 text-xl font-bold mb-3">
+              <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
                 {info.borrower.substring(0, 6)}...
                 {info.borrower.substring(info.borrower.length - 4)}
               </h2>
 
-              <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
-                {/* IOU name / symbol */}
+              <div className="bg-gray-800 rounded-2xl p-4 md:p-6 flex flex-col items-center border border-gray-700">
                 <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
-                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-400 py-1 px-2 rounded-full">
                     {info.iouName || 'SpotIOU'}
                   </h2>
-                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-300/20 py-1 px-2 rounded-full">
                     {info.iouSymbol || 'IOU'}
                   </h2>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-600">🪙 Loan Token:</p>
-                  <p className="text-pink-500 text-lg font-semibold">
+                  <p className="text-gray-400">🪙 Loan Token:</p>
+                  <p className="text-[#A5CAE1] text-lg font-semibold">
                     {info.underlyingSymbol || 'TOKEN'}
                   </p>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-500">🎯 Loan Goal:</p>
-                  <p className="bg-green-50 px-3 py-1 rounded-full text-green-600 font-bold">
+                  <p className="text-gray-400">🎯 Loan Goal:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#94C7DA] font-bold">
                     {info.loanGoal}
                   </p>
                 </div>
 
                 <div className="m-2 text-center">
-                  <p className="text-gray-500 text-sm mb-1">💰 Total Funded:</p>
-                  <p className="bg-blue-50 px-3 py-1 rounded-full text-blue-600 font-bold">
+                  <p className="text-gray-400 text-sm mb-1">💰 Total Funded:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#78ADC3] font-bold">
                     {info.totalFunded}
                   </p>
                 </div>
 
-                <div className="relative w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-2">
+                <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
                   <div
-                    className="absolute left-0 top-0 h-full bg-pink-400"
+                    className="absolute left-0 top-0 h-full bg-blue-400"
                     style={{ width: `${progressPercent.toFixed(2)}%` }}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 w-full">
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">🤝 Borrowed:</p>
-                    <p className="bg-yellow-50 px-3 py-1 rounded-full text-yellow-600 font-bold">
+                    <p className="text-gray-400 text-sm">🤝 Borrowed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#C7D3DB] font-bold">
                       {info.totalDrawnDown || '0'}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">💎 Owed:</p>
-                    <p className="bg-orange-50 px-3 py-1 rounded-full text-orange-600 font-bold">
+                    <p className="text-gray-400 text-sm">💎 Owed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#E1CBA5] font-bold">
                       {info.updatedTotalOwed || '0'}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-center mb-2 mt-2">
-                  <p className="text-gray-500 text-sm">📊 Annual Interest:</p>
+                  <p className="text-gray-400 text-sm">📊 Annual Interest:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       {(info.annualInterestRate / 100).toFixed(2)}%
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Accrued: {info.updatedInterest || '0'}
                     </span>
                   </div>
                 </div>
 
-                {/* Repayments row (similar to My Loans) */}
                 <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">Repayments:</p>
+                  <p className="text-gray-400 text-sm">Repayments:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Total: {info.repayments || '0'}
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Interest: {info.interestrepayments || '0'}
                     </span>
                   </div>
                 </div>
 
-                <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">👛 Your IOUs:</p>
-                  <p className="bg-gray-50 px-3 py-1 rounded-full text-gray-600 font-bold">
+                <div className="text-center mb-4">
+                  <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
                     {info.myIOUs || '0'}
                   </p>
                 </div>
@@ -742,13 +771,15 @@ const SpotIOUFactory = () => {
                   placeholder="Amount"
                   value={actionAmount}
                   onChange={(e) => setActionAmount(e.target.value)}
-                  className="w-full mb-3 px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                  className="w-full mb-3 px-4 py-2 bg-blue-300/20 text-gray-200 rounded-full placeholder-gray-400
+                             focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 />
 
                 <div className="w-full flex flex-wrap justify-center gap-3">
                   <button
                     onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
+                    className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold rounded-full
+                               transition focus:outline-none text-sm"
                   >
                     Fund
                   </button>
@@ -757,13 +788,15 @@ const SpotIOUFactory = () => {
                     <>
                       <button
                         onClick={() => drawDown(info.loanAddress, actionAmount)}
-                        className="flex-1 p-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-yellow-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E3B23C]"
                       >
                         Draw Down
                       </button>
                       <button
                         onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                        className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-red-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E85A4F]"
                       >
                         Repay
                       </button>
@@ -772,8 +805,8 @@ const SpotIOUFactory = () => {
 
                   <button
                     onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
-                    style={{ backgroundColor: '#4A90E2' }}
+                    className="flex-1 py-2 bg-[#206a5d] hover:scale-105 text-white font-semibold 
+                               rounded-full transition text-sm"
                   >
                     Redeem
                   </button>
@@ -785,13 +818,13 @@ const SpotIOUFactory = () => {
       </div>
 
       {/* All Loans */}
-      <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl font-bold mb-4">All Loans</h1>
-        {allLoans.length === 0 && <p className="text-gray-600">No loans found.</p>}
+      <div className="max-w-2xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
+                     ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105">
+        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">💼 All Loans</h1>
+        {allLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
         {allLoans.map((info) => {
-          const isBorrower =
-            userAddress?.toLowerCase() === info.borrower.toLowerCase();
+          const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -804,94 +837,94 @@ const SpotIOUFactory = () => {
           return (
             <div
               key={info.loanAddress}
-              className="max-w-xl w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
+              className="max-w-xl w-full mx-auto bg-blue-300/20 p-6 rounded-3xl shadow-md mt-8
+                         hover:scale-[1.02] transform transition border border-blue-300/20"
             >
-              <h2 className="text-center text-pink-600 text-xl font-bold mb-3">
+              <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
                 {info.borrower.substring(0, 6)}...
                 {info.borrower.substring(info.borrower.length - 4)}
               </h2>
 
-              <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
+              <div className="bg-gray-800 rounded-2xl p-4 md:p-6 flex flex-col items-center border border-gray-700">
                 <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
-                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-400 py-1 px-2 rounded-full">
                     {info.iouName || 'SpotIOU'}
                   </h2>
-                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-blue-300/20 py-1 px-2 rounded-full">
                     {info.iouSymbol || 'IOU'}
                   </h2>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-600">🪙 Loan Token:</p>
-                  <p className="text-pink-500 text-lg font-semibold">
+                  <p className="text-gray-400">🪙 Loan Token:</p>
+                  <p className="text-[#A5CAE1] text-lg font-semibold">
                     {info.underlyingSymbol || 'TOKEN'}
                   </p>
                 </div>
 
                 <div className="text-center mb-2">
-                  <p className="text-gray-500">🎯 Loan Goal:</p>
-                  <p className="bg-green-50 px-3 py-1 rounded-full text-green-600 font-bold">
+                  <p className="text-gray-400">🎯 Loan Goal:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#94C7DA] font-bold">
                     {info.loanGoal}
                   </p>
                 </div>
 
                 <div className="m-2 text-center">
-                  <p className="text-gray-500 text-sm mb-1">💰 Total Funded:</p>
-                  <p className="bg-blue-50 px-3 py-1 rounded-full text-blue-600 font-bold">
+                  <p className="text-gray-400 text-sm mb-1">💰 Total Funded:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-[#78ADC3] font-bold">
                     {info.totalFunded}
                   </p>
                 </div>
 
-                <div className="relative w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-2">
+                <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
                   <div
-                    className="absolute left-0 top-0 h-full bg-pink-400"
+                    className="absolute left-0 top-0 h-full bg-blue-400"
                     style={{ width: `${progressPercent.toFixed(2)}%` }}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 w-full">
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">🤝 Borrowed:</p>
-                    <p className="bg-yellow-50 px-3 py-1 rounded-full text-yellow-600 font-bold">
+                    <p className="text-gray-400 text-sm">🤝 Borrowed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#C7D3DB] font-bold">
                       {info.totalDrawnDown || '0'}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-gray-500 text-sm">💎 Owed:</p>
-                    <p className="bg-orange-50 px-3 py-1 rounded-full text-orange-600 font-bold">
+                    <p className="text-gray-400 text-sm">💎 Owed:</p>
+                    <p className="bg-gray-700 px-3 py-1 rounded-full text-[#E1CBA5] font-bold">
                       {info.updatedTotalOwed || '0'}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-center mb-2 mt-2">
-                  <p className="text-gray-500 text-sm">📊 Annual Interest:</p>
+                  <p className="text-gray-400 text-sm">📊 Annual Interest:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       {(info.annualInterestRate / 100).toFixed(2)}%
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Accrued: {info.updatedInterest || '0'}
                     </span>
                   </div>
                 </div>
 
-                {/* Repayments row (optional) */}
                 <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">Repayments:</p>
+                  <p className="text-gray-400 text-sm">Repayments:</p>
                   <div className="inline-flex items-center gap-2">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Total: {info.repayments || '0'}
                     </span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                    <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                       Interest: {info.interestrepayments || '0'}
                     </span>
                   </div>
                 </div>
 
-                <div className="text-center mb-2">
-                  <p className="text-gray-500 text-sm">👛 Your IOUs:</p>
-                  <p className="bg-gray-50 px-3 py-1 rounded-full text-gray-600 font-bold">
+                <div className="text-center mb-4">
+                  <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
+                  <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
                     {info.myIOUs || '0'}
                   </p>
                 </div>
@@ -901,13 +934,15 @@ const SpotIOUFactory = () => {
                   placeholder="Amount"
                   value={actionAmount}
                   onChange={(e) => setActionAmount(e.target.value)}
-                  className="w-full mb-3 px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                  className="w-full mb-3 px-4 py-2 bg-blue-300/20 text-gray-200 rounded-full placeholder-gray-400
+                             focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 />
 
                 <div className="w-full flex flex-wrap justify-center gap-3">
                   <button
                     onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
+                    className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold rounded-full
+                               transition focus:outline-none text-sm"
                   >
                     Fund
                   </button>
@@ -916,13 +951,15 @@ const SpotIOUFactory = () => {
                     <>
                       <button
                         onClick={() => drawDown(info.loanAddress, actionAmount)}
-                        className="flex-1 p-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-yellow-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E3B23C]"
                       >
                         Draw Down
                       </button>
                       <button
                         onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                        className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-red-500"
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:scale-105 
+                                   transition text-sm bg-[#E85A4F]"
                       >
                         Repay
                       </button>
@@ -931,8 +968,8 @@ const SpotIOUFactory = () => {
 
                   <button
                     onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
-                    style={{ backgroundColor: '#4A90E2' }}
+                    className="flex-1 py-2 bg-[#206a5d] hover:scale-105 text-white font-semibold 
+                               rounded-full transition text-sm"
                   >
                     Redeem
                   </button>
