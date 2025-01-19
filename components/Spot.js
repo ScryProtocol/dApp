@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0xF721090A0048B0265ce758ab57074d778DB68AAd';
+const IOUMintAddress = '0x975bbb9ff336246f230cae37da1dbaf49b6cda36';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
@@ -132,10 +132,24 @@ const SpotIOUFactory = () => {
       const [...myLoansArr] = await IOUMintContract.getUserLoans(userAddress);
       const [...myIOUsArr] = await IOUMintContract.getUserIOUs(userAddress);
       const [...allLoansArr] = await IOUMintContract.getAllLoans();
-
-      const myLoansInfo = await fetchLoanInfo(myLoansArr);
-      const myIOUsInfo = await fetchLoanInfo(myIOUsArr);
-      const allLoansInfo = await fetchLoanInfo(allLoansArr);
+      let myLoansArr2=[]
+      let myIOUsArr2=[]
+      let allLoansArr2=[]
+for(let i = 0; i < allLoansArr.length; i++) {
+  myLoansArr2.push(allLoansArr[allLoansArr.length - i-1])
+}
+for(let i = 0; i < myLoansArr.length; i++) {
+  myIOUsArr2.push(myLoansArr[myLoansArr.length - i-1])
+}
+for(let i = 0; i < myIOUsArr.length; i++) {
+  allLoansArr2.push(myIOUsArr[myIOUsArr.length - i-1])
+}
+console.log(myLoansArr2)
+console.log(myIOUsArr2)
+console.log(allLoansArr2)
+      const myLoansInfo = await fetchLoanInfo(myLoansArr2);
+      const myIOUsInfo = await fetchLoanInfo(myIOUsArr2);
+      const allLoansInfo = await fetchLoanInfo(allLoansArr2);
 
       setMyLoans(myLoansInfo);
       setMyIOUs(myIOUsInfo);
@@ -549,7 +563,7 @@ const SpotIOUFactory = () => {
         <h2 className="text-blue-400 text-2xl font-bold mb-4 uppercase mt-4">Find a Loan</h2>
         <input
           type="text"
-          placeholder="Search by borrower address"
+          placeholder="Search by borrower address or loan ID"
           value={searchAddress}
           className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                      focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
@@ -1486,7 +1500,8 @@ const SpotIOUFactory = () => {
                       </div>
 
                       {/* Action input */}
-                      <div className="mt-4 flex items-center space-x-2">
+                      <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
                         <input
                           type="text"
                           placeholder="Amount"
@@ -1495,8 +1510,10 @@ const SpotIOUFactory = () => {
                           className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
                                      rounded-full placeholder-gray-500
                                      focus:outline-none focus:ring-2 
-                                     focus:ring-pink-400 transition"
+                                     focus:ring-pink-400 transition w-full"
                         />
+                        </div>
+                        <div className="flex items-center space-x-2 grid grid-cols-4 gap-2">
                         <button
                           onClick={() => fundLoan(info.loanAddress, actionAmount)}
                           className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
@@ -1529,6 +1546,7 @@ const SpotIOUFactory = () => {
                         >
                           Redeem
                         </button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1562,6 +1580,9 @@ const SpotIOUFactory = () => {
     className="flex items-center justify-between px-4 py-3 w-full 
                cursor-pointer hover:bg-gray-600 transition"
   >
+    <p className="text-sm text-gray-500 font-bold bg-gray-600/70 px-2 py-1 rounded-full">
+      #{allLoans.length-i-1}
+    </p>
     <div className="flex items-center grid grid-cols-5 w-full">
       <span className="text-sm text-gray-300">
         🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}
