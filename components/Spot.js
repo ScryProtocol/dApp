@@ -5,10 +5,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-// Your IOUMint factory address
 const IOUMintAddress = '0x5100062BC5cB67F7A7d59b265827ABC78E3bDb29';
 
-// Example ABI for the IOUMint with getSpotInfo including emojis in labels
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
   'function getAllLoans() external view returns (address[])',
@@ -60,9 +58,6 @@ const tokenABI = [
 ];
 
 const SpotIOUFactory = () => {
-  // ------------------------------
-  // 1) Hooks & States
-  // ------------------------------
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const { address: userAddress } = useAccount();
@@ -72,7 +67,7 @@ const SpotIOUFactory = () => {
   const [myIOUs, setMyIOUs] = useState([]);
   const [allLoans, setAllLoans] = useState([]);
 
-  // For deploying a new loan
+  // Deployment fields
   const [loanToken, setLoanToken] = useState('');
   const [borrower, setBorrower] = useState('');
   const [loanGoal, setLoanGoal] = useState('');
@@ -82,25 +77,20 @@ const SpotIOUFactory = () => {
   const [iouName, setIouName] = useState('');
   const [iouSymbol, setIouSymbol] = useState('');
 
-  // Single input for user actions
+  // Single input for fund/repay/redeem
   const [actionAmount, setActionAmount] = useState('');
 
-  // ------------------------------
-  // 2) Contract references
-  // ------------------------------
+  // Contract
   const IOUMintContract = new ethers.Contract(IOUMintAddress, IOUMintABI, provider);
 
-  // ------------------------------
-  // 3) On mount, fetch all arrays
-  // ------------------------------
   useEffect(() => {
     if (!provider || !userAddress) return;
     fetchAllData();
   }, [provider, userAddress]);
 
+  // Fetch arrays & info
   const fetchAllData = async () => {
     try {
-      // Where the emojis at? Right here! 🍊
       const [...myLoansArr] = await IOUMintContract.getUserLoans(userAddress);
       const [...myIOUsArr] = await IOUMintContract.getUserIOUs(userAddress);
       const [...allLoansArr] = await IOUMintContract.getAllLoans();
@@ -155,12 +145,10 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // ------------------------------
-  // 4) Deploy New Loan
-  // ------------------------------
+  // Deploy new
   const deployNewLoan = async () => {
     if (!signer) {
-      toast.error('Connect your wallet first.');
+      toast.error('Connect wallet first.');
       return;
     }
     if (!loanToken || !borrower || !loanGoal) {
@@ -171,7 +159,6 @@ const SpotIOUFactory = () => {
     try {
       const factoryWithSigner = IOUMintContract.connect(signer);
 
-      // Resolve borrower if ENS
       let finalBorrower = borrower;
       if (!ethers.isAddress(borrower)) {
         const resolved = await provider.resolveName(borrower);
@@ -189,14 +176,13 @@ const SpotIOUFactory = () => {
         finalFeeAddr = resolvedFee;
       }
 
-      // Read decimals from the loanToken
       let decimals = 18;
       if (ethers.isAddress(loanToken) && loanToken !== ethers.ZeroAddress) {
         try {
           const token = new ethers.Contract(loanToken, tokenABI, provider);
           decimals = await token.decimals();
         } catch {
-          console.log('Failed to fetch decimals, default to 18');
+          console.log('Error fetching decimals, defaulting to 18');
         }
       }
 
@@ -216,7 +202,7 @@ const SpotIOUFactory = () => {
       );
       await tx.wait();
 
-      toast.success('Loan deployed! Fetching updates...');
+      toast.success('Loan deployed! Refreshing...');
       setTimeout(fetchAllData, 3000);
     } catch (err) {
       console.error(err);
@@ -224,15 +210,13 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // ------------------------------
-  // 5) Actions: fund, drawDown, repay, redeem
-  // ------------------------------
+  // Actions
   const getLoanContract = (loanAddress) =>
     new ethers.Contract(loanAddress, SpotIOULoanABI, signer || provider);
 
   const fundLoan = async (loanAddress, amount) => {
     if (!signer) {
-      toast.error('Connect your wallet first.');
+      toast.error('Connect wallet first.');
       return;
     }
     if (!amount || Number(amount) <= 0) {
@@ -248,7 +232,6 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
-        // check allowance
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -258,20 +241,20 @@ const SpotIOUFactory = () => {
         const tx = await loan.fundLoan(parsed);
         await tx.wait();
 
-        toast.success('Successfully funded the loan');
+        toast.success('Funded loan successfully');
         fetchAllData();
       } else {
-        toast.error('Native chain flow not handled in this snippet.');
+        toast.error('Native asset not handled.');
       }
     } catch (err) {
       console.error(err);
-      toast.error('Error funding the loan.');
+      toast.error('Error funding loan.');
     }
   };
 
   const drawDown = async (loanAddress, amount) => {
     if (!signer) {
-      toast.error('Connect your wallet first');
+      toast.error('Connect wallet first');
       return;
     }
     try {
@@ -291,7 +274,7 @@ const SpotIOUFactory = () => {
       const tx = await loan.drawDown(parsed);
       await tx.wait();
 
-      toast.success('Drawdown successful!');
+      toast.success('Drawdown successful');
       fetchAllData();
     } catch (err) {
       console.error(err);
@@ -301,7 +284,7 @@ const SpotIOUFactory = () => {
 
   const repayLoan = async (loanAddress, amount) => {
     if (!signer) {
-      toast.error('Connect your wallet first');
+      toast.error('Connect wallet first');
       return;
     }
     if (!amount || Number(amount) <= 0) {
@@ -317,7 +300,6 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
-        // check allowance
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -327,27 +309,26 @@ const SpotIOUFactory = () => {
         const tx = await loan.repayLoan(parsed);
         await tx.wait();
 
-        toast.success('Repayment successful');
+        toast.success('Repayment successful!');
         fetchAllData();
       } else {
-        toast.error('Native asset not handled in this snippet.');
+        toast.error('Native asset flow not handled.');
       }
     } catch (err) {
       console.error(err);
-      toast.error('Error repaying loan');
+      toast.error('Error repaying loan.');
     }
   };
 
   const redeemIOUs = async (loanAddress, amount) => {
     if (!signer) {
-      toast.error('Connect your wallet first');
+      toast.error('Connect wallet first');
       return;
     }
     if (!amount || Number(amount) <= 0) {
       toast.error('Redeem amount must be > 0');
       return;
     }
-
     try {
       const loan = getLoanContract(loanAddress);
       const decimals = await loan.decimals();
@@ -356,7 +337,7 @@ const SpotIOUFactory = () => {
       const tx = await loan.redeemIOUs(parsed);
       await tx.wait();
 
-      toast.success('IOUs redeemed successfully!');
+      toast.success('IOUs redeemed successfully');
       fetchAllData();
     } catch (err) {
       console.error(err);
@@ -364,21 +345,17 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // ------------------------------
-  // 6) Render
-  // ------------------------------
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-blue-100 via-cyan-300 to-green-200 text-gray-800 font-sans flex flex-col items-center pb-10">
       <Toaster />
 
-      {/* 1) Deploy a new IOU */}
+      {/* Deploy New IOU */}
       <div className="max-w-xl w-11/12 mt-12 p-6 md:p-8 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
         <h1 className="text-pink-500 text-2xl md:text-3xl font-bold mt-2 mb-4">
           Mint an IOU
         </h1>
         <div className="w-full space-y-4 text-left">
-
-          {/* 🪙 ERC20 Token */}
+          {/* ERC20 Token */}
           <div>
             <label className="block font-semibold text-gray-700 mb-1">
               🪙 ERC20 Token Address:
@@ -392,21 +369,21 @@ const SpotIOUFactory = () => {
             />
           </div>
 
-          {/* 🤝 Borrower */}
+          {/* Borrower */}
           <div>
             <label className="block font-semibold text-gray-700 mb-1">
               🤝 Borrower Address / ENS:
             </label>
             <input
               type="text"
-              placeholder="0x... or mybuddy.eth"
+              placeholder="0x... or user.eth"
               className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
               value={borrower}
               onChange={(e) => setBorrower(e.target.value)}
             />
           </div>
 
-          {/* 🎯 Loan Goal */}
+          {/* Loan Goal */}
           <div>
             <label className="block font-semibold text-gray-700 mb-1">
               🎯 Loan Goal:
@@ -420,7 +397,6 @@ const SpotIOUFactory = () => {
             />
           </div>
 
-          {/* 📊 Interest, 💹 Fee */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
@@ -441,16 +417,15 @@ const SpotIOUFactory = () => {
               </label>
               <input
                 type="text"
-                placeholder="e.g. 50 = 0.5%"
+                placeholder="50 = 0.5%"
                 className="w-full px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
                 value={platformFeeRate}
                 onChange={(e) => setPlatformFeeRate(e.target.value)}
               />
             </div>
-
           </div>
 
-          {/* 🏷 IOU Name, 🔖 Symbol */}
+          {/* IOU Name, Symbol */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
@@ -478,7 +453,6 @@ const SpotIOUFactory = () => {
             </div>
           </div>
 
-          {/* Deploy */}
           <button
             onClick={deployNewLoan}
             className="w-full py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition"
@@ -492,17 +466,14 @@ const SpotIOUFactory = () => {
         </div>
       </div>
 
-      {/* --- Section: My Loans (Borrower) --- */}
+      {/* My Loans (Borrower) */}
       <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl font-bold mb-4">
-          🌟 My Loans
-        </h1>
+        <h1 className="text-pink-500 text-2xl font-bold mb-4">🌟 My Loans</h1>
         {myLoans.length === 0 && <p className="text-gray-600">No loans found.</p>}
 
         {myLoans.map((info) => {
           const isBorrower =
             userAddress?.toLowerCase() === info.borrower.toLowerCase();
-
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -524,13 +495,14 @@ const SpotIOUFactory = () => {
 
               <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
                 <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
-                  <h2 className="text-center text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
                     {info.iouName || 'SpotIOU'}
                   </h2>
-                  <h2 className="text-center text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
                     {info.iouSymbol || 'IOU'}
                   </h2>
                 </div>
+
                 <div className="text-center mb-2">
                   <p className="text-gray-600">🪙 Loan Token:</p>
                   <p className="text-pink-500 text-lg font-semibold">
@@ -585,14 +557,15 @@ const SpotIOUFactory = () => {
                     </span>
                   </div>
                 </div>
+
                 <div className="text-center mb-2">
                   <p className="text-gray-500 text-sm">Repayments:</p>
                   <div className="inline-flex items-center gap-2">
                     <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
-                     Total: {info.repayments || '0'}
+                      Total: {info.repayments || '0'}
                     </span>
                     <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
-                     Interest: {info.interestrepayments || '0'}
+                      Interest: {info.interestrepayments || '0'}
                     </span>
                   </div>
                 </div>
@@ -604,7 +577,6 @@ const SpotIOUFactory = () => {
                   </p>
                 </div>
 
-                {/* Action input */}
                 <input
                   type="text"
                   placeholder="Amount"
@@ -614,7 +586,6 @@ const SpotIOUFactory = () => {
                 />
 
                 <div className="w-full flex flex-wrap justify-center gap-3">
-                  {/* Anyone can fund */}
                   <button
                     onClick={() => fundLoan(info.loanAddress, actionAmount)}
                     className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
@@ -622,7 +593,6 @@ const SpotIOUFactory = () => {
                     Fund
                   </button>
 
-                  {/* Borrower-only */}
                   {isBorrower && (
                     <>
                       <button
@@ -640,7 +610,6 @@ const SpotIOUFactory = () => {
                     </>
                   )}
 
-                  {/* Redeem IOUs */}
                   <button
                     onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                     className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
@@ -655,17 +624,14 @@ const SpotIOUFactory = () => {
         })}
       </div>
 
-      {/* --- Section: My IOUs --- */}
-      <div className="max-w-xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
-        <h1 className="text-pink-500 text-2xl font-bold mb-4">
-          👛 My IOUs
-        </h1>
+      {/* My IOUs */}
+      <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
+        <h1 className="text-pink-500 text-2xl font-bold mb-4">👛 My IOUs</h1>
         {myIOUs.length === 0 && <p className="text-gray-600">No IOUs found.</p>}
 
         {myIOUs.map((info) => {
           const isBorrower =
             userAddress?.toLowerCase() === info.borrower.toLowerCase();
-
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -678,7 +644,7 @@ const SpotIOUFactory = () => {
           return (
             <div
               key={info.loanAddress}
-              className="max-w-md w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
+              className="max-w-xl w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
             >
               <h2 className="text-center text-pink-600 text-xl font-bold mb-3">
                 {info.borrower.substring(0, 6)}...
@@ -686,6 +652,16 @@ const SpotIOUFactory = () => {
               </h2>
 
               <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
+                {/* IOU name / symbol */}
+                <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
+                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                    {info.iouName || 'SpotIOU'}
+                  </h2>
+                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                    {info.iouSymbol || 'IOU'}
+                  </h2>
+                </div>
+
                 <div className="text-center mb-2">
                   <p className="text-gray-600">🪙 Loan Token:</p>
                   <p className="text-pink-500 text-lg font-semibold">
@@ -737,6 +713,19 @@ const SpotIOUFactory = () => {
                     </span>
                     <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
                       Accrued: {info.updatedInterest || '0'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Repayments row (similar to My Loans) */}
+                <div className="text-center mb-2">
+                  <p className="text-gray-500 text-sm">Repayments:</p>
+                  <div className="inline-flex items-center gap-2">
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      Total: {info.repayments || '0'}
+                    </span>
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      Interest: {info.interestrepayments || '0'}
                     </span>
                   </div>
                 </div>
@@ -795,15 +784,14 @@ const SpotIOUFactory = () => {
         })}
       </div>
 
-      {/* --- Section: All Loans --- */}
-      <div className="max-w-xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
+      {/* All Loans */}
+      <div className="max-w-2xl w-11/12 mt-8 p-6 bg-white rounded-3xl shadow-xl text-center flex flex-col transition-transform duration-300 hover:scale-105">
         <h1 className="text-pink-500 text-2xl font-bold mb-4">All Loans</h1>
         {allLoans.length === 0 && <p className="text-gray-600">No loans found.</p>}
 
         {allLoans.map((info) => {
           const isBorrower =
             userAddress?.toLowerCase() === info.borrower.toLowerCase();
-
           let progressPercent = 0;
           try {
             const goal = parseFloat(info.loanGoal || '0');
@@ -816,122 +804,146 @@ const SpotIOUFactory = () => {
           return (
             <div
               key={info.loanAddress}
-              className="max-w-md w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
+              className="max-w-xl w-full mx-auto bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-200 p-6 rounded-3xl shadow-lg mt-8"
             >
               <h2 className="text-center text-pink-600 text-xl font-bold mb-3">
                 {info.borrower.substring(0, 6)}...
-                {borrower.substring(info.borrower.length - 4)} </h2>
-                          <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
-            <div className="text-center mb-2">
-              <p className="text-gray-600">🪙 Loan Token:</p>
-              <p className="text-pink-500 text-lg font-semibold">
-                {info.underlyingSymbol || 'TOKEN'}
-              </p>
-            </div>
+                {info.borrower.substring(info.borrower.length - 4)}
+              </h2>
 
-            <div className="text-center mb-2">
-              <p className="text-gray-500">🎯 Loan Goal:</p>
-              <p className="bg-green-50 px-3 py-1 rounded-full text-green-600 font-bold">
-                {info.loanGoal}
-              </p>
-            </div>
+              <div className="bg-white rounded-2xl shadow-md p-4 md:p-6 flex flex-col items-center">
+                <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
+                  <h2 className="text-white text-xl font-bold bg-pink-500 py-1 px-2 rounded-full">
+                    {info.iouName || 'SpotIOU'}
+                  </h2>
+                  <h2 className="text-white text-xl font-bold bg-pink-400 py-1 px-2 rounded-full">
+                    {info.iouSymbol || 'IOU'}
+                  </h2>
+                </div>
 
-            <div className="m-2 text-center">
-              <p className="text-gray-500 text-sm mb-1">💰 Total Funded:</p>
-              <p className="bg-blue-50 px-3 py-1 rounded-full text-blue-600 font-bold">
-                {info.totalFunded}
-              </p>
-            </div>
+                <div className="text-center mb-2">
+                  <p className="text-gray-600">🪙 Loan Token:</p>
+                  <p className="text-pink-500 text-lg font-semibold">
+                    {info.underlyingSymbol || 'TOKEN'}
+                  </p>
+                </div>
 
-            <div className="relative w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-2">
-              <div
-                className="absolute left-0 top-0 h-full bg-pink-400"
-                style={{ width: `${progressPercent.toFixed(2)}%` }}
-              />
-            </div>
+                <div className="text-center mb-2">
+                  <p className="text-gray-500">🎯 Loan Goal:</p>
+                  <p className="bg-green-50 px-3 py-1 rounded-full text-green-600 font-bold">
+                    {info.loanGoal}
+                  </p>
+                </div>
 
-            <div className="grid grid-cols-2 gap-2 w-full">
-              <div className="text-center">
-                <p className="text-gray-500 text-sm">🤝 Borrowed:</p>
-                <p className="bg-yellow-50 px-3 py-1 rounded-full text-yellow-600 font-bold">
-                  {info.totalDrawnDown || '0'}
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-gray-500 text-sm">💎 Owed:</p>
-                <p className="bg-orange-50 px-3 py-1 rounded-full text-orange-600 font-bold">
-                  {info.updatedTotalOwed || '0'}
-                </p>
-              </div>
-            </div>
+                <div className="m-2 text-center">
+                  <p className="text-gray-500 text-sm mb-1">💰 Total Funded:</p>
+                  <p className="bg-blue-50 px-3 py-1 rounded-full text-blue-600 font-bold">
+                    {info.totalFunded}
+                  </p>
+                </div>
 
-            <div className="text-center mb-2 mt-2">
-              <p className="text-gray-500 text-sm">📊 Annual Interest:</p>
-              <div className="inline-flex items-center gap-2">
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
-                  {(info.annualInterestRate / 100).toFixed(2)}%
-                </span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
-                  Accrued: {info.updatedInterest || '0'}
-                </span>
-              </div>
-            </div>
+                <div className="relative w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-2">
+                  <div
+                    className="absolute left-0 top-0 h-full bg-pink-400"
+                    style={{ width: `${progressPercent.toFixed(2)}%` }}
+                  />
+                </div>
 
-            <div className="text-center mb-2">
-              <p className="text-gray-500 text-sm">👛 Your IOUs:</p>
-              <p className="bg-gray-50 px-3 py-1 rounded-full text-gray-600 font-bold">
-                {info.myIOUs || '0'}
-              </p>
-            </div>
+                <div className="grid grid-cols-2 gap-2 w-full">
+                  <div className="text-center">
+                    <p className="text-gray-500 text-sm">🤝 Borrowed:</p>
+                    <p className="bg-yellow-50 px-3 py-1 rounded-full text-yellow-600 font-bold">
+                      {info.totalDrawnDown || '0'}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-gray-500 text-sm">💎 Owed:</p>
+                    <p className="bg-orange-50 px-3 py-1 rounded-full text-orange-600 font-bold">
+                      {info.updatedTotalOwed || '0'}
+                    </p>
+                  </div>
+                </div>
 
-            <input
-              type="text"
-              placeholder="Amount"
-              value={actionAmount}
-              onChange={(e) => setActionAmount(e.target.value)}
-              className="w-full mb-3 px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
-            />
+                <div className="text-center mb-2 mt-2">
+                  <p className="text-gray-500 text-sm">📊 Annual Interest:</p>
+                  <div className="inline-flex items-center gap-2">
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      {(info.annualInterestRate / 100).toFixed(2)}%
+                    </span>
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      Accrued: {info.updatedInterest || '0'}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="w-full flex flex-wrap justify-center gap-3">
-              <button
-                onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
-              >
-                Fund
-              </button>
+                {/* Repayments row (optional) */}
+                <div className="text-center mb-2">
+                  <p className="text-gray-500 text-sm">Repayments:</p>
+                  <div className="inline-flex items-center gap-2">
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      Total: {info.repayments || '0'}
+                    </span>
+                    <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-semibold">
+                      Interest: {info.interestrepayments || '0'}
+                    </span>
+                  </div>
+                </div>
 
-              {isBorrower && (
-                <>
+                <div className="text-center mb-2">
+                  <p className="text-gray-500 text-sm">👛 Your IOUs:</p>
+                  <p className="bg-gray-50 px-3 py-1 rounded-full text-gray-600 font-bold">
+                    {info.myIOUs || '0'}
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Amount"
+                  value={actionAmount}
+                  onChange={(e) => setActionAmount(e.target.value)}
+                  className="w-full mb-3 px-4 py-2 bg-pink-100 rounded-full placeholder-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                />
+
+                <div className="w-full flex flex-wrap justify-center gap-3">
                   <button
-                    onClick={() => drawDown(info.loanAddress, actionAmount)}
-                    className="flex-1 p-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-yellow-500"
+                    onClick={() => fundLoan(info.loanAddress, actionAmount)}
+                    className="flex-1 py-2 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition text-sm"
                   >
-                    Draw Down
+                    Fund
                   </button>
-                  <button
-                    onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                    className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-red-500"
-                  >
-                    Repay
-                  </button>
-                </>
-              )}
 
-              <button
-                onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
-                style={{ backgroundColor: '#4A90E2' }}
-              >
-                Redeem
-              </button>
+                  {isBorrower && (
+                    <>
+                      <button
+                        onClick={() => drawDown(info.loanAddress, actionAmount)}
+                        className="flex-1 p-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-yellow-500"
+                      >
+                        Draw Down
+                      </button>
+                      <button
+                        onClick={() => repayLoan(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm bg-red-500"
+                      >
+                        Repay
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
+                    className="flex-1 py-2 text-white font-semibold rounded-full hover:opacity-90 transition text-sm"
+                    style={{ backgroundColor: '#4A90E2' }}
+                  >
+                    Redeem
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</div>
-); };
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default SpotIOUFactory;
-
