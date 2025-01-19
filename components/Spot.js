@@ -12,6 +12,7 @@ const IOUMintABI = [
   'function getAllLoans() external view returns (address[])',
   'function getUserLoans(address) external view returns (address[])',
   'function getUserIOUs(address) external view returns (address[])',
+  'function getLoans(uint256[] memory) external view returns (address[] memory)',
   'function getSpotInfo(address[] memory, address) external view returns ( \
     tuple( \
       address loanAddress, \
@@ -391,6 +392,13 @@ const SpotIOUFactory = () => {
     if (!searchAddress) return;
     async function fetchLoan() {
       try {
+        if(!searchAddress.startsWith('0x')) {
+          let [...loans] = await IOUMintContract.getLoans([searchAddress]);
+          let results = await fetchLoanInfo(loans);
+          console.log(results);
+          setSearchResults(results);
+          return;
+        }          
         const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
         const results = await fetchLoanInfo(loans);
         setSearchResults(results);
