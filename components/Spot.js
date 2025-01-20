@@ -12,7 +12,7 @@ const IOUMintABI = [
   'function getAllLoans() external view returns (address[])',
   'function getUserLoans(address) external view returns (address[])',
   'function getUserIOUs(address) external view returns (address[])',
-  'function getLoans(uint256[] memory) external view returns (address[] memory)',
+  'function getLoans(uint256[] memory) external view returns (address[])',
   'function getSpotInfo(address[] memory, address) external view returns ( \
     tuple( \
       address loanAddress, \
@@ -95,7 +95,7 @@ const SpotIOUFactory = () => {
   const [expandedRowsMyIOUs, setExpandedRowsMyIOUs] = useState({});
   const [expandedRows, setExpandedRows] = useState({});
 
-  // Toggles
+  // Toggle handlers
   const toggleExpandSearch = (index) => {
     setExpandedRowsSearch((prev) => ({
       ...prev,
@@ -124,31 +124,30 @@ const SpotIOUFactory = () => {
     }));
   };
 
-  // On mount / address change, fetch data
+  // Fetch data on mount or user change
   useEffect(() => {
     if (!provider || !userAddress) return;
     fetchAllData();
   }, [provider, userAddress]);
 
-  // Grab arrays & map details
   const fetchAllData = async () => {
     try {
       const [...myLoansArr] = await IOUMintContract.getUserLoans(userAddress);
       const [...myIOUsArr] = await IOUMintContract.getUserIOUs(userAddress);
       const [...allLoansArr] = await IOUMintContract.getAllLoans();
 
-      // Reverse them just as your snippet does
+      // Reverse them if you like the "newest first" approach
       let myLoansArr2 = [];
       let myIOUsArr2 = [];
       let allLoansArr2 = [];
-      for (let i = 0; i < allLoansArr.length; i++) {
-        myLoansArr2.push(allLoansArr[allLoansArr.length - i - 1]);
+      for (let i = allLoansArr.length - 1; i >= 0; i--) {
+        myLoansArr2.push(allLoansArr[i]);
       }
-      for (let i = 0; i < myLoansArr.length; i++) {
-        myIOUsArr2.push(myLoansArr[myLoansArr.length - i - 1]);
+      for (let i = myLoansArr.length - 1; i >= 0; i--) {
+        myIOUsArr2.push(myLoansArr[i]);
       }
-      for (let i = 0; i < myIOUsArr.length; i++) {
-        allLoansArr2.push(myIOUsArr[myIOUsArr.length - i - 1]);
+      for (let i = myIOUsArr.length - 1; i >= 0; i--) {
+        allLoansArr2.push(myIOUsArr[i]);
       }
 
       const myLoansInfo = await fetchLoanInfo(myLoansArr2);
@@ -202,7 +201,7 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // Deploy new
+  // Deploy new IOU-based Loan
   const deployNewLoan = async () => {
     if (!signer) {
       toast.error('Connect wallet first.');
@@ -216,7 +215,7 @@ const SpotIOUFactory = () => {
     try {
       const factoryWithSigner = IOUMintContract.connect(signer);
 
-      // Resolve borrower if ENS
+      // Borrower ENS resolution
       let finalBorrower = borrower;
       if (!ethers.isAddress(borrower)) {
         const resolved = await provider.resolveName(borrower);
@@ -224,10 +223,7 @@ const SpotIOUFactory = () => {
         finalBorrower = resolved;
       }
 
-      let finalFeeAddr = feeAddress;
-      if (!finalFeeAddr) {
-        finalFeeAddr = '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'; // your fallback
-      }
+      let finalFeeAddr = feeAddress || '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5';
       if (!ethers.isAddress(finalFeeAddr)) {
         const resolvedFee = await provider.resolveName(finalFeeAddr);
         if (!resolvedFee) throw new Error('Could not resolve fee ENS');
@@ -290,7 +286,6 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
-        // check allowance
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -326,9 +321,10 @@ const SpotIOUFactory = () => {
         decimals = await tok.decimals();
       }
 
-      const parsed = amount && Number(amount) > 0
-        ? ethers.parseUnits(amount, decimals)
-        : 0n;
+      const parsed =
+        amount && Number(amount) > 0
+          ? ethers.parseUnits(amount, decimals)
+          : 0n;
 
       const tx = await loan.drawDown(parsed);
       await tx.wait();
@@ -359,7 +355,7 @@ const SpotIOUFactory = () => {
         const decimals = await tok.decimals();
         const parsed = ethers.parseUnits(amount, decimals);
 
-        // approve if needed
+        // check allowance
         const allowance = await tok.allowance(userAddress, loanAddress);
         if (allowance < parsed) {
           const approveTx = await tok.approve(loanAddress, parsed);
@@ -419,6 +415,7 @@ const SpotIOUFactory = () => {
       const token = new ethers.Contract(await loan.loanToken(), tokenABI, signer);
       const decimals = await token.decimals();
       const parsed = ethers.parseUnits(amount, decimals);
+
       const tx = await loan.unfundLoan(parsed);
       await tx.wait();
       toast.success('Unfunded loan successfully');
@@ -429,27 +426,27 @@ const SpotIOUFactory = () => {
     }
   };
 
-  // Whenever searchAddress changes, fetch by ID or user address
+  // Searching
   useEffect(() => {
     if (!searchAddress) return;
     async function fetchLoan() {
       try {
-        // If not a 0x address, treat searchAddress as a loan ID
+        // If not a 0x, treat as loan ID
         if (!searchAddress.startsWith('0x')) {
           let [...loans] = await IOUMintContract.getLoans([searchAddress]);
           let results = await fetchLoanInfo(loans);
           setSearchResults(results);
           return;
         }
-        // Otherwise, treat as user address => getUserIOUs
+        // Otherwise treat as user address
         try {
           let results = await fetchLoanInfo([searchAddress]);
           setSearchResults(results);
         } catch (error) {
-          
-        const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
-        const results = await fetchLoanInfo(loans);
-        setSearchResults(results);}
+          const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
+          const results = await fetchLoanInfo(loans);
+          setSearchResults(results);
+        }
       } catch (err) {
         console.error(err);
         toast.error('Error fetching search results');
@@ -517,7 +514,7 @@ const SpotIOUFactory = () => {
             />
           </div>
 
-          {/* Annual + Fee */}
+          {/* AnnualInterestRate + PlatformFee */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-200 mb-1">
@@ -532,7 +529,6 @@ const SpotIOUFactory = () => {
                 onChange={(e) => setAnnualInterestRate(e.target.value)}
               />
             </div>
-
             <div>
               <label className="block font-semibold text-gray-200 mb-1">
                 💹 Platform Fee (bps):
@@ -594,7 +590,9 @@ const SpotIOUFactory = () => {
 
       {/* FIND A LOAN */}
       <div className="max-w-lg w-full mt-8 p-6 text-center flex flex-col">
-        <h2 className="text-blue-400 text-2xl font-bold mb-4 uppercase mt-4">Find a Loan</h2>
+        <h2 className="text-blue-400 text-2xl font-bold mb-4 uppercase mt-4">
+          Find a Loan
+        </h2>
         <input
           type="text"
           placeholder="Search by borrower address or loan address"
@@ -623,14 +621,16 @@ const SpotIOUFactory = () => {
             Close
           </button>
 
-          {/* If none found */}
-          {searchResults.length === 0 && <p className="text-gray-400">No loans found.</p>}
+          {searchResults.length === 0 && (
+            <p className="text-gray-400">No loans found.</p>
+          )}
 
-          {/* If 2 or fewer => card style */}
           {searchResults.length <= 2 ? (
+            /*  CARD STYLE if 2 or fewer  */
             <>
               {searchResults.map((info) => {
-                const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+                const isBorrower =
+                  userAddress?.toLowerCase() === info.borrower.toLowerCase();
                 let progressPercent = 0;
                 try {
                   const goal = parseFloat(info.loanGoal || '0');
@@ -655,6 +655,7 @@ const SpotIOUFactory = () => {
                       className="bg-gray-800 rounded-2xl p-4 md:p-6 flex flex-col 
                                  items-center border border-gray-700"
                     >
+                      {/* IOU name/symbol */}
                       <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
                         <h2 className="text-white text-xl font-bold bg-blue-400 py-1 px-2 rounded-full">
                           {info.iouName || 'SpotIOU'}
@@ -685,6 +686,7 @@ const SpotIOUFactory = () => {
                         </p>
                       </div>
 
+                      {/* progress bar */}
                       <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
                         <div
                           className="absolute left-0 top-0 h-full bg-blue-400"
@@ -808,7 +810,8 @@ const SpotIOUFactory = () => {
             /* TABLE/ACCORDION STYLE for SEARCH RESULTS */
             <div className="space-y-2 w-full mt-4">
               {searchResults.map((info, i) => {
-                const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+                const isBorrower =
+                  userAddress?.toLowerCase() === info.borrower.toLowerCase();
 
                 return (
                   <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
@@ -819,7 +822,8 @@ const SpotIOUFactory = () => {
                     >
                       <div className="flex items-center grid grid-cols-5 w-full">
                         <span className="text-sm text-gray-300">
-                          🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}
+                          🧑‍💼 {info.borrower.slice(0, 6)}...
+                          {info.borrower.slice(-4)}
                         </span>
                         <span className="text-sm text-blue-300">
                           {info.underlyingSymbol || 'TOKEN'}
@@ -885,7 +889,7 @@ const SpotIOUFactory = () => {
                               ).toFixed(4)}
                             </p>
                             <p className="text-gray-400 text-xs">Borrower:</p>
-                            <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                            <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
                               {info.borrower}
                             </p>
                           </div>
@@ -957,12 +961,12 @@ const SpotIOUFactory = () => {
         <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">🌟 My Loans</h1>
         {myLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
-        {/* If 2 or fewer => CARD style, else => TABLE style */}
         {myLoans.length <= 2 ? (
           /* --------------------- CARD STYLE --------------------- */
           <>
             {myLoans.map((info) => {
-              const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+              const isBorrower =
+                userAddress?.toLowerCase() === info.borrower.toLowerCase();
               let progressPercent = 0;
               try {
                 const goal = parseFloat(info.loanGoal || '0');
@@ -1137,7 +1141,8 @@ const SpotIOUFactory = () => {
           /* --------------------- TABLE/ACCORDION STYLE --------------------- */
           <div className="space-y-2 w-full mt-4">
             {myLoans.map((info, i) => {
-              const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+              const isBorrower =
+                userAddress?.toLowerCase() === info.borrower.toLowerCase();
               return (
                 <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
                   {/* Summary row */}
@@ -1148,21 +1153,27 @@ const SpotIOUFactory = () => {
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                        🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}
+                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        {info.borrower.slice(-4)}
                       </span>
                       <span className="text-sm text-blue-300">
                         {info.underlyingSymbol || 'TOKEN'}
                       </span>
-                      <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
+                      <span className="text-sm text-purple-300">
+                        Goal: {info.loanGoal}
+                      </span>
                       <span className="text-sm text-green-300">
                         APR: {(info.annualInterestRate / 100).toFixed(2)}%
                       </span>
-                      <span className="text-sm text-pink-300">Owed: {info.updatedTotalOwed}</span>
+                      <span className="text-sm text-pink-300">
+                        Owed: {info.updatedTotalOwed}
+                      </span>
                     </div>
-                    <div className="text-gray-400">{expandedRowsMyLoans[i] ? '▼' : '▶'}</div>
+                    <div className="text-gray-400">
+                      {expandedRowsMyLoans[i] ? '▼' : '▶'}
+                    </div>
                   </button>
 
-                  {/* Expanded content (TABLE STYLE SNIPPET) */}
                   {expandedRowsMyLoans[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
                       <div className="grid grid-cols-2 gap-4">
@@ -1205,13 +1216,12 @@ const SpotIOUFactory = () => {
                             ).toFixed(2)}
                           </p>
                           <p className="text-gray-400 text-xs">Owed:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
                             {info.updatedTotalOwed}
                           </p>
                         </div>
                       </div>
 
-                      {/* Action buttons */}
                       <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
                           <input
@@ -1279,11 +1289,12 @@ const SpotIOUFactory = () => {
         {myIOUs.length === 0 && <p className="text-gray-400">No IOUs found.</p>}
 
         {myIOUs.length <= 2 ? (
-          /* --------------------- CARD STYLE --------------------- */
+          /* --------------------- CARD STYLE for MY IOUs --------------------- */
           <>
-            {/* (You can retain the standard card approach here) */}
             {myIOUs.map((info) => {
-              const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+              const isBorrower =
+                userAddress?.toLowerCase() === info.borrower.toLowerCase();
+
               let progressPercent = 0;
               try {
                 const goal = parseFloat(info.loanGoal || '0');
@@ -1299,17 +1310,195 @@ const SpotIOUFactory = () => {
                   className="max-w-xl w-full mx-auto bg-blue-300/20 p-6 rounded-3xl shadow-md mt-8
                              hover:scale-[1.02] transform transition border border-blue-300/20"
                 >
-                  {/* ... card details for IOUs */}
-                  {/* ... plus Unfund button, etc. */}
+                  {/* Borrower heading */}
+                  <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
+                    {info.borrower.slice(0, 6)}...
+                    {info.borrower.slice(-4)}
+                  </h2>
+
+                  <div
+                    className="bg-gray-800 rounded-2xl p-4 md:p-6 flex flex-col 
+                               items-center border border-gray-700"
+                  >
+                    <div className="text-center mb-2 flex flex-wrap justify-center gap-2">
+                      <h2 className="text-white text-xl font-bold bg-blue-400 py-1 px-2 rounded-full">
+                        {info.iouName || 'SpotIOU'}
+                      </h2>
+                      <h2 className="text-white text-xl font-bold bg-blue-300/20 py-1 px-2 rounded-full">
+                        {info.iouSymbol || 'IOU'}
+                      </h2>
+                    </div>
+
+                    {/* Borrower (overflow-hidden) */}
+                    <div className="text-center mb-2">
+                      <p className="text-gray-400">Borrower:</p>
+                      <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
+                        {info.borrower}
+                      </p>
+                    </div>
+
+                    {/* Loan token */}
+                    <div className="text-center mb-2">
+                      <p className="text-gray-400">🪙 Loan Token:</p>
+                      <p className="text-[#A5CAE1] text-lg font-semibold">
+                        {info.underlyingSymbol || 'TOKEN'}
+                      </p>
+                    </div>
+
+                    {/* Loan Goal */}
+                    <div className="text-center mb-2">
+                      <p className="text-gray-400">🎯 Loan Goal:</p>
+                      <p className="bg-gray-700 px-3 py-1 rounded-full text-[#94C7DA] font-bold">
+                        {info.loanGoal}
+                      </p>
+                    </div>
+
+                    {/* Total Funded */}
+                    <div className="m-2 text-center">
+                      <p className="text-gray-400 text-sm mb-1">💰 Total Funded:</p>
+                      <p className="bg-gray-700 px-3 py-1 rounded-full text-[#78ADC3] font-bold">
+                        {info.totalFunded}
+                      </p>
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
+                      <div
+                        className="absolute left-0 top-0 h-full bg-blue-400"
+                        style={{ width: `${progressPercent.toFixed(2)}%` }}
+                      />
+                    </div>
+
+                    {/* Borrowed/Owed */}
+                    <div className="grid grid-cols-2 gap-2 w-full">
+                      <div className="text-center">
+                        <p className="text-gray-400 text-sm">🤝 Borrowed:</p>
+                        <p className="bg-gray-700 px-3 py-1 rounded-full text-[#C7D3DB] font-bold">
+                          {info.totalDrawnDown || '0'}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-400 text-sm">💎 Owed:</p>
+                        <p className="bg-gray-700 px-3 py-1 rounded-full text-[#E1CBA5] font-bold">
+                          {info.updatedTotalOwed || '0'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Annual Interest */}
+                    <div className="text-center mb-2 mt-2">
+                      <p className="text-gray-400 text-sm">📊 Annual Interest:</p>
+                      <div className="inline-flex items-center gap-2">
+                        <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
+                          {(info.annualInterestRate / 100).toFixed(2)}%
+                        </span>
+                        <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
+                          Accrued: {info.updatedInterest || '0'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Repayments */}
+                    <div className="text-center mb-2">
+                      <p className="text-gray-400 text-sm">Repayments:</p>
+                      <div className="inline-flex items-center gap-2">
+                        <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
+                          Total: {info.repayments || '0'}
+                        </span>
+                        <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
+                          Interest: {info.interestrepayments || '0'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* My IOUs + Redeemable */}
+                    <div className="text-center mb-4">
+                      <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
+                      <div className="flex items-center gap-2">
+                        <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                          {info.myIOUs || '0'} {info.iouSymbol}
+                        </p>
+                        <p className="bg-orange-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
+                          Redeemable:{' '}
+                          {(
+                            ((parseFloat(info.myIOUs) || 0) /
+                              (parseFloat(info.totalSupply) || 1)) *
+                            (parseFloat(info.repayments) || 0)
+                          ).toFixed(4)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Action input */}
+                    <input
+                      type="text"
+                      placeholder="Amount"
+                      value={actionAmount}
+                      onChange={(e) => setActionAmount(e.target.value)}
+                      className="w-full mb-3 px-4 py-2 bg-blue-300/20 text-gray-200
+                                 rounded-full placeholder-gray-400
+                                 focus:outline-none focus:ring-2 
+                                 focus:ring-blue-400 transition"
+                    />
+
+                    {/* Buttons (including Unfund) */}
+                    <div className="w-full flex flex-wrap justify-center gap-3">
+                      <button
+                        onClick={() => fundLoan(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] 
+                                   text-white font-semibold rounded-full
+                                   transition focus:outline-none text-sm"
+                      >
+                        Fund
+                      </button>
+
+                      {isBorrower && (
+                        <>
+                          <button
+                            onClick={() => drawDown(info.loanAddress, actionAmount)}
+                            className="flex-1 py-2 text-white font-semibold rounded-full 
+                                       hover:scale-105 transition text-sm bg-[#E3B23C]"
+                          >
+                            Draw Down
+                          </button>
+                          <button
+                            onClick={() => repayLoan(info.loanAddress, actionAmount)}
+                            className="flex-1 py-2 text-white font-semibold rounded-full 
+                                       hover:scale-105 transition text-sm bg-[#E85A4F]"
+                          >
+                            Repay
+                          </button>
+                        </>
+                      )}
+
+                      <button
+                        onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 bg-[#206a5d] hover:scale-105 
+                                   text-white font-semibold rounded-full 
+                                   transition text-sm"
+                      >
+                        Redeem
+                      </button>
+                      <button
+                        onClick={() => unfundLoan(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 bg-red-400 hover:bg-red-600
+                                    text-white font-semibold rounded-full
+                                    transition text-sm"
+                      >
+                        Unfund
+                      </button>
+                    </div>
+                  </div>
                 </div>
               );
             })}
           </>
         ) : (
-          /* --------------------- TABLE/ACCORDION STYLE --------------------- */
+          /* --------------------- TABLE/ACCORDION STYLE for MY IOUs --------------------- */
           <div className="space-y-2 w-full mt-4">
             {myIOUs.map((info, i) => {
-              const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+              const isBorrower =
+                userAddress?.toLowerCase() === info.borrower.toLowerCase();
               return (
                 <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
                   {/* Summary row */}
@@ -1320,7 +1509,8 @@ const SpotIOUFactory = () => {
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                        🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}
+                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        {info.borrower.slice(-4)}
                       </span>
                       <span className="text-sm text-blue-300">
                         {info.underlyingSymbol || 'TOKEN'}
@@ -1335,10 +1525,11 @@ const SpotIOUFactory = () => {
                         Owed: {info.updatedTotalOwed}
                       </span>
                     </div>
-                    <div className="text-gray-400">{expandedRowsMyIOUs[i] ? '▼' : '▶'}</div>
+                    <div className="text-gray-400">
+                      {expandedRowsMyIOUs[i] ? '▼' : '▶'}
+                    </div>
                   </button>
 
-                  {/* Expanded content */}
                   {expandedRowsMyIOUs[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
                       <div className="grid grid-cols-2 gap-4">
@@ -1369,12 +1560,13 @@ const SpotIOUFactory = () => {
                           </p>
                           <p className="text-gray-400 text-xs">Unfundable:</p>
                           <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {parseFloat(info.totalFunded) - parseFloat(info.totalDrawnDown) || '0'}
+                            {parseFloat(info.totalFunded) -
+                              parseFloat(info.totalDrawnDown) || '0'}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Borrower:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
                             {info.borrower}
                           </p>
                           <p className="text-gray-400 text-xs">Redeemable:</p>
@@ -1434,6 +1626,7 @@ const SpotIOUFactory = () => {
                           >
                             Redeem
                           </button>
+                          {/* UNFUND button */}
                           <button
                             onClick={() => unfundLoan(info.loanAddress, actionAmount)}
                             className="bg-red-400 hover:bg-red-600 text-white 
@@ -1479,14 +1672,21 @@ const SpotIOUFactory = () => {
                     </p>
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                        🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}
+                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        {info.borrower.slice(-4)}
                       </span>
-                      <span className="text-sm text-blue-300">{info.underlyingSymbol || 'TOKEN'}</span>
-                      <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
+                      <span className="text-sm text-blue-300">
+                        {info.underlyingSymbol || 'TOKEN'}
+                      </span>
+                      <span className="text-sm text-purple-300">
+                        Goal: {info.loanGoal}
+                      </span>
                       <span className="text-sm text-green-300">
                         APR: {(info.annualInterestRate / 100).toFixed(2)}%
                       </span>
-                      <span className="text-sm text-pink-300">Owed: {info.updatedTotalOwed}</span>
+                      <span className="text-sm text-pink-300">
+                        Owed: {info.updatedTotalOwed}
+                      </span>
                     </div>
                     <div className="text-gray-400">
                       {expandedRows[i] ? '▼' : '▶'}
