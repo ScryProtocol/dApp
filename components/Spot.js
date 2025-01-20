@@ -442,9 +442,14 @@ const SpotIOUFactory = () => {
           return;
         }
         // Otherwise, treat as user address => getUserIOUs
+        try {
+          let results = await fetchLoanInfo([searchAddress]);
+          setSearchResults(results);
+        } catch (error) {
+          
         const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
         const results = await fetchLoanInfo(loans);
-        setSearchResults(results);
+        setSearchResults(results);}
       } catch (err) {
         console.error(err);
         toast.error('Error fetching search results');
@@ -592,7 +597,7 @@ const SpotIOUFactory = () => {
         <h2 className="text-blue-400 text-2xl font-bold mb-4 uppercase mt-4">Find a Loan</h2>
         <input
           type="text"
-          placeholder="Search by borrower address or loan ID"
+          placeholder="Search by borrower address or loan address"
           value={searchAddress}
           className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                      focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
