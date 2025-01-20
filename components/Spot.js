@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0xC97A86627647157d105B773267d8f98E1c93222b';
+const IOUMintAddress = '0xb9A638Ac89CB519b4ee6DdE7957369c699da1603';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
@@ -399,6 +399,29 @@ console.log(allLoansArr2)
     } catch (err) {
       console.error(err);
       toast.error('Error redeeming IOUs.');
+    }
+  };
+  const unfundLoan = async (loanAddress, amount) => {
+    if (!signer) {
+      toast.error('Connect wallet first');
+      return;
+    }
+    if (!amount || Number(amount) <= 0) {
+      toast.error('Unfund amount must be > 0');
+      return;
+    }
+    try {
+      const loan = getLoanContract(loanAddress);
+      const token = new ethers.Contract(await loan.loanToken(), tokenABI, signer);
+      const decimals = await token.decimals();
+      const parsed = ethers.parseUnits(amount, decimals);
+      const tx = await loan.unfundLoan(parsed);
+      await tx.wait();
+      toast.success('Unfunded loan successfully');
+      fetchAllData();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error unfunding loan.');
     }
   };
 
@@ -1141,7 +1164,7 @@ console.log(allLoansArr2)
                   {/* Expanded content */}
                   {expandedRowsMyLoans[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-x-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1157,9 +1180,9 @@ console.log(allLoansArr2)
                           <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.totalFunded}
                           </p>
-                          <p className="text-gray-400 text-xs">My IOUs:</p>
+                          <p className="text-gray-400 text-xs">Interest:</p>
                           <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.myIOUs}
+                            {info.updatedInterest}
                           </p>
                         </div>
                         <div>
@@ -1173,17 +1196,13 @@ console.log(allLoansArr2)
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-400 text-xs">Redeemable:</p>
+                          <p className="text-gray-400 text-xs">Loan:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {(
-                              ((parseFloat(info.myIOUs) || 0) /
-                                (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments) || 0)
-                            ).toFixed(4)}
+                            {info.updatedTotalOwed-info.updatedInterest}
                           </p>
-                          <p className="text-gray-400 text-xs">Borrower:</p>
+                          <p className="text-gray-400 text-xs">Owed:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.borrower}
+                            {info.updatedTotalOwed}
                           </p>
                         </div>
                       </div>
@@ -1248,7 +1267,7 @@ console.log(allLoansArr2)
                    flex flex-col ring-1 ring-[#36444c] transition-transform 
                    duration-300 hover:scale-105"
       >
-        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">👛 My IOUs</h1>
+        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">👛 IOUs</h1>
         {myIOUs.length === 0 && <p className="text-gray-400">No IOUs found.</p>}
 
         {myIOUs.length <= 2 ? (
@@ -1412,6 +1431,14 @@ console.log(allLoansArr2)
                       >
                         Redeem
                       </button>
+                      <button
+                        onClick={() => unfundLoan(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 bg-red-400 hover:bg-red-600
+                                    text-white font-semibold rounded-full
+                                    transition text-sm"
+                      >
+                        Unfund
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1479,9 +1506,9 @@ console.log(allLoansArr2)
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.repayments} / {info.interestrepayments}
                           </p>
-                          <p className="text-gray-400 text-xs">Total Drawn Down:</p>
+                          <p className="text-gray-400 text-xs">Unfundable:</p>
                           <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.totalDrawnDown}
+                            {info.totalFunded-info.totalDrawnDown}  
                           </p>
                         </div>
                         <div>
@@ -1546,6 +1573,13 @@ console.log(allLoansArr2)
                                      font-semibold px-3 py-2 rounded-full text-sm"
                         >
                           Redeem
+                        </button>
+                        <button
+                          onClick={() => unfundLoan(info.loanAddress, actionAmount)}
+                          className="bg-red-400 hover:bg-red-600 text-white 
+                                     font-semibold px-3 py-2 rounded-full text-sm"
+                        >
+                          Unfund
                         </button>
                         </div>
                       </div>
