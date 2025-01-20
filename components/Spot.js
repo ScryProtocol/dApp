@@ -1208,7 +1208,8 @@ console.log(allLoansArr2)
                       </div>
 
                       {/* Action input */}
-                      <div className="mt-4 flex items-center space-x-2">
+                      <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
                         <input
                           type="text"
                           placeholder="Amount"
@@ -1217,12 +1218,14 @@ console.log(allLoansArr2)
                           className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
                                      rounded-full placeholder-gray-500
                                      focus:outline-none focus:ring-2 
-                                     focus:ring-pink-400 transition"
+                                     focus:ring-pink-400 transition w-full"
                         />
+                        </div>
+                        <div className="flex justify-between gap-2">
                         <button
                           onClick={() => fundLoan(info.loanAddress, actionAmount)}
                           className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
-                                     px-3 py-2 rounded-full text-sm"
+                                     px-3 py-2 rounded-full text-sm w-full"
                         >
                           Fund
                         </button>
@@ -1231,14 +1234,14 @@ console.log(allLoansArr2)
                             <button
                               onClick={() => drawDown(info.loanAddress, actionAmount)}
                               className="bg-yellow-500 hover:bg-yellow-600 text-white 
-                                         font-semibold px-3 py-2 rounded-full text-sm"
+                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Draw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
                               className="bg-red-500 hover:bg-red-600 text-white 
-                                         font-semibold px-3 py-2 rounded-full text-sm"
+                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Repay
                             </button>
@@ -1247,10 +1250,11 @@ console.log(allLoansArr2)
                         <button
                           onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                           className="bg-blue-600 hover:bg-blue-700 text-white 
-                                     font-semibold px-3 py-2 rounded-full text-sm"
+                                     font-semibold px-3 py-2 rounded-full text-sm w-full"
                         >
                           Redeem
                         </button>
+                        </div>
                       </div>
                     </div>
                   )}
