@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <WagmiProvider  config={config}>
       <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider>
+      <RainbowKitProvider>{0==1&&(
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
          ><a href={0!==1?'https://twitter.com/spotdotpizza':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
@@ -107,14 +107,14 @@ function MyApp({ Component, pageProps }) {
           }{activeTab === 'wall' &&
             <Wall/>
             }
-        </div>
 
         {showInfo && (
             <Info
               app={activeTab}
               handleClose={() => setShowInfo(false)}
             />
-          )}      </RainbowKitProvider>
+          )}  
+        </div>)}<Spot/>            </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider >
   );
