@@ -499,7 +499,7 @@ const SpotIOUFactory = () => {
             />
           </div>
 
-          {/* Loan Goal */}
+<div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block font-semibold text-gray-200 mb-1">
               🎯 Loan Goal:
@@ -513,9 +513,6 @@ const SpotIOUFactory = () => {
               onChange={(e) => setLoanGoal(e.target.value)}
             />
           </div>
-
-          {/* AnnualInterestRate + PlatformFee */}
-          <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-200 mb-1">
                 📊 Annual Interest Rate (bps):
@@ -527,19 +524,6 @@ const SpotIOUFactory = () => {
                            focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                 value={annualInterestRate}
                 onChange={(e) => setAnnualInterestRate(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-200 mb-1">
-                💹 Platform Fee (bps):
-              </label>
-              <input
-                type="text"
-                placeholder="50 = 0.5%"
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                value={platformFeeRate}
-                onChange={(e) => setPlatformFeeRate(e.target.value)}
               />
             </div>
           </div>
