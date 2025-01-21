@@ -640,7 +640,7 @@ const SpotIOUFactory = () => {
                                hover:scale-[1.02] transform transition border border-blue-300/20"
                   >
                     <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
                       >🔗</button>{info.borrower.substring(0, 6)}...
                       {info.borrower.substring(info.borrower.length - 4)}
                     </h2>
@@ -817,7 +817,7 @@ const SpotIOUFactory = () => {
                       <div className="flex items-center grid grid-cols-5 w-full">
                         <span className="text-sm text-gray-300">
                           
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
+                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
                       >🔗</button>
                         🧑‍💼 {info.borrower.slice(0, 6)}...
                           {info.borrower.slice(-4)}
@@ -980,7 +980,7 @@ const SpotIOUFactory = () => {
                              hover:scale-[1.02] transform transition border border-blue-300/20"
                 >
                   <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                    <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                    <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
                       >🔗</button>{info.borrower.substring(0, 6)}...
                     {info.borrower.substring(info.borrower.length - 4)}
                   </h2>
@@ -1151,7 +1151,7 @@ const SpotIOUFactory = () => {
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
+                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
                       >🔗</button>
                         🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
@@ -1312,7 +1312,7 @@ const SpotIOUFactory = () => {
                 >
                   {/* Borrower heading */}
                   <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                 <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                 <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
                       >🔗</button>{info.borrower.substring(0, 6)}...
                     {info.borrower.slice(-4)}
                   </h2>
@@ -1511,7 +1511,7 @@ const SpotIOUFactory = () => {
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
                         
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
+                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
                       >🔗</button>
                         🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
@@ -1677,7 +1677,7 @@ const SpotIOUFactory = () => {
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
                         
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.href + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
+                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
                       >🔗</button>
                         🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
