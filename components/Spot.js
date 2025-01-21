@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0xb9A638Ac89CB519b4ee6DdE7957369c699da1603';
+const IOUMintAddress = '0xDc9ff13BB245caCA6E546894ecc53a430392515A';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
@@ -36,6 +36,7 @@ const IOUMintABI = [
       uint256 myIOUs, \
       uint256 repayments, \
       uint256 interestrepayments, \
+      uint256 interestClaimable \
     )[] memory)'
 ];
 
@@ -51,6 +52,7 @@ const SpotIOULoanABI = [
   'function annualInterestRate() external view returns (uint256)',
   'function decimals() external view returns (uint8)',
   'function unfundLoan(uint256) external',
+  'function claimInterest(address) external',
 ];
 
 const tokenABI = [
@@ -193,6 +195,7 @@ const SpotIOUFactory = () => {
           ? ethers.formatUnits(info.interestrepayments, info.underlyingDecimals)
           : '0',
         totalSupply: ethers.formatUnits(info.totalSupply, 18),
+        interestClaimable: ethers.formatUnits(info.interestClaimable, info.underlyingDecimals),
       }));
     } catch (err) {
       console.error(err);
@@ -400,6 +403,22 @@ const SpotIOUFactory = () => {
       toast.error('Error redeeming IOUs.');
     }
   };
+  const claimInterest = async (loanAddress) => {
+    if (!signer) {
+      toast.error('Connect wallet first');
+      return;
+    }
+    try {
+      const loan = getLoanContract(loanAddress);
+      const tx = await loan.claimInterest(userAddress);
+      await tx.wait();
+      toast.success('Interest claimed successfully');
+      fetchAllData();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error claiming interest.');
+    }
+  }
 
   const unfundLoan = async (loanAddress, amount) => {
     if (!signer) {
@@ -793,6 +812,14 @@ const SpotIOUFactory = () => {
                                      transition text-sm"
                         >
                           Redeem
+                        </button>
+                        <button
+                          onClick={() => claimInterest(info.loanAddress)}
+                          className="flex-1 py-2 bg-[#206a5d] hover:scale-105 text-white 
+                                     font-semibold rounded-full 
+                                     transition text-sm"
+                        >
+                          Claim Interest
                         </button>
                       </div>
                     </div>
@@ -1427,6 +1454,10 @@ const SpotIOUFactory = () => {
                             (parseFloat(info.repayments) || 0)
                           ).toFixed(4)}
                         </p>
+                        <p className="bg-green-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
+                        Claimable:{' '}
+                        {info.interestClaimable}
+                      </p>
                       </div>
                     </div>
 
