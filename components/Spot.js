@@ -688,6 +688,13 @@ const SpotIOUFactory = () => {
                           {info.iouSymbol || 'IOU'}
                         </h2>
                       </div>
+                      <div className="text-center mb-2">
+                        <p className="text-gray-400">🧑‍💼 Borrower:
+                        </p>
+                        <p className="text-blue-300 font-semibold bg-gray-700 px-3 py-1 rounded-full">
+                          {info.borrower}
+                        </p>
+                      </div>
 
                       <div className="text-center mb-2">
                         <p className="text-gray-400">🪙 Loan Token:</p>
