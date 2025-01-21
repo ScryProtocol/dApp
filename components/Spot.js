@@ -1586,7 +1586,7 @@ const SpotIOUFactory = () => {
                       {/* New Claim button */}
                       <button
                         onClick={() => claimInterest(info.loanAddress)}
-                        className="flex-1 py-2 bg-[#206a5d] hover:scale-105 
+                        className="flex-1 py-2 bg-pink-400 hover:scale-105 
                                    text-white font-semibold rounded-full 
                                    transition text-sm"
                       >
