@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -403,6 +403,7 @@ const SpotIOUFactory = () => {
       toast.error('Error redeeming IOUs.');
     }
   };
+
   const claimInterest = async (loanAddress) => {
     if (!signer) {
       toast.error('Connect wallet first');
@@ -418,7 +419,7 @@ const SpotIOUFactory = () => {
       console.error(err);
       toast.error('Error claiming interest.');
     }
-  }
+  };
 
   const unfundLoan = async (loanAddress, amount) => {
     if (!signer) {
@@ -457,7 +458,7 @@ const SpotIOUFactory = () => {
           setSearchResults(results);
           return;
         }
-        // Otherwise treat as user address
+        // Otherwise treat as loan address or user address
         try {
           let results = await fetchLoanInfo([searchAddress]);
           setSearchResults(results);
@@ -473,6 +474,7 @@ const SpotIOUFactory = () => {
     }
     fetchLoan();
   }, [searchAddress]);
+
   useEffect(() => {
     let location = window.location.href;
     let url = new URL(location);
@@ -480,8 +482,7 @@ const SpotIOUFactory = () => {
     if (loan) {
       setSearchAddress(loan);
     }
-  }
-  , []);
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
@@ -527,20 +528,20 @@ const SpotIOUFactory = () => {
             />
           </div>
 
-<div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block font-semibold text-gray-200 mb-1">
-              🎯 Loan Goal:
-            </label>
-            <input
-              type="text"
-              placeholder="1000"
-              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              value={loanGoal}
-              onChange={(e) => setLoanGoal(e.target.value)}
-            />
-          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold text-gray-200 mb-1">
+                🎯 Loan Goal:
+              </label>
+              <input
+                type="text"
+                placeholder="1000"
+                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                value={loanGoal}
+                onChange={(e) => setLoanGoal(e.target.value)}
+              />
+            </div>
             <div>
               <label className="block font-semibold text-gray-200 mb-1">
                 📊 Annual Interest Rate (bps):
@@ -659,8 +660,18 @@ const SpotIOUFactory = () => {
                                hover:scale-[1.02] transform transition border border-blue-300/20"
                   >
                     <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin + '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
-                      >🔗</button>{info.borrower.substring(0, 6)}...
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            window.location.origin + '?loan=' + info.loanAddress
+                          );
+                          toast.success('Copied to clipboard!');
+                        }}
+                        className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                      >
+                        🔗
+                      </button>
+                      {info.borrower.substring(0, 6)}...
                       {info.borrower.substring(info.borrower.length - 4)}
                     </h2>
 
@@ -746,6 +757,14 @@ const SpotIOUFactory = () => {
                         </div>
                       </div>
 
+                      {/* New block: interestClaimable */}
+                      <div className="text-center mb-4">
+                        <p className="text-gray-400 text-sm">Claimable Interest:</p>
+                        <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                          {info.interestClaimable}
+                        </p>
+                      </div>
+
                       <div className="text-center mb-4">
                         <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
                         <div className="flex items-center gap-2">
@@ -813,13 +832,14 @@ const SpotIOUFactory = () => {
                         >
                           Redeem
                         </button>
+                        {/* Updated button text */}
                         <button
                           onClick={() => claimInterest(info.loanAddress)}
                           className="flex-1 py-2 bg-[#206a5d] hover:scale-105 text-white 
                                      font-semibold rounded-full 
                                      transition text-sm"
                         >
-                          Claim Interest
+                          Claim
                         </button>
                       </div>
                     </div>
@@ -843,10 +863,19 @@ const SpotIOUFactory = () => {
                     >
                       <div className="flex items-center grid grid-cols-5 w-full">
                         <span className="text-sm text-gray-300">
-                          
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
-                      >🔗</button>
-                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(
+                                window.location.origin + '?loan=' + info.loanAddress
+                              );
+                              toast.success('Copied to clipboard!');
+                            }}
+                            className="bg-gray-600 px-1 py-1 rounded-full"
+                          >
+                            🔗
+                          </button>
+                          &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
                           {info.borrower.slice(-4)}
                         </span>
                         <span className="text-sm text-blue-300">
@@ -897,13 +926,18 @@ const SpotIOUFactory = () => {
                             <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.repayments} / {info.interestrepayments}
                             </p>
-                            <p className="text-gray-400 text-xs">Total Drawn Down:</p>
-                            <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                              {info.totalDrawnDown}
+                            {/* New block: interestClaimable */}
+                            <p className="text-gray-400 text-xs">Interest Claimable:</p>
+                            <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                              {info.interestClaimable}
                             </p>
                           </div>
 
                           <div>
+                            <p className="text-gray-400 text-xs">Total Drawn Down:</p>
+                            <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                              {info.totalDrawnDown}
+                            </p>
                             <p className="text-gray-400 text-xs">Redeemable:</p>
                             <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {(
@@ -911,10 +945,6 @@ const SpotIOUFactory = () => {
                                   (parseFloat(info.totalSupply) || 1)) *
                                 (parseFloat(info.repayments) || 0)
                               ).toFixed(4)}
-                            </p>
-                            <p className="text-gray-400 text-xs">Borrower:</p>
-                            <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
-                              {info.borrower}
                             </p>
                           </div>
                         </div>
@@ -965,6 +995,14 @@ const SpotIOUFactory = () => {
                             >
                               Redeem
                             </button>
+                            {/* New Claim button */}
+                            <button
+                              onClick={() => claimInterest(info.loanAddress)}
+                              className="bg-[#206a5d] hover:scale-105 text-white 
+                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
+                            >
+                              Claim
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -977,7 +1015,7 @@ const SpotIOUFactory = () => {
         </div>
       )}
 
-      {/* MY LOANS */}
+      {/* MY LOANS (unchanged content except expansions) */}
       <div
         className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                    ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
@@ -986,7 +1024,7 @@ const SpotIOUFactory = () => {
         {myLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
         {myLoans.length <= 2 ? (
-          /* --------------------- CARD STYLE --------------------- */
+          /* CARD STYLE for My Loans (unchanged) */
           <>
             {myLoans.map((info) => {
               const isBorrower =
@@ -1007,8 +1045,18 @@ const SpotIOUFactory = () => {
                              hover:scale-[1.02] transform transition border border-blue-300/20"
                 >
                   <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                    <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
-                      >🔗</button>{info.borrower.substring(0, 6)}...
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          window.location.origin + '?loan=' + info.loanAddress
+                        );
+                        toast.success('Copied to clipboard!');
+                      }}
+                      className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                    >
+                      🔗
+                    </button>
+                    {info.borrower.substring(0, 6)}...
                     {info.borrower.substring(info.borrower.length - 4)}
                   </h2>
 
@@ -1163,7 +1211,7 @@ const SpotIOUFactory = () => {
             })}
           </>
         ) : (
-          /* --------------------- TABLE/ACCORDION STYLE --------------------- */
+          /* TABLE/ACCORDION STYLE for My Loans (unchanged) */
           <div className="space-y-2 w-full mt-4">
             {myLoans.map((info, i) => {
               const isBorrower =
@@ -1178,9 +1226,19 @@ const SpotIOUFactory = () => {
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
-                      >🔗</button>
-                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(
+                              window.location.origin + '?loan=' + info.loanAddress
+                            );
+                            toast.success('Copied to clipboard!');
+                          }}
+                          className="bg-gray-600 px-1 py-1 rounded-full"
+                        >
+                          🔗
+                        </button>
+                        &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
                       </span>
                       <span className="text-sm text-blue-300">
@@ -1316,7 +1374,7 @@ const SpotIOUFactory = () => {
         {myIOUs.length === 0 && <p className="text-gray-400">No IOUs found.</p>}
 
         {myIOUs.length <= 2 ? (
-          /* --------------------- CARD STYLE for MY IOUs --------------------- */
+          /* CARD STYLE for MY IOUs (with Claim button + interestClaimable) */
           <>
             {myIOUs.map((info) => {
               const isBorrower =
@@ -1337,10 +1395,19 @@ const SpotIOUFactory = () => {
                   className="max-w-xl w-full mx-auto bg-blue-300/20 p-6 rounded-3xl shadow-md mt-8
                              hover:scale-[1.02] transform transition border border-blue-300/20"
                 >
-                  {/* Borrower heading */}
                   <h2 className="text-center text-[#B4C8CF] text-xl font-bold mb-3">
-                 <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full mx-2"
-                      >🔗</button>{info.borrower.substring(0, 6)}...
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          window.location.origin + '?loan=' + info.loanAddress
+                        );
+                        toast.success('Copied to clipboard!');
+                      }}
+                      className="bg-gray-600 px-1 py-1 rounded-full mx-2"
+                    >
+                      🔗
+                    </button>
+                    {info.borrower.substring(0, 6)}...
                     {info.borrower.slice(-4)}
                   </h2>
 
@@ -1357,7 +1424,7 @@ const SpotIOUFactory = () => {
                       </h2>
                     </div>
 
-                    {/* Borrower (overflow-hidden) */}
+                    {/* Borrower */}
                     <div className="text-center mb-2">
                       <p className="text-gray-400">Borrower:</p>
                       <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
@@ -1365,7 +1432,6 @@ const SpotIOUFactory = () => {
                       </p>
                     </div>
 
-                    {/* Loan token */}
                     <div className="text-center mb-2">
                       <p className="text-gray-400">🪙 Loan Token:</p>
                       <p className="text-[#A5CAE1] text-lg font-semibold">
@@ -1373,7 +1439,6 @@ const SpotIOUFactory = () => {
                       </p>
                     </div>
 
-                    {/* Loan Goal */}
                     <div className="text-center mb-2">
                       <p className="text-gray-400">🎯 Loan Goal:</p>
                       <p className="bg-gray-700 px-3 py-1 rounded-full text-[#94C7DA] font-bold">
@@ -1381,7 +1446,6 @@ const SpotIOUFactory = () => {
                       </p>
                     </div>
 
-                    {/* Total Funded */}
                     <div className="m-2 text-center">
                       <p className="text-gray-400 text-sm mb-1">💰 Total Funded:</p>
                       <p className="bg-gray-700 px-3 py-1 rounded-full text-[#78ADC3] font-bold">
@@ -1389,7 +1453,6 @@ const SpotIOUFactory = () => {
                       </p>
                     </div>
 
-                    {/* Progress bar */}
                     <div className="relative w-full h-3 rounded-full bg-blue-300/20 overflow-hidden mb-2">
                       <div
                         className="absolute left-0 top-0 h-full bg-blue-400"
@@ -1397,7 +1460,6 @@ const SpotIOUFactory = () => {
                       />
                     </div>
 
-                    {/* Borrowed/Owed */}
                     <div className="grid grid-cols-2 gap-2 w-full">
                       <div className="text-center">
                         <p className="text-gray-400 text-sm">🤝 Borrowed:</p>
@@ -1413,7 +1475,6 @@ const SpotIOUFactory = () => {
                       </div>
                     </div>
 
-                    {/* Annual Interest */}
                     <div className="text-center mb-2 mt-2">
                       <p className="text-gray-400 text-sm">📊 Annual Interest:</p>
                       <div className="inline-flex items-center gap-2">
@@ -1426,7 +1487,6 @@ const SpotIOUFactory = () => {
                       </div>
                     </div>
 
-                    {/* Repayments */}
                     <div className="text-center mb-2">
                       <p className="text-gray-400 text-sm">Repayments:</p>
                       <div className="inline-flex items-center gap-2">
@@ -1439,7 +1499,14 @@ const SpotIOUFactory = () => {
                       </div>
                     </div>
 
-                    {/* My IOUs + Redeemable */}
+                    {/* interestClaimable */}
+                    <div className="text-center mb-2">
+                      <p className="text-gray-400 text-sm">Claimable Interest:</p>
+                      <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                        {info.interestClaimable}
+                      </p>
+                    </div>
+
                     <div className="text-center mb-4">
                       <p className="text-gray-400 text-sm">👛 Your IOUs:</p>
                       <div className="flex items-center gap-2">
@@ -1455,13 +1522,11 @@ const SpotIOUFactory = () => {
                           ).toFixed(4)}
                         </p>
                         <p className="bg-green-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
-                        Claimable:{' '}
-                        {info.interestClaimable}
-                      </p>
+                          Claimable: {info.interestClaimable}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Action input */}
                     <input
                       type="text"
                       placeholder="Amount"
@@ -1473,7 +1538,6 @@ const SpotIOUFactory = () => {
                                  focus:ring-blue-400 transition"
                     />
 
-                    {/* Buttons (including Unfund) */}
                     <div className="w-full flex flex-wrap justify-center gap-3">
                       <button
                         onClick={() => fundLoan(info.loanAddress, actionAmount)}
@@ -1519,6 +1583,15 @@ const SpotIOUFactory = () => {
                       >
                         Unfund
                       </button>
+                      {/* New Claim button */}
+                      <button
+                        onClick={() => claimInterest(info.loanAddress)}
+                        className="flex-1 py-2 bg-[#206a5d] hover:scale-105 
+                                   text-white font-semibold rounded-full 
+                                   transition text-sm"
+                      >
+                        Claim
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1526,7 +1599,7 @@ const SpotIOUFactory = () => {
             })}
           </>
         ) : (
-          /* --------------------- TABLE/ACCORDION STYLE for MY IOUs --------------------- */
+          /* TABLE/ACCORDION STYLE for MY IOUs (with Claim button + interestClaimable) */
           <div className="space-y-2 w-full mt-4">
             {myIOUs.map((info, i) => {
               const isBorrower =
@@ -1541,10 +1614,19 @@ const SpotIOUFactory = () => {
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                        
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
-                      >🔗</button>
-                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(
+                              window.location.origin + '?loan=' + info.loanAddress
+                            );
+                            toast.success('Copied to clipboard!');
+                          }}
+                          className="bg-gray-600 px-1 py-1 rounded-full"
+                        >
+                          🔗
+                        </button>
+                        &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
                       </span>
                       <span className="text-sm text-blue-300">
@@ -1593,10 +1675,10 @@ const SpotIOUFactory = () => {
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.repayments} / {info.interestrepayments}
                           </p>
-                          <p className="text-gray-400 text-xs">Unfundable:</p>
-                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {parseFloat(info.totalFunded) -
-                              parseFloat(info.totalDrawnDown) || '0'}
+                          {/* interestClaimable */}
+                          <p className="text-gray-400 text-xs">Interest Claimable:</p>
+                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                            {info.interestClaimable}
                           </p>
                         </div>
                         <div>
@@ -1669,6 +1751,14 @@ const SpotIOUFactory = () => {
                           >
                             Unfund
                           </button>
+                          {/* New Claim button */}
+                          <button
+                            onClick={() => claimInterest(info.loanAddress)}
+                            className="bg-[#206a5d] hover:scale-105 text-white 
+                                       font-semibold px-3 py-2 rounded-full text-sm w-full"
+                          >
+                            Claim
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1680,7 +1770,7 @@ const SpotIOUFactory = () => {
         )}
       </div>
 
-      {/* ALL LOANS */}
+      {/* ALL LOANS (unchanged) */}
       <div
         className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                    ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
@@ -1707,10 +1797,19 @@ const SpotIOUFactory = () => {
                     </p>
                     <div className="flex items-center grid grid-cols-5 w-full">
                       <span className="text-sm text-gray-300">
-                        
-                      <button onClick={() => {navigator.clipboard.writeText(window.location.origin+ '?loan=' + info.loanAddress);toast.success('Copied to clipboard!')}} className="bg-gray-600 px-1 py-1 rounded-full"
-                      >🔗</button>
-                        🧑‍💼 {info.borrower.slice(0, 6)}...
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(
+                              window.location.origin + '?loan=' + info.loanAddress
+                            );
+                            toast.success('Copied to clipboard!');
+                          }}
+                          className="bg-gray-600 px-1 py-1 rounded-full"
+                        >
+                          🔗
+                        </button>
+                        &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
                         {info.borrower.slice(-4)}
                       </span>
                       <span className="text-sm text-blue-300">
