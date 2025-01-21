@@ -1754,7 +1754,7 @@ const SpotIOUFactory = () => {
                           {/* New Claim button */}
                           <button
                             onClick={() => claimInterest(info.loanAddress)}
-                            className="bg-[#206a5d] hover:scale-105 text-white 
+                            className="bg-pink-400 hover:scale-105 text-white 
                                        font-semibold px-3 py-2 rounded-full text-sm w-full"
                           >
                             Claim
