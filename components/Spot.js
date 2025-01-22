@@ -488,11 +488,7 @@ const SpotIOUFactory = () => {
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
       <Toaster />
       <span className="text-xl font-bold mt-4 inline-flex items-center">
-  <img 
-    src="/favicon.ico" 
-    alt="logo" 
-    className="w-16 h-16" 
-  />
+  <h2 className="text-3xl font-bold text-blue-400 relative top-2">IOU</h2>
   <span className="relative top-3">
   .fi
   </span>
