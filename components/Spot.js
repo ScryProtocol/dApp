@@ -1561,7 +1561,7 @@ const SpotIOUFactory = () => {
                           ).toFixed(4)}
                         </p>
                         <p className="bg-green-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
-                          Claimable: {info.interestClaimable}
+                          Claimable/Owed: {info.interestClaimable} / {info.updatedInterest}
                         </p>
                       </div>
                     </div>
@@ -1715,9 +1715,9 @@ const SpotIOUFactory = () => {
                             {info.repayments} / {info.interestrepayments}
                           </p>
                           {/* interestClaimable */}
-                          <p className="text-gray-400 text-xs">Interest Claimable:</p>
+                          <p className="text-gray-400 text-xs">Interest Claimable/Owed:</p>
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.interestClaimable}
+                            {info.interestClaimable} / {info.updatedInterest}
                           </p>
                         </div>
                         <div>
