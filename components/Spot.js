@@ -815,7 +815,7 @@ const SpotIOUFactory = () => {
                             {(
                               ((parseFloat(info.myIOUs) || 0) /
                                 (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments) || 0)
+                              (parseFloat(info.repayments-info.interestrepayments) || 0)
                             ).toFixed(4)}
                           </p>
                         </div>
@@ -982,7 +982,7 @@ const SpotIOUFactory = () => {
                               {(
                                 ((parseFloat(info.myIOUs) || 0) /
                                   (parseFloat(info.totalSupply) || 1)) *
-                                (parseFloat(info.repayments) || 0)
+                                (parseFloat(info.repayments-info.interestrepayments) || 0)
                               ).toFixed(4)}
                             </p>
                           </div>
@@ -1190,7 +1190,7 @@ const SpotIOUFactory = () => {
                           {(
                             ((parseFloat(info.myIOUs) || 0) /
                               (parseFloat(info.totalSupply) || 1)) *
-                            (parseFloat(info.repayments) || 0)
+                            (parseFloat(info.repayments-info.interestrepayments) || 0)
                           ).toFixed(4)}
                         </p>
                       </div>
@@ -1557,7 +1557,7 @@ const SpotIOUFactory = () => {
                           {(
                             ((parseFloat(info.myIOUs) || 0) /
                               (parseFloat(info.totalSupply) || 1)) *
-                            (parseFloat(info.repayments) || 0)
+                            (parseFloat(info.repayments-info.interestrepayments) || 0)
                           ).toFixed(4)}
                         </p>
                         <p className="bg-green-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
@@ -1730,7 +1730,7 @@ const SpotIOUFactory = () => {
                             {(
                               ((parseFloat(info.myIOUs) || 0) /
                                 (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments) || 0)
+                              (parseFloat(info.repayments-info.interestrepayments) || 0)
                             ).toFixed(4)}
                           </p>
                         </div>
@@ -1913,7 +1913,7 @@ const SpotIOUFactory = () => {
                             {(
                               ((parseFloat(info.myIOUs) || 0) /
                                 (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments) || 0)
+                              (parseFloat(info.repayments-info.interestrepayments) || 0)
                             ).toFixed(4)}
                           </p>
                         </div>
