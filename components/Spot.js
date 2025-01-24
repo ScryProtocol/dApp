@@ -487,6 +487,10 @@ const SpotIOUFactory = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
       <Toaster />
+      <head>
+        <title>IOU.fi - Decentralized Loans</title>
+        <meta name="description" content="Decentralized, fully on-chain tokenized loans" />
+        </head>
       <span className="text-xl font-bold mt-4 inline-flex items-center">
   <h2 className="text-3xl font-bold text-blue-400 relative top-2">IOU</h2>
   <span className="relative top-3">
