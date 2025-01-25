@@ -1138,6 +1138,10 @@ const handleCancelTransaction = async (txIndex) => {
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
       <Toaster />
       <main className=" mx-auto py-8 px-4 sm:px-8">
+        <head>
+          <title>Spot - Simple Onchain Finance</title>
+          <meta name="description" content="Spot is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans." />
+          </head>
         <Header />
         <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 lg:w-1/2 mx-auto">
           <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
