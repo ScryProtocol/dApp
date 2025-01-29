@@ -143,19 +143,18 @@ const SpotIOUFactory = () => {
       let myIOUsArr2 = [];
       let allLoansArr2 = [];
       for (let i = allLoansArr.length - 1; i >= 0; i--) {
-        myLoansArr2.push(allLoansArr[i]);
-      }
+allLoansArr2.push(allLoansArr[i]);      }
       for (let i = myLoansArr.length - 1; i >= 0; i--) {
         myIOUsArr2.push(myLoansArr[i]);
       }
       for (let i = myIOUsArr.length - 1; i >= 0; i--) {
-        allLoansArr2.push(myIOUsArr[i]);
-      }
+        myLoansArr2.push(myIOUsArr[i]);}
 
       const myLoansInfo = await fetchLoanInfo(myLoansArr2);
+      console.log(myLoansInfo);
       const myIOUsInfo = await fetchLoanInfo(myIOUsArr2);
       const allLoansInfo = await fetchLoanInfo(allLoansArr2);
-
+console.log(allLoansInfo);
       setMyLoans(myLoansInfo);
       setMyIOUs(myIOUsInfo);
       setAllLoans(allLoansInfo);
