@@ -53,6 +53,7 @@ const SpotIOULoanABI = [
   'function decimals() external view returns (uint8)',
   'function unfundLoan(uint256) external',
   'function claimInterest(address) external',
+  'function updateGoal(uint256) external',
 ];
 
 const tokenABI = [
@@ -209,7 +210,7 @@ console.log(allLoansInfo);
       toast.error('Connect wallet first.');
       return;
     }
-    if (!loanToken || !borrower || !loanGoal) {
+    if (!loanToken || !loanGoal){//!borrower || !loanGoal) {
       toast.error('Please fill in the required fields.');
       return;
     }
@@ -218,12 +219,12 @@ console.log(allLoansInfo);
       const factoryWithSigner = IOUMintContract.connect(signer);
 
       // Borrower ENS resolution
-      let finalBorrower = borrower;
-      if (!ethers.isAddress(borrower)) {
-        const resolved = await provider.resolveName(borrower);
-        if (!resolved) throw new Error('Could not resolve borrower ENS');
-        finalBorrower = resolved;
-      }
+      let finalBorrower = userAddress//borrower;
+//      if (!ethers.isAddress(borrower)) {
+//        const resolved = await provider.resolveName(borrower);
+//        if (!resolved) throw new Error('Could not resolve borrower ENS');
+//        finalBorrower = resolved;
+//      }
 
       let finalFeeAddr = feeAddress || '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5';
       if (!ethers.isAddress(finalFeeAddr)) {
@@ -444,6 +445,29 @@ console.log(allLoansInfo);
       toast.error('Error unfunding loan.');
     }
   };
+  const updateGoal = async (loanAddress, amount) => {
+    if (!signer) {
+      toast.error('Connect wallet first');
+      return;
+    }
+    let loan = myLoans.find((l) => l.loanAddress === loanAddress);
+    
+    try {
+      const loan = getLoanContract(loanAddress);
+      const token = new ethers.Contract(await loan.loanToken(), tokenABI, signer);
+      const decimals = await token.decimals();
+      const parsed = ethers.parseUnits(amount, decimals);
+
+      const tx = await loan.updateGoal(parsed);
+      await tx.wait();
+      toast.success('Updated loan goal successfully');
+      fetchAllData();
+    }
+    catch (err) {
+      console.error(err);
+      toast.error('Error updating loan goal.');
+    }
+  };
 
   // Searching
   useEffect(() => {
@@ -482,6 +506,153 @@ console.log(allLoansInfo);
       setSearchAddress(loan);
     }
   }, []);
+  const [showModal, setShowModal] = useState(true);
+const InfoModal = () => {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+{showModal && (
+    <div
+      className="relative top-0 max-w-3xl w-full bg-gray-800 text-gray-300 
+                 rounded-3xl p-8 shadow-xl overflow-y-auto max-h-[90vh]"
+style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
+      <h2 className="text-3xl font-extrabold mb-6 text-blue-400">
+        Welcome to IOU.fi
+      </h2>
+
+      <p className="mb-6">
+        <strong>IOU.fi</strong> is a decentralized platform for creating, funding, and managing on-chain,  
+        tokenized loans. Each <strong>IOU</strong> represents a fraction of a loan, 
+        letting lenders and borrowers interact transparently and without needing to trust 
+        a middleman. Here’s a detailed look at how it all works.
+      </p>
+
+      {/* Mint/Deploy an IOU */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Mint/Deploy an IOU
+        </h3>
+        <p className="mb-3">
+          If you’re seeking to borrow, you can launch a specialized loan contract by specifying:
+        </p>
+        <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
+          <li>
+            <strong>Loan Token</strong> – The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
+          </li>
+          <li>
+            <strong>Loan Goal</strong> – The total principal you aim to raise.
+          </li>
+          <li>
+            <strong>Annual Interest Rate</strong> – Stated in basis points (e.g., 500 = 5%).
+          </li>
+          <li>
+            <strong>Borrower</strong> – The address authorized to withdraw loaned funds and initiate repayments.
+          </li>
+          <li>
+            <strong>IOU Token Name &amp; Symbol</strong> – Custom labels for the ERC20 IOU 
+            tokens representing a share of the debt.
+          </li>
+        </ul>
+        <p>
+          This contract monitors contributions, accumulates interest on the outstanding 
+          principal, and orchestrates repayment logic until the loan is finalized.
+        </p>
+      </section>
+
+      {/* Provide Funding */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Provide Funding
+        </h3>
+        <p className="mb-3">
+          As a lender, simply select a loan and click “Fund.” You’ll deposit the designated token 
+          into the loan contract, receiving IOUs that reflect your proportion of the total funds 
+          raised. These tokens let you claim principal and any accumulated interest once repayments 
+          begin.
+        </p>
+      </section>
+
+      {/* Borrower Withdrawals & Repayments */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Borrower Withdrawals &amp; Repayments
+        </h3>
+        <p className="mb-3">
+          Once enough capital is raised, the borrower can withdraw part or all of the funds to use 
+          as needed. Over the loan’s duration, they’re responsible for repaying the principal plus 
+          accrued interest. Partial repayments are possible, and each one updates the amount 
+          available to lenders.
+        </p>
+        <p>
+          Borrowers can manage the frequency and size of repayments, but interest continues to 
+          accrue on any outstanding principal until it’s fully settled.
+        </p>
+      </section>
+
+      {/* Interest Accrual & Claiming */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Interest Accrual &amp; Claiming
+        </h3>
+        <p className="mb-3">
+          Interest is calculated in real time based on the annual rate and the remaining principal. 
+          As the borrower repays, the contract allocates a share of the interest to each IOU holder. 
+          Lenders can claim this interest whenever they choose, without any complex manual calculations 
+          or extra steps.
+        </p>
+      </section>
+
+      {/* Redeeming IOUs for Principal */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Redeeming IOUs for Principal
+        </h3>
+        <p className="mb-3">
+          When principal repayments take place, that repaid portion becomes available for IOU holders 
+          to redeem. Redeeming <strong>burns</strong> the IOUs you surrender, granting you the 
+          corresponding share of principal. Once redeemed, those IOUs no longer earn future repayments 
+          or interest, so you can decide whether to wait for more principal to accumulate or redeem 
+          early for partial liquidity.
+        </p>
+      </section>
+
+      {/* Optional Unfund */}
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          Optional “Unfund” Feature
+        </h3>
+        <p className="mb-3">
+          If the borrower hasn’t yet withdrawn your contribution, you can back out by “unfunding.” 
+          This action returns your tokens and burns the IOUs you received, freeing you to reallocate 
+          your capital elsewhere if circumstances change.
+        </p>
+      </section>
+        <h3 className="text-xl font-semibold mb-3 text-blue-300">
+          My Loans &amp; IOUs
+        </h3>
+      {/* Wrap-up */}
+      <p className="mb-6">
+        After connecting your wallet, you can set up a new loan or fund existing ones. In “My Loans”
+        you'll see all loans you've created and “My IOUs” IOUs you've funded and can see all relevant details—like interest due and principal you can redeem. 
+        We invite you to explore IOU.fi and experience decentralized lending firsthand!
+      </p>
+<p className="text-sm font-semibold mb-3 text-orange-300">
+        Note: IOUs are for use with private loans and not public sale, we do not guarantee any liquidity or value of loans. Make sure to check any local laws or regulations before participating.
+      </p>
+      <button
+        onClick={() => setShowModal(false)}
+        className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-2
+                   rounded-full transition w-full focus:outline-none 
+                   focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+      >
+        Got it!
+      </button>
+    </div>
+
+
+)}
+</div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
@@ -490,6 +661,7 @@ console.log(allLoansInfo);
         <title>IOU.fi - Decentralized Loans</title>
         <meta name="description" content="Decentralized, fully on-chain tokenized loans" />
         </head>
+        <InfoModal />
       <span className="text-xl font-bold mt-4 inline-flex items-center">
   <h2 className="text-3xl font-bold text-blue-400 relative top-2">IOU</h2>
   <span className="relative top-3">
@@ -521,6 +693,7 @@ console.log(allLoansInfo);
     className="w-6 h-6" fill="#fff">
   <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
 </a>
+<button className="text-2xl text-white px-2.5 py-0 ml-1.5 relative top-2.5" onClick={() => setShowModal(!showModal)}>?</button>
 </span>
         
       {/* Deploy a new IOU */}
@@ -555,10 +728,10 @@ console.log(allLoansInfo);
             </label>
             <input
               type="text"
+              value={userAddress}
               placeholder="0x... or user.eth"
               className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              value={borrower}
               onChange={(e) => setBorrower(e.target.value)}
             />
           </div>
@@ -1212,13 +1385,12 @@ console.log(allLoansInfo);
 
                     <div className="w-full flex flex-wrap justify-center gap-3">
                       <button
-                        onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                        className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] 
-                                   text-white font-semibold rounded-full 
-                                   transition focus:outline-none text-sm"
+                        onClick={() => updateGoal(info.loanAddress, actionAmount)}
+                        className="flex-1 py-2 bg-blue-400 hover:bg-[#356195] text-white
+                                    font-semibold rounded-full transition focus:outline-none text-sm"
                       >
-                        Fund
-                      </button>
+                Set Goal
+              </button>
 
                       {isBorrower && (
                         <>
@@ -1364,11 +1536,11 @@ console.log(allLoansInfo);
                         </div>
                         <div className="flex justify-between gap-2">
                           <button
-                            onClick={() => fundLoan(info.loanAddress, actionAmount)}
+                            onClick={() => updateGoal(info.loanAddress, actionAmount)}
                             className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
                                        px-3 py-2 rounded-full text-sm w-full"
                           >
-                            Fund
+                            Set Goal
                           </button>
                           {isBorrower && (
                             <>
