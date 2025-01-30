@@ -507,10 +507,19 @@ console.log(allLoansInfo);
     }
   }, []);
   const [showModal, setShowModal] = useState(true);
+  useEffect(() => {
+    const show = localStorage.getItem('showModal');
+    if (show === 'false') {
+      setShowModal(false);
+    }
+  }, []);
 const InfoModal = () => {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-{showModal && (
+      <div>
+      {showModal && (
+
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+      onClick={() => setShowModal(false)}>
     <div
       className="relative top-0 max-w-3xl w-full bg-gray-800 text-gray-300 
                  rounded-3xl p-8 shadow-xl overflow-y-auto max-h-[90vh]"
@@ -639,7 +648,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
         Note: IOUs are for use with private loans and not public sale, we do not guarantee any liquidity or value of loans. Make sure to check any local laws or regulations before participating.
       </p>
       <button
-        onClick={() => setShowModal(false)}
+        onClick={() => {setShowModal(false);localStorage.setItem('showModal', 'false');}}
         className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-2
                    rounded-full transition w-full focus:outline-none 
                    focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
@@ -647,7 +656,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
         Got it!
       </button>
     </div>
-
+</div>
 
 )}
 </div>
