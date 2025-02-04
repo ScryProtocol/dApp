@@ -332,7 +332,7 @@ console.log(allLoansInfo);
       const tx = await loan.drawDown(parsed);
       await tx.wait();
 
-      toast.success('Drawdown successful');
+      toast.success('Withdraw successful');
       fetchAllData();
     } catch (err) {
       console.error(err);
@@ -720,14 +720,36 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
             <label className="block font-semibold text-gray-200 mb-1">
               🪙 ERC20 Token Address:
             </label>
+            <select
+              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition mb-2"
+              value={loanToken}
+              onChange={(e) => setLoanToken(e.target.value)}
+            >
+              <option value="">{!loanToken?'Select Token':loanToken}</option>
+              {chainId==1&&(<>
+              <option value="0x6B175474E89094C44Da98b954EedeAC495271d0F">DAI</option>
+              <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+              <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+              <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">WETH</option>
+              <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
+              </>)}
+              {chainId==8453&&(<>
+              <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+              <option value="0x4200000000000000000000000000000000000006">WETH</option>
+              </>)}
+              <option value="custom">Custom Token</option>
+              </select>
+              {loanToken === 'custom' && (
             <input
               type="text"
               placeholder="0x..."
               className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              value={loanToken}
+                         
               onChange={(e) => setLoanToken(e.target.value)}
             />
+          )}
           </div>
 
           {/* Borrower */}
@@ -1035,7 +1057,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                                          rounded-full hover:scale-105 
                                          transition text-sm bg-[#E3B23C]"
                             >
-                              Draw Down
+                              Withdraw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -1158,7 +1180,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           </div>
 
                           <div>
-                            <p className="text-gray-400 text-xs">Total Drawn Down:</p>
+                            <p className="text-gray-400 text-xs">Total Withdrawn:</p>
                             <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.totalDrawnDown}
                             </p>
@@ -1201,7 +1223,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                                   className="bg-yellow-500 hover:bg-yellow-600 text-white 
                                              font-semibold px-3 py-2 rounded-full text-sm w-full"
                                 >
-                                  Draw
+                                  Withdraw
                                 </button>
                                 <button
                                   onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -1408,7 +1430,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             className="flex-1 py-2 text-white font-semibold rounded-full 
                                        hover:scale-105 transition text-sm bg-[#E3B23C]"
                           >
-                            Draw Down
+                            Withdraw
                           </button>
                           <button
                             onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -1510,7 +1532,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.repayments} / {info.interestrepayments}
                           </p>
-                          <p className="text-gray-400 text-xs">Total Drawn Down:</p>
+                          <p className="text-gray-400 text-xs">Total Withdrawn:</p>
                           <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.totalDrawnDown}
                           </p>
@@ -1558,7 +1580,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                                 className="bg-yellow-500 hover:bg-yellow-600 text-white 
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
-                                Draw
+                                Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -1778,7 +1800,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             className="flex-1 py-2 text-white font-semibold rounded-full 
                                        hover:scale-105 transition text-sm bg-[#E3B23C]"
                           >
-                            Draw Down
+                            Withdraw
                           </button>
                           <button
                             onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -1948,7 +1970,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                                 className="bg-yellow-500 hover:bg-yellow-600 text-white 
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
-                                Draw
+                                Withdrawn
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
@@ -2082,7 +2104,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.repayments} / {info.interestrepayments}
                           </p>
-                          <p className="text-gray-400 text-xs">Total Drawn Down:</p>
+                          <p className="text-gray-400 text-xs">Total Withdrawn:</p>
                           <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.totalDrawnDown}
                           </p>
@@ -2131,7 +2153,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                                 className="bg-yellow-500 hover:bg-yellow-600 text-white 
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
-                                Draw
+                                Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
