@@ -490,10 +490,13 @@ console.log(allLoansInfo);
         try {
           let results = await fetchLoanInfo([searchAddress]);
           setSearchResults(results);
-        } catch (error) {
+          if (results.length === 0) {
+            console.log('No results');
           const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
           const results = await fetchLoanInfo(loans);
-          setSearchResults(results);
+          setSearchResults(results);}
+        }
+        catch {
         }
       } catch (err) {
         console.error(err);
