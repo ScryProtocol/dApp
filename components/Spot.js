@@ -1750,14 +1750,16 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                       </div>
                     </div>
 
-                    <div className="text-center mb-2">
-                      <p className="text-gray-400 text-sm">Repayments:</p>
-                      <div className="inline-flex items-center gap-2">
+                    <div className="text-center mb-2 grid grid-cols-2 gap-2">
+                      <div>
+                      <p className="text-gray-400 text-sm mb-1">Repayments:</p>
                         <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
                           Total: {info.repayments || '0'}
                         </span>
+                        </div><div>
+                      <p className="text-gray-400 text-sm mb-1">Interest Repaid:</p>
                         <span className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-semibold">
-                          Interest: {info.interestrepayments || '0'}
+                           {info.interestrepayments || '0'}
                         </span>
                       </div>
                     </div>
