@@ -1900,9 +1900,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.iouName} ({info.iouSymbol})
                           </p>
-                          <p className="text-gray-400 text-xs">Loan Goal:</p>
+                          <p className="text-gray-400 text-xs">Withdrawn:</p>
                           <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.loanGoal}
+                            {info.totalDrawnDown}
                           </p>
                         </div>
                         <div>
