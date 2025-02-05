@@ -1763,11 +1763,16 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                     </div>
 
                     {/* interestClaimable */}
-                    <div className="text-center mb-2">
+                    <div className="text-center mb-2 grid grid-cols-2 gap-2">
+                      <div>
                       <p className="text-gray-400 text-sm">Claimable Interest:</p>
                       <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
                         {info.interestClaimable}
-                      </p>
+                      </p></div><div>
+                      <p className="text-gray-400 text-sm">Interest Owed:</p>
+                      <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                        {info.updatedInterest}
+                      </p></div>
                     </div>
 
                     <div className="text-center mb-4">
@@ -1783,9 +1788,6 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                               (parseFloat(info.totalSupply) || 1)) *
                             (parseFloat(info.repayments-info.interestrepayments) || 0)
                           ).toFixed(4)}
-                        </p>
-                        <p className="bg-green-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
-                          Claimable/Owed: {info.interestClaimable} / {info.updatedInterest}
                         </p>
                       </div>
                     </div>
