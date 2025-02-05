@@ -1939,6 +1939,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           </p>
                         </div>
                       </div>
+                      <div>
+                        <p className='text-white font-semibold'>{info.underlyingSymbol} Available: {info.underlyingBalance}</p>
+                      </div>
 
                       <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
