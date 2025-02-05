@@ -1524,7 +1524,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
 
                   {expandedRowsMyLoans[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-x-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1545,6 +1545,20 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             {info.updatedInterest}
                           </p>
                         </div>
+                        <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
+                      <p className="relative text-white text-xs z-10">Funded: {info.totalFunded}/{info.loanGoal} - {info.totalFunded/info.loanGoal*100} %</p>
+                      <div
+                        className="absolute left-0 top-0 h-full bg-blue-400 z-0"
+                        style={{ width: `${info.totalFunded/info.loanGoal*100}%` }}
+                      />
+                    </div>
+                    <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
+                      <p className="relative text-white text-xs z-10">Repaid: {(info.repayments-info.interestrepayments)}/{info.totalDrawnDown} - {(info.repayments-info.interestrepayments)/ info.totalDrawnDown *100} %</p>
+                      <div
+                        className="absolute left-0 top-0 h-full bg-orange-400/50"
+                        style={{ width: `${(info.repayments-info.interestrepayments)/info.totalFunded*100}%` }}
+                      />
+                    </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1916,7 +1930,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
 
                   {expandedRowsMyIOUs[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-x-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1936,7 +1950,20 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.myIOUs}
                           </p>
-                        </div>
+                        </div><div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
+                      <p className="relative text-white text-xs z-10">Funded: {info.totalFunded}/{info.loanGoal} - {info.totalFunded/info.loanGoal*100} %</p>
+                      <div
+                        className="absolute left-0 top-0 h-full bg-blue-400 z-0"
+                        style={{ width: `${info.totalFunded/info.loanGoal*100}%` }}
+                      />
+                    </div>
+                    <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
+                      <p className="relative text-white text-xs z-10">Repaid: {(info.repayments-info.interestrepayments)}/{info.totalDrawnDown} - {(info.repayments-info.interestrepayments)/info.totalDrawnDown*100} %</p>
+                      <div
+                        className="absolute left-0 top-0 h-full bg-orange-400/75"
+                        style={{ width: `${(info.repayments-info.interestrepayments)/info.totalFunded*100}%` }}
+                      />
+                    </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
