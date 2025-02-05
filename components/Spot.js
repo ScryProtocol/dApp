@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0x8367e7eb561387ddfb18136f4087deefc91ddb0b';
+const IOUMintAddress = '0x08fd060b06975A8C78817E3B64199d10564b63fc';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
@@ -36,7 +36,9 @@ const IOUMintABI = [
       uint256 myIOUs, \
       uint256 repayments, \
       uint256 interestrepayments, \
-      uint256 interestClaimable \
+      uint256 interestClaimable, \
+      uint256 underlyingBalance, \
+      uint256 redeemed, \
     )[] memory)'
 ];
 
@@ -196,6 +198,9 @@ console.log(allLoansInfo);
           : '0',
         totalSupply: ethers.formatUnits(info.totalSupply, 18),
         interestClaimable: ethers.formatUnits(info.interestClaimable, info.underlyingDecimals),
+        underlyingBalance: ethers.formatUnits(info.underlyingBalance, info.underlyingDecimals),
+        redeemed: ethers.formatUnits(info.redeemed, info.underlyingDecimals),
+        redeemable: (ethers.formatUnits(info.repayments-info.interestrepayments, info.underlyingDecimals)-ethers.formatUnits(info.redeemed, info.underlyingDecimals))/ethers.formatUnits(info.totalSupply, 18),
       }));
     } catch (err) {
       console.error(err);
