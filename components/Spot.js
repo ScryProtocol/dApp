@@ -1150,7 +1150,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
 
                     {expandedRowsSearch[i] && (
                       <div className="px-4 py-4 border-t border-gray-600">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-x-4">
                           <div>
                             <p className="text-gray-400 text-xs">IOU Name:</p>
                             <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1159,6 +1159,16 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
                             <p className="text-white font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.underlyingBalance}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-xs">Available to Borrow:</p>
+                            <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                              {info.totalFunded-info.totalDrawnDown}
+                            </p>
+                            <p className="text-gray-400 text-xs">Borrower:</p>
+                            <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                              {info.borrower}
                             </p>
                           </div>
 
@@ -1190,6 +1200,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.totalDrawnDown}
                             </p>
+                          </div>
+
+                          <div>
                             <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
                             <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.redeemable}
