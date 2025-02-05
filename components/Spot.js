@@ -882,7 +882,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
             <p className="text-gray-400">No loans found.</p>
           )}
 
-          {searchResults.length <= 2 ? (
+          {searchResults.length == 2 ? (
             /*  CARD STYLE if 2 or fewer  */
             <>
               {searchResults.map((info) => {
@@ -1156,9 +1156,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.iouName} ({info.iouSymbol})
                             </p>
-                            <p className="text-gray-400 text-xs">Loan Goal:</p>
-                            <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                              {info.loanGoal}
+                            <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
+                            <p className="text-white font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                              {info.underlyingBalance}
                             </p>
                           </div>
 
