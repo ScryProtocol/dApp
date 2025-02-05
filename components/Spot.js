@@ -5,7 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
-const IOUMintAddress = '0xDc9ff13BB245caCA6E546894ecc53a430392515A';
+const IOUMintAddress = '0x8367e7eb561387ddfb18136f4087deefc91ddb0b';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
