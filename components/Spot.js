@@ -1024,15 +1024,16 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           </p>
                           <p className="bg-orange-300/50 px-3 py-1 rounded-full text-gray-200 font-bold">
                             Redeemable:{' '}
-                            {(
-                              ((parseFloat(info.myIOUs) || 0) /
-                                (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments-info.interestrepayments) || 0)
-                            ).toFixed(4)}
+                            {info.redeemable || '0'} {info.underlyingSymbol}
                           </p>
                         </div>
                       </div>
-
+<div className="text-center mb-4">
+                        <p className="text-gray-400 text-sm">{info.underlyingSymbol} Available:</p>
+                        <p className="bg-gray-700 px-3 py-1 rounded-full text-gray-200 font-bold">
+                          {info.underlyingBalance}
+                        </p>
+                      </div>
                       <input
                         type="text"
                         placeholder="Amount"
@@ -1189,13 +1190,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                               {info.totalDrawnDown}
                             </p>
-                            <p className="text-gray-400 text-xs">Redeemable:</p>
+                            <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
                             <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                              {(
-                                ((parseFloat(info.myIOUs) || 0) /
-                                  (parseFloat(info.totalSupply) || 1)) *
-                                (parseFloat(info.repayments-info.interestrepayments) || 0)
-                              ).toFixed(4)}
+                              {info.redeemable}
                             </p>
                           </div>
                         </div>
@@ -1517,9 +1514,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.iouName} ({info.iouSymbol})
                           </p>
-                          <p className="text-gray-400 text-xs">Loan Goal:</p>
+                          <p className="text-gray-400 text-xs">Available:</p>
                           <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {info.loanGoal}
+                            {info.totalFunded-info.totalDrawnDown}
                           </p>
                         </div>
                         <div>
@@ -1550,9 +1547,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                               parseFloat(info.updatedInterest || '0')
                             ).toFixed(2)}
                           </p>
-                          <p className="text-gray-400 text-xs">Owed:</p>
+                          <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
-                            {info.updatedTotalOwed}
+                            {info.underlyingBalance}
                           </p>
                         </div>
                       </div>
@@ -1936,13 +1933,9 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-hidden">
                             {info.borrower}
                           </p>
-                          <p className="text-gray-400 text-xs">Redeemable:</p>
+                          <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
-                            {(
-                              ((parseFloat(info.myIOUs) || 0) /
-                                (parseFloat(info.totalSupply) || 1)) *
-                              (parseFloat(info.repayments-info.interestrepayments) || 0)
-                            ).toFixed(4)}
+                            {info.redeemable}
                           </p>
                         </div>
                       </div>
