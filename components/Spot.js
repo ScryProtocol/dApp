@@ -2233,4 +2233,96 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
   );
 };
 
+function ProgressBar({ info }) {
+  const [hoveredSegment, setHoveredSegment] = useState(null);
+
+  // Calculate widths (percentages) for each segment.
+  // (The math here comes from your example—adjust as needed.)
+  const fundedWidth = (info.totalFunded / info.loanGoal) * 100;
+  const withdrawnWidth = (info.totalDrawnDown / info.loanGoal) * 100;
+  const repaidWidth = ((info.repayments - info.interestrepayments) / info.totalFunded) * 100|| 0;
+
+  // Calculate positions for the tooltips (centered over each segment).
+  const fundedTooltipLeft = fundedWidth / 2;
+  const withdrawnTooltipLeft = withdrawnWidth / 2;
+  const repaidTooltipLeft = repaidWidth / 2;
+
+  return (
+    <div className="relative w-full my-1">
+      {/* Clipped progress bar container */}
+      <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden">
+        {/* Funded Segment */}
+        <div
+          className="absolute left-0 top-0 h-full"
+          style={{ width: `${fundedWidth}%` }}
+          onMouseEnter={() => setHoveredSegment('funded')}
+          onMouseLeave={() => setHoveredSegment(null)}
+        >
+          <div
+            className="h-full bg-blue-400 hover:scale-125 transition-transform duration-300 origin-left"
+          />
+        </div>
+
+        {/* Withdrawn Segment */}
+        <div
+          className="absolute left-0 top-0 h-full"
+          style={{ width: `${withdrawnWidth}%` }}
+          onMouseEnter={() => setHoveredSegment('withdrawn')}
+          onMouseLeave={() => setHoveredSegment(null)}
+        >
+          <div
+            className="h-full bg-purple-400/75 hover:scale-125 transition-transform duration-300 origin-left"
+          />
+        </div>
+
+        {/* Repaid Segment */}
+        <div
+          className="absolute left-0 top-0 h-full"
+          style={{ width: `${repaidWidth}%` }}
+          onMouseEnter={() => setHoveredSegment('repaid')}
+          onMouseLeave={() => setHoveredSegment(null)}
+        >
+          <div
+            className="h-full bg-orange-400/75 hover:scale-125 transition-transform duration-300 origin-left"
+          />
+        </div>
+      </div>
+
+      {/* Tooltip Container (rendered outside the clipped area) */}
+      {hoveredSegment === 'funded' && (
+        <div
+          className="absolute -top-8 pointer-events-none"
+          style={{ left: `${fundedTooltipLeft}%` }}
+        >
+          <span className="px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap">
+            Funded: {info.totalFunded}/{info.loanGoal} - {((info.totalFunded / info.loanGoal) * 100).toFixed(2)}%
+          </span>
+        </div>
+      )}
+
+      {hoveredSegment === 'withdrawn' && (
+        <div
+          className="absolute -top-8 pointer-events-none"
+          style={{ left: `${withdrawnTooltipLeft}%` }}
+        >
+          <span className="px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap">
+            Withdrawn: {info.totalDrawnDown}/{info.loanGoal} - {((info.totalDrawnDown / info.loanGoal) * 100).toFixed(2)}%
+          </span>
+        </div>
+      )}
+
+      {hoveredSegment === 'repaid' && (
+        <div
+          className="absolute -top-8 pointer-events-none"
+          style={{ left: `${repaidTooltipLeft}%` }}
+        >
+          <span className="px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap">
+            Repaid: {info.repayments - info.interestrepayments}/{info.totalDrawnDown} - {(((info.repayments - info.interestrepayments) / info.totalDrawnDown) * 100 || 0).toFixed(2)}%
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default SpotIOUFactory;
