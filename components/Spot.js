@@ -492,25 +492,29 @@ const SpotIOUFactory = () => {
    * Searching
    */
   useEffect(() => {
-    if (!searchAddress) return; // do nothing if empty
+    if (!searchAddress) return;
     async function fetchLoan() {
       try {
-        // If searchAddress is NOT "0x..." => treat it as a numeric ID
-        if (typeof searchAddress === 'string' && !searchAddress.startsWith('0x')) {
-          const [...loans] = await IOUMintContract.getLoans([searchAddress]);
-          const results = await fetchLoanInfo(loans);
+        // If not a 0x, treat as loan ID
+        if (!searchAddress.startsWith('0x')) {
+          let [...loans] = await IOUMintContract.getLoans([searchAddress]);
+          let results = await fetchLoanInfo(loans);
           setSearchResults(results);
           return;
         }
-
-        // Otherwise, treat as loan address or user address
-        const results = await fetchLoanInfo([searchAddress]);
-        setSearchResults(results);
-        if (results.length === 0) {
-          // Maybe it's a user address with IOUs
-          const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
-          const userResults = await fetchLoanInfo(loans);
-          setSearchResults(userResults);
+        // Otherwise treat as loan address or user address
+        try {
+          let results = await fetchLoanInfo([searchAddress]);
+          setSearchResults(results);
+          if (results.length === 0) {
+            // Maybe it's a user address
+            const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
+            const userResults = await fetchLoanInfo(loans);
+            setSearchResults(userResults);
+          }
+        }
+        catch {
+          // handle silent
         }
       } catch (err) {
         console.error(err);
