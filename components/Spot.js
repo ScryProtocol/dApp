@@ -67,14 +67,14 @@ const tokenABI = [
   'function approve(address, uint256) returns (bool)',
 ];
 
-const SpotIOUFactory = () => {
+function SpotIOUFactory() {
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
 
   // Deploy fields
-  // Borrower is set to userAddress by default (read-only)
+  // Borrower is set to userAddress by default; can be overridden
   const [loanToken, setLoanToken] = useState('');
   const [borrower, setBorrower] = useState('');
   const [loanGoal, setLoanGoal] = useState('');
@@ -85,7 +85,6 @@ const SpotIOUFactory = () => {
   const [iouSymbol, setIouSymbol] = useState('');
 
   // Searching
-  // IMPORTANT: must be a string to avoid the "startsWith is not a function" error
   const [searchAddress, setSearchAddress] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
@@ -126,6 +125,169 @@ const SpotIOUFactory = () => {
       ...prev,
       [index]: !prev[index],
     }));
+  };
+
+  // Info modal state + localStorage check
+  const [showModal, setShowModal] = useState(true);
+
+  useEffect(() => {
+    const show = localStorage.getItem('showModal');
+    if (show === 'false') {
+      setShowModal(false);
+    }
+  }, []);
+
+  // InfoModal component
+  const InfoModal = () => {
+    return (
+      <div>
+        {showModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+            onClick={() => setShowModal(false)}
+          >
+            <div
+              className="relative top-0 max-w-3xl w-full bg-gray-800 text-gray-300
+                         rounded-3xl p-8 shadow-xl overflow-y-auto max-h-[90vh]"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}
+            >
+              <h2 className="text-3xl font-extrabold mb-6 text-blue-400">
+                Welcome to IOU.fi
+              </h2>
+
+              <p className="mb-6">
+                <strong>IOU.fi</strong> is a decentralized platform for creating, funding,
+                and managing on-chain, tokenized loans. Each <strong>IOU</strong> represents
+                a fraction of a loan, letting lenders and borrowers interact transparently
+                and without needing to trust a middleman. Here’s a detailed look at how it all works.
+              </p>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Mint/Deploy an IOU
+                </h3>
+                <p className="mb-3">
+                  If you’re seeking to borrow, you can launch a specialized loan contract by specifying:
+                </p>
+                <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
+                  <li>
+                    <strong>Loan Token</strong> – The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
+                  </li>
+                  <li>
+                    <strong>Loan Goal</strong> – The total principal you aim to raise.
+                  </li>
+                  <li>
+                    <strong>Annual Interest Rate</strong> – Stated in basis points (e.g., 500 = 5%).
+                  </li>
+                  <li>
+                    <strong>Borrower</strong> – The address authorized to withdraw loaned funds and initiate repayments.
+                  </li>
+                  <li>
+                    <strong>IOU Token Name &amp; Symbol</strong> – Custom labels for the ERC20 IOU
+                    tokens representing a share of the debt.
+                  </li>
+                </ul>
+                <p>
+                  This contract monitors contributions, accumulates interest on the outstanding
+                  principal, and orchestrates repayment logic until the loan is finalized.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Provide Funding
+                </h3>
+                <p className="mb-3">
+                  As a lender, simply select a loan and click “Fund.” You’ll deposit the designated token
+                  into the loan contract, receiving IOUs that reflect your proportion of the total funds
+                  raised. These tokens let you claim principal and any accumulated interest once repayments
+                  begin.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Borrower Withdrawals &amp; Repayments
+                </h3>
+                <p className="mb-3">
+                  Once enough capital is raised, the borrower can withdraw part or all of the funds to use
+                  as needed. Over the loan’s duration, they’re responsible for repaying the principal plus
+                  accrued interest. Partial repayments are possible, and each one updates the amount
+                  available to lenders.
+                </p>
+                <p>
+                  Borrowers can manage the frequency and size of repayments, but interest continues to
+                  accrue on any outstanding principal until it’s fully settled.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Interest Accrual &amp; Claiming
+                </h3>
+                <p className="mb-3">
+                  Interest is calculated in real time based on the annual rate and the remaining principal.
+                  As the borrower repays, the contract allocates a share of the interest to each IOU holder.
+                  Lenders can claim this interest whenever they choose, without any complex manual calculations
+                  or extra steps.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Redeeming IOUs for Principal
+                </h3>
+                <p className="mb-3">
+                  When principal repayments take place, that repaid portion becomes available for IOU holders
+                  to redeem. Redeeming <strong>burns</strong> the IOUs you surrender, granting you the
+                  corresponding share of principal. Once redeemed, those IOUs no longer earn future repayments
+                  or interest, so you can decide whether to wait for more principal to accumulate or redeem
+                  early for partial liquidity.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                  Optional “Unfund” Feature
+                </h3>
+                <p className="mb-3">
+                  If the borrower hasn’t yet withdrawn your contribution, you can back out by “unfunding.”
+                  This action returns your tokens and burns the IOUs you received, freeing you to reallocate
+                  your capital elsewhere if circumstances change.
+                </p>
+              </section>
+
+              <h3 className="text-xl font-semibold mb-3 text-blue-300">
+                My Loans &amp; IOUs
+              </h3>
+              <p className="mb-6">
+                After connecting your wallet, you can set up a new loan or fund existing ones. In “My Loans”
+                you'll see all loans you've created and “My IOUs” for all loans you’ve funded. Each section
+                displays interest due, principal redeemed, and more. Explore IOU.fi and experience
+                decentralized lending firsthand!
+              </p>
+              <p className="text-sm font-semibold mb-3 text-orange-300">
+                Note: IOUs are for use with private loans and not public sale. We do not guarantee any liquidity or value of loans. 
+                Make sure to check local laws or regulations before participating.
+              </p>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowModal(false);
+                  localStorage.setItem('showModal', 'false');
+                }}
+                className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-2
+                           rounded-full transition w-full focus:outline-none
+                           focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   // On mount or user change, fetch data
@@ -493,6 +655,7 @@ const SpotIOUFactory = () => {
    */
   useEffect(() => {
     if (!searchAddress) return;
+
     async function fetchLoan() {
       try {
         // If not a 0x, treat as loan ID
@@ -507,15 +670,12 @@ const SpotIOUFactory = () => {
           let results = await fetchLoanInfo([searchAddress]);
           setSearchResults(results);
           if (results.length === 0) {
-            // Maybe it's a user address
+            // If no direct result, check if it’s a user address with IOUs
             const [...loans] = await IOUMintContract.getUserIOUs(searchAddress);
             const userResults = await fetchLoanInfo(loans);
             setSearchResults(userResults);
           }
-        }
-        catch {
-          // handle silent
-        }
+        } catch {}
       } catch (err) {
         console.error(err);
         toast.error('Error fetching search results');
@@ -534,149 +694,66 @@ const SpotIOUFactory = () => {
     }
   }, []);
 
-  // Info Modal
-  const [showModal, setShowModal] = useState(true);
-  useEffect(() => {
-    const show = localStorage.getItem('showModal');
-    if (show === 'false') {
-      setShowModal(false);
-    }
-  }, []);
-
-  const InfoModal = () => {
-    return (
-      <>
-        {showModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
-            onClick={() => setShowModal(false)}
-          >
-            <div
-              className="relative top-0 max-w-3xl w-full bg-gray-800 text-gray-300
-                         rounded-3xl p-8 shadow-xl overflow-y-auto max-h-[90vh]"
-              style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}
-            >
-              <h2 className="text-3xl font-extrabold mb-6 text-blue-400">
-                Welcome to IOU.fi
-              </h2>
-
-              <p className="mb-6">
-                <strong>IOU.fi</strong> is a decentralized platform for creating, funding, and
-                managing on-chain tokenized loans. Each <strong>IOU</strong> represents a fraction
-                of a loan, letting lenders and borrowers interact without a traditional intermediary.
-              </p>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Mint/Deploy an IOU
-                </h3>
-                <p className="mb-3">
-                  If you’re seeking to borrow, create a special loan contract by specifying:
-                </p>
-                <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
-                  <li><strong>Loan Token</strong> – The ERC20 asset you plan to borrow/repay.</li>
-                  <li><strong>Loan Goal</strong> – The total principal you aim to raise.</li>
-                  <li><strong>Annual Interest Rate</strong> – in basis points, e.g. 500 = 5%.</li>
-                  <li><strong>Borrower</strong> – The address authorized to withdraw & repay.</li>
-                  <li><strong>IOU Name & Symbol</strong> – Custom labels for your IOU token.</li>
-                </ul>
-                <p>
-                  This contract tracks your funding, interest accrual, and orchestrates repayments
-                  until the loan is fully settled.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Provide Funding
-                </h3>
-                <p>
-                  As a lender, choose a loan and click “Fund.” You deposit tokens into the contract
-                  and receive IOUs representing your share of the loan. Redeem them once the borrower
-                  starts repaying.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Borrower Withdrawals & Repayments
-                </h3>
-                <p>
-                  Once sufficiently funded, the borrower can withdraw all or part of the funds.
-                  Over time, they repay principal plus accrued interest. Partial repayments update
-                  the redeemable principal for IOU holders.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Interest Accrual & Claiming
-                </h3>
-                <p>
-                  Interest accrues on outstanding principal, and when the borrower repays, 
-                  IOU holders can claim their share of that interest at any point.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Redeeming IOUs
-                </h3>
-                <p>
-                  As principal is repaid, IOU holders can redeem IOUs for that principal. 
-                  Redeeming burns those IOUs, so they no longer collect further interest or principal.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Unfunding
-                </h3>
-                <p>
-                  If the borrower has not yet withdrawn your funds, you can “unfund” to get them back, 
-                  burning the IOUs you received.
-                </p>
-              </section>
-
-              <p className="text-sm font-semibold mb-3 text-orange-300">
-                Note: IOUs do not guarantee liquidity or a secondary market. Check local regulations
-                before participating.
-              </p>
-
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  localStorage.setItem('showModal', 'false');
-                }}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-semibold 
-                           px-4 py-2 rounded-full transition w-full focus:outline-none 
-                           focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-              >
-                Got it!
-              </button>
-            </div>
-          </div>
-        )}
-      </>
-    );
-  };
-
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
+
       <Toaster />
 
+      {/* Head tags (for Next.js or basic meta) */}
       <head>
         <title>IOU.fi - Decentralized Loans</title>
         <meta name="description" content="Decentralized, fully on-chain tokenized loans" />
       </head>
 
+      {/* The Info Modal */}
       <InfoModal />
 
-      {/* Top Header */}
+      {/* Header / Nav */}
       <span className="text-xl font-bold mt-4 inline-flex items-center">
         <h2 className="text-3xl font-bold text-blue-400 relative top-2">IOU</h2>
         <span className="relative top-3">.fi</span>
-        <ConnectButton />
+
+        {/* Example social icons */}
+        <a
+          href="https://twitter.com/heyvault"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 ml-3 inline-flex items-center relative top-3"
+        >
+          <svg
+            role="img"
+            fill="#fff"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+          >
+            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+          </svg>
+        </a>
+        <a
+          href="https://discord.gg/vrV4YpUccq"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 ml-3 inline-flex items-center relative top-3"
+        >
+          <svg
+            role="img"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="#fff"
+          >
+            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+          </svg>
+        </a>
+
+        {/* Toggle modal with "?" */}
+        <button
+          className="text-2xl text-white px-2.5 py-0 ml-1.5 relative top-2.5"
+          onClick={() => setShowModal(!showModal)}
+        >
+          ?
+        </button>
       </span>
 
       {/* Deploy a new IOU */}
@@ -700,7 +777,7 @@ const SpotIOUFactory = () => {
               value={loanToken}
               onChange={(e) => setLoanToken(e.target.value)}
             >
-              <option value="">{loanToken ? loanToken : 'Select Token'}</option>
+              <option value="">{!loanToken ? 'Select Token' : loanToken}</option>
               {chainId === 1 && (
                 <>
                   <option value="0x6B175474E89094C44Da98b954EedeAC495271d0F">DAI</option>
@@ -729,17 +806,18 @@ const SpotIOUFactory = () => {
             )}
           </div>
 
-          {/* Borrower - readOnly set to userAddress */}
+          {/* Borrower */}
           <div>
             <label className="block font-semibold text-gray-200 mb-1">
               🤝 Borrower Address / ENS:
             </label>
             <input
               type="text"
-              value={userAddress || ''}
-              readOnly
+              value={borrower}
+              placeholder="0x... or user.eth"
               className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              onChange={(e) => setBorrower(e.target.value)}
             />
           </div>
 
@@ -809,6 +887,11 @@ const SpotIOUFactory = () => {
             Deploy Loan
           </button>
         </div>
+
+        {/* Example ConnectButton at bottom of this section */}
+        <div className="mt-4">
+          <ConnectButton />
+        </div>
       </div>
 
       {/* FIND A LOAN */}
@@ -853,7 +936,7 @@ const SpotIOUFactory = () => {
                 <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
                   <button
                     onClick={() => toggleExpandSearch(i)}
-                    className="flex items-center justify-between px-4 py-3 w-full 
+                    className="flex items-center justify-between px-4 py-3 w-full
                                cursor-pointer hover:bg-gray-600 transition"
                   >
                     <div className="flex items-center grid grid-cols-5 w-full">
@@ -954,16 +1037,16 @@ const SpotIOUFactory = () => {
                             placeholder="Amount"
                             value={actionAmount}
                             onChange={(e) => setActionAmount(e.target.value)}
-                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
+                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
                                        rounded-full placeholder-gray-500
-                                       focus:outline-none focus:ring-2 
+                                       focus:outline-none focus:ring-2
                                        focus:ring-pink-400 transition w-full"
                           />
                         </div>
                         <div className="flex justify-between gap-2">
                           <button
                             onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
+                            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
                                        px-3 py-2 rounded-full text-sm w-full"
                           >
                             Fund
@@ -972,14 +1055,14 @@ const SpotIOUFactory = () => {
                             <>
                               <button
                                 onClick={() => drawDown(info.loanAddress, actionAmount)}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white 
+                                className="bg-yellow-500 hover:bg-yellow-600 text-white
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
                                 Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                                className="bg-red-500 hover:bg-red-600 text-white 
+                                className="bg-red-500 hover:bg-red-600 text-white
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
                                 Repay
@@ -988,14 +1071,14 @@ const SpotIOUFactory = () => {
                           )}
                           <button
                             onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white 
+                            className="bg-blue-600 hover:bg-blue-700 text-white
                                        font-semibold px-3 py-2 rounded-full text-sm w-full"
                           >
                             Redeem
                           </button>
                           <button
                             onClick={() => claimInterest(info.loanAddress)}
-                            className="bg-[#206a5d] hover:scale-105 text-white 
+                            className="bg-[#206a5d] hover:scale-105 text-white
                                        font-semibold px-3 py-2 rounded-full text-sm w-full"
                           >
                             Claim
@@ -1011,7 +1094,7 @@ const SpotIOUFactory = () => {
         </div>
       )}
 
-      {/* MY LOANS (Accordion Only) */}
+      {/* MY LOANS */}
       <div
         className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                    ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
@@ -1028,7 +1111,7 @@ const SpotIOUFactory = () => {
               <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
                 <button
                   onClick={() => toggleExpandMyLoans(i)}
-                  className="flex items-center justify-between px-4 py-3 w-full 
+                  className="flex items-center justify-between px-4 py-3 w-full
                              cursor-pointer hover:bg-gray-600 transition"
                 >
                   <div className="flex items-center grid grid-cols-5 w-full">
@@ -1126,16 +1209,16 @@ const SpotIOUFactory = () => {
                           placeholder="Amount"
                           value={actionAmount}
                           onChange={(e) => setActionAmount(e.target.value)}
-                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
+                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
                                      rounded-full placeholder-gray-500
-                                     focus:outline-none focus:ring-2 
+                                     focus:outline-none focus:ring-2
                                      focus:ring-pink-400 transition w-full"
                         />
                       </div>
                       <div className="flex justify-between gap-2">
                         <button
                           onClick={() => updateGoal(info.loanAddress, actionAmount)}
-                          className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
+                          className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
                                      px-3 py-2 rounded-full text-sm w-full"
                         >
                           Set Goal
@@ -1144,14 +1227,14 @@ const SpotIOUFactory = () => {
                           <>
                             <button
                               onClick={() => drawDown(info.loanAddress, actionAmount)}
-                              className="bg-yellow-500 hover:bg-yellow-600 text-white 
+                              className="bg-yellow-500 hover:bg-yellow-600 text-white
                                          font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Withdraw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                              className="bg-red-500 hover:bg-red-600 text-white 
+                              className="bg-red-500 hover:bg-red-600 text-white
                                          font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Repay
@@ -1160,7 +1243,7 @@ const SpotIOUFactory = () => {
                         )}
                         <button
                           onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white 
+                          className="bg-blue-600 hover:bg-blue-700 text-white
                                      font-semibold px-3 py-2 rounded-full text-sm w-full"
                         >
                           Redeem
@@ -1175,10 +1258,10 @@ const SpotIOUFactory = () => {
         </div>
       </div>
 
-      {/* MY IOUs (Accordion Only) */}
+      {/* MY IOUs */}
       <div
-        className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center 
-                   flex flex-col ring-1 ring-[#36444c] transition-transform 
+        className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center
+                   flex flex-col ring-1 ring-[#36444c] transition-transform
                    duration-300 hover:scale-105"
       >
         <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">👛 IOUs</h1>
@@ -1289,16 +1372,16 @@ const SpotIOUFactory = () => {
                           placeholder="Amount"
                           value={actionAmount}
                           onChange={(e) => setActionAmount(e.target.value)}
-                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
+                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
                                      rounded-full placeholder-gray-500
-                                     focus:outline-none focus:ring-2 
+                                     focus:outline-none focus:ring-2
                                      focus:ring-pink-400 transition w-full"
                         />
                       </div>
                       <div className="flex justify-between gap-2">
                         <button
                           onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                          className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
+                          className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
                                      px-3 py-2 rounded-full text-sm w-full"
                         >
                           Fund
@@ -1307,14 +1390,14 @@ const SpotIOUFactory = () => {
                           <>
                             <button
                               onClick={() => drawDown(info.loanAddress, actionAmount)}
-                              className="bg-yellow-500 hover:bg-yellow-600 text-white 
+                              className="bg-yellow-500 hover:bg-yellow-600 text-white
                                          font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Withdraw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                              className="bg-red-500 hover:bg-red-600 text-white 
+                              className="bg-red-500 hover:bg-red-600 text-white
                                          font-semibold px-3 py-2 rounded-full text-sm w-full"
                             >
                               Repay
@@ -1323,21 +1406,21 @@ const SpotIOUFactory = () => {
                         )}
                         <button
                           onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white 
+                          className="bg-blue-600 hover:bg-blue-700 text-white
                                      font-semibold px-3 py-2 rounded-full text-sm w-full"
                         >
                           Redeem
                         </button>
                         <button
                           onClick={() => unfundLoan(info.loanAddress, actionAmount)}
-                          className="bg-red-400 hover:bg-red-600 text-white 
+                          className="bg-red-400 hover:bg-red-600 text-white
                                      font-semibold px-3 py-2 rounded-full text-sm w-full"
                         >
                           Unfund
                         </button>
                         <button
                           onClick={() => claimInterest(info.loanAddress)}
-                          className="bg-pink-400 hover:scale-105 text-white 
+                          className="bg-pink-400 hover:scale-105 text-white
                                      font-semibold px-3 py-2 rounded-full text-sm w-full"
                         >
                           Claim
@@ -1352,7 +1435,7 @@ const SpotIOUFactory = () => {
         </div>
       </div>
 
-      {/* ALL LOANS (Accordion Only) */}
+      {/* ALL LOANS */}
       <div
         className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                    ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
@@ -1370,7 +1453,7 @@ const SpotIOUFactory = () => {
                 <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
                   <button
                     onClick={() => toggleExpand(i)}
-                    className="flex items-center justify-between px-4 py-3 w-full 
+                    className="flex items-center justify-between px-4 py-3 w-full
                                cursor-pointer hover:bg-gray-600 transition"
                   >
                     <p className="text-sm text-gray-500 font-bold bg-gray-600/70 px-2 py-1 rounded-full">
@@ -1459,16 +1542,16 @@ const SpotIOUFactory = () => {
                             placeholder="Amount"
                             value={actionAmount}
                             onChange={(e) => setActionAmount(e.target.value)}
-                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100 
+                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
                                        rounded-full placeholder-gray-500
-                                       focus:outline-none focus:ring-2 
+                                       focus:outline-none focus:ring-2
                                        focus:ring-pink-400 transition w-full"
                           />
                         </div>
                         <div className="flex justify-between gap-2">
                           <button
                             onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold 
+                            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
                                        px-3 py-2 rounded-full text-sm w-full"
                           >
                             Fund
@@ -1477,14 +1560,14 @@ const SpotIOUFactory = () => {
                             <>
                               <button
                                 onClick={() => drawDown(info.loanAddress, actionAmount)}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white 
+                                className="bg-yellow-500 hover:bg-yellow-600 text-white
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
                                 Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                                className="bg-red-500 hover:bg-red-600 text-white 
+                                className="bg-red-500 hover:bg-red-600 text-white
                                            font-semibold px-3 py-2 rounded-full text-sm w-full"
                               >
                                 Repay
@@ -1493,7 +1576,7 @@ const SpotIOUFactory = () => {
                           )}
                           <button
                             onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white 
+                            className="bg-blue-600 hover:bg-blue-700 text-white
                                        font-semibold px-3 py-2 rounded-full text-sm w-full"
                           >
                             Redeem
@@ -1510,7 +1593,7 @@ const SpotIOUFactory = () => {
       </div>
     </div>
   );
-};
+}
 
 /**
  * ProgressBar for visualizing:
