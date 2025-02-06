@@ -684,6 +684,13 @@ function SpotIOUFactory() {
     fetchLoan();
   }, [searchAddress]);
 
+provider.on("network", (newNetwork, oldNetwork) => {
+  // Only reload if the network actually changed (i.e. oldNetwork is defined)
+  toast.success(`Network changed to ${newNetwork.name}`);
+  if (oldNetwork) {
+    fetchAllData();
+  }
+});
   // If URL includes ?loan=, auto-search
   useEffect(() => {
     const loc = window.location.href;
