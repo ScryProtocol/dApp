@@ -311,8 +311,8 @@ function SpotIOUFactory() {
       const myIOUsReversed = [...ious].reverse();
       const allLoansReversed = [...all].reverse();
 
-      const myLoansInfo = await fetchLoanInfo(myLoansReversed);
-      const myIOUsInfo = await fetchLoanInfo(myIOUsReversed);
+      const myLoansInfo = await fetchLoanInfo(myIOUsReversed);
+      const myIOUsInfo = await fetchLoanInfo(myLoansReversed);
       const allLoansInfo = await fetchLoanInfo(allLoansReversed);
 
       setMyLoans(myLoansInfo);
