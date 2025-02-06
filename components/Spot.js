@@ -973,56 +973,56 @@ function SpotIOUFactory() {
                       <div className="grid grid-cols-2 gap-x-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.iouName} ({info.iouSymbol})
                           </p>
                           <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
-                          <p className="text-white font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-white font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.underlyingBalance}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Available to Borrow:</p>
-                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {(
                               parseFloat(info.totalFunded) -
                               parseFloat(info.totalDrawnDown || '0')
                             ).toFixed(4)}
                           </p>
                           <p className="text-gray-400 text-xs">Borrower:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.borrower}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Total Funded:</p>
-                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.totalFunded}
                           </p>
                           <p className="text-gray-400 text-xs">My IOUs:</p>
-                          <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.myIOUs}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
-                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.repayments} / {info.interestrepayments}
                           </p>
                           <p className="text-gray-400 text-xs">Interest Claimable:</p>
-                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.interestClaimable}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Total Withdrawn:</p>
-                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.totalDrawnDown}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.redeemable}
                           </p>
                         </div>
@@ -1154,11 +1154,11 @@ function SpotIOUFactory() {
                     <div className="grid grid-cols-2 gap-x-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.iouName} ({info.iouSymbol})
                         </p>
                         <p className="text-gray-400 text-xs">Available to Borrow:</p>
-                        <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {(
                             parseFloat(info.totalFunded) -
                             parseFloat(info.totalDrawnDown || '0')
@@ -1167,34 +1167,34 @@ function SpotIOUFactory() {
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Total Funded:</p>
-                        <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.totalFunded}
                         </p>
                         <p className="text-gray-400 text-xs">Interest:</p>
-                        <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.updatedInterest}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Repayments / Interest:</p>
-                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.repayments} / {info.interestrepayments}
                         </p>
                         <p className="text-gray-400 text-xs">Total Withdrawn:</p>
-                        <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.totalDrawnDown}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Loan:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {(
                             parseFloat(info.updatedTotalOwed || '0') -
                             parseFloat(info.updatedInterest || '0')
                           ).toFixed(2)}
                         </p>
                         <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.underlyingBalance}
                         </p>
                       </div>
@@ -1319,41 +1319,41 @@ function SpotIOUFactory() {
                     <div className="grid grid-cols-2 gap-x-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.iouName} ({info.iouSymbol})
                         </p>
                         <p className="text-gray-400 text-xs">Withdrawn:</p>
-                        <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.totalDrawnDown}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Total Funded:</p>
-                        <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.totalFunded}
                         </p>
                         <p className="text-gray-400 text-xs">My IOUs:</p>
-                        <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.myIOUs}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Repayments / Interest:</p>
-                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.repayments} / {info.interestrepayments}
                         </p>
                         <p className="text-gray-400 text-xs">Interest Claimable/Owed:</p>
-                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.interestClaimable} / {info.updatedInterest}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-xs">Borrower:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.borrower}
                         </p>
                         <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {info.redeemable}
                         </p>
                       </div>
@@ -1493,41 +1493,41 @@ function SpotIOUFactory() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.iouName} ({info.iouSymbol})
                           </p>
                           <p className="text-gray-400 text-xs">Loan Goal:</p>
-                          <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-purple-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.loanGoal}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Total Funded:</p>
-                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.totalFunded}
                           </p>
                           <p className="text-gray-400 text-xs">My IOUs:</p>
-                          <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.myIOUs}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
-                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.repayments} / {info.interestrepayments}
                           </p>
                           <p className="text-gray-400 text-xs">Total Withdrawn:</p>
-                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.totalDrawnDown}
                           </p>
                         </div>
                         <div>
                           <p className="text-gray-400 text-xs">Borrower:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.borrower}
                           </p>
                           <p className="text-gray-400 text-xs">Redeemable:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
+                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                             {info.redeemable}
                           </p>
                         </div>
