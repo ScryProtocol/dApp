@@ -1212,7 +1212,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             </p>
                           </div>
                         </div>
-
+<ProgressBar info={info} />
                         <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                           <div>
                             <input
@@ -1545,20 +1545,6 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             {info.updatedInterest}
                           </p>
                         </div>
-                        <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
-                      <p className="relative text-white text-xs z-10">Funded: {info.totalFunded}/{info.loanGoal} - {info.totalFunded/info.loanGoal*100} %</p>
-                      <div
-                        className="absolute left-0 top-0 h-full bg-blue-400 z-0"
-                        style={{ width: `${info.totalFunded/info.loanGoal*100}%` }}
-                      />
-                    </div>
-                    <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
-                      <p className="relative text-white text-xs z-10">Repaid: {(info.repayments-info.interestrepayments)}/{info.totalDrawnDown} - {(info.repayments-info.interestrepayments)/ info.totalDrawnDown *100} %</p>
-                      <div
-                        className="absolute left-0 top-0 h-full bg-orange-400/50"
-                        style={{ width: `${(info.repayments-info.interestrepayments)/info.totalFunded*100}%` }}
-                      />
-                    </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1583,7 +1569,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           </p>
                         </div>
                       </div>
-
+                      <ProgressBar info={info} className="grid-2" />
                       <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
                           <input
@@ -1950,20 +1936,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
                             {info.myIOUs}
                           </p>
-                        </div><div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
-                      <p className="relative text-white text-xs z-10">Funded: {info.totalFunded}/{info.loanGoal} - {info.totalFunded/info.loanGoal*100} %</p>
-                      <div
-                        className="absolute left-0 top-0 h-full bg-blue-400 z-0"
-                        style={{ width: `${info.totalFunded/info.loanGoal*100}%` }}
-                      />
-                    </div>
-                    <div className="relative w-full h-5 rounded-full bg-blue-300/20 overflow-hidden my-1">
-                      <p className="relative text-white text-xs z-10">Repaid: {(info.repayments-info.interestrepayments)}/{info.totalDrawnDown} - {(info.repayments-info.interestrepayments)/info.totalDrawnDown*100} %</p>
-                      <div
-                        className="absolute left-0 top-0 h-full bg-orange-400/75"
-                        style={{ width: `${(info.repayments-info.interestrepayments)/info.totalFunded*100}%` }}
-                      />
-                    </div>
+                        </div>
                         <div>
                           <p className="text-gray-400 text-xs">Repayments / Interest:</p>
                           <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full">
@@ -1985,7 +1958,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                             {info.redeemable}
                           </p>
                         </div>
-                      </div>
+                      </div><ProgressBar info={info} />
                       <div>
                         <p className='text-white font-semibold'>{info.underlyingSymbol} Available: {info.underlyingBalance}</p>
                       </div>
@@ -2172,7 +2145,7 @@ style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}    >
                           </p>
                         </div>
                       </div>
-
+                      <ProgressBar info={info} />
                       <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
                           <input
@@ -2240,7 +2213,7 @@ function ProgressBar({ info }) {
   // (The math here comes from your example—adjust as needed.)
   const fundedWidth = (info.totalFunded / info.loanGoal) * 100;
   const withdrawnWidth = (info.totalDrawnDown / info.loanGoal) * 100;
-  const repaidWidth = ((info.repayments - info.interestrepayments) / info.totalFunded) * 100|| 0;
+  const repaidWidth = ((info.repayments - info.interestrepayments) / info.loanGoal) * 100|| 0;
 
   // Calculate positions for the tooltips (centered over each segment).
   const fundedTooltipLeft = fundedWidth / 2;
