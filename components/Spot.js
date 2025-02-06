@@ -294,7 +294,7 @@ function SpotIOUFactory() {
   useEffect(() => {
     if (!provider || !userAddress) return;
     // Default borrower to userAddress on load
-    setBorrower(userAddress);
+    setBorrower(userAddress||'0x14B214CA36249b516B59401B3b221CB87483b53C');
     fetchAllData();
   }, [provider, userAddress]);
 
@@ -302,8 +302,10 @@ function SpotIOUFactory() {
 
   const fetchAllData = async () => {
     try {
-      const loans = await IOUMintContract.getUserLoans(userAddress);
-      const ious = await IOUMintContract.getUserIOUs(userAddress);
+      console.log('Fetching data...');
+      const loans = await IOUMintContract.getUserLoans(userAddress||'0x14B214CA36249b516B59401B3b221CB87483b53C');
+      console.log('Loans:', loans);
+      const ious = await IOUMintContract.getUserIOUs(userAddress||'0x14B214CA36249b516B59401B3b221CB87483b53C');
       const all = await IOUMintContract.getAllLoans();
 
       // Reverse for "newest first"
@@ -330,7 +332,7 @@ function SpotIOUFactory() {
   const fetchLoanInfo = async (loanAddresses) => {
     if (!loanAddresses || loanAddresses.length === 0) return [];
     try {
-      const data = await IOUMintContract.getSpotInfo(loanAddresses, userAddress);
+      const data = await IOUMintContract.getSpotInfo(loanAddresses, userAddress||'0x14B214CA36249b516B59401B3b221CB87483b53C');
 
       return data.map((info) => {
         const loanGoal = ethers.formatUnits(info.loanGoal, info.underlyingDecimals);
