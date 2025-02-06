@@ -292,7 +292,7 @@ function SpotIOUFactory() {
 
   // On mount or user change, fetch data
   useEffect(() => {
-    if (!provider || !userAddress) return;
+    //if (!provider || !userAddress) return;
     // Default borrower to userAddress on load
     setBorrower(userAddress||'0x14B214CA36249b516B59401B3b221CB87483b53C');
     fetchAllData();
