@@ -300,7 +300,11 @@ function DAOLoanManagerUI() {
           totalFunded,
           underlyingBalance,
           interestrepayments,
-          repayments
+          repayments,
+          updatedTotalOwed,
+          totalSupply,
+          redeemed,
+        
         } = info;
 
         results[i].borrower = borrower;
@@ -314,6 +318,8 @@ function DAOLoanManagerUI() {
         results[i].underlyingBalance = ethers.formatUnits(underlyingBalance, underlyingDecimals);
         results[i].interestrepayments = ethers.formatUnits(interestrepayments, underlyingDecimals);
         results[i].repayments = ethers.formatUnits(totalFunded, 6);
+        results[i].updatedTotalOwed = ethers.formatUnits(updatedTotalOwed, underlyingDecimals);
+        results[i].redeemable = Number(ethers.formatUnits(((repayments-interestrepayments)-redeemed),underlyingDecimals))/(Number(ethers.formatUnits(totalSupply, 18))>0?Number(ethers.formatUnits(totalSupply, 18)):1);
       });
     } catch (err) {
       console.error("IOUMint getSpotInfo error:", err);
@@ -643,7 +649,7 @@ useEffect(() => {
         <h1 className="text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4">
             ✨ GigaStrat ✨
           </h1>
-          <h2 className="text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[400px]">
+          <h2 className="text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]">
           {Number(daoEthBalance).toFixed(4)} ETH HODLD
         </h2>
         <h2 className="text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1">
@@ -653,7 +659,7 @@ useEffect(() => {
         {/* swapIOUForMintTokens */}
         <div className="">
         <div className="max-w-6xl mx-auto mt-6 text-center">
-          <div className='bg-white/70 backdrop-blur-sm rounded-[50px] p-4 w-[400px]  mx-auto'>
+          <div className='bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px]  mx-auto'>
           <h3 className="text-lg font-semibold text-green-600 mb-3">
             🌱 Swap IOU → DAO
           </h3>
@@ -676,7 +682,7 @@ useEffect(() => {
               onChange={(e) => setSwapIOUAmount(e.target.value)}
             />
             <p className="text-green-500 font-semibold">
-              {swapIOUAmount} IOU → {Number(swapIOUAmount) * Number(loans[swapIndex]?.iouConversionRate)} GG
+              {swapIOUAmount} IOU → {Number(swapIOUAmount) / Number(loans[swapIndex]?.iouConversionRate)} GG
             </p>
             <button
               onClick={handleSwapIOU}
@@ -752,6 +758,9 @@ useEffect(() => {
                       {ln.iouSymbol}
                     </span>
                     </p>
+                    <p className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0">
+                      {ln.iouConversionRate} IOU per GG
+                    </p>
                 {/* Loan Info */}
                 <div className="text-sm text-gray-700 mb-3 md:mb-0 text-center justify-center align-middle grid grid-cols-2 gap-2">
                   <p className="absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl">
@@ -761,8 +770,8 @@ useEffect(() => {
                   <p className="text-pink-600 font-semibold text-lg mt-2">
                     Loan Goal
                   </p>
-                  <p className="text-xl font-semibold text-white text-center bg-pink-200 rounded-full px-2 py-1 pr-0">
-                    {ln.loanGoal} USDC @ <span className="bg-yellow-300 text-white rounded-full px-2 py-1 font-semibold text-xl">{ln.annualInterestRate/100}%</span>
+                  <p className="text-xl font-semibold text-white text-center bg-pink-200 rounded-full px-1 py-1">
+                    {ln.loanGoal} USDC
                   </p>
                   </div>
                   <div className="">
@@ -820,6 +829,22 @@ useEffect(() => {
                     </p>
                     <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
                       {Number(ln.underlyingBalance).toFixed(4)} {ln.underlyingSymbol}
+                    </p>
+                    </div>
+                    <div className="">
+                    <p className="text-pink-600 font-semibold text-lg">
+                      Owed
+                    </p>
+                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.updatedTotalOwed).toFixed(4)} {ln.underlyingSymbol}
+                    </p>
+                </div>
+                <div className="">
+                    <p className="text-orange-600 font-semibold text-lg">
+                      Redeemable per IOU
+                    </p>
+                    <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.redeemable).toFixed(4)} {ln.underlyingSymbol}
                     </p>
                     </div>
                 </div>
