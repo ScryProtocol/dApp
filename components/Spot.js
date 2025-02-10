@@ -103,7 +103,7 @@ const ERC20ABI = [
   "function decimals() view returns (uint8)",
   "function allowance(address,address) view returns (uint256)",
   "function approve(address,uint256) returns (bool)",
-  "function balanceOf(address) view returns (uint256)" // <--- Needed for manager IOU balance
+  "function balanceOf(address) view returns (uint256)" 
 ];
 
 // ------------------------------
@@ -166,11 +166,11 @@ function GGLoanManagerUI() {
   // "repayLoan(loanIndex)" input
   const [repayLoanIndex, setRepayLoanIndex] = useState('');
 
-  // ** NEW: repayLoanUSDC(loanIndex, usdcAmount) inputs **
+  // repayLoanUSDC(loanIndex, usdcAmount)
   const [repayLoanIndexUSDC, setRepayLoanIndexUSDC] = useState('');
   const [repayUsdcAmount, setRepayUsdcAmount] = useState('');
 
-  // For swapping IOU
+  // For swapping IOU -> GG
   const [swapIndex, setSwapIndex] = useState(0);
   const [swapIOUAmount, setSwapIOUAmount] = useState('');
 
@@ -362,7 +362,6 @@ function GGLoanManagerUI() {
         // Assuming IOU tokens have 18 decimals:
         results[i].managerIOUBalance = ethers.formatUnits(bal, 18);
       });
-
     } catch (err) {
       console.error("IOUMint getSpotInfo error:", err);
     }
@@ -523,8 +522,8 @@ function GGLoanManagerUI() {
       const idx = parseInt(setIndex) || 0;
       const parsed = ethers.parseUnits(newRate || '1.0', 18);
 
-      // Example only (placeholder):
-      const tx = await mgr.startLoan(idx, parsed); // This is not the real function; adapt as needed.
+      // Placeholder: adapt if you have an actual setter function
+      const tx = await mgr.startLoan(idx, parsed); 
       await tx.wait();
 
       toast.success("IOU Conversion Rate updated!");
@@ -550,19 +549,21 @@ function GGLoanManagerUI() {
     }
   };
 
+  // ** Updated to match ABI: burnDAOForETH **
   const handleBurnDAOForETH = async () => {
     try {
       const mgr = getMgr();
       if (!mgr) return;
       const parsed = ethers.parseUnits(burnAmount || '0', GGDecimals);
 
-      const tx = await mgr.BurnDAOForETH(parsed);
+      // Make sure the function name matches the ABI
+      const tx = await mgr.burnDAOForETH(parsed);
       await tx.wait();
-      toast.success("BurnDAOForETH successful");
+      toast.success("burnDAOForETH successful");
       fetchManagerData();
     } catch (err) {
       console.error(err);
-      toast.error("BurnDAOForETH failed");
+      toast.error("burnDAOForETH failed");
     }
   };
 
@@ -672,7 +673,7 @@ function GGLoanManagerUI() {
   }
 
   // -------------------------------------------------------------------
-  // 5) Quick “drawDownAndBuyETH” + “repayLoan” from the new contract
+  // 5) Quick “drawDownAndBuyETH” + “repayLoan” 
   // -------------------------------------------------------------------
   const handleDrawDownAndBuy = async (loanIndex) => {
     try {
@@ -950,33 +951,33 @@ function GGLoanManagerUI() {
                   </div>
                 </div>
 
-                {/* The quick combo calls as small emoji buttons */}
+                {/* The quick combo calls with new emojis */}
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  {/* drawDownAndBuy */}
+                  {/* Draw Down & Buy -> 💰 */}
                   {!ln.fullyRepaid && (
                     <button
                       onClick={() => handleDrawDownAndBuy(ln.index)}
                       className="bg-green-200 hover:bg-green-300 text-green-600 px-2 py-1 rounded-full font-bold"
                     >
-                      🍃
+                      💰
                     </button>
                   )}
-                  {/* repayLoan */}
+                  {/* Repay Loan -> 💵 */}
                   {!ln.fullyRepaid && (
                     <button
                       onClick={() => handleQuickRepay(ln.index)}
                       className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold"
                     >
-                      🫧
+                      💵
                     </button>
                   )}
-                  {/* 🪄 ONLY show if managerIOUBalance > 0 */}
+                  {/* Redeem IOUs & Swap -> 💱, only if managerIOUBalance > 0 */}
                   {parseFloat(ln.managerIOUBalance || "0") > 0 && (
                     <button
                       onClick={() => handleRedeemIOUs(ln.index)}
                       className="bg-purple-200 hover:bg-purple-300 text-purple-600 px-2 py-1 rounded-full font-bold"
                     >
-                      🪄
+                      💱
                     </button>
                   )}
                 </div>
@@ -1050,28 +1051,52 @@ function GGLoanManagerUI() {
             <div className="text-sm space-y-2 mt-2">
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
-                  <p><span className="font-semibold text-rose-600">GG Name/Symbol:</span> {GGName} ({GGSymbol})</p>
-                  <p><span className="font-semibold text-rose-600">Decimals:</span> {GGDecimals}</p>
-                  <p><span className="font-semibold text-rose-600">GG Supply:</span> {GGSupply}</p>
-                  <p><span className="font-semibold text-rose-600">My GG Balance:</span> {myGGBalance}</p>
+                  <p>
+                    <span className="font-semibold text-rose-600">GG Name/Symbol:</span> {GGName} ({GGSymbol})
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">Decimals:</span> {GGDecimals}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">GG Supply:</span> {GGSupply}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">My GG Balance:</span> {myGGBalance}
+                  </p>
                 </div>
                 <div>
-                  <p><span className="font-semibold text-rose-600">ethFromMint:</span> {ethFromMint}</p>
-                  <p><span className="font-semibold text-rose-600">GG’s ETH:</span> {GGEthBalance} ETH</p>
+                  <p>
+                    <span className="font-semibold text-rose-600">ethFromMint:</span> {ethFromMint}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">GG’s ETH:</span> {GGEthBalance} ETH
+                  </p>
                 </div>
               </div>
 
               <hr className="border-rose-200 my-2"/>
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
-                  <p><span className="font-semibold text-rose-600">Price Feed:</span> {priceFeed}</p>
-                  <p><span className="font-semibold text-rose-600">Latest Price:</span> {latestPrice}</p>
+                  <p>
+                    <span className="font-semibold text-rose-600">Price Feed:</span> {priceFeed}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">Latest Price:</span> {latestPrice}
+                  </p>
                 </div>
                 <div>
-                  <p><span className="font-semibold text-rose-600">ioUMint:</span> {ioUMint}</p>
-                  <p><span className="font-semibold text-rose-600">USDC Token:</span> {usdcToken}</p>
-                  <p><span className="font-semibold text-rose-600">Swap Router:</span> {swapRouter}</p>
-                  <p><span className="font-semibold text-rose-600">WETH Address:</span> {wethAddress}</p>
+                  <p>
+                    <span className="font-semibold text-rose-600">ioUMint:</span> {ioUMint}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">USDC Token:</span> {usdcToken}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">Swap Router:</span> {swapRouter}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-rose-600">WETH Address:</span> {wethAddress}
+                  </p>
                 </div>
               </div>
             </div>
