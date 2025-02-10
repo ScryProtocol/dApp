@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ethers, N } from 'ethers';
+import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Toaster, toast } from 'react-hot-toast';
@@ -8,77 +8,77 @@ import { Toaster, toast } from 'react-hot-toast';
 import { useEthersProvider, useEthersSigner } from './tl';
 
 // ------------------------------
-// 1) DAO Manager Contract
+// 1) GG Manager Contract
 // ------------------------------
-const DAOLoanManagerAddress = '0xD967d67a7493a819c5F4baAc81D259F68B3dc392';
+const GGLoanManagerAddress = '0x3691E9C8d99470d7Bd825c12087AFb0a727c1945';
 
-const DAOLoanManagerABI = [
-  // Loan enumeration
-  "function loans(uint256) external view returns (address,uint256,uint256,bool,uint256,bool,uint256,uint256,uint256,uint256)",
-
-  // Manager-level state
-  "function allLoansFullyRepaid() external view returns (bool)",
+// Updated ABI to match the new contract
+const GGLoanManagerABI = [
+  "function loans(uint256) external view returns (address loanAddress, uint256 loanGoal, uint256 totalDrawnDown, bool loanDrawn, uint256 loanDrawnTime, bool fullyRepaid, uint256 iouConversionRate, uint256 totalBuyETH, uint256 soldETH, uint256 profitETH)",
+  "function canCreateLoan() external view returns (bool)",
   "function ethFromMint() external view returns (uint256)",
-
-  // Because contract inherits ERC20 (DAO token)
   "function name() view returns (string)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
   "function totalSupply() view returns (uint256)",
   "function balanceOf(address) view returns (uint256)",
-
-  // Additional getters
+  "function getLatestPrice() external view returns (int256)",
   "function ioUMint() external view returns (address)",
   "function usdcToken() external view returns (address)",
   "function swapRouter() external view returns (address)",
   "function wethAddress() external view returns (address)",
   "function priceFeed() external view returns (address)",
-  "function getLatestPrice() external view returns (int256)",
 
   // Manager-level writes
-  "function startLoan(uint256,uint256,uint256,address,uint256) external",
-  "function drawDownLoan(uint256,uint256) external",
-  "function buyETH(uint256,uint256) external",
-  "function repayLoan(uint256,uint256) external",
-  "function swapIOUForMintTokens(uint256,uint256) external",
-  "function setIOUConversionRate(uint256,uint256) external",
-  "function redeemHeldIOUsAndSwapToETH(uint256) external",
-  "function burnDAOForETH(uint256) external"
+  "function setRole(address _address, uint256 _role) external",
+  "function startLoan(uint256 _loanGoal, address _token, uint256 _annualInterestRate, uint256 _platformFeeRate, address _feeAddress, uint256 _loanIOUConversionRate) external",
+  "function openLoan() external",
+
+  // Combined "quick" calls
+  "function drawDownAndBuyETH(uint256 loanIndex) external",
+  "function repayLoan(uint256 loanIndex) external",
+
+  // Older/manual calls
+  "function drawDownLoan(uint256 loanIndex, uint256 amount) external",
+  "function buyETH(uint256 loanIndex, uint256 usdcAmount) external",
+  "function repayLoanUSDC(uint256 loanIndex, uint256 usdcAmount) external",
+  "function redeemHeldIOUsAndSwapToETH(uint256 loanIndex) external",
+  "function swapIOUForMintTokens(uint256 loanIndex, uint256 iouAmount) external",
+  "function burnDAOForETH(uint256 GGTokenAmount) external"
 ];
 
 // ------------------------------
 // 2) IOUMint (factory) Contract
 // ------------------------------
 const IOUMintAddress = '0x08fd060b06975A8C78817E3B64199d10564b63fc';
-
 const IOUMintABI = [
-  "function getSpotInfo(address[] memory, address) external view returns ("
-    + "tuple("
-    + "  address loanAddress,"
-    + "  address borrower,"
-    + "  uint256 loanGoal,"
-    + "  uint256 totalFunded,"
-    + "  uint256 totalDrawnDown,"
-    + "  uint256 accruedInterest,"
-    + "  uint256 annualInterestRate,"
-    + "  uint256 platformFeeRate,"
-    + "  address feeAddress,"
-    + "  uint256 totalSupply,"
-    + "  string iouName,"
-    + "  string iouSymbol,"
-    + "  address underlying,"
-    + "  string underlyingName,"
-    + "  string underlyingSymbol,"
-    + "  uint8 underlyingDecimals,"
-    + "  uint256 updatedInterest,"
-    + "  uint256 updatedTotalOwed,"
-    + "  uint256 myIOUs,"
-    + "  uint256 repayments,"
-    + "  uint256 interestrepayments,"
-    + "  uint256 interestClaimable,"
-    + "  uint256 underlyingBalance,"
-    + "  uint256 redeemed"
-    + ")[]"
+  "function getSpotInfo(address[] memory, address) external view returns (" +
+    "tuple(" +
+    "  address loanAddress," +
+    "  address borrower," +
+    "  uint256 loanGoal," +
+    "  uint256 totalFunded," +
+    "  uint256 totalDrawnDown," +
+    "  uint256 accruedInterest," +
+    "  uint256 annualInterestRate," +
+    "  uint256 platformFeeRate," +
+    "  address feeAddress," +
+    "  uint256 totalSupply," +
+    "  string iouName," +
+    "  string iouSymbol," +
+    "  address underlying," +
+    "  string underlyingName," +
+    "  string underlyingSymbol," +
+    "  uint8 underlyingDecimals," +
+    "  uint256 updatedInterest," +
+    "  uint256 updatedTotalOwed," +
+    "  uint256 myIOUs," +
+    "  uint256 repayments," +
+    "  uint256 interestrepayments," +
+    "  uint256 interestClaimable," +
+    "  uint256 underlyingBalance," +
+    "  uint256 redeemed" +
+    ")[]"
     + ")"
 ];
 
@@ -99,17 +99,17 @@ const SpotIOULoanABI = [
   "function decimals() external view returns (uint8)"
 ];
 
-// Minimal ERC20 for approvals
 const ERC20ABI = [
   "function decimals() view returns (uint8)",
   "function allowance(address,address) view returns (uint256)",
-  "function approve(address,uint256) returns (bool)"
+  "function approve(address,uint256) returns (bool)",
+  "function balanceOf(address) view returns (uint256)" // <--- Needed for manager IOU balance
 ];
 
 // ------------------------------
 // Main UI Component
 // ------------------------------
-function DAOLoanManagerUI() {
+function GGLoanManagerUI() {
   // Wagmi/Provider context
   const provider = useEthersProvider();
   const signer = useEthersSigner();
@@ -118,7 +118,7 @@ function DAOLoanManagerUI() {
   // Contracts in React.useMemo
   const managerContract = React.useMemo(() => {
     if (!provider) return null;
-    return new ethers.Contract(DAOLoanManagerAddress, DAOLoanManagerABI, provider);
+    return new ethers.Contract(GGLoanManagerAddress, GGLoanManagerABI, provider);
   }, [provider]);
 
   const IOUMintContract = React.useMemo(() => {
@@ -127,15 +127,14 @@ function DAOLoanManagerUI() {
   }, [provider]);
 
   // Global states from manager
-  const [allRepaid, setAllRepaid] = useState(false);
   const [ethFromMint, setEthFromMint] = useState('0');
-  const [daoEthBalance, setDaoEthBalance] = useState('0');
+  const [GGEthBalance, setGGEthBalance] = useState('0');
 
-  const [daoName, setDaoName] = useState('');
-  const [daoSymbol, setDaoSymbol] = useState('');
-  const [daoDecimals, setDaoDecimals] = useState(18);
-  const [daoSupply, setDaoSupply] = useState('0');
-  const [myDaoBalance, setMyDaoBalance] = useState('0');
+  const [GGName, setGGName] = useState('');
+  const [GGSymbol, setGGSymbol] = useState('');
+  const [GGDecimals, setGGDecimals] = useState(18);
+  const [GGSupply, setGGSupply] = useState('0');
+  const [myGGBalance, setMyGGBalance] = useState('0');
 
   const [ioUMint, setIoUMint] = useState('');
   const [usdcToken, setUsdcToken] = useState('');
@@ -144,54 +143,69 @@ function DAOLoanManagerUI() {
   const [priceFeed, setPriceFeed] = useState('');
   const [latestPrice, setLatestPrice] = useState('');
 
+  // Whether we can call `openLoan()`
+  const [canOpenLoan, setCanOpenLoan] = useState(false);
+
   // The enumerated loans array
   const [loans, setLoans] = useState([]);
 
   // Manager-level write inputs
   const [startLoanGoal, setStartLoanGoal] = useState('');
+  const [startLoanToken, setStartLoanToken] = useState(usdcToken);
   const [annualInterest, setAnnualInterest] = useState('');
   const [platformFee, setPlatformFee] = useState('');
   const [feeAddress, setFeeAddress] = useState('');
   const [loanIOUConversionRate, setLoanIOUConversionRate] = useState('1.0');
 
+  // For the older draw/buy calls
   const [drawLoanIndex, setDrawLoanIndex] = useState('');
   const [drawAmount, setDrawAmount] = useState('');
-
   const [buyLoanIndex, setBuyLoanIndex] = useState('');
   const [buyUsdcAmount, setBuyUsdcAmount] = useState('');
 
+  // "repayLoan(loanIndex)" input
   const [repayLoanIndex, setRepayLoanIndex] = useState('');
+
+  // ** NEW: repayLoanUSDC(loanIndex, usdcAmount) inputs **
+  const [repayLoanIndexUSDC, setRepayLoanIndexUSDC] = useState('');
   const [repayUsdcAmount, setRepayUsdcAmount] = useState('');
 
+  // For swapping IOU
   const [swapIndex, setSwapIndex] = useState(0);
   const [swapIOUAmount, setSwapIOUAmount] = useState('');
 
+  // For setting the IOU conversion rate
   const [setIndex, setSetIndex] = useState('');
   const [newRate, setNewRate] = useState('');
 
+  // For redeeming IOUs -> ETH
   const [redeemLoanIndex, setRedeemLoanIndex] = useState('');
+
+  // For burning GG -> ETH
   const [burnAmount, setBurnAmount] = useState('');
 
   // Per-loan user input (fund, etc.)
   const [fundInput, setFundInput] = useState('');
 
-  // ------------------------------
+  // For previewing burn → ETH
+  const [burnPreview, setBurnPreview] = useState('0');
+
+  // -------------------------------------------------------------------
   // 1) fetchManagerData
-  // ------------------------------
+  // -------------------------------------------------------------------
   async function fetchManagerData() {
     if (!managerContract) return;
 
     try {
-      // Basic manager info
       const [
-        _allRepaid,
+        _canCreate,
         _ethFromMint,
-        _daoName,
-        _daoSymbol,
-        _daoDecimals,
-        _daoSupply
+        _GGName,
+        _GGSymbol,
+        _GGDecimals,
+        _GGSupply
       ] = await Promise.all([
-        managerContract.allLoansFullyRepaid(),
+        managerContract.canCreateLoan(),
         managerContract.ethFromMint(),
         managerContract.name(),
         managerContract.symbol(),
@@ -215,31 +229,30 @@ function DAOLoanManagerUI() {
         managerContract.getLatestPrice()
       ]);
 
-      let myDaoBal = 0n;
+      let myGGBal = 0n;
       if (userAddress) {
-        myDaoBal = await managerContract.balanceOf(userAddress);
+        myGGBal = await managerContract.balanceOf(userAddress);
       }
 
       // Manager contract's own ETH balance
-      const contractEthBal = await provider.getBalance(DAOLoanManagerAddress);
+      const contractEthBal = await provider.getBalance(GGLoanManagerAddress);
 
-      // Set states
-      setAllRepaid(_allRepaid);
+      setCanOpenLoan(_canCreate);
       setEthFromMint(ethers.formatEther(_ethFromMint));
-      setDaoName(_daoName);
-      setDaoSymbol(_daoSymbol);
-      setDaoDecimals(_daoDecimals);
-      setDaoSupply(ethers.formatUnits(_daoSupply, _daoDecimals));
-      setMyDaoBalance(ethers.formatUnits(myDaoBal, _daoDecimals));
+      setGGName(_GGName);
+      setGGSymbol(_GGSymbol);
+      setGGDecimals(Number(_GGDecimals));
+      setGGSupply(ethers.formatUnits(_GGSupply, _GGDecimals));
+      setMyGGBalance(ethers.formatUnits(myGGBal, _GGDecimals));
       setIoUMint(_ioUMint);
       setUsdcToken(_usdcToken);
       setSwapRouter(_swapRouter);
       setWethAddress(_wethAddress);
       setPriceFeed(_priceFeed);
 
-      const formatted = ethers.formatUnits(_latestPrice, 8);
-      setLatestPrice(formatted);
-      setDaoEthBalance(ethers.formatEther(contractEthBal));
+      const formattedPrice = ethers.formatUnits(_latestPrice, 8);
+      setLatestPrice(formattedPrice);
+      setGGEthBalance(ethers.formatEther(contractEthBal));
 
       // Enumerate loans
       const discovered = await fetchLoans();
@@ -250,9 +263,9 @@ function DAOLoanManagerUI() {
     }
   }
 
-  // ------------------------------
+  // -------------------------------------------------------------------
   // 2) fetchLoans
-  // ------------------------------
+  // -------------------------------------------------------------------
   async function fetchLoans() {
     if (!managerContract) return [];
     const MAX_LOANS = 50;
@@ -263,29 +276,31 @@ function DAOLoanManagerUI() {
         const ln = await managerContract.loans(i);
         results.push({
           index: i,
-          loanAddress: ln[0],
-          loanGoal: ethers.formatUnits(ln[1], 6),
-          totalDrawnDown: ethers.formatUnits(ln[2], 6),
-          loanDrawn: ln[3],
-          loanDrawnTime: ln[4].toString(),
-          fullyRepaid: ln[5],
-          iouConversionRate: ethers.formatUnits(ln[6], 18),
-          totalBuyETH: ethers.formatEther(ln[7]),
-          soldETH: ethers.formatEther(ln[8]),
-          profitETH: ethers.formatEther(ln[9])
+          loanAddress: ln.loanAddress,
+          loanGoal: ethers.formatUnits(ln.loanGoal, 6),
+          totalDrawnDown: ethers.formatUnits(ln.totalDrawnDown, 6),
+          loanDrawn: ln.loanDrawn,
+          loanDrawnTime: ln.loanDrawnTime.toString(),
+          fullyRepaid: ln.fullyRepaid,
+          iouConversionRate: ethers.formatUnits(ln.iouConversionRate, 18),
+          totalBuyETH: ethers.formatEther(ln.totalBuyETH),
+          soldETH: ethers.formatEther(ln.soldETH),
+          profitETH: ethers.formatEther(ln.profitETH)
         });
       } catch (err) {
-        break; // we assume no more loans
+        // no more loans
+        break;
       }
     }
 
-    // Now call IOUMint.getSpotInfo to get borrower, iouName, userIOUBalance, etc.
+    // If we have none or no user, skip the IOUMint extras
     if (!IOUMintContract || !userAddress || results.length === 0) {
       return results;
     }
 
     const addresses = results.map((r) => r.loanAddress);
     try {
+      // 1) Retrieve user-lens info from IOUMint
       const infoArray = await IOUMintContract.getSpotInfo(addresses, userAddress);
       infoArray.forEach((info, i) => {
         const {
@@ -303,8 +318,7 @@ function DAOLoanManagerUI() {
           repayments,
           updatedTotalOwed,
           totalSupply,
-          redeemed,
-        
+          redeemed
         } = info;
 
         results[i].borrower = borrower;
@@ -314,13 +328,41 @@ function DAOLoanManagerUI() {
         results[i].userIOUBalance = ethers.formatUnits(myIOUs, 18);
         results[i].claimableInterest = ethers.formatUnits(interestClaimable, underlyingDecimals);
         results[i].underlyingSymbol = underlyingSymbol;
+        results[i].underlyingDecimals = underlyingDecimals;
         results[i].totalFunded = ethers.formatUnits(totalFunded, 6);
         results[i].underlyingBalance = ethers.formatUnits(underlyingBalance, underlyingDecimals);
         results[i].interestrepayments = ethers.formatUnits(interestrepayments, underlyingDecimals);
-        results[i].repayments = ethers.formatUnits(totalFunded, 6);
+        results[i].repayments = ethers.formatUnits(repayments, underlyingDecimals);
         results[i].updatedTotalOwed = ethers.formatUnits(updatedTotalOwed, underlyingDecimals);
-        results[i].redeemable = Number(ethers.formatUnits(((repayments-interestrepayments)-redeemed),underlyingDecimals))/(Number(ethers.formatUnits(totalSupply, 18))>0?Number(ethers.formatUnits(totalSupply, 18)):1);
+
+        // approximate share for "redeemable" display:
+        const numericRepayments = parseFloat(results[i].repayments || '0');
+        const numericInterestRepayments = parseFloat(results[i].interestrepayments || '0');
+        const numericRedeemed = parseFloat(ethers.formatUnits(redeemed, underlyingDecimals));
+
+        // total principal repaid - interest portion
+        const principalRepaid = numericRepayments - numericInterestRepayments;
+        const numericTotalSupply = parseFloat(ethers.formatUnits(totalSupply, 18)) || 1;
+        const redeemedSoFar = numericRedeemed;
+        const rawShare = principalRepaid - redeemedSoFar;
+        const perIOU = rawShare / numericTotalSupply;
+
+        results[i].redeemable = perIOU;
       });
+
+      // 2) Fetch manager contract’s IOU balance for each loan
+      const managerIOUBalances = await Promise.all(
+        addresses.map(async (loanAddr) => {
+          const iouToken = new ethers.Contract(loanAddr, ERC20ABI, provider);
+          const bal = await iouToken.balanceOf(GGLoanManagerAddress);
+          return bal;
+        })
+      );
+      managerIOUBalances.forEach((bal, i) => {
+        // Assuming IOU tokens have 18 decimals:
+        results[i].managerIOUBalance = ethers.formatUnits(bal, 18);
+      });
+
     } catch (err) {
       console.error("IOUMint getSpotInfo error:", err);
     }
@@ -328,9 +370,9 @@ function DAOLoanManagerUI() {
     return results;
   }
 
-  // ------------------------------
+  // -------------------------------------------------------------------
   // 3) Manager-level writes
-  // ------------------------------
+  // -------------------------------------------------------------------
   function getMgr() {
     if (!signer) {
       toast.error('Connect wallet first');
@@ -343,20 +385,34 @@ function DAOLoanManagerUI() {
     try {
       const mgr = getMgr();
       if (!mgr) return;
-      const _goal = ethers.parseUnits(startLoanGoal || '0', 6);
-      const _annual = annualInterest ? BigInt(annualInterest) : 0n;
-      const _platform = platformFee ? BigInt(platformFee) : 0n;
+      const goal = ethers.parseUnits(startLoanGoal || '0', 6);
+      const annual = annualInterest ? BigInt(annualInterest) : 0n;
+      const pFee = platformFee ? BigInt(platformFee) : 0n;
       const feeAddr = feeAddress || ethers.ZeroAddress;
       const iouRate = ethers.parseUnits(loanIOUConversionRate || '1.0', 18);
 
-      const tx = await mgr.startLoan(_goal, _annual, _platform, feeAddr, iouRate);
+      const tx = await mgr.startLoan(goal, startLoanToken, annual, pFee, feeAddr, iouRate);
       await tx.wait();
-
       toast.success("startLoan successful!");
       fetchManagerData();
     } catch (err) {
       console.error(err);
       toast.error("startLoan failed");
+    }
+  };
+
+  const handleOpenLoan = async () => {
+    try {
+      const mgr = getMgr();
+      if (!mgr) return;
+
+      const tx = await mgr.openLoan();
+      await tx.wait();
+      toast.success("openLoan successful!");
+      fetchManagerData();
+    } catch (err) {
+      console.error(err);
+      toast.error("openLoan failed");
     }
   };
 
@@ -394,14 +450,14 @@ function DAOLoanManagerUI() {
     }
   };
 
+  // aggregator repayLoan(loanIndex)
   const handleRepayLoan = async () => {
     try {
       const mgr = getMgr();
       if (!mgr) return;
       const idx = parseInt(repayLoanIndex) || 0;
-      const amt = ethers.parseUnits(repayUsdcAmount || '0', 6);
 
-      const tx = await mgr.repayLoan(idx, amt);
+      const tx = await mgr.repayLoan(idx);
       await tx.wait();
       toast.success("repayLoan successful");
       fetchManagerData();
@@ -411,6 +467,25 @@ function DAOLoanManagerUI() {
     }
   };
 
+  // repayLoanUSDC(loanIndex, usdcAmount)
+  const handleRepayLoanUSDC = async () => {
+    try {
+      const mgr = getMgr();
+      if (!mgr) return;
+      const idx = parseInt(repayLoanIndexUSDC) || 0;
+      const amt = ethers.parseUnits(repayUsdcAmount || '0', 6);
+
+      const tx = await mgr.repayLoanUSDC(idx, amt);
+      await tx.wait();
+      toast.success("repayLoanUSDC successful");
+      fetchManagerData();
+    } catch (err) {
+      console.error(err);
+      toast.error("repayLoanUSDC failed");
+    }
+  };
+
+  // swapIOUForMintTokens
   const handleSwapIOU = async () => {
     try {
       const mgr = getMgr();
@@ -418,14 +493,14 @@ function DAOLoanManagerUI() {
       const idx = parseInt(swapIndex, 10) || 0;
       const amt = ethers.parseUnits(swapIOUAmount || '0', 18);
 
-      // Approve the IOU token
+      // Approve the IOU token first
       const ln = await managerContract.loans(idx);
-      const iouAddr = ln[0];
+      const iouAddr = ln.loanAddress;
       const iouToken = new ethers.Contract(iouAddr, ERC20ABI, signer);
 
-      const allowance = await iouToken.allowance(userAddress, DAOLoanManagerAddress);
+      const allowance = await iouToken.allowance(userAddress, GGLoanManagerAddress);
       if (allowance < amt) {
-        const approveTx = await iouToken.approve(DAOLoanManagerAddress, amt);
+        const approveTx = await iouToken.approve(GGLoanManagerAddress, amt);
         await approveTx.wait();
         toast.success(`Approved IOU for loan #${idx}`);
       }
@@ -440,6 +515,7 @@ function DAOLoanManagerUI() {
     }
   };
 
+  // setIOUConversionRate – placeholder if your contract has such a function
   const handleSetIOURate = async () => {
     try {
       const mgr = getMgr();
@@ -447,9 +523,11 @@ function DAOLoanManagerUI() {
       const idx = parseInt(setIndex) || 0;
       const parsed = ethers.parseUnits(newRate || '1.0', 18);
 
-      const tx = await mgr.setIOUConversionRate(idx, parsed);
+      // Example only (placeholder):
+      const tx = await mgr.startLoan(idx, parsed); // This is not the real function; adapt as needed.
       await tx.wait();
-      toast.success("setIOUConversionRate successful");
+
+      toast.success("IOU Conversion Rate updated!");
       fetchManagerData();
     } catch (err) {
       console.error(err);
@@ -457,15 +535,14 @@ function DAOLoanManagerUI() {
     }
   };
 
-  const handleRedeemIOUs = async () => {
+  // aggregator redeemHeldIOUsAndSwapToETH
+  const handleRedeemIOUs = async (loanIndex) => {
     try {
       const mgr = getMgr();
       if (!mgr) return;
-      const idx = parseInt(redeemLoanIndex) || 0;
-
-      const tx = await mgr.redeemHeldIOUsAndSwapToETH(idx);
+      const tx = await mgr.redeemHeldIOUsAndSwapToETH(loanIndex);
       await tx.wait();
-      toast.success("redeemHeldIOUsAndSwapToETH successful");
+      toast.success(`redeemHeldIOUsAndSwapToETH successful for loan #${loanIndex}`);
       fetchManagerData();
     } catch (err) {
       console.error(err);
@@ -477,21 +554,21 @@ function DAOLoanManagerUI() {
     try {
       const mgr = getMgr();
       if (!mgr) return;
-      const parsed = ethers.parseUnits(burnAmount || '0', daoDecimals);
+      const parsed = ethers.parseUnits(burnAmount || '0', GGDecimals);
 
-      const tx = await mgr.burnDAOForETH(parsed);
+      const tx = await mgr.BurnDAOForETH(parsed);
       await tx.wait();
-      toast.success("burnDAOForETH successful");
+      toast.success("BurnDAOForETH successful");
       fetchManagerData();
     } catch (err) {
       console.error(err);
-      toast.error("burnDAOForETH failed");
+      toast.error("BurnDAOForETH failed");
     }
   };
 
-  // ------------------------------
-  // 4) Per-loan user actions
-  // ------------------------------
+  // -------------------------------------------------------------------
+  // 4) Per-loan user actions (fund, redeem, claim, unfund)
+  // -------------------------------------------------------------------
   function getSpotIOULoanContract(loanAddr) {
     if (!loanAddr || !signer) return null;
     return new ethers.Contract(loanAddr, SpotIOULoanABI, signer);
@@ -508,7 +585,7 @@ function DAOLoanManagerUI() {
 
       const tokenAddr = await loan.loanToken();
       if (tokenAddr === ethers.ZeroAddress) {
-        toast.error("Native-asset funding not supported in snippet");
+        toast.error("Native-asset funding not implemented in this snippet");
         return;
       }
       // Approve + fund
@@ -592,49 +669,73 @@ function DAOLoanManagerUI() {
       console.error(err);
       toast.error("Error unfunding loan");
     }
-  }// Pseudocode in your main component:
-
-// Additional state for showing user’s potential “Burn → ETH” share
-const [burnPreview, setBurnPreview] = useState('0');
-
-// Re-compute whenever burnAmount, loans, or other related values change
-useEffect(() => {
-  if (!burnAmount || parseFloat(burnAmount) <= 0 || parseFloat(daoSupply) <= 0) {
-    setBurnPreview('0');
-    return;
   }
 
-  // 1) sum up all profitETH from your enumerated loans
-  let totalProfit = 0;
-  for (const ln of loans) {
-    totalProfit += parseFloat(ln.profitETH) || 0;
-  }
+  // -------------------------------------------------------------------
+  // 5) Quick “drawDownAndBuyETH” + “repayLoan” from the new contract
+  // -------------------------------------------------------------------
+  const handleDrawDownAndBuy = async (loanIndex) => {
+    try {
+      const mgr = getMgr();
+      if (!mgr) return;
+      const tx = await mgr.drawDownAndBuyETH(loanIndex);
+      await tx.wait();
+      toast.success(`drawDownAndBuyETH on loan #${loanIndex} complete`);
+      fetchManagerData();
+    } catch (err) {
+      console.error(err);
+      toast.error(`drawDownAndBuyETH failed for loan #${loanIndex}`);
+    }
+  };
 
-  // 2) totalDistribution = totalProfit + ethFromMint
-  const totalDistribution = totalProfit + parseFloat(ethFromMint || '0');
+  const handleQuickRepay = async (loanIndex) => {
+    try {
+      const mgr = getMgr();
+      if (!mgr) return;
+      const tx = await mgr.repayLoan(loanIndex);
+      await tx.wait();
+      toast.success(`repayLoan on loan #${loanIndex} complete`);
+      fetchManagerData();
+    } catch (err) {
+      console.error(err);
+      toast.error(`repayLoan failed for loan #${loanIndex}`);
+    }
+  };
 
-  // 3) fraction = burnAmount / daoSupply
-  const fraction = parseFloat(burnAmount) / parseFloat(daoSupply);
+  // -------------------------------------------------------------------
+  // 6) burnPreview calculation whenever burnAmount changes
+  // -------------------------------------------------------------------
+  useEffect(() => {
+    if (!burnAmount || parseFloat(burnAmount) <= 0 || parseFloat(GGSupply) <= 0) {
+      setBurnPreview('0');
+      return;
+    }
 
-  // 4) approximate userShare
-  const userShare = fraction * totalDistribution;
+    let totalProfit = 0;
+    for (const ln of loans) {
+      totalProfit += parseFloat(ln.profitETH) || 0;
+    }
 
-  setBurnPreview(userShare.toFixed(18));
-}, [burnAmount, loans, ethFromMint, daoSupply]);
+    const totalDistribution = totalProfit + parseFloat(ethFromMint || '0');
+    const fraction = parseFloat(burnAmount) / parseFloat(GGSupply);
+    const userShare = fraction * totalDistribution;
 
+    setBurnPreview(userShare.toFixed(6));
+  }, [burnAmount, loans, ethFromMint, GGSupply]);
 
-  // ------------------------------
+  // -------------------------------------------------------------------
   // On mount or user change
-  // ------------------------------
+  // -------------------------------------------------------------------
   useEffect(() => {
     if (managerContract) {
       fetchManagerData();
     }
+    // eslint-disable-next-line
   }, [managerContract, userAddress]);
 
-  // ------------------------------
+  // -------------------------------------------------------------------
   // Render
-  // ------------------------------
+  // -------------------------------------------------------------------
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-pink-50 to-rose-100 text-gray-800 px-4 py-6">
       <Toaster position="top-right" />
@@ -642,83 +743,88 @@ useEffect(() => {
       {/* Header */}
       <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center">
         <div className="absolute top-0 right-0 p-4">
-        <ConnectButton />
+          <ConnectButton />
         </div>
       </header>
       
-        <h1 className="text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4">
-            ✨ GigaStrat ✨
-          </h1>
-          <h2 className="text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]">
-          {Number(daoEthBalance).toFixed(4)} ETH HODLD
-        </h2>
-        <h2 className="text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1">
-          {Number(myDaoBalance).toFixed(4)} GG
-        </h2>
+      <h1 className="text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4">
+        ✨ GigaStrat ✨
+      </h1>
 
-        {/* swapIOUForMintTokens */}
-        <div className="">
-        <div className="max-w-6xl mx-auto mt-6 text-center">
-          <div className='bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px]  mx-auto'>
+      <h2 className="text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]">
+        {Number(GGEthBalance).toFixed(4)} ETH HODLD
+      </h2>
+      <h2 className="text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1">
+        {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
+      </h2>
+
+      {/* Swap IOU → GG & Burn GG → ETH */}
+      <div className="max-w-6xl mx-auto mt-6 text-center">
+        <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px] mx-auto">
           <h3 className="text-lg font-semibold text-green-600 mb-3">
-            🌱 Swap IOU → DAO
+            🌱 Swap IOU → GG
           </h3>
-            <select
-              className="w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold"
-              placeholder="Loan index"
-              value={swapIndex}
-              onChange={(e) => setSwapIndex(e.target.value)}
-            >
-              {loans.map((ln) => (
-                <option key={ln.index} value={ln.index}>
-                  #{ln.index} - {ln.userIOUBalance} {ln.iouName} @ {ln.iouConversionRate}
-                </option>
-              ))}
-              </select>
-            <input
-              className="w-full px-3 py-2 bg-green-200 rounded-full border border-green-100 mb-2"
-              placeholder="IOU amount"
-              value={swapIOUAmount}
-              onChange={(e) => setSwapIOUAmount(e.target.value)}
-            />
-            <p className="text-green-500 font-semibold">
-              {swapIOUAmount} IOU → {Number(swapIOUAmount) / Number(loans[swapIndex]?.iouConversionRate)} GG
+          <select
+            className="w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold"
+            value={swapIndex}
+            onChange={(e) => setSwapIndex(e.target.value)}
+          >
+            {loans.map((ln) => (
+              <option key={ln.index} value={ln.index}>
+                #{ln.index} - {ln.userIOUBalance} {ln.iouSymbol} @ rate {ln.iouConversionRate}
+              </option>
+            ))}
+          </select>
+          <input
+            className="w-full px-3 py-2 bg-green-200 rounded-full border border-green-100 mb-2"
+            placeholder="IOU amount"
+            value={swapIOUAmount}
+            onChange={(e) => setSwapIOUAmount(e.target.value)}
+          />
+          <p className="text-green-500 font-semibold">
+            {swapIOUAmount || 0} IOU →{" "}
+            {loans[swapIndex]
+              ? (
+                  Number(swapIOUAmount || 0) /
+                  Number(loans[swapIndex].iouConversionRate || 1)
+                ).toFixed(4)
+              : 0}{" "}
+            {GGSymbol}
+          </p>
+          <button
+            onClick={handleSwapIOU}
+            className="w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors"
+          >
+            Mint GG
+          </button>
+
+          <h3 className="text-lg font-semibold text-pink-600 mt-6 mb-3">
+            🔥 Burn GG for ETH
+          </h3>
+          <input
+            className="w-full px-3 py-2 bg-white rounded-full border border-pink-100"
+            placeholder={`Amount of ${GGSymbol}`}
+            value={burnAmount}
+            onChange={(e) => setBurnAmount(e.target.value)}
+          />
+          {burnAmount && parseFloat(burnAmount) > 0 && (
+            <p className="text-pink-600 font-semibold">
+              {burnAmount} {GGSymbol} → ~{burnPreview} ETH
             </p>
-            <button
-              onClick={handleSwapIOU}
-              className="w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors"
-            >
-              Mint DAO
-            </button>
-            <h3 className="text-lg font-semibold text-pink-600 m-3">
-            🔥 Burn DAO for ETH
-          </h3>
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-pink-100"
-              placeholder="Amount of DAO"
-              value={burnAmount}
-              onChange={(e) => setBurnAmount(e.target.value)}
-            />
-            {burnAmount && parseFloat(burnAmount) > 0 && (
-              <p className="text-pink-600 font-semibold">
-                {burnAmount} GG → {burnPreview} ETH
-              </p>
-            )}
-            <button
-              onClick={handleBurnDAOForETH}
-              className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2"
-            >
-              Burn DAO
-            </button>
-          </div>
-          </div>
+          )}
+          <button
+            onClick={handleBurnDAOForETH}
+            className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2"
+          >
+            Burn GG
+          </button>
         </div>
+      </div>
 
-
-      {/* 5) Loan List + Per-Loan Actions */}
+      {/* Loans list */}
       <div className="max-w-7xl mx-auto mt-8 p-2">
         <h2 className="text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400">
-          DAO Loans 
+          GG Loans
         </h2>
 
         {loans.length === 0 ? (
@@ -726,127 +832,153 @@ useEffect(() => {
             No loans found or none discovered so far.
           </p>
         ) : (
-          <div className="space-y-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {loans.map((ln) => (
               <div
                 key={ln.index}
-                className="bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto w-3xl"
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto"
               >
-                  <div className="mt-1 mx-auto">
-                    {ln.fullyRepaid ? (
-                      <span className="inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full">
-                        Fully Repaid
-                        <span className="text-xs text-gray-500"> - 
-                          Drawn on:{" "}
-                          {new Date(parseInt(ln.loanDrawnTime, 10) * 1000).toLocaleDateString()}
-                        </span>
-                      </span>
-                    ) : (
-                      <span className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full">
-                        Not Repaid - 
-                        <span className="text-xs text-gray-500">
-                          Drawn on:{" "}
-                          {new Date(parseInt(ln.loanDrawnTime, 10) * 1000).toLocaleDateString()}
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-lg font-semibold text-pink-600 mt-2">
-                  <span className="text-white bg-blue-300 rounded-full px-2 py-1 w-1/2 mx-auto font-semibold mt-4">
-                      {ln.iouName}
-                    </span><span className="text-white bg-blue-200 rounded-full px-2 py-1 w-1/2 mx-auto font-semibold ml-1 mt-4">
-                      {ln.iouSymbol}
+                {/* Repaid or not */}
+                <div className="mt-1 mx-auto">
+                  {ln.fullyRepaid ? (
+                    <span className="inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full">
+                      Fully Repaid
                     </span>
-                    </p>
-                    <p className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0">
-                      {ln.iouConversionRate} IOU per GG
-                    </p>
-                {/* Loan Info */}
-                <div className="text-sm text-gray-700 mb-3 md:mb-0 text-center justify-center align-middle grid grid-cols-2 gap-2">
+                  ) : (
+                    <span className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full">
+                      Not Repaid
+                    </span>
+                  )}
+                  {ln.loanDrawnTime !== '0' && (
+                    <span className="text-xs text-gray-500 ml-1">
+                      (drawn on{" "}
+                      {new Date(
+                        parseInt(ln.loanDrawnTime, 10) * 1000
+                      ).toLocaleDateString()}
+                      )
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-lg font-semibold text-pink-600 mt-2">
+                  <span className="text-white bg-blue-300 rounded-full px-2 py-1 font-semibold">
+                    {ln.iouName}
+                  </span>{" "}
+                  <span className="text-white bg-blue-200 rounded-full px-2 py-1 ml-1 font-semibold">
+                    {ln.iouSymbol}
+                  </span>
+                </p>
+                <p className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0">
+                  {ln.iouConversionRate} IOU per {GGSymbol}
+                </p>
+
+                <div className="text-sm text-gray-700 mb-3 text-center grid grid-cols-2 gap-2 mt-2">
                   <p className="absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl">
                     {ln.index}
                   </p>
-                  <div className="">
-                  <p className="text-pink-600 font-semibold text-lg mt-2">
-                    Loan Goal
-                  </p>
-                  <p className="text-xl font-semibold text-white text-center bg-pink-200 rounded-full px-1 py-1">
-                    {ln.loanGoal} USDC
-                  </p>
-                  </div>
-                  <div className="">
-                    <p className="text-pink-600 font-semibold text-lg mt-2">
-                      Bought
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">Goal</p>
+                    <p className="text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1">
+                      {ln.loanGoal} USDC
                     </p>
-                  <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                  {Number(ln.totalBuyETH).toFixed(4)} ETH
-                  </p>
                   </div>
-                  
-                  <div className="grid-2">
-                    <p className="text-pink-600 font-semibold text-lg">
-                    Filled
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">Bought</p>
+                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.totalBuyETH).toFixed(4)} ETH
                     </p>
-                  <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                  {Number(ln.totalFunded).toFixed(4)} USDC
-                  </p>
                   </div>
-                  <div className="">
-                    <p className="text-pink-600 font-semibold text-lg">
-                      Drawn
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">Funded</p>
+                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.totalFunded || '0').toFixed(4)} USDC
                     </p>
-                  <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                  {Number(ln.totalDrawnDown).toFixed(4)} USDC
-                  </p>
                   </div>
-                  <div className="">
-                    <p className="text-pink-600 font-semibold text-lg w-full">
-                      My IOUs
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">Drawn</p>
+                    <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.totalDrawnDown).toFixed(4)} USDC
                     </p>
-                    <p className="bg-blue-300 text-white rounded-full px-2 py-1 w-1/2 mx-auto font-semibold text-xl w-full">
+                  </div>
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">My IOUs</p>
+                    <p className="bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
                       {ln.userIOUBalance} {ln.iouSymbol}
                     </p>
-                    </div>
-                    <div>
-                    <p className="text-yellow-600 font-semibold text-lg w-full">
+                  </div>
+                  <div>
+                    <p className="text-yellow-600 font-semibold text-lg">
                       Repaid
                     </p>
-                    <p className="bg-yellow-300 text-white rounded-full px-2 py-1 w-1/2 mx-auto font-semibold text-xl w-full">
-                      {ln.repayments-ln.interestrepayments} {ln.underlyingSymbol}
+                    <p className="bg-yellow-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                      {Number(ln.repayments || '0').toFixed(4)}{" "}
+                      {ln.underlyingSymbol}
                     </p>
-                    </div>
-                    <div>
+                  </div>
+                  <div>
                     <p className="text-green-600 font-semibold text-lg">
-                      Claimable Interest
+                      Interest
                     </p>
                     <p className="bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
                       {ln.claimableInterest} {ln.underlyingSymbol}
                     </p>
-                    </div>
-                    <div>
+                  </div>
+                  <div>
                     <p className="text-pink-600 font-semibold text-lg">
-                      My {ln.underlyingSymbol}
+                      Balance
                     </p>
                     <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                      {Number(ln.underlyingBalance).toFixed(4)} {ln.underlyingSymbol}
+                      {Number(ln.underlyingBalance || '0').toFixed(4)}{" "}
+                      {ln.underlyingSymbol}
                     </p>
-                    </div>
-                    <div className="">
-                    <p className="text-pink-600 font-semibold text-lg">
-                      Owed
-                    </p>
+                  </div>
+                  <div>
+                    <p className="text-pink-600 font-semibold text-lg">Owed</p>
                     <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                      {Number(ln.updatedTotalOwed).toFixed(4)} {ln.underlyingSymbol}
+                      {Number(ln.updatedTotalOwed || '0').toFixed(4)}{" "}
+                      {ln.underlyingSymbol}
                     </p>
-                </div>
-                <div className="">
+                  </div>
+                  <div>
                     <p className="text-orange-600 font-semibold text-lg">
-                      Redeemable per IOU
+                      Redeemable
                     </p>
                     <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
-                      {Number(ln.redeemable).toFixed(4)} {ln.underlyingSymbol}
+                      {ln.redeemable ? ln.redeemable.toFixed(4) : '0'}{" "}
+                      {ln.underlyingSymbol}/IOU
                     </p>
-                    </div>
+                  </div>
+                </div>
+
+                {/* The quick combo calls as small emoji buttons */}
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  {/* drawDownAndBuy */}
+                  {!ln.fullyRepaid && (
+                    <button
+                      onClick={() => handleDrawDownAndBuy(ln.index)}
+                      className="bg-green-200 hover:bg-green-300 text-green-600 px-2 py-1 rounded-full font-bold"
+                    >
+                      🍃
+                    </button>
+                  )}
+                  {/* repayLoan */}
+                  {!ln.fullyRepaid && (
+                    <button
+                      onClick={() => handleQuickRepay(ln.index)}
+                      className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold"
+                    >
+                      🫧
+                    </button>
+                  )}
+                  {/* 🪄 ONLY show if managerIOUBalance > 0 */}
+                  {parseFloat(ln.managerIOUBalance || "0") > 0 && (
+                    <button
+                      onClick={() => handleRedeemIOUs(ln.index)}
+                      className="bg-purple-200 hover:bg-purple-300 text-purple-600 px-2 py-1 rounded-full font-bold"
+                    >
+                      🪄
+                    </button>
+                  )}
                 </div>
 
                 {/* Fund input + actions */}
@@ -857,7 +989,7 @@ useEffect(() => {
                   value={fundInput}
                   onChange={(e) => setFundInput(e.target.value)}
                 />
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 justify-center">
                   <button
                     onClick={() => fundLoan(ln.loanAddress, fundInput)}
                     className="bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
@@ -885,228 +1017,271 @@ useEffect(() => {
                 </div>
               </div>
             ))}
+
+            {/* "Open Loan" if canCreateLoan is true, else a placeholder */}
+            <div 
+              className="bg-green-100 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 
+                        text-center flex items-center justify-center"
+            >
+              {canOpenLoan ? (
+                <button
+                  onClick={handleOpenLoan}
+                  className="text-3xl font-semibold text-white bg-pink-400 rounded-full p-4 hover:bg-pink-500"
+                >
+                  🌱 Open Next Loan
+                </button>
+              ) : (
+                <h3 className="text-3xl font-semibold text-white bg-gray-300 rounded-full p-4">
+                  Fill all loans to create more.
+                </h3>
+              )}
+            </div>
           </div>
         )}
       </div>
-      {/* Manager summary */}
-      {userAddress=='0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5' && (<>
-      <div className="max-w-6xl mx-auto mb-6 bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-        <h2 className="text-lg font-semibold text-pink-600">
-          Global Status 🌸
-        </h2>
-        <div className="text-sm space-y-2 mt-2">
-          <div className="grid md:grid-cols-2 gap-2">
-            <div>
-              <p><span className="font-semibold text-rose-600">DAO Name/Symbol:</span> {daoName} ({daoSymbol})</p>
-              <p><span className="font-semibold text-rose-600">Decimals:</span> {daoDecimals}</p>
-              <p><span className="font-semibold text-rose-600">DAO Supply:</span> {daoSupply}</p>
-              <p><span className="font-semibold text-rose-600">My DAO Balance:</span> {myDaoBalance}</p>
+
+      {/* Manager summary only if the user is the special address */}
+      {userAddress?.toLowerCase() === '0x9d31e30003f253563ff108bc60b16fdf2c93abb5'.toLowerCase() && (
+        <>
+          <div className="max-w-6xl mx-auto mb-6 bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+            <h2 className="text-lg font-semibold text-pink-600">
+              Global Status 🌸
+            </h2>
+            <div className="text-sm space-y-2 mt-2">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <p><span className="font-semibold text-rose-600">GG Name/Symbol:</span> {GGName} ({GGSymbol})</p>
+                  <p><span className="font-semibold text-rose-600">Decimals:</span> {GGDecimals}</p>
+                  <p><span className="font-semibold text-rose-600">GG Supply:</span> {GGSupply}</p>
+                  <p><span className="font-semibold text-rose-600">My GG Balance:</span> {myGGBalance}</p>
+                </div>
+                <div>
+                  <p><span className="font-semibold text-rose-600">ethFromMint:</span> {ethFromMint}</p>
+                  <p><span className="font-semibold text-rose-600">GG’s ETH:</span> {GGEthBalance} ETH</p>
+                </div>
+              </div>
+
+              <hr className="border-rose-200 my-2"/>
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <p><span className="font-semibold text-rose-600">Price Feed:</span> {priceFeed}</p>
+                  <p><span className="font-semibold text-rose-600">Latest Price:</span> {latestPrice}</p>
+                </div>
+                <div>
+                  <p><span className="font-semibold text-rose-600">ioUMint:</span> {ioUMint}</p>
+                  <p><span className="font-semibold text-rose-600">USDC Token:</span> {usdcToken}</p>
+                  <p><span className="font-semibold text-rose-600">Swap Router:</span> {swapRouter}</p>
+                  <p><span className="font-semibold text-rose-600">WETH Address:</span> {wethAddress}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p>
-                <span className="font-semibold text-rose-600">All Loans Repaid?:</span>
-                {allRepaid ? <span className="text-green-600 ml-1">Yes</span> : <span className="text-red-500 ml-1">No</span>}
-              </p>
-              <p><span className="font-semibold text-rose-600">ethFromMint:</span> {ethFromMint}</p>
-              <p><span className="font-semibold text-rose-600">DAO’s ETH:</span> {daoEthBalance} ETH</p>
+          </div>
+
+          {/* Manager-level calls */}
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
+            {/* startLoan */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-pink-600 mb-3">💖 Start a New Loan</h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="Loan Goal (USDC, 6 decimals)"
+                  value={startLoanGoal}
+                  onChange={(e) => setStartLoanGoal(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="Underlying token address"
+                  value={startLoanToken}
+                  onChange={(e) => setStartLoanToken(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="Annual Interest Rate (bps)"
+                  value={annualInterest}
+                  onChange={(e) => setAnnualInterest(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="Platform Fee Rate (bps)"
+                  value={platformFee}
+                  onChange={(e) => setPlatformFee(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="Fee Address"
+                  value={feeAddress}
+                  onChange={(e) => setFeeAddress(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  placeholder="IOU→GG rate (e.g. 1.0 => 1e18)"
+                  value={loanIOUConversionRate}
+                  onChange={(e) => setLoanIOUConversionRate(e.target.value)}
+                />
+                <button
+                  onClick={handleStartLoan}
+                  className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-800 transition-colors"
+                >
+                  startLoan
+                </button>
+              </div>
+            </div>
+
+            {/* buyETH */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-yellow-600 mb-3">🌻 Buy ETH</h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
+                  placeholder="Loan Index"
+                  value={buyLoanIndex}
+                  onChange={(e) => setBuyLoanIndex(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
+                  placeholder="USDC Amount"
+                  value={buyUsdcAmount}
+                  onChange={(e) => setBuyUsdcAmount(e.target.value)}
+                />
+                <button
+                  onClick={handleBuyETH}
+                  className="w-full py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 text-yellow-800 transition-colors"
+                >
+                  buyETH
+                </button>
+              </div>
             </div>
           </div>
 
-          <hr className="border-rose-200 my-2"/>
-          <div className="grid md:grid-cols-2 gap-2">
-            <div>
-              <p><span className="font-semibold text-rose-600">Price Feed:</span> {priceFeed}</p>
-              <p><span className="font-semibold text-rose-600">Latest Price:</span> {latestPrice}</p>
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mt-6">
+            {/* redeemHeldIOUsAndSwapToETH */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-orange-600 mb-3">
+                🪄 Redeem IOUs &amp; Swap
+              </h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-orange-100"
+                  placeholder="Loan Index"
+                  value={redeemLoanIndex}
+                  onChange={(e) => setRedeemLoanIndex(e.target.value)}
+                />
+                <button
+                  onClick={() => handleRedeemIOUs(parseInt(redeemLoanIndex || '0', 10))}
+                  className="w-full py-2 bg-orange-200 rounded-full font-medium hover:bg-orange-300 text-orange-800 transition-colors"
+                >
+                  redeemHeldIOUsAndSwapToETH
+                </button>
+              </div>
             </div>
-            <div>
-              <p><span className="font-semibold text-rose-600">ioUMint:</span> {ioUMint}</p>
-              <p><span className="font-semibold text-rose-600">USDC Token:</span> {usdcToken}</p>
-              <p><span className="font-semibold text-rose-600">Swap Router:</span> {swapRouter}</p>
-              <p><span className="font-semibold text-rose-600">WETH Address:</span> {wethAddress}</p>
+
+            {/* drawDownLoan */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-purple-600 mb-3">
+                🚰 Draw Down Loan
+              </h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
+                  placeholder="Loan index"
+                  value={drawLoanIndex}
+                  onChange={(e) => setDrawLoanIndex(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
+                  placeholder="Amount in USDC"
+                  value={drawAmount}
+                  onChange={(e) => setDrawAmount(e.target.value)}
+                />
+                <button
+                  onClick={handleDrawDownLoan}
+                  className="w-full py-2 bg-purple-200 rounded-full font-medium hover:bg-purple-300 text-purple-800 transition-colors"
+                >
+                  drawDownLoan
+                </button>
+              </div>
+            </div>
+
+            {/* repayLoan (aggregator) */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-red-600 mb-3">
+                💵 Repay Loan (Aggregator)
+              </h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  placeholder="Loan index"
+                  value={repayLoanIndex}
+                  onChange={(e) => setRepayLoanIndex(e.target.value)}
+                />
+                <button
+                  onClick={handleRepayLoan}
+                  className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                >
+                  repayLoan
+                </button>
+              </div>
+            </div>
+
+            {/* repayLoanUSDC (manual) */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-red-600 mb-3">
+                💵 Repay Loan (USDC)
+              </h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  placeholder="Loan index"
+                  value={repayLoanIndexUSDC}
+                  onChange={(e) => setRepayLoanIndexUSDC(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  placeholder="USDC amount"
+                  value={repayUsdcAmount}
+                  onChange={(e) => setRepayUsdcAmount(e.target.value)}
+                />
+                <button
+                  onClick={handleRepayLoanUSDC}
+                  className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                >
+                  repayLoanUSDC
+                </button>
+              </div>
+            </div>
+
+            {/* setIOUConversionRate (if needed) */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+              <h3 className="text-lg font-semibold text-blue-600 mb-3">
+                ⚙️ Update IOU Rate
+              </h3>
+              <div className="space-y-2 text-sm">
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
+                  placeholder="Loan index"
+                  value={setIndex}
+                  onChange={(e) => setSetIndex(e.target.value)}
+                />
+                <input
+                  className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
+                  placeholder="New rate in 1e18"
+                  value={newRate}
+                  onChange={(e) => setNewRate(e.target.value)}
+                />
+                <button
+                  onClick={handleSetIOURate}
+                  className="w-full py-2 bg-blue-200 rounded-full font-medium hover:bg-blue-300 text-blue-800 transition-colors"
+                >
+                  setIOUConversionRate
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      {/* Manager-level calls */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
-        {/* startLoan */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-pink-600 mb-3">💖 Start a New Loan</h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
-              placeholder="Loan Goal (USDC, 6 decimals)"
-              value={startLoanGoal}
-              onChange={(e) => setStartLoanGoal(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
-              placeholder="Annual Interest Rate (bps)"
-              value={annualInterest}
-              onChange={(e) => setAnnualInterest(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
-              placeholder="Platform Fee Rate (bps)"
-              value={platformFee}
-              onChange={(e) => setPlatformFee(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
-              placeholder="Fee Address"
-              value={feeAddress}
-              onChange={(e) => setFeeAddress(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
-              placeholder="IOU→DAO rate (e.g. 1.0 => 1e18)"
-              value={loanIOUConversionRate}
-              onChange={(e) => setLoanIOUConversionRate(e.target.value)}
-            />
-            <button
-              onClick={handleStartLoan}
-              className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-800 transition-colors"
-            >
-              startLoan
-            </button>
-          </div>
-        </div>
-
-        {/* buyETH */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-yellow-600 mb-3">🌻 Buy ETH</h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
-              placeholder="Loan Index"
-              value={buyLoanIndex}
-              onChange={(e) => setBuyLoanIndex(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
-              placeholder="USDC Amount"
-              value={buyUsdcAmount}
-              onChange={(e) => setBuyUsdcAmount(e.target.value)}
-            />
-            <button
-              onClick={handleBuyETH}
-              className="w-full py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 text-yellow-800 transition-colors"
-            >
-              buyETH
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Next row of manager calls */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mt-6">
-        {/* redeemHeldIOUsAndSwapToETH */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-orange-600 mb-3">
-            🪄 Redeem IOUs &amp; Swap
-          </h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-orange-100"
-              placeholder="Loan Index"
-              value={redeemLoanIndex}
-              onChange={(e) => setRedeemLoanIndex(e.target.value)}
-            />
-            <button
-              onClick={handleRedeemIOUs}
-              className="w-full py-2 bg-orange-200 rounded-full font-medium hover:bg-orange-300 text-orange-800 transition-colors"
-            >
-              redeemHeldIOUsAndSwapToETH
-            </button>
-          </div>
-        </div>
-
-
-        {/* drawDownLoan */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-purple-600 mb-3">
-            🚰 Draw Down Loan
-          </h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
-              placeholder="Loan index"
-              value={drawLoanIndex}
-              onChange={(e) => setDrawLoanIndex(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
-              placeholder="Amount in USDC"
-              value={drawAmount}
-              onChange={(e) => setDrawAmount(e.target.value)}
-            />
-            <button
-              onClick={handleDrawDownLoan}
-              className="w-full py-2 bg-purple-200 rounded-full font-medium hover:bg-purple-300 text-purple-800 transition-colors"
-            >
-              drawDownLoan
-            </button>
-          </div>
-        </div>
-
-        {/* repayLoan */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-red-600 mb-3">
-            💵 Repay Loan
-          </h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
-              placeholder="Loan index"
-              value={repayLoanIndex}
-              onChange={(e) => setRepayLoanIndex(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
-              placeholder="Amount in USDC"
-              value={repayUsdcAmount}
-              onChange={(e) => setRepayUsdcAmount(e.target.value)}
-            />
-            <button
-              onClick={handleRepayLoan}
-              className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
-            >
-              repayLoan
-            </button>
-          </div>
-        </div>
-
-
-        {/* setIOUConversionRate */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-          <h3 className="text-lg font-semibold text-blue-600 mb-3">
-            ⚙️ Update IOU Rate
-          </h3>
-          <div className="space-y-2 text-sm">
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
-              placeholder="Loan index"
-              value={setIndex}
-              onChange={(e) => setSetIndex(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
-              placeholder="New rate in 1e18"
-              value={newRate}
-              onChange={(e) => setNewRate(e.target.value)}
-            />
-            <button
-              onClick={handleSetIOURate}
-              className="w-full py-2 bg-blue-200 rounded-full font-medium hover:bg-blue-300 text-blue-800 transition-colors"
-            >
-              setIOUConversionRate
-            </button>
-          </div>
-        </div>
-      </div>
-      </>)}
+        </>
+      )}
     </div>
   );
 }
 
-export default DAOLoanManagerUI;
+export default GGLoanManagerUI;
