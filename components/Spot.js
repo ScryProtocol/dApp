@@ -971,7 +971,7 @@ function GGLoanManagerUI() {
                     </p>
                     <p
                       className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
-                      title="Loan contract’s underlying balance (USDC)."
+                      title="Your current balance of the underlying asset."
                     >
                       {Number(ln.underlyingBalance || '0').toFixed(4)}{" "}
                       {ln.underlyingSymbol}
