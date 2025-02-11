@@ -174,7 +174,7 @@ function GGLoanManagerUI() {
   const [swapIndex, setSwapIndex] = useState(0);
   const [swapIOUAmount, setSwapIOUAmount] = useState('');
 
-  // For setting the IOU conversion rate
+  // For setting the IOU conversion rate (example stub)
   const [setIndex, setSetIndex] = useState('');
   const [newRate, setNewRate] = useState('');
 
@@ -514,7 +514,7 @@ function GGLoanManagerUI() {
     }
   };
 
-  // setIOUConversionRate – placeholder if your contract has such a function
+  // Example placeholder if you had a setIOUConversionRate function
   const handleSetIOURate = async () => {
     try {
       const mgr = getMgr();
@@ -522,7 +522,8 @@ function GGLoanManagerUI() {
       const idx = parseInt(setIndex) || 0;
       const parsed = ethers.parseUnits(newRate || '1.0', 18);
 
-      // Placeholder: adapt if you have an actual setter function
+      // Placeholder: adapt if you have an actual setter function on your contract
+      // e.g. `mgr.setIOUConversionRate(idx, parsed)`
       const tx = await mgr.startLoan(idx, parsed); 
       await tx.wait();
 
@@ -549,14 +550,13 @@ function GGLoanManagerUI() {
     }
   };
 
-  // ** Updated to match ABI: burnDAOForETH **
+  // burnDAOForETH
   const handleBurnDAOForETH = async () => {
     try {
       const mgr = getMgr();
       if (!mgr) return;
       const parsed = ethers.parseUnits(burnAmount || '0', GGDecimals);
 
-      // Make sure the function name matches the ABI
       const tx = await mgr.burnDAOForETH(parsed);
       await tx.wait();
       toast.success("burnDAOForETH successful");
@@ -673,7 +673,7 @@ function GGLoanManagerUI() {
   }
 
   // -------------------------------------------------------------------
-  // 5) Quick “drawDownAndBuyETH” + “repayLoan” 
+  // 5) Quick “drawDownAndBuyETH” + “repayLoan”
   // -------------------------------------------------------------------
   const handleDrawDownAndBuy = async (loanIndex) => {
     try {
@@ -769,6 +769,7 @@ function GGLoanManagerUI() {
             className="w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold"
             value={swapIndex}
             onChange={(e) => setSwapIndex(e.target.value)}
+            title="Select which loan's IOU you want to swap for GG tokens."
           >
             {loans.map((ln) => (
               <option key={ln.index} value={ln.index}>
@@ -781,6 +782,7 @@ function GGLoanManagerUI() {
             placeholder="IOU amount"
             value={swapIOUAmount}
             onChange={(e) => setSwapIOUAmount(e.target.value)}
+            title="Enter how many IOU tokens you want to swap for GG tokens."
           />
           <p className="text-green-500 font-semibold">
             {swapIOUAmount || 0} IOU →{" "}
@@ -795,6 +797,7 @@ function GGLoanManagerUI() {
           <button
             onClick={handleSwapIOU}
             className="w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors"
+            title="Swap your IOU tokens to mint new GG tokens."
           >
             Mint GG
           </button>
@@ -807,6 +810,7 @@ function GGLoanManagerUI() {
             placeholder={`Amount of ${GGSymbol}`}
             value={burnAmount}
             onChange={(e) => setBurnAmount(e.target.value)}
+            title="How many GG tokens you want to burn in exchange for ETH."
           />
           {burnAmount && parseFloat(burnAmount) > 0 && (
             <p className="text-pink-600 font-semibold">
@@ -816,6 +820,7 @@ function GGLoanManagerUI() {
           <button
             onClick={handleBurnDAOForETH}
             className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2"
+            title="Burn the specified amount of GG tokens for your share of the treasury ETH."
           >
             Burn GG
           </button>
@@ -842,11 +847,17 @@ function GGLoanManagerUI() {
                 {/* Repaid or not */}
                 <div className="mt-1 mx-auto">
                   {ln.fullyRepaid ? (
-                    <span className="inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full">
+                    <span
+                      className="inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full"
+                      title="This loan has been fully repaid."
+                    >
                       Fully Repaid
                     </span>
                   ) : (
-                    <span className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full">
+                    <span
+                      className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full"
+                      title="This loan is not fully repaid yet."
+                    >
                       Not Repaid
                     </span>
                   )}
@@ -862,14 +873,23 @@ function GGLoanManagerUI() {
                 </div>
 
                 <p className="text-lg font-semibold text-pink-600 mt-2">
-                  <span className="text-white bg-blue-300 rounded-full px-2 py-1 font-semibold">
+                  <span
+                    className="text-white bg-blue-300 rounded-full px-2 py-1 font-semibold"
+                    title="IOU token name"
+                  >
                     {ln.iouName}
                   </span>{" "}
-                  <span className="text-white bg-blue-200 rounded-full px-2 py-1 ml-1 font-semibold">
+                  <span
+                    className="text-white bg-blue-200 rounded-full px-2 py-1 ml-1 font-semibold"
+                    title="IOU token symbol"
+                  >
                     {ln.iouSymbol}
                   </span>
                 </p>
-                <p className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0">
+                <p
+                  className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0"
+                  title="The rate of IOU tokens per 1 GG token."
+                >
                   {ln.iouConversionRate} IOU per {GGSymbol}
                 </p>
 
@@ -879,31 +899,46 @@ function GGLoanManagerUI() {
                   </p>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">Goal</p>
-                    <p className="text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1">
+                    <p
+                      className="text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1"
+                      title="The total principal goal (in USDC)."
+                    >
                       {ln.loanGoal} USDC
                     </p>
                   </div>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">Bought</p>
-                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Total ETH the manager purchased for this loan."
+                    >
                       {Number(ln.totalBuyETH).toFixed(4)} ETH
                     </p>
                   </div>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">Funded</p>
-                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Total USDC currently funded by backers (not necessarily drawn)."
+                    >
                       {Number(ln.totalFunded || '0').toFixed(4)} USDC
                     </p>
                   </div>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">Drawn</p>
-                    <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Amount of USDC that has actually been drawn by the borrower."
+                    >
                       {Number(ln.totalDrawnDown).toFixed(4)} USDC
                     </p>
                   </div>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">My IOUs</p>
-                    <p className="bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Your personal IOU balance in this loan."
+                    >
                       {ln.userIOUBalance} {ln.iouSymbol}
                     </p>
                   </div>
@@ -911,7 +946,10 @@ function GGLoanManagerUI() {
                     <p className="text-yellow-600 font-semibold text-lg">
                       Repaid
                     </p>
-                    <p className="bg-yellow-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-yellow-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="How much has been repaid so far (principal + interest)."
+                    >
                       {Number(ln.repayments || '0').toFixed(4)}{" "}
                       {ln.underlyingSymbol}
                     </p>
@@ -920,7 +958,10 @@ function GGLoanManagerUI() {
                     <p className="text-green-600 font-semibold text-lg">
                       Interest
                     </p>
-                    <p className="bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Interest available for you to claim."
+                    >
                       {ln.claimableInterest} {ln.underlyingSymbol}
                     </p>
                   </div>
@@ -928,14 +969,20 @@ function GGLoanManagerUI() {
                     <p className="text-pink-600 font-semibold text-lg">
                       Balance
                     </p>
-                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Loan contract’s underlying balance (USDC)."
+                    >
                       {Number(ln.underlyingBalance || '0').toFixed(4)}{" "}
                       {ln.underlyingSymbol}
                     </p>
                   </div>
                   <div>
                     <p className="text-pink-600 font-semibold text-lg">Owed</p>
-                    <p className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Total owed = principal + accrued interest so far."
+                    >
                       {Number(ln.updatedTotalOwed || '0').toFixed(4)}{" "}
                       {ln.underlyingSymbol}
                     </p>
@@ -944,7 +991,10 @@ function GGLoanManagerUI() {
                     <p className="text-orange-600 font-semibold text-lg">
                       Redeemable
                     </p>
-                    <p className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl">
+                    <p
+                      className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      title="Estimated principal returned per IOU (approx share)."
+                    >
                       {ln.redeemable ? ln.redeemable.toFixed(4) : '0'}{" "}
                       {ln.underlyingSymbol}/IOU
                     </p>
@@ -958,6 +1008,7 @@ function GGLoanManagerUI() {
                     <button
                       onClick={() => handleDrawDownAndBuy(ln.index)}
                       className="bg-green-200 hover:bg-green-300 text-green-600 px-2 py-1 rounded-full font-bold"
+                      title="Draw down 1/10 of the total funded USDC and immediately buy ETH with it."
                     >
                       💰
                     </button>
@@ -967,6 +1018,7 @@ function GGLoanManagerUI() {
                     <button
                       onClick={() => handleQuickRepay(ln.index)}
                       className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold"
+                      title="Repay 1% of the total owed USDC by selling the required ETH."
                     >
                       💵
                     </button>
@@ -976,6 +1028,7 @@ function GGLoanManagerUI() {
                     <button
                       onClick={() => handleRedeemIOUs(ln.index)}
                       className="bg-purple-200 hover:bg-purple-300 text-purple-600 px-2 py-1 rounded-full font-bold"
+                      title="Redeem any IOUs still held by the manager contract and swap to ETH."
                     >
                       💱
                     </button>
@@ -989,29 +1042,34 @@ function GGLoanManagerUI() {
                   className="w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2"
                   value={fundInput}
                   onChange={(e) => setFundInput(e.target.value)}
+                  title="Amount for Fund/Redeem/Unfund calls."
                 />
                 <div className="flex items-center gap-1 justify-center">
                   <button
                     onClick={() => fundLoan(ln.loanAddress, fundInput)}
                     className="bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    title="Fund the loan with this USDC amount."
                   >
                     Fund
                   </button>
                   <button
                     onClick={() => redeemIOUs(ln.loanAddress, fundInput)}
                     className="bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    title="Redeem this many IOUs, receiving principal from the repaid portion."
                   >
                     Redeem
                   </button>
                   <button
                     onClick={() => claimInterest(ln.loanAddress)}
                     className="bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    title="Claim your accrued interest for this loan."
                   >
                     Claim
                   </button>
                   <button
                     onClick={() => unfundLoan(ln.loanAddress, fundInput)}
                     className="bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    title="Unfund (withdraw) your yet-undrawn principal from this loan."
                   >
                     Unfund
                   </button>
@@ -1028,11 +1086,15 @@ function GGLoanManagerUI() {
                 <button
                   onClick={handleOpenLoan}
                   className="text-3xl font-semibold text-white bg-pink-400 rounded-full p-4 hover:bg-pink-500"
+                  title="Create a new loan contract once all existing ones are fully funded."
                 >
                   🌱 Open Next Loan
                 </button>
               ) : (
-                <h3 className="text-3xl font-semibold text-white bg-gray-300 rounded-full p-4">
+                <h3
+                  className="text-3xl font-semibold text-white bg-gray-300 rounded-full p-4"
+                  title="You must ensure all existing loans are fully funded before creating a new one."
+                >
                   Fill all loans to create more.
                 </h3>
               )}
@@ -1113,40 +1175,47 @@ function GGLoanManagerUI() {
                   placeholder="Loan Goal (USDC, 6 decimals)"
                   value={startLoanGoal}
                   onChange={(e) => setStartLoanGoal(e.target.value)}
+                  title="The total principal goal for the new loan (in USDC)."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
                   placeholder="Underlying token address"
                   value={startLoanToken}
                   onChange={(e) => setStartLoanToken(e.target.value)}
+                  title="Address of the ERC20 token to be borrowed (e.g., USDC)."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
                   placeholder="Annual Interest Rate (bps)"
                   value={annualInterest}
                   onChange={(e) => setAnnualInterest(e.target.value)}
+                  title="Annual interest rate in basis points, e.g., 100 = 1% APR."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
                   placeholder="Platform Fee Rate (bps)"
                   value={platformFee}
                   onChange={(e) => setPlatformFee(e.target.value)}
+                  title="Platform fee in basis points (bps)."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
                   placeholder="Fee Address"
                   value={feeAddress}
                   onChange={(e) => setFeeAddress(e.target.value)}
+                  title="Where platform fees should be sent."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
                   placeholder="IOU→GG rate (e.g. 1.0 => 1e18)"
                   value={loanIOUConversionRate}
                   onChange={(e) => setLoanIOUConversionRate(e.target.value)}
+                  title="How many IOUs per 1 GG token (in 1e18 scale)."
                 />
                 <button
                   onClick={handleStartLoan}
                   className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-800 transition-colors"
+                  title="Deploy a new Spot IOU Loan via the IOUMint factory."
                 >
                   startLoan
                 </button>
@@ -1162,16 +1231,19 @@ function GGLoanManagerUI() {
                   placeholder="Loan Index"
                   value={buyLoanIndex}
                   onChange={(e) => setBuyLoanIndex(e.target.value)}
+                  title="Which loan (by index) to buy ETH for."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
                   placeholder="USDC Amount"
                   value={buyUsdcAmount}
                   onChange={(e) => setBuyUsdcAmount(e.target.value)}
+                  title="How many USDC to sell for ETH."
                 />
                 <button
                   onClick={handleBuyETH}
                   className="w-full py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 text-yellow-800 transition-colors"
+                  title="Swaps USDC for ETH on Uniswap (manager-level function)."
                 >
                   buyETH
                 </button>
@@ -1191,10 +1263,12 @@ function GGLoanManagerUI() {
                   placeholder="Loan Index"
                   value={redeemLoanIndex}
                   onChange={(e) => setRedeemLoanIndex(e.target.value)}
+                  title="The index of the loan from which you want to redeem IOUs & swap to ETH."
                 />
                 <button
                   onClick={() => handleRedeemIOUs(parseInt(redeemLoanIndex || '0', 10))}
                   className="w-full py-2 bg-orange-200 rounded-full font-medium hover:bg-orange-300 text-orange-800 transition-colors"
+                  title="Redeems any IOUs this manager contract is still holding, then swaps USDC→ETH."
                 >
                   redeemHeldIOUsAndSwapToETH
                 </button>
@@ -1212,16 +1286,19 @@ function GGLoanManagerUI() {
                   placeholder="Loan index"
                   value={drawLoanIndex}
                   onChange={(e) => setDrawLoanIndex(e.target.value)}
+                  title="Which loan index to draw from."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
                   placeholder="Amount in USDC"
                   value={drawAmount}
                   onChange={(e) => setDrawAmount(e.target.value)}
+                  title="How many USDC to draw for that loan."
                 />
                 <button
                   onClick={handleDrawDownLoan}
                   className="w-full py-2 bg-purple-200 rounded-full font-medium hover:bg-purple-300 text-purple-800 transition-colors"
+                  title="Borrower function: draws these USDC from the funded portion."
                 >
                   drawDownLoan
                 </button>
@@ -1239,10 +1316,12 @@ function GGLoanManagerUI() {
                   placeholder="Loan index"
                   value={repayLoanIndex}
                   onChange={(e) => setRepayLoanIndex(e.target.value)}
+                  title="Index of the loan to repay using the aggregator function."
                 />
                 <button
                   onClick={handleRepayLoan}
                   className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                  title="Calls repayLoan(loanIndex) which repays 1% of the total owed USDC."
                 >
                   repayLoan
                 </button>
@@ -1260,16 +1339,19 @@ function GGLoanManagerUI() {
                   placeholder="Loan index"
                   value={repayLoanIndexUSDC}
                   onChange={(e) => setRepayLoanIndexUSDC(e.target.value)}
+                  title="Which loan index to repay."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
                   placeholder="USDC amount"
                   value={repayUsdcAmount}
                   onChange={(e) => setRepayUsdcAmount(e.target.value)}
+                  title="How many USDC to repay for that loan."
                 />
                 <button
                   onClick={handleRepayLoanUSDC}
                   className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                  title="Manually repay the loan with a specific USDC amount."
                 >
                   repayLoanUSDC
                 </button>
@@ -1287,16 +1369,19 @@ function GGLoanManagerUI() {
                   placeholder="Loan index"
                   value={setIndex}
                   onChange={(e) => setSetIndex(e.target.value)}
+                  title="Which loan index to modify the rate for."
                 />
                 <input
                   className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
                   placeholder="New rate in 1e18"
                   value={newRate}
                   onChange={(e) => setNewRate(e.target.value)}
+                  title="Enter the new IOU→GG conversion rate in 1e18 scale."
                 />
                 <button
                   onClick={handleSetIOURate}
                   className="w-full py-2 bg-blue-200 rounded-full font-medium hover:bg-blue-300 text-blue-800 transition-colors"
+                  title="(Example) Update IOU conversion rate for a given loan."
                 >
                   setIOUConversionRate
                 </button>
