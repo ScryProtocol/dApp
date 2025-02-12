@@ -10,12 +10,11 @@ import { useEthersProvider, useEthersSigner } from './tl';
 // ------------------------------
 // 1) GG Manager Contract
 // ------------------------------
-const GGLoanManagerAddress = '0x3691E9C8d99470d7Bd825c12087AFb0a727c1945';
+const GGLoanManagerAddress = '0xD38fF6DD1c8ECFA61793D847cb413438e686E818';
 
 // Updated ABI to match the new contract
 const GGLoanManagerABI = [
   "function loans(uint256) external view returns (address loanAddress, uint256 loanGoal, uint256 totalDrawnDown, bool loanDrawn, uint256 loanDrawnTime, bool fullyRepaid, uint256 iouConversionRate, uint256 totalBuyETH, uint256 soldETH, uint256 profitETH)",
-  "function canCreateLoan() external view returns (bool)",
   "function ethFromMint() external view returns (uint256)",
   "function name() view returns (string)",
   "function symbol() view returns (string)",
@@ -198,14 +197,12 @@ function GGLoanManagerUI() {
 
     try {
       const [
-        _canCreate,
         _ethFromMint,
         _GGName,
         _GGSymbol,
         _GGDecimals,
         _GGSupply
       ] = await Promise.all([
-        managerContract.canCreateLoan(),
         managerContract.ethFromMint(),
         managerContract.name(),
         managerContract.symbol(),
@@ -237,7 +234,6 @@ function GGLoanManagerUI() {
       // Manager contract's own ETH balance
       const contractEthBal = await provider.getBalance(GGLoanManagerAddress);
 
-      setCanOpenLoan(_canCreate);
       setEthFromMint(ethers.formatEther(_ethFromMint));
       setGGName(_GGName);
       setGGSymbol(_GGSymbol);
@@ -777,13 +773,22 @@ function GGLoanManagerUI() {
               </option>
             ))}
           </select>
+          <div className="flex w-full bg-green-200 rounded-full border border-green-100 mb-2 px-3 py-1">
           <input
-            className="w-full px-3 py-2 bg-green-200 rounded-full border border-green-100 mb-2"
+            className="bg-green-200 flex-grow outline-none"
             placeholder="IOU amount"
             value={swapIOUAmount}
             onChange={(e) => setSwapIOUAmount(e.target.value)}
             title="Enter how many IOU tokens you want to swap for GG tokens."
           />
+            <button
+              onClick={() => setSwapIOUAmount(loans[swapIndex].userIOUBalance)}
+              className="text-white bg-pink-400 rounded-full px-2 py-1 font-semibold"
+              title="Swap all your IOU tokens for GG tokens."
+            >
+              Max
+            </button>
+          </div>
           <p className="text-green-500 font-semibold">
             {swapIOUAmount || 0} IOU →{" "}
             {loans[swapIndex]
