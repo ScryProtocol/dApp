@@ -730,14 +730,37 @@ function GGLoanManagerUI() {
     }
     // eslint-disable-next-line
   }, [managerContract, userAddress]);
-
+  const [showModal, setShowModal] = useState(true);
+const InfoModal = () => {
+  return (
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div className="bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center">
+    <h2 className="text-lg font-semibold text-pink-600 mb-2">GG Loan Manager ALPHA</h2>
+    <p className="font-semibold">
+      This is a demo UI for the GigaStrat Protocol on Base. It allows you to interact with the contract and perform various actions such as opening loans, swapping IOUs for GG, and burning GG for ETH. 
+    </p>
+    <p className="font-semibold mt-2">
+      Please note that this is an ALPHA version and may contain bugs or incomplete features. This deployment is for test purposes only and is not for use with real funds and should be considered lost on deposit with UI and contracts updates happening on with no notice. Please use at your own risk.
+    </p>
+    <button
+      onClick={() => setShowModal(false)}
+      className="text-sm text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
+    >
+      I understand, continue
+    </button>
+  </div>
+</div>
+);
+};
   // -------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-pink-50 to-rose-100 text-gray-800 px-4 py-6">
       <Toaster position="top-right" />
-
+      {showModal &&
+<InfoModal />
+}
       {/* Header */}
       <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center">
         <div className="absolute top-0 right-0 p-4">
