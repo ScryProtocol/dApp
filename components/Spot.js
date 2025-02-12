@@ -253,6 +253,8 @@ function GGLoanManagerUI() {
       // Enumerate loans
       const discovered = await fetchLoans();
       setLoans(discovered);
+      setCanOpenLoan(discovered[discovered.length - 1]?.loanGoal ==discovered[discovered.length - 1]?.totalFunded);
+
     } catch (err) {
       console.error(err);
       toast.error('Error fetching manager data');
