@@ -752,6 +752,141 @@ const InfoModal = () => {
 </div>
 );
 };
+const [showGigaStratModal, setShowGigaStratModal] = useState(true);
+function GigaStratModal({ show, onClose }) {
+  if (!show) return null; // Don't render anything if show is false
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4"
+      onClick={onClose} // Close if user clicks outside the content
+    >
+      <div 
+        className="max-w-3xl bg-white p-6 rounded-3xl overflow-y-scroll text-center h-4/5"
+        style={{ scrollbarWidth: 'none' }}
+        onClick={(e) => e.stopPropagation()} // Prevent outside-click close if user clicks inside
+      >
+        <h2 className="text-xl font-bold text-pink-600 mb-3">
+          GigaStrat: An On-Chain Microstrategy for ETH
+        </h2>
+        <div className="">
+          <p className="mb-4">
+            GigaStrat is an on-chain system that blends lending and borrowing with a treasury 
+            strategy focused on accumulating ETH. The core contract is the DAOLoanManager, which 
+            creates separate loan contracts called SpotIOULoans. Each SpotIOULoan mints IOU 
+            tokens for lenders, while the manager simultaneously issues a governance token 
+            called <strong>GG</strong>, backed by the protocol’s ETH treasury.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">How GigaStrat Works</h3>
+          <p className="mb-4">
+            A SpotIOULoan accepts stablecoins (like USDC) from lenders in exchange for newly 
+            minted IOU tokens. These IOU tokens track the lender’s share of that specific loan. 
+            The DAOLoanManager draws down stablecoins from the funded loan, swaps them for ETH, 
+            and then repays the loan in installments by selling small amounts of ETH. Over time, 
+            lenders can either redeem IOUs for principal and interest or convert these IOUs into GG tokens.
+          </p>
+          <p className="mb-4">
+            GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH 
+            remaining after loan obligations are satisfied stays in the treasury, which benefits 
+            holders of the GG token. If the price of ETH increases, the treasury’s value grows, 
+            enhancing the backing of each GG token.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Fully On-Chain and Decentralized
+          </h3>
+          <p className="mb-4">
+            All core actions happen through verified smart contracts, removing any reliance on 
+            centralized actors. The manager sets up loans, draws down funds, executes trades, 
+            and repays lenders, all according to the code’s logic. Participants see precisely 
+            how much ETH the system holds and exactly when trades occur. Once a loan is funded, 
+            the manager’s established protocol ensures that selling portions of ETH for 
+            repayment takes place automatically, gradually returning principal plus interest to 
+            lenders. No single party can divert or mismanage the treasury since every transaction 
+            is enforced at the contract level and can be reviewed on-chain.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Funding a Loan and Getting IOUs
+          </h3>
+          <p className="mb-4">
+            Funding happens when you send stablecoins to a SpotIOULoan contract. You receive IOU 
+            tokens in return. These IOUs represent your share of the loan’s principal and will 
+            allow you to claim repayment plus interest as the manager sells ETH. If you simply 
+            want your principal back (plus accrued interest), redeeming IOUs will give you 
+            stablecoins. If you want exposure to the treasury’s ETH, you can swap your IOUs 
+            for GG tokens instead.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            On-Demand Loan Deployment
+          </h3>
+          <p className="mb-4">
+            The manager contract can start fresh SpotIOULoans at any point, allowing GigaStrat 
+            to continually raise new capital to buy ETH. As soon as a loan reaches its funding 
+            goal, the manager draws down the stablecoins and acquires ETH through an on-chain 
+            swap. This cycle repeats, with each new SpotIOULoan following the same pattern of 
+            raising capital, purchasing ETH, and repaying lenders in scheduled increments. Because 
+            the manager can deploy loans whenever market conditions are favorable or there is a 
+            desire to expand the treasury, GigaStrat can keep accumulating ETH even as previous 
+            loans wind down.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Swapping IOUs for GG
+          </h3>
+          <p className="mb-4">
+            IOU holders can transform their lender position into ownership of the broader system 
+            by swapping IOUs for GG. This conversion pivots you from earning interest on a single 
+            loan to a more general stake in the protocol’s growing ETH treasury. The conversion 
+            rate is set per loan. After swapping, you hold GG tokens, which do not expire or 
+            require redemption like IOUs do.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Holding GG and Burning for ETH
+          </h3>
+          <p className="mb-4">
+            GG represents a fraction of the entire treasury. Its value depends on how effectively 
+            the manager invests in ETH and how many outstanding GG tokens exist. If you hold GG 
+            and want to exit, burning GG returns your proportional share of the treasury’s ETH. 
+            This creates a liquidity mechanism and ensures that every GG token is backed by real 
+            assets in the treasury.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Risks and Rewards
+          </h3>
+          <p className="mb-4">
+            The system relies on ETH price movement. If ETH appreciates, the treasury gains, and 
+            GG tokens become more valuable. If ETH declines significantly, the treasury may 
+            struggle to cover loan repayments, and GG tokens may lose value. GigaStrat also 
+            depends on stablecoins and DeFi components (like Uniswap swaps), which carry their 
+            own technical risks.
+          </p>
+
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">Summary</h3>
+          <p>
+            GigaStrat allows lenders to earn interest by funding loans while giving them the 
+            choice to convert their positions into a stake in the protocol’s ETH-centric treasury. 
+            It combines traditional lending mechanics (IOUs, repayment schedules) with a 
+            treasury-backed governance token (GG), aiming to capture the upside of ETH in a 
+            transparent, on-chain manner. Lenders who swap into GG become co-owners of the protocol. 
+            GG holders can burn their tokens to withdraw ETH if they ever want to exit.
+          </p>
+          <button
+            onClick={onClose}
+            className="text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
+          >
+            Got it!
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
   // -------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------
@@ -761,6 +896,7 @@ const InfoModal = () => {
       {showModal &&
 <InfoModal />
 }
+< GigaStratModal show={showGigaStratModal} onClose={() => setShowGigaStratModal(false)} />
       {/* Header */}
       <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center">
         <div className="absolute top-0 right-0 p-4">
