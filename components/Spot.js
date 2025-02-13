@@ -776,6 +776,9 @@ function GigaStratModal({ show, onClose }) {
           <a href="https://twitter.com/not_pr0" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
           <img src="https://simpleicons.org/icons/x.svg" alt="twitter" className="w-6 h-6 inline-block mr-2" />
           </a>
+          <a href="https://basescan.org/address/0x67961f3f6ae5b9b251bccaed54e7c0db7b9d5265" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+          <img src="https://basescan.org/assets/base/images/svg/brandassets/logo-symbol.svg?v=25.1.4.0" alt="basescan" className="w-6 h-6 inline-block mr-2" />
+          </a>
           </div>
         <div className="">
           <p className="mb-4">
