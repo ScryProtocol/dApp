@@ -769,6 +769,14 @@ function GigaStratModal({ show, onClose }) {
         <h2 className="text-xl font-bold text-pink-600 mb-3">
           GigaStrat: An On-Chain Microstrategy for ETH
         </h2>
+        <div className="align-items-center items-center justify-center">
+          <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+          <img src="https://simpleicons.org/icons/discord.svg" alt="discord" className="w-6 h-6 inline-block mr-2" />
+          </a>
+          <a href="https://twitter.com/not_pr0" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+          <img src="https://simpleicons.org/icons/x.svg" alt="twitter" className="w-6 h-6 inline-block mr-2" />
+          </a>
+          </div>
         <div className="">
           <p className="mb-4">
             GigaStrat is an on-chain system that blends lending and borrowing with a treasury 
