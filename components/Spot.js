@@ -876,8 +876,23 @@ function GigaStratModal({ show, onClose }) {
             depends on stablecoins and DeFi components (like Uniswap swaps), which carry their 
             own technical risks.
           </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Summary</h3>
+<strong className="text-lg font-semibold text-pink-500">Actions</strong>
+              <p className="">
+            
+<strong className="font-semibold text-pink-500"> 💰 Draw Down &amp; Buy</strong> draws the funded USDC and immediately 
+              swaps for ETH.  
+             </p>
+             <p className="">
+            
+<strong className="font-semibold text-pink-500"> 💵 Repay Loan</strong> sells ETH to repay ~50% of the total 
+              owed principal + interest.  
+            </p>
+            <p className="">
+          
+<strong className="font-semibold text-pink-500">💱 Redeem IOUs &amp; Swap</strong> allows the manager to redeem any leftover 
+              IOUs in the contract and convert them into ETH for the treasury after the loan is fully repaid. 
+           </p> 
+          <h3 className="text-lg font-semibold text-gray-700 mt-4">Summary</h3>
           <p>
             GigaStrat allows lenders to earn interest by funding loans while giving them the 
             choice to convert their positions into a stake in the protocol’s ETH-centric treasury. 
