@@ -112,7 +112,7 @@ function GGLoanManagerUI() {
   // Wagmi/Provider context
   const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const { address: userAddress } = useAccount();
+  const { address: userAddress } = useAccount()||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
 
   // Contracts in React.useMemo
   const managerContract = React.useMemo(() => {
