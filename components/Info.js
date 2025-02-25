@@ -9,11 +9,10 @@ import { Alchemy, Network } from 'alchemy-sdk';
 
 
 const Info = ({ handleClose,app }) => {
-  
+  const[deployed,setDeployed]=useState({vault:'',vaultfac:'',stream:'', spot:''})
   let provider = useEthersProvider();
   let signer = useEthersSigner();
   console.log(provider);
-  async function deploy() {
     let create2='0x4e59b44847b379578588920ca78fbf26c0b4956c'
     let salt = '0x0000000000000000000000000000000000000000000000000000000000000000'
   let contract = new ethers.Contract('0x0000000000ffe8b47b3e2130213b802212439497', ['function safeCreate2(bytes32 salt, bytes initializationCode) payable'], signer);
@@ -53,6 +52,20 @@ console.log('vault','0x'+vaultaddress);
 console.log('vaultfac','0x'+vaultfacaddress);
 console.log('stream','0x'+streamaddress);
 console.log('wall','0x'+walladdress);
+
+useEffect(() => {
+let deployed = {}
+async function getDeployed() {
+  deployed.vault= await provider.getCode('0x'+vaultaddress)
+  deployed.vaultfac= await provider.getCode('0x'+vaultfacaddress)
+  deployed.stream= await provider.getCode('0x'+streamaddress)
+  deployed.wall= await provider.getCode('0x'+walladdress)
+  setDeployed(deployed)
+}
+getDeployed()
+
+  } , []);
+  async function deploy() {
   try {
     console.log('boop');
     try {
@@ -93,20 +106,6 @@ console.log('wall','0x'+walladdress);
   }
 }
 
-  const handleKeyDown = (event) => {
-    if (event.key === '`') {
-deploy() }
-  };
-
-  useEffect(() => {
-    // Add event listener when component mounts
-    window.addEventListener('keydown', handleKeyDown);
-
-    // Remove event listener when component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
 
   const Wall = () => {
     return (
@@ -835,6 +834,42 @@ deploy() }
         <div
         style={{ overflowY: 'auto', scrollbarWidth: 'thin', WebkitScrollbarWidth: 'thin', WebkitScrollbarTrack: { backgroundColor: '#e5e7eb', borderRadius: '9999px', }, WebkitScrollbarThumb: { backgroundColor: '#9ca3af', borderRadius: '9999px', border: '2px solid #e5e7eb', }, }}
       id="info-section" className="absolute top-2 bg-white p-8 overflow-y-auto max-w-3xl m-4 mx-auto rounded-3xl shadow-lg justify-center inset-0">
+  <div className="mb-10">
+    <h2 className="text-4xl text-pink-500 font-extrabold">Deployed</h2>
+    <p className="text-gray-600 mt-2 text-lg">
+    {deployed.vault ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+              ) : (
+                <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
+              )} Vault <span className="font-semibold inline-block"> is {deployed.vault ? 'deployed' : 'not deployed'} on the blockchain.
+    </span></p>
+    <p className="text-gray-600 mt-2 text-lg">
+    {deployed.vaultfac ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+              ) : (
+                <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
+              )} VaultFactory <span className="font-semibold inline-block"> is {deployed.vaultfac ? 'deployed' : 'not deployed'} on the blockchain.
+    </span></p>
+    <p className="text-gray-600 mt-2 text-lg">
+    {deployed.stream ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+              ) : (
+                <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
+              )} Stream <span className="font-semibold inline-block"> is {deployed.stream ? 'deployed' : 'not deployed'} on the blockchain.
+    </span></p>
+    <p className="text-gray-600 mt-2 text-lg">
+    {deployed.spot ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+              ) : (
+                <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
+              )} Spot <span className="font-semibold inline-block"> is {deployed.spot ? 'deployed' : 'not deployed'} on the blockchain.
+    </span></p>
+    {deployed.vault && deployed.vaultfactory && deployed.stream && deployed.spot ? (
+      <p className="text-gray-600 mt-2 text-lg">All contracts are deployed and ready to use.</p>):(
+        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
+        onClick={deploy}
+      >
+        Deploy Contracts
+      </button>
+      )}
+    </div>
+
   {app == 'wall'&& <Wall />}
   {app == 'vault'&& <Vault />}
   {app == 'spot'&& <Spot />}
