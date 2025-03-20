@@ -10,7 +10,7 @@ import { useEthersProvider, useEthersSigner } from './tl';
 // ------------------------------
 // 1) GG Manager Contract
 // ------------------------------
-const GGLoanManagerAddress = '0xa4aa0A3992569663c78fe1B5290C8043fe674C42';
+const GGLoanManagerAddress = '0x1F2BbDDD1bdeAFa9BA29b328ccA27C104963D071';
 
 // Updated ABI to match the new contract
 const GGLoanManagerABI = [
@@ -43,7 +43,7 @@ const GGLoanManagerABI = [
   "function repayLoanUSDC(uint256 loanIndex, uint256 usdcAmount) external",
   "function redeemHeldIOUsAndSwapToETH(uint256 loanIndex) external",
   "function swapIOUForMintTokens(uint256 loanIndex, uint256 iouAmount) external",
-  "function burnForETH(uint256 GGTokenAmount) external"
+  "function burnDAOForETH(uint256 GGTokenAmount) external"
 ];
 
 // ------------------------------
@@ -554,7 +554,7 @@ function GGLoanManagerUI() {
       if (!mgr) return;
       const parsed = ethers.parseUnits(burnAmount || '0', GGDecimals);
 
-      const tx = await mgr.burnForETH(parsed);
+      const tx = await mgr.burnDAOForETH(parsed);
       await tx.wait();
       toast.success("burnDAOForETH successful");
       fetchManagerData();
