@@ -10,7 +10,7 @@ import { useEthersProvider, useEthersSigner } from './tl';
 // ------------------------------
 // 1) GG Manager Contract
 // ------------------------------
-const GGLoanManagerAddress = '0x67961F3F6aE5b9b251bCCAEd54e7c0Db7b9d5265';
+const GGLoanManagerAddress = '0xa4aa0A3992569663c78fe1B5290C8043fe674C42';
 
 // Updated ABI to match the new contract
 const GGLoanManagerABI = [
