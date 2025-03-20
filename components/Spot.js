@@ -1066,6 +1066,13 @@ provider.on("network", (newNetwork, oldNetwork) => {
                           >
                             Fund
                           </button>
+                              <button
+                                onClick={() => repayLoan(info.loanAddress, actionAmount)}
+                                className="bg-red-500 hover:bg-red-600 text-white
+                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
+                              >
+                                Repay
+                              </button>
                           {isBorrower && (
                             <>
                               <button
@@ -1074,13 +1081,6 @@ provider.on("network", (newNetwork, oldNetwork) => {
                                            font-semibold px-3 py-2 rounded-full text-sm flex-1"
                               >
                                 Withdraw
-                              </button>
-                              <button
-                                onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                                className="bg-red-500 hover:bg-red-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
-                              >
-                                Repay
                               </button>
                             </>
                           )}
