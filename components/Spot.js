@@ -987,7 +987,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                   {expandedRowsSearch[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1167,7 +1167,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                 {expandedRowsMyLoans[i] && (
                   <div className="px-4 py-4 border-t border-gray-600">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
                         <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1329,7 +1329,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                 {expandedRowsMyIOUs[i] && (
                   <div className="px-4 py-4 border-t border-gray-600">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
                         <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
