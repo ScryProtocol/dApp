@@ -43,7 +43,7 @@ const GGLoanManagerABI = [
   "function repayLoanUSDC(uint256 loanIndex, uint256 usdcAmount) external",
   "function redeemHeldIOUsAndSwapToETH(uint256 loanIndex) external",
   "function swapIOUForMintTokens(uint256 loanIndex, uint256 iouAmount) external",
-  "function burnDAOForETH(uint256 GGTokenAmount) external"
+  "function burnForETH(uint256 GGTokenAmount) external"
 ];
 
 // ------------------------------
@@ -554,7 +554,7 @@ function GGLoanManagerUI() {
       if (!mgr) return;
       const parsed = ethers.parseUnits(burnAmount || '0', GGDecimals);
 
-      const tx = await mgr.burnDAOForETH(parsed);
+      const tx = await mgr.burnForETH(parsed);
       await tx.wait();
       toast.success("burnDAOForETH successful");
       fetchManagerData();
