@@ -820,14 +820,17 @@ provider.on("network", (newNetwork, oldNetwork) => {
             <label className="block font-semibold text-gray-200 mb-1">
               🤝 Borrower Address / ENS:
             </label>
-            <input
+            {0==1&&<input
               type="text"
               value={borrower}
               placeholder="0x... or user.eth"
               className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               onChange={(e) => setBorrower(e.target.value)}
-            />
+            />}
+            <p className="bg-gray-700 text-gray-200 rounded-full px-4 py-2 mt-2 w-full">
+              {borrower || '0x14B214'}
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
