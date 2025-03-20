@@ -828,7 +828,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               onChange={(e) => setBorrower(e.target.value)}
             />}
-            <p className="bg-gray-700 text-gray-200 rounded-full px-4 py-2 mt-2 w-full">
+            <p className="bg-gray-700 text-gray-200 rounded-full px-4 py-2 mt-2 w-full overflow-hidden">
               {borrower || '0x14B214'}
             </p>
           </div>
@@ -907,8 +907,8 @@ provider.on("network", (newNetwork, oldNetwork) => {
       </div>
 
       {/* FIND A LOAN */}
-      <div className="max-w-lg w-full mt-8 p-6 text-center flex flex-col">
-        <h2 className="text-blue-400 text-2xl font-bold mb-4 uppercase mt-4">
+      <div className="w-full max-w-lg mx-auto mt-6 text-center flex flex-col">
+        <h2 className="text-blue-400 text-lg sm:text-2xl font-bold mb-4 uppercase mt-2">
           Find a Loan
         </h2>
         <input
@@ -924,22 +924,23 @@ provider.on("network", (newNetwork, oldNetwork) => {
       {/* SEARCH RESULTS (Accordion) */}
       {searchResults.length > 0 && (
         <div
-          className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
-                     ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
+          className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl shadow-lg
+                     text-center flex flex-col ring-1 ring-[#36444c]
+                     md:hover:scale-105 transition-transform duration-300"
         >
-          <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">🔍 IOUs</h1>
+          <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase">🔍 IOUs</h1>
           <button
             onClick={() => {
               setSearchResults([]);
               setSearchAddress('');
             }}
-            className="w-40 py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold rounded-full transition
-                       focus:outline-none focus:ring-2 focus:ring-blue-400 mx-auto"
+            className="w-40 py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold
+                       rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-400 mx-auto mb-4"
           >
             Close
           </button>
 
-          <div className="space-y-2 w-full mt-4">
+          <div className="space-y-2 w-full">
             {searchResults.map((info, i) => {
               const isBorrower =
                 userAddress?.toLowerCase() === info.borrower.toLowerCase();
@@ -951,8 +952,8 @@ provider.on("network", (newNetwork, oldNetwork) => {
                     className="flex items-center justify-between px-4 py-3 w-full
                                cursor-pointer hover:bg-gray-600 transition"
                   >
-                    <div className="flex items-center grid grid-cols-5 w-full">
-                      <span className="text-sm text-gray-300">
+                    <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
+                      <span className="text-sm text-gray-300 flex items-center space-x-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -965,8 +966,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         >
                           🔗
                         </button>
-                        &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
-                        {info.borrower.slice(-4)}
+                        <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                       </span>
                       <span className="text-sm text-blue-300">{info.underlyingSymbol || 'TOKEN'}</span>
                       <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
@@ -982,7 +982,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                   {expandedRowsSearch[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-2 gap-x-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1042,24 +1042,22 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                       <ProgressBar info={info} />
 
-                      <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div>
-                          <input
-                            type="text"
-                            placeholder="Amount"
-                            value={actionAmount}
-                            onChange={(e) => setActionAmount(e.target.value)}
-                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
-                                       rounded-full placeholder-gray-500
-                                       focus:outline-none focus:ring-2
-                                       focus:ring-pink-400 transition w-full"
-                          />
-                        </div>
-                        <div className="flex justify-between gap-2">
+                      <div className="mt-4 flex flex-col sm:flex-row items-center sm:space-x-2 space-y-2 sm:space-y-0">
+                        <input
+                          type="text"
+                          placeholder="Amount"
+                          value={actionAmount}
+                          onChange={(e) => setActionAmount(e.target.value)}
+                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
+                                     rounded-full placeholder-gray-500
+                                     focus:outline-none focus:ring-2
+                                     focus:ring-pink-400 transition"
+                        />
+                        <div className="flex-1 flex flex-wrap gap-2">
                           <button
                             onClick={() => fundLoan(info.loanAddress, actionAmount)}
                             className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
-                                       px-3 py-2 rounded-full text-sm w-full"
+                                       px-3 py-2 rounded-full text-sm flex-1"
                           >
                             Fund
                           </button>
@@ -1068,14 +1066,14 @@ provider.on("network", (newNetwork, oldNetwork) => {
                               <button
                                 onClick={() => drawDown(info.loanAddress, actionAmount)}
                                 className="bg-yellow-500 hover:bg-yellow-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
                               >
                                 Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
                                 className="bg-red-500 hover:bg-red-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
                               >
                                 Repay
                               </button>
@@ -1084,14 +1082,14 @@ provider.on("network", (newNetwork, oldNetwork) => {
                           <button
                             onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                             className="bg-blue-600 hover:bg-blue-700 text-white
-                                       font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                       font-semibold px-3 py-2 rounded-full text-sm flex-1"
                           >
                             Redeem
                           </button>
                           <button
                             onClick={() => claimInterest(info.loanAddress)}
                             className="bg-[#206a5d] hover:scale-105 text-white
-                                       font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                       font-semibold px-3 py-2 rounded-full text-sm flex-1"
                           >
                             Claim
                           </button>
@@ -1108,10 +1106,11 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
       {/* MY LOANS */}
       <div
-        className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
-                   ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
+        className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl
+                   shadow-lg text-center flex flex-col ring-1 ring-[#36444c]
+                   md:hover:scale-105 transition-transform duration-300"
       >
-        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">🌟 My Loans</h1>
+        <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase">🌟 My Loans</h1>
         {myLoans.length === 0 && <p className="text-gray-400">No loans found.</p>}
 
         <div className="space-y-2 w-full mt-4">
@@ -1126,8 +1125,8 @@ provider.on("network", (newNetwork, oldNetwork) => {
                   className="flex items-center justify-between px-4 py-3 w-full
                              cursor-pointer hover:bg-gray-600 transition"
                 >
-                  <div className="flex items-center grid grid-cols-5 w-full">
-                    <span className="text-sm text-gray-300">
+                  <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
+                    <span className="text-sm text-gray-300 flex items-center space-x-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1140,8 +1139,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       >
                         🔗
                       </button>
-                      &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
-                      {info.borrower.slice(-4)}
+                      <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
                     <span className="text-sm text-blue-300">
                       {info.underlyingSymbol || 'TOKEN'}
@@ -1163,7 +1161,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                 {expandedRowsMyLoans[i] && (
                   <div className="px-4 py-4 border-t border-gray-600">
-                    <div className="grid grid-cols-2 gap-x-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
                         <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1198,40 +1196,38 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-400 text-xs">Loan:</p>
+                        <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
+                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
+                          {info.underlyingBalance}
+                        </p>
+                        <p className="text-gray-400 text-xs">Loan (excl. interest):</p>
                         <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
                           {(
                             parseFloat(info.updatedTotalOwed || '0') -
                             parseFloat(info.updatedInterest || '0')
                           ).toFixed(2)}
                         </p>
-                        <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
-                        <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                          {info.underlyingBalance}
-                        </p>
                       </div>
                     </div>
 
                     <ProgressBar info={info} />
 
-                    <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Amount"
-                          value={actionAmount}
-                          onChange={(e) => setActionAmount(e.target.value)}
-                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
-                                     rounded-full placeholder-gray-500
-                                     focus:outline-none focus:ring-2
-                                     focus:ring-pink-400 transition w-full"
-                        />
-                      </div>
-                      <div className="flex justify-between gap-2">
+                    <div className="mt-4 flex flex-col sm:flex-row items-center sm:space-x-2 space-y-2 sm:space-y-0">
+                      <input
+                        type="text"
+                        placeholder="Amount"
+                        value={actionAmount}
+                        onChange={(e) => setActionAmount(e.target.value)}
+                        className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
+                                   rounded-full placeholder-gray-500
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-pink-400 transition"
+                      />
+                      <div className="flex-1 flex flex-wrap gap-2">
                         <button
                           onClick={() => updateGoal(info.loanAddress, actionAmount)}
                           className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
-                                     px-3 py-2 rounded-full text-sm w-full"
+                                     px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Set Goal
                         </button>
@@ -1240,14 +1236,14 @@ provider.on("network", (newNetwork, oldNetwork) => {
                             <button
                               onClick={() => drawDown(info.loanAddress, actionAmount)}
                               className="bg-yellow-500 hover:bg-yellow-600 text-white
-                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                         font-semibold px-3 py-2 rounded-full text-sm flex-1"
                             >
                               Withdraw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
                               className="bg-red-500 hover:bg-red-600 text-white
-                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                         font-semibold px-3 py-2 rounded-full text-sm flex-1"
                             >
                               Repay
                             </button>
@@ -1256,7 +1252,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         <button
                           onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                           className="bg-blue-600 hover:bg-blue-700 text-white
-                                     font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                     font-semibold px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Redeem
                         </button>
@@ -1272,11 +1268,11 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
       {/* MY IOUs */}
       <div
-        className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center
-                   flex flex-col ring-1 ring-[#36444c] transition-transform
-                   duration-300 hover:scale-105"
+        className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl
+                   shadow-lg text-center flex flex-col ring-1 ring-[#36444c]
+                   md:hover:scale-105 transition-transform duration-300"
       >
-        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">👛 IOUs</h1>
+        <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase">👛 IOUs</h1>
         {myIOUs.length === 0 && <p className="text-gray-400">No IOUs found.</p>}
 
         <div className="space-y-2 w-full mt-4">
@@ -1291,8 +1287,8 @@ provider.on("network", (newNetwork, oldNetwork) => {
                   className="flex items-center justify-between px-4 py-3 w-full
                              cursor-pointer hover:bg-gray-600 transition"
                 >
-                  <div className="flex items-center grid grid-cols-5 w-full">
-                    <span className="text-sm text-gray-300">
+                  <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
+                    <span className="text-sm text-gray-300 flex items-center space-x-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1305,8 +1301,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       >
                         🔗
                       </button>
-                      &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
-                      {info.borrower.slice(-4)}
+                      <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
                     <span className="text-sm text-blue-300">
                       {info.underlyingSymbol || 'TOKEN'}
@@ -1328,7 +1323,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                 {expandedRowsMyIOUs[i] && (
                   <div className="px-4 py-4 border-t border-gray-600">
-                    <div className="grid grid-cols-2 gap-x-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                       <div>
                         <p className="text-gray-400 text-xs">IOU Name:</p>
                         <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1377,24 +1372,22 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       {info.underlyingSymbol} Available: {info.underlyingBalance}
                     </p>
 
-                    <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Amount"
-                          value={actionAmount}
-                          onChange={(e) => setActionAmount(e.target.value)}
-                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
-                                     rounded-full placeholder-gray-500
-                                     focus:outline-none focus:ring-2
-                                     focus:ring-pink-400 transition w-full"
-                        />
-                      </div>
-                      <div className="flex justify-between gap-2">
+                    <div className="mt-4 flex flex-col sm:flex-row items-center sm:space-x-2 space-y-2 sm:space-y-0">
+                      <input
+                        type="text"
+                        placeholder="Amount"
+                        value={actionAmount}
+                        onChange={(e) => setActionAmount(e.target.value)}
+                        className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
+                                   rounded-full placeholder-gray-500
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-pink-400 transition"
+                      />
+                      <div className="flex-1 flex flex-wrap gap-2">
                         <button
                           onClick={() => fundLoan(info.loanAddress, actionAmount)}
                           className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
-                                     px-3 py-2 rounded-full text-sm w-full"
+                                     px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Fund
                         </button>
@@ -1403,14 +1396,14 @@ provider.on("network", (newNetwork, oldNetwork) => {
                             <button
                               onClick={() => drawDown(info.loanAddress, actionAmount)}
                               className="bg-yellow-500 hover:bg-yellow-600 text-white
-                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                         font-semibold px-3 py-2 rounded-full text-sm flex-1"
                             >
                               Withdraw
                             </button>
                             <button
                               onClick={() => repayLoan(info.loanAddress, actionAmount)}
                               className="bg-red-500 hover:bg-red-600 text-white
-                                         font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                         font-semibold px-3 py-2 rounded-full text-sm flex-1"
                             >
                               Repay
                             </button>
@@ -1419,21 +1412,21 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         <button
                           onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                           className="bg-blue-600 hover:bg-blue-700 text-white
-                                     font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                     font-semibold px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Redeem
                         </button>
                         <button
                           onClick={() => unfundLoan(info.loanAddress, actionAmount)}
                           className="bg-red-400 hover:bg-red-600 text-white
-                                     font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                     font-semibold px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Unfund
                         </button>
                         <button
                           onClick={() => claimInterest(info.loanAddress)}
                           className="bg-pink-400 hover:scale-105 text-white
-                                     font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                     font-semibold px-3 py-2 rounded-full text-sm flex-1"
                         >
                           Claim
                         </button>
@@ -1449,10 +1442,11 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
       {/* ALL LOANS */}
       <div
-        className="max-w-4xl w-full mt-8 p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
-                   ring-1 ring-[#36444c] transition-transform duration-300 hover:scale-105"
+        className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl
+                   shadow-lg text-center flex flex-col ring-1 ring-[#36444c]
+                   md:hover:scale-105 transition-transform duration-300"
       >
-        <h1 className="text-blue-400 text-2xl font-bold mb-4 uppercase">All Loans</h1>
+        <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase">All Loans</h1>
         {allLoans.length === 0 ? (
           <p className="text-gray-400">No loans found.</p>
         ) : (
@@ -1468,11 +1462,11 @@ provider.on("network", (newNetwork, oldNetwork) => {
                     className="flex items-center justify-between px-4 py-3 w-full
                                cursor-pointer hover:bg-gray-600 transition"
                   >
-                    <p className="text-sm text-gray-500 font-bold bg-gray-600/70 px-2 py-1 rounded-full">
+                    <div className="text-sm text-gray-500 font-bold bg-gray-600/70 px-2 py-1 rounded-full mr-2">
                       #{allLoans.length - i - 1}
-                    </p>
-                    <div className="flex items-center grid grid-cols-5 w-full">
-                      <span className="text-sm text-gray-300">
+                    </div>
+                    <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
+                      <span className="text-sm text-gray-300 flex items-center space-x-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -1485,10 +1479,11 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         >
                           🔗
                         </button>
-                        &nbsp;🧑‍💼 {info.borrower.slice(0, 6)}...
-                        {info.borrower.slice(-4)}
+                        <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                       </span>
-                      <span className="text-sm text-blue-300">{info.underlyingSymbol || 'TOKEN'}</span>
+                      <span className="text-sm text-blue-300">
+                        {info.underlyingSymbol || 'TOKEN'}
+                      </span>
                       <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
                       <span className="text-sm text-green-300">
                         APR: {(info.annualInterestRate / 100).toFixed(2)}%
@@ -1502,7 +1497,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                   {expandedRows[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <p className="text-gray-400 text-xs">IOU Name:</p>
                           <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
@@ -1547,24 +1542,22 @@ provider.on("network", (newNetwork, oldNetwork) => {
 
                       <ProgressBar info={info} />
 
-                      <div className="mt-4 flex items-center space-x-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div>
-                          <input
-                            type="text"
-                            placeholder="Amount"
-                            value={actionAmount}
-                            onChange={(e) => setActionAmount(e.target.value)}
-                            className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
-                                       rounded-full placeholder-gray-500
-                                       focus:outline-none focus:ring-2
-                                       focus:ring-pink-400 transition w-full"
-                          />
-                        </div>
-                        <div className="flex justify-between gap-2">
+                      <div className="mt-4 flex flex-col sm:flex-row items-center sm:space-x-2 space-y-2 sm:space-y-0">
+                        <input
+                          type="text"
+                          placeholder="Amount"
+                          value={actionAmount}
+                          onChange={(e) => setActionAmount(e.target.value)}
+                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
+                                     rounded-full placeholder-gray-500
+                                     focus:outline-none focus:ring-2
+                                     focus:ring-pink-400 transition"
+                        />
+                        <div className="flex-1 flex flex-wrap gap-2">
                           <button
                             onClick={() => fundLoan(info.loanAddress, actionAmount)}
                             className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
-                                       px-3 py-2 rounded-full text-sm w-full"
+                                       px-3 py-2 rounded-full text-sm flex-1"
                           >
                             Fund
                           </button>
@@ -1573,14 +1566,14 @@ provider.on("network", (newNetwork, oldNetwork) => {
                               <button
                                 onClick={() => drawDown(info.loanAddress, actionAmount)}
                                 className="bg-yellow-500 hover:bg-yellow-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
                               >
                                 Withdraw
                               </button>
                               <button
                                 onClick={() => repayLoan(info.loanAddress, actionAmount)}
                                 className="bg-red-500 hover:bg-red-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
                               >
                                 Repay
                               </button>
@@ -1589,7 +1582,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                           <button
                             onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
                             className="bg-blue-600 hover:bg-blue-700 text-white
-                                       font-semibold px-3 py-2 rounded-full text-sm w-full"
+                                       font-semibold px-3 py-2 rounded-full text-sm flex-1"
                           >
                             Redeem
                           </button>
@@ -1627,7 +1620,7 @@ function ProgressBar({ info }) {
   const withdrawnWidth = goal > 0 ? (withdrawnVal / goal) * 100 : 0;
   const repaidWidth = withdrawnVal > 0 ? (totalRepaid / withdrawnVal) * 100 : 0;
 
-  // approximate center positions
+  // approximate center positions for tooltips
   const fundedTooltipLeft = fundedWidth / 2;
   const withdrawnTooltipLeft = withdrawnWidth / 2;
   const repaidTooltipLeft = repaidWidth / 2;
