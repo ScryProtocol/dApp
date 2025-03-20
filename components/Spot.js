@@ -968,13 +968,18 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         </button>
                         <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                       </span>
-                      <span className="text-sm text-blue-300">{info.underlyingSymbol || 'TOKEN'}</span>
-                      <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
-                      <span className="text-sm text-green-300">
-                        APR: {(info.annualInterestRate / 100).toFixed(2)}%
-                      </span>
-                      <span className="text-sm text-pink-300">Owed: {info.updatedTotalOwed}</span>
-                    </div>
+                      <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      {info.underlyingSymbol || 'TOKEN'}
+                    </span>
+                    <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      Goal: {info.loanGoal}
+                    </span>
+                    <span className="text-sm text-green-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      APR: {(info.annualInterestRate / 100).toFixed(2)}%
+                    </span>
+                    <span className="text-sm text-pink-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      Owed: {info.updatedTotalOwed}
+                    </span></div>
                     <div className="text-gray-400">
                       {expandedRowsSearch[i] ? '▼' : '▶'}
                     </div>
@@ -1141,16 +1146,17 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       </button>
                       <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
-                    <span className="text-sm text-blue-300">
+                    
+                    <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       {info.underlyingSymbol || 'TOKEN'}
                     </span>
-                    <span className="text-sm text-purple-300">
+                    <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
                     </span>
-                    <span className="text-sm text-green-300">
+                    <span className="text-sm text-green-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       APR: {(info.annualInterestRate / 100).toFixed(2)}%
                     </span>
-                    <span className="text-sm text-pink-300">
+                    <span className="text-sm text-pink-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Owed: {info.updatedTotalOwed}
                     </span>
                   </div>
@@ -1303,16 +1309,16 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       </button>
                       <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
-                    <span className="text-sm text-blue-300">
+                    <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       {info.underlyingSymbol || 'TOKEN'}
                     </span>
-                    <span className="text-sm text-purple-300">
+                    <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
                     </span>
-                    <span className="text-sm text-green-300">
+                    <span className="text-sm text-green-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       APR: {(info.annualInterestRate / 100).toFixed(2)}%
                     </span>
-                    <span className="text-sm text-pink-300">
+                    <span className="text-sm text-pink-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Owed: {info.updatedTotalOwed}
                     </span>
                   </div>
@@ -1481,15 +1487,19 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         </button>
                         <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                       </span>
-                      <span className="text-sm text-blue-300">
-                        {info.underlyingSymbol || 'TOKEN'}
-                      </span>
-                      <span className="text-sm text-purple-300">Goal: {info.loanGoal}</span>
-                      <span className="text-sm text-green-300">
-                        APR: {(info.annualInterestRate / 100).toFixed(2)}%
-                      </span>
-                      <span className="text-sm text-pink-300">Owed: {info.updatedTotalOwed}</span>
-                    </div>
+                    
+                      <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      {info.underlyingSymbol || 'TOKEN'}
+                    </span>
+                    <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      Goal: {info.loanGoal}
+                    </span>
+                    <span className="text-sm text-green-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      APR: {(info.annualInterestRate / 100).toFixed(2)}%
+                    </span>
+                    <span className="text-sm text-pink-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      Owed: {info.updatedTotalOwed}
+                    </span></div>
                     <div className="text-gray-400">
                       {expandedRows[i] ? '▼' : '▶'}
                     </div>
