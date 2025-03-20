@@ -950,7 +950,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                   <button
                     onClick={() => toggleExpandSearch(i)}
                     className="flex items-center justify-between px-4 py-3 w-full
-                               cursor-pointer hover:bg-gray-600 transition hover:rounded-3xl"
+                               cursor-pointer hover:bg-gray-600/50 transition hover:rounded-3xl"
                   >
                     <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
                       <span className="text-sm text-gray-300 flex items-center space-x-2">
@@ -1128,7 +1128,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                 <button
                   onClick={() => toggleExpandMyLoans(i)}
                   className="flex items-center justify-between px-4 py-3 w-full
-                             cursor-pointer hover:bg-gray-600 transition hover:rounded-3xl"
+                             cursor-pointer hover:bg-gray-600/50 transition hover:rounded-3xl"
                 >
                   <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
                     <span className="text-sm text-gray-300 flex items-center space-x-2">
@@ -1291,7 +1291,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                 <button
                   onClick={() => toggleExpandMyIOUs(i)}
                   className="flex items-center justify-between px-4 py-3 w-full
-                             cursor-pointer hover:bg-gray-600 transition hover:rounded-3xl"
+                             cursor-pointer hover:bg-gray-600/50 transition hover:rounded-3xl"
                 >
                   <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
                     <span className="text-sm text-gray-300 flex items-center space-x-2">
@@ -1466,7 +1466,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                   <button
                     onClick={() => toggleExpand(i)}
                     className="flex items-center justify-between px-4 py-3 w-full
-                               cursor-pointer hover:bg-gray-600 transition hover:rounded-3xl"
+                               cursor-pointer hover:bg-gray-600/50 transition hover:rounded-3xl"
                   >
                     <div className="text-sm text-gray-500 font-bold bg-gray-600/70 px-2 py-1 rounded-full mr-2">
                       #{allLoans.length - i - 1}
