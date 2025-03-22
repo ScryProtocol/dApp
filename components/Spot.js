@@ -852,7 +852,7 @@ function GigaStratModal({ show, onClose }) {
             by swapping IOUs for GG. This conversion pivots you from earning interest on a single 
             loan to a more general stake in the protocol’s growing ETH treasury. The conversion 
             rate is set per loan. After swapping, you hold GG tokens, which do not expire or 
-            require redemption like IOUs do.
+            require redemption like IOUs do. The ETH bought using the IOUs used to back the loans.
           </p>
 
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
