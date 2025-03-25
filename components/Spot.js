@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount,useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -10,7 +10,7 @@ import { useEthersProvider, useEthersSigner } from './tl';
 // ------------------------------
 // 1) GG Manager Contract
 // ------------------------------
-const GGLoanManagerAddress = '0x1F2BbDDD1bdeAFa9BA29b328ccA27C104963D071';
+//const GGLoanManagerAddress = '0x1F2BbDDD1bdeAFa9BA29b328ccA27C104963D071';
 
 // Updated ABI to match the new contract
 const GGLoanManagerABI = [
@@ -113,11 +113,13 @@ function GGLoanManagerUI() {
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const { address: userAddress } = useAccount()||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x1F2BbDDD1bdeAFa9BA29b328ccA27C104963D071'
 
+let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanManagerAddress
   // Contracts in React.useMemo
   const managerContract = React.useMemo(() => {
     if (!provider) return null;
-    return new ethers.Contract(GGLoanManagerAddress, GGLoanManagerABI, provider);
+    return new ethers.Contract(addrs, GGLoanManagerABI, provider);
   }, [provider]);
 
   const IOUMintContract = React.useMemo(() => {
@@ -232,7 +234,7 @@ function GGLoanManagerUI() {
       }
 
       // Manager contract's own ETH balance
-      const contractEthBal = await provider.getBalance(GGLoanManagerAddress);
+      const contractEthBal = await provider.getBalance(addrs);
 
       setEthFromMint(ethers.formatEther(_ethFromMint));
       setGGName(_GGName);
@@ -500,7 +502,7 @@ function GGLoanManagerUI() {
         await approveTx.wait();
         toast.success(`Approved IOU for loan #${idx}`);
       }
-
+console.log('swapIOUForMintTokens',idx,amt,allowance)
       const tx = await mgr.swapIOUForMintTokens(idx, amt);
       await tx.wait();
       toast.success("swapIOUForMintTokens successful");
@@ -763,7 +765,7 @@ function GigaStratModal({ show, onClose }) {
     >
       <div 
         className="max-w-3xl bg-white p-6 rounded-3xl overflow-y-scroll text-center h-4/5"
-        style={{ scrollbarWidth: 'none' }}
+        style={{ scrollbarWidth: 'thin' }}
         onClick={(e) => e.stopPropagation()} // Prevent outside-click close if user clicks inside
       >
         <h2 className="text-xl font-bold text-pink-600 mb-3">
@@ -884,7 +886,7 @@ function GigaStratModal({ show, onClose }) {
              </p>
              <p className="">
             
-<strong className="font-semibold text-pink-500"> 💵 Repay Loan</strong> sells ETH to repay ~50% of the total 
+<strong className="font-semibold text-pink-500"> 💵 Repay Loan</strong> sells ETH to repay ~1% of the total 
               owed principal + interest.  
             </p>
             <p className="">
