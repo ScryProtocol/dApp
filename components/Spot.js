@@ -49,7 +49,7 @@ const GGLoanManagerABI = [
 // ------------------------------
 // 2) IOUMint (factory) Contract
 // ------------------------------
-const IOUMintAddress = '0x08fd060b06975A8C78817E3B64199d10564b63fc';
+const IOUMintAddress = '0x38E6C8C5E566937E72C793FE0C229f9063cDE381';
 const IOUMintABI = [
   "function getSpotInfo(address[] memory, address) external view returns (" +
     "tuple(" +
@@ -76,7 +76,8 @@ const IOUMintABI = [
     "  uint256 interestrepayments," +
     "  uint256 interestClaimable," +
     "  uint256 underlyingBalance," +
-    "  uint256 redeemed" +
+    "  uint256 redeemed," +
+    "  bool flexible" +
     ")[]"
     + ")"
 ];
@@ -113,7 +114,7 @@ function GGLoanManagerUI() {
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const { address: userAddress } = useAccount()||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x1F2BbDDD1bdeAFa9BA29b328ccA27C104963D071'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0xe35E836994D779Efa9d90DD803A6d9932ABBD776'
 
 let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanManagerAddress
   // Contracts in React.useMemo
