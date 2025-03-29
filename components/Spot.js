@@ -6,10 +6,10 @@ import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
 // Deployed factory address and ABI
-const IOUMintAddress = '0x94ad5EF040e97daA007acC5c6d42470a3833F971';
+const IOUMintAddress = '0xf5955012b63c2712b1B4de8BB2feA3CFc0Bc16E9';
 
 const IOUMintABI = [
-  'function deployLoan(address, address, uint256, uint256, uint256, address, string, string) external returns (address)',
+  'function deployLoan(address, address, uint256, uint256, uint256, address, string, string, bool) external returns (address)',
   'function getAllLoans() external view returns (address[])',
   'function getUserLoans(address) external view returns (address[])',
   'function getUserIOUs(address) external view returns (address[])',
@@ -40,6 +40,7 @@ const IOUMintABI = [
       uint256 interestClaimable, \
       uint256 underlyingBalance, \
       uint256 redeemed, \
+      bool flexible, \
     )[] memory)'
 ];
 
@@ -83,7 +84,7 @@ function SpotIOUFactory() {
   const [feeAddress, setFeeAddress] = useState('');
   const [iouName, setIouName] = useState('');
   const [iouSymbol, setIouSymbol] = useState('');
-
+const [flexible, setFlexible] = useState(true);
   // Searching
   const [searchAddress, setSearchAddress] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -377,7 +378,8 @@ function SpotIOUFactory() {
           interestClaimable: ethers.formatUnits(info.interestClaimable, info.underlyingDecimals),
           underlyingBalance: ethers.formatUnits(info.underlyingBalance, info.underlyingDecimals),
           redeemed,
-          redeemable: redeemableVal.toFixed(6),
+          redeemable: Number(info.flexible?(ethers.formatUnits(info.totalFunded- info.totalDrawnDown,info.underlyingDecimals)):redeemableVal.toFixed(6)),
+          flexible: info.flexible,
         };
       });
     } catch (err) {
@@ -436,7 +438,8 @@ function SpotIOUFactory() {
         _platform,
         finalFeeAddr,
         iouName || 'SpotIOU',
-        iouSymbol || 'IOU'
+        iouSymbol || 'IOU',
+        true,
       );
       await tx.wait();
 
@@ -1310,7 +1313,8 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
                     <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      {info.underlyingSymbol || 'TOKEN'}
+                      {!info.flexible && (<div className="text-red-500">Fixed</div>)}
+                        {info.underlyingSymbol || 'TOKEN'}
                     </span>
                     <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
