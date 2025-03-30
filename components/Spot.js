@@ -6,7 +6,7 @@ import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
 // Deployed factory address and ABI
-const IOUMintAddress = '0x38E6C8C5E566937E72C793FE0C229f9063cDE381';
+const IOUMintAddress = '0x7578Bb9326D5D32D8FF557D2EAa166Ca5138dFEd';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string, bool) external returns (address)',
@@ -257,6 +257,12 @@ const [flexible, setFlexible] = useState(true);
                   your capital elsewhere if circumstances change.
                 </p>
               </section>
+              <h3 className="text-xl font-semibold mb-3 text-blue-300">
+              Flexible Loans
+              </h3>
+              <p className="mb-3">
+                🟢 Flexible loans allow the borrower to withdraw and repay at any time from available funds vs being able to draw from a loan and on repayment having the funds locked for IOU holders to guarantee liquidity. 🟢 Flexible 🔵 Non
+                </p>
 
               <h3 className="text-xl font-semibold mb-3 text-blue-300">
                 My Loans &amp; IOUs
@@ -378,7 +384,7 @@ const [flexible, setFlexible] = useState(true);
           interestClaimable: ethers.formatUnits(info.interestClaimable, info.underlyingDecimals),
           underlyingBalance: ethers.formatUnits(info.underlyingBalance, info.underlyingDecimals),
           redeemed,
-          redeemable: Number(info.flexible?(ethers.formatUnits(info.totalFunded- info.totalDrawnDown,info.underlyingDecimals)):redeemableVal.toFixed(6)),
+          redeemable: Number(info.flexible?1:redeemableVal.toFixed(6)),
           flexible: info.flexible,
         };
       });
@@ -393,6 +399,7 @@ const [flexible, setFlexible] = useState(true);
    * Deploy new IOU-based Loan
    */
   const deployNewLoan = async () => {
+    console.log(myLoans)
     if (!signer) {
       toast.error('Connect wallet first.');
       return;
@@ -439,7 +446,7 @@ const [flexible, setFlexible] = useState(true);
         finalFeeAddr,
         iouName || 'SpotIOU',
         iouSymbol || 'IOU',
-        true,
+        flexible,
       );
       await tx.wait();
 
@@ -904,8 +911,21 @@ provider.on("network", (newNetwork, oldNetwork) => {
         </div>
 
         {/* Example ConnectButton at bottom of this section */}
-        <div className="mt-4">
+        <div className="flex justify-between items-center mt-6">
+          <div className="">
           <ConnectButton />
+</div>
+          <div className=""><button
+            onClick={() => {
+              setFlexible(!flexible);
+            }
+            }
+            className={`w-28 p-2 ${flexible ? 'bg-green-400' : 'bg-blue-400'} hover:bg-[#356195] text-white font-semibold rounded-full transition
+                       focus:outline-none focus:ring-2 focus:ring-blue-400 mx-auto ml-2`}
+          >
+            {flexible ? 'Flexible' : 'Non-Flexible'}
+          </button>
+          </div>
         </div>
       </div>
 
@@ -972,7 +992,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                         <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                       </span>
                       <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      {info.underlyingSymbol || 'TOKEN'}
+                      {!info.flexible ? '🔵' : '🟢'}{info.underlyingSymbol || 'TOKEN'}
                     </span>
                     <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
@@ -1151,6 +1171,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                     </span>
                     
                     <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
+                      {!info.flexible ? '🔵' : '🟢'}
                       {info.underlyingSymbol || 'TOKEN'}
                     </span>
                     <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
@@ -1313,8 +1334,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
                     </span>
                     <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      {!info.flexible && (<div className="text-red-500">Fixed</div>)}
-                        {info.underlyingSymbol || 'TOKEN'}
+                    {!info.flexible ? '🔵' : '🟢'}                        {info.underlyingSymbol || 'TOKEN'}
                     </span>
                     <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
@@ -1493,7 +1513,7 @@ provider.on("network", (newNetwork, oldNetwork) => {
                       </span>
                     
                       <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      {info.underlyingSymbol || 'TOKEN'}
+                      {!info.flexible ? '🔵' : '🟢'}{info.underlyingSymbol || 'TOKEN'}
                     </span>
                     <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
                       Goal: {info.loanGoal}
