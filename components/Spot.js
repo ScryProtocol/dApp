@@ -6,7 +6,7 @@ import { useEthersProvider, useEthersSigner } from './tl';
 import { useAccount, useChainId } from 'wagmi';
 
 // Deployed factory address and ABI
-const IOUMintAddress = '0x7578Bb9326D5D32D8FF557D2EAa166Ca5138dFEd';
+const IOUMintAddress = '0xD9AF0e405a335602b6F05E978b3177087F367738';
 
 const IOUMintABI = [
   'function deployLoan(address, address, uint256, uint256, uint256, address, string, string, bool) external returns (address)',
