@@ -6,6 +6,7 @@ import { Toaster, toast } from 'react-hot-toast';
 
 // If you have your own custom hooks for provider/signer:
 import { useEthersProvider, useEthersSigner } from './tl';
+import { info } from 'autoprefixer';
 
 // ------------------------------
 // 1) GG Manager Contract
@@ -114,7 +115,7 @@ function GGLoanManagerUI() {
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const { address: userAddress } = useAccount()||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x1442d4721F8Df9D988a952dAC8280B9f2e39BFB2'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0xd40155187faaaf82ef1567869aF0A191C2BD0656'
 
 let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanManagerAddress
   // Contracts in React.useMemo
