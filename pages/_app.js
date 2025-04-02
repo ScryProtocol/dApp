@@ -3,7 +3,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import './global.css';
 import React, { useState, useEffect } from 'react';
 import { http, createConfig } from 'wagmi'
-import { base, holesky, mainnet, optimism, polygon, sepolia,scroll,arbitrum,ink,soneium } from 'wagmi/chains'
+import * as allWagmiChains from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
