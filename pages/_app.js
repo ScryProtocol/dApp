@@ -18,19 +18,33 @@ import Info from "../components/Info";
 import App from '../components/App';
 const queryClient = new QueryClient()
 
+// Destructure some known chains from wagmi/chains
+const { mainnet, base, optimism } = allWagmiChains;
+
+// 1. Put your “most used” chains at the top in a fixed array:
+const topChains = [mainnet, base, optimism];
+
+// 2. Generate a complete chain list from wagmi
+const wagmiChainList = Object.values(allWagmiChains).filter(
+  (ch) => typeof ch.id === "number"
+);
+
+// 3. Remove any duplicates of your topChains to avoid collisions
+const otherChains = wagmiChainList.filter((ch) => {
+  return !topChains.some((top) => top.id === ch.id);
+});
+
+// 4. Merge them so that your favorites are at the top
+const allChains = [...topChains, ...otherChains];
+
+// 5. Create your config using allChains
 const config = getDefaultConfig({
-  chains: [base, holesky,mainnet,optimism, polygon,scroll,arbitrum,ink,soneium],// sepolia, holesky, base, optimism],
-  projectId: '97d417268e5bd5a42151f0329e544898',
-
-  transports: {
- //   [mainnet.id]: http(),
-    [holesky.id]: http(),[ink.id]: http(),[soneium.id]: http(),
-    [base.id]: http(), [optimism.id]: http(),[mainnet.id]: http(),[polygon.id]: http(),[sepolia.id]: http(), [scroll.id]: http(),[arbitrum.id]: http(),
-//  [optimism.id]: http(),
-  //  [mainnet.id]: http(),
-  },
-})
-
+  chains: allChains,
+  projectId: "YOUR_PROJECT_ID_HERE",
+  transports: Object.fromEntries(
+    allChains.map((chain) => [chain.id, http()])
+  ),
+});
 function MyApp({ Component, pageProps }) {
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     console.log(ink,optimism);
