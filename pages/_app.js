@@ -40,7 +40,7 @@ const allChains = [...topChains, ...otherChains];
 // 5. Create your config using allChains
 const config = getDefaultConfig({
   chains: allChains,
-  projectId: "YOUR_PROJECT_ID_HERE",
+  projectId: "97d417268e5bd5a42151f0329e544898",
   transports: Object.fromEntries(
     allChains.map((chain) => [chain.id, http()])
   ),
