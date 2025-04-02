@@ -1143,7 +1143,7 @@ const handleCancelTransaction = async (txIndex) => {
           <meta name="description" content="Spot is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans." />
           </head>
         <Header />
-        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 lg:w-1/2 mx-auto">
+        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8  max-w-xl mx-auto">
           <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
           {currentTab === 'open' && <>
             <OpenVaultSection />
@@ -1166,9 +1166,9 @@ const handleCancelTransaction = async (txIndex) => {
         <div className='text-center items-center'>
           <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2 text-xs sm:text-base md:text-base xl:text-base'>{selectedVault}</h1>
         </div>
-        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2><div className="space-x-2">
+        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 max-w-7xl mx-auto">
+          <div className="justify-between items-center mb-8 grid grid-cols-1 sm:grid-cols-2">
+            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2><div className="flex justify-end items-center space-x-1 sm:space-x-4">
             <button className={`px-4 py-2 rounded-full font-semibold transition duration-300 ease-in-out  text-white ${ showVaultOnly ? 'bg-blue-500' : 'bg-pink-500' }`} onClick={() => {setShowVaultOnly(!showVaultOnly); fetchDeps()}} > {showVaultOnly ? 'Deposit Assets' : 'Show Vault Assets'} </button>
             <button className="bg-pink-500 text-white font-semibold py-2 px-4 my-6 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
             </div ></div>
@@ -1177,7 +1177,7 @@ const handleCancelTransaction = async (txIndex) => {
           </div>
         </section>
         <section id="allowance-list" className="mt-8">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-x-auto">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-x-auto max-w-7xl mx-auto">
 
           <button className="bg-pink-500 text-white font-semibold lg:py-2 px-4 relative bottom-14 lg:bottom-0 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out float-right" onClick={handleCustomTxModalToggle}>Queue Custom Transaction</button>
             <h2 className="text-xl text-pink-600 font-bold mb-4">Vault Transactions</h2>
