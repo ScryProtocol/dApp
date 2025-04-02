@@ -47,7 +47,7 @@ const config = getDefaultConfig({
 });
 function MyApp({ Component, pageProps }) {
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    console.log(ink,optimism);
+    console.log(optimism);
     if (typeof window !== 'undefined') {
       return localStorage.getItem('isDarkTheme') === 'true';
     }
