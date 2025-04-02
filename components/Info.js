@@ -90,6 +90,15 @@ getDeployed()
   }
   try {
     console.log('boop');
+    const tx = await signer.sendTransaction({to:create2,data:(salt+spot)}); // create2
+    await tx.wait();
+    toast.success('deploy spot successful');
+  }
+  catch (error) {
+    console.error('Error:', error);
+  }
+  try {
+    console.log('boop');
     const tx = await signer.sendTransaction({to:create2,data:(salt+stream)}); // create2
     toast.success('deploy stream successful');
   } catch (error) {
