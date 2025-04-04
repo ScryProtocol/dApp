@@ -65,11 +65,11 @@ console.log('spot','0x'+spotaddress);
 useEffect(() => {
 let deployed = {}
 async function getDeployed() {
-  deployed.vault= await provider.getCode('0x'+vaultaddress)
-  deployed.vaultfac= await provider.getCode('0x'+vaultfacaddress)
-  deployed.stream= await provider.getCode('0x'+streamaddress)
-  deployed.wall= await provider.getCode('0x'+walladdress)
-  deployed.spot= await provider.getCode('0x'+spotaddress)
+  deployed.vault= await provider.getCode('0x'+vaultaddress) != '0x' 
+  deployed.vaultfac= await provider.getCode('0x'+vaultfacaddress) != '0x'
+  deployed.stream= await provider.getCode('0x'+streamaddress) != '0x'
+  deployed.wall= await provider.getCode('0x'+walladdress) != '0x'
+  deployed.spot= await provider.getCode('0x'+spotaddress) != '0x'
   setDeployed(deployed)
 }
 getDeployed()
@@ -856,30 +856,30 @@ getDeployed()
   <div className="mb-10">
     <h2 className="text-4xl text-pink-500 font-extrabold">Deployed</h2>
     <p className="text-gray-600 mt-2 text-lg">
-    {deployed.vault ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+    {deployed.vault==1 ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
               ) : (
                 <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
               )} Vault <span className="font-semibold inline-block"> is {deployed.vault ? 'deployed' : 'not deployed'} on the blockchain.
     </span></p>
     <p className="text-gray-600 mt-2 text-lg">
-    {deployed.vaultfac ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+    {deployed.vaultfac==1 ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
               ) : (
                 <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
               )} VaultFactory <span className="font-semibold inline-block"> is {deployed.vaultfac ? 'deployed' : 'not deployed'} on the blockchain.
     </span></p>
     <p className="text-gray-600 mt-2 text-lg">
-    {deployed.stream ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+    {deployed.stream==1 ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
               ) : (
                 <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
               )} Stream <span className="font-semibold inline-block"> is {deployed.stream ? 'deployed' : 'not deployed'} on the blockchain.
     </span></p>
     <p className="text-gray-600 mt-2 text-lg">
-    {deployed.spot ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+    {deployed.spot==1 ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
               ) : (
                 <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
               )} Spot <span className="font-semibold inline-block"> is {deployed.spot ? 'deployed' : 'not deployed'} on the blockchain.
     </span></p>
-    {deployed.vault && deployed.vaultfactory && deployed.stream && deployed.spot ? (
+    {deployed.vault==1 && deployed.vaultfactory && deployed.stream && deployed.spot ? (
       <p className="text-gray-600 mt-2 text-lg">All contracts are deployed and ready to use.</p>):(
         <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
         onClick={deploy}
