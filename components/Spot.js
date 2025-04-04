@@ -519,9 +519,10 @@ const [showModal, setShowModal] = useState(false);
   return (
     <div className="main-container font-sans">          <Toaster />
           <LoanModal className=" top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 float" />
-      <div className="container lg:w-1/2">
-        <h1 className="main-title">🍕 Spot a Friend 🚀</h1>
-        <label className="subtitle">
+      
+          <h1 className="text-center text-4xl mt-12 relative text-white font-extrabold">Spot a Friend</h1>
+          <div className="bg-white rounded-3xl p-4 mt-4 mb-8">
+        <label className="text-center text-xl font-semibold text-pink-500">
           🌈 Allow friends to borrow tokens from your wallet, with optional interest!
         </label>
 
