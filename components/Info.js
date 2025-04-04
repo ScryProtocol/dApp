@@ -853,7 +853,13 @@ getDeployed()
         <div
         style={{ overflowY: 'auto', scrollbarWidth: 'thin', WebkitScrollbarWidth: 'thin', WebkitScrollbarTrack: { backgroundColor: '#e5e7eb', borderRadius: '9999px', }, WebkitScrollbarThumb: { backgroundColor: '#9ca3af', borderRadius: '9999px', border: '2px solid #e5e7eb', }, }}
       id="info-section" className="absolute top-2 bg-white p-8 overflow-y-auto max-w-3xl m-4 mx-auto rounded-3xl shadow-lg justify-center inset-0">
-  <div className="mb-10">
+  {app == 'wall'&& <Wall />}
+  {app == 'vault'&& <Vault />}
+  {app == 'spot'&& <Spot />}
+  {app == 'stream'&& <Stream />}
+  {app == 'sub'&& <Sub />}
+  {app == 'feed'&& <FeedGuide />}
+  <div className="mb-10 bg-gray-100 mt-4 p-4 rounded-3xl">
     <h2 className="text-4xl text-pink-500 font-extrabold">Deployed</h2>
     <p className="text-gray-600 mt-2 text-lg">
     {deployed.vault==1 ? (<span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
@@ -889,12 +895,6 @@ getDeployed()
       )}
     </div>
 
-  {app == 'wall'&& <Wall />}
-  {app == 'vault'&& <Vault />}
-  {app == 'spot'&& <Spot />}
-  {app == 'stream'&& <Stream />}
-  {app == 'sub'&& <Sub />}
-  {app == 'feed'&& <FeedGuide />}
   </div>
   </div>
       );
