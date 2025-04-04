@@ -1139,8 +1139,8 @@ const handleCancelTransaction = async (txIndex) => {
       <Toaster />
       <main className=" mx-auto py-8 px-4 sm:px-8">
         <head>
-          <title>Spot - Simple Onchain Finance</title>
-          <meta name="description" content="Spot is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans." />
+          <title>Boop - Simple Finance</title>
+          <meta name="description" content="Boop is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans." />
           </head>
         <Header />
         <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8  max-w-xl mx-auto">
@@ -1206,11 +1206,11 @@ const handleCancelTransaction = async (txIndex) => {
       <>
       <h1 className="text-center text-4xl amb-8 relative text-white font-extrabold">Welcome to Vault</h1>
       <div className="flex justify-center items-center">
-        <a href="https://twitter.com/heyvault" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
+        <a href="https://twitter.com/heyboop" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
         <img src="https://cdn.simpleicons.org/x/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
         <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
           <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
-          <button onClick={() => {navigator.clipboard.writeText('https://vault.store/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
+          <button onClick={() => {navigator.clipboard.writeText('https://spot.pizza/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
           </button>
 
 </div></>

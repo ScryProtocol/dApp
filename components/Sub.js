@@ -565,8 +565,7 @@ const handleClaim = async (token) => {
     {!showSubscribeForm && (
       <div>
         <form onSubmit={handleCreateSubscription} className="space-y-8">
-          <h1 className="text-5xl font-extrabold text-orange-700 mb-8">🍕 Create Subscription</h1>
-          <div className="emoji text-6xl mb-8">🍕🎉</div>
+          <h1 className="text-5xl font-extrabold text-orange-700 mb-8">🍕 Create Subscription 🍕</h1>
           <div className="bg-yellow-100 rounded-lg p-10 shadow-lg">
             <div className="space-y-6">
             <div className="text-left">
