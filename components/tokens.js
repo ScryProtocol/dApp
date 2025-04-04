@@ -19,6 +19,12 @@ const tokens = {
     { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC', name: 'USD Coin' },
     { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH', name: 'Wrapped Ether' },
   ],
+  
+  57073: [
+    { address: '0x73e0c0d45e048d25fc26fa3159b0aa04bfa4db98', symbol: 'kBTC', name: 'Kraken Wrapped Bitcoin' },
+    { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC', name: 'USD Coin' },
+    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH', name: 'Wrapped Ether' },
+  ],
   534352 : [
     { address: '0xd29687c813D741E2F938F4aC377128810E217b1b', symbol: 'SCR', name: 'Scroll' },
     { address: '0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4', symbol: 'USDC', name: 'USD Coin' },
