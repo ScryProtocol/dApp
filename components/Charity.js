@@ -656,7 +656,7 @@ newCharity.chain=chainID;
                 />
               </a>
               <a
-                href="https://discord.gg/boopfinance"
+                href="https://discord.gg/vrV4YpUccq"
                 target="_blank"
                 rel="noopener noreferrer"
               >
