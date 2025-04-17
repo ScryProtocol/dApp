@@ -61,11 +61,14 @@ function MyApp({ Component, pageProps }) {
     // Save theme preference to local storage whenever it changes
     localStorage.setItem('isDarkTheme', isDarkTheme);
     let location = window.location.href;
-    if (location.includes('token')) {
+    if (location.includes('?token')) {
       setActiveTab('sub');
     }
     if (location.includes('?spot')) {
       setActiveTab('spot');
+    }
+    if (location.includes('give')) {
+      setActiveTab('charity');
     }
   }, [isDarkTheme]);
   const toggleTheme = () => {
