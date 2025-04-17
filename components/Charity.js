@@ -90,6 +90,26 @@ const defaultCharities = [
       },
     ],
   },{
+    name: 'Protocol Guild',
+    address: '0x32e3C7fD24e175701A35c224f2238d18439C7dBC',
+    about:
+      'Independent non-profit funding 190 Ethereum L1 R&D maintainers 🌿 $100mm from the ecosystem in an onchain 4yr vest 🌿 Stewarding our commons infra.',
+    link: 'https://example.org/water-for-all',
+    image: 'https://pbs.twimg.com/profile_images/1529206083390255110/UkK0Hc6q_400x400.jpg',
+    chain: 1,
+    tokens: [
+      {
+        token: 'USDC',
+        address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        presetAmounts: [5, 10, 20],
+      },
+      {
+        token: 'wETH',
+        address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        presetAmounts: [0.005, 0.01, 0.05],
+      },
+    ],
+  },{
     name: 'GiveDirectly',
     address: '0x69b4B1Ee9b7c619AdC51C256869cE705841BeD44',
     about: 'Delivers unconditional cash transfers to families living in extreme poverty.',
