@@ -635,7 +635,9 @@ newCharity.chain=chainID;
     <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 relative overflow-hidden">
       <div className="absolute inset-0 bg-white bg-opacity-30 backdrop-filter backdrop-blur-md"></div>
       <Toaster />
-
+<title>Charity Subscriptions</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="description" content="Subscribe to a charity and support their cause." />
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-4">
 
         {/* Header Bar */}
