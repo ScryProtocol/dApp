@@ -248,7 +248,7 @@ const { charityClaims, claimForCharity } =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [streamContract, userAddress, charities]);
   const togglePro = useCallback((e) => {
-    if (e.key.toLowerCase() === 'p') {
+    if (e.key.toLowerCase() === '`') {
       e.preventDefault();
       setPr0((prev) => !prev);
     }
@@ -964,7 +964,7 @@ console.log('charitySubs',charity.share);
           <div className="max-w-sm mx-auto mb-10 p-6 bg-white bg-opacity-90 rounded-3xl shadow-2xl border border-pink-100 text-pink-600">
             <h2 className="text-2xl font-extrabold mb-4 drop-shadow-sm">Add Charity Info</h2>
             <p className="text-gray-600 mb-6">
-              Fill out the details below to add your own charity. Once added, you'll be provided a share link so others can subscribe! You can claim all your subscriptions at <a href="https://boop.finance/?token=" target="_blank" rel="noopener noreferrer" className="text-pink-500 underline">Boop.Finance</a>.
+              Fill out the details below to add your own charity. Once added, you'll be provided a share link so others can subscribe! You can claim all your subscriptions at <a href="https://boop.finance/?token=" target="_blank" rel="noopener noreferrer" className="text-pink-500 underline">Boop.Finance</a>. Press "`" to see claimable balances and claim from all supporters.
             </p>
 
             {/* Charity Info Fields */}
