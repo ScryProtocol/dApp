@@ -16,6 +16,7 @@ import Feed from "../components/Feed";
 import Wall from "../components/Wall";
 import Info from "../components/Info";
 import App from '../components/App';
+import Charity from '../components/Charity';
 const queryClient = new QueryClient()
 
 // Destructure some known chains from wagmi/chains
@@ -95,6 +96,9 @@ function MyApp({ Component, pageProps }) {
       <button className={`ta ${activeTab === 'wall' ? 'tab-active' : ''}`} onClick={() => setActiveTab('wall')}>
           Wall
           </button></>)}
+          <button className={`ta ${activeTab === 'charity' ? 'tab-active' : ''}`} onClick={() => setActiveTab('charity')}>
+          🎁
+          </button>
       </div>
       <button className="absolute right-2 top-2 w-9 rounded-full bg-white p-1 font-bold text-xl" onClick={() => setShowInfo(!showInfo)}>?</button>
       </div>
@@ -121,6 +125,8 @@ function MyApp({ Component, pageProps }) {
           }{activeTab === 'wall' &&
             <Wall/>
             }
+          {activeTab === 'charity' &&
+          <Charity/>}
         </div>
 
         {showInfo && (
