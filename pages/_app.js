@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }) {
     }
     return false;
   });
-  const [activeTab, setActiveTab] = useState('vault');
+  const [activeTab, setActiveTab] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   
   useEffect(() => {
@@ -69,6 +69,9 @@ function MyApp({ Component, pageProps }) {
     }
     if (location.includes('give')) {
       setActiveTab('charity');
+    }
+    else {
+      setActiveTab('vault');
     }
   }, [isDarkTheme]);
   const toggleTheme = () => {
