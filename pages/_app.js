@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }) {
     }
     return false;
   });
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState('charity');
   const [showInfo, setShowInfo] = useState(false);
   
   useEffect(() => {
