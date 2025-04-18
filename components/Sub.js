@@ -1000,7 +1000,7 @@ const handleClaim = async (tokenSymbol) => {
         {/* Subscription Fronts */}
         <div className="flex flex-wrap gap-8 justify-center">
           {fronts
-            .filter((front) => front.chain === chainID)
+            //.filter((front) => front.chain === chainID)
             .map((front) => {
               const planState = frontPlans[front.address] || {};
               const isCustom = planState.plan === 'custom';
@@ -1023,8 +1023,11 @@ const handleClaim = async (tokenSymbol) => {
                       Subscribed for {Number(subInfoObj.amountAllowed)} {chosenTokenObj.token} {subInfoObj.details.once && 'for ' + Number(subInfoObj.details.window)/60/60/30 + ' months'}
                     </div>
                     </div>
+                  )}{front.chain != chainID && (
+                  <div className="absolute bottom-2 bg-orange-300 text-white font-semibold rounded-full px-3 py-1 mx-4">
+                    This subscription is not on the current chain. Please switch to chainID {front.chain}.
+                    </div>
                   )}
-                  
                   {front.image && (
                     <img
                       src={front.image}
