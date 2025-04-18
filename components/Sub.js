@@ -763,7 +763,7 @@ const handleClaim = async (tokenSymbol) => {
         {data.map((item) => (
           <div
             key={item.hash}
-            className="relative bg-green-100 bg-opacity-90 rounded-3xl border border-green-200 flex w-full justify-between p-2 mb-4"
+            className="relative bg-green-100 bg-opacity-90 rounded-3xl border border-green-200 w-full justify-between p-2 gap-2 mb-4 grid lg:flex"
           >
             {/* Top Badge */}
             <div className="bg-green-400 text-white font-semibold rounded-full px-3 py-1">
