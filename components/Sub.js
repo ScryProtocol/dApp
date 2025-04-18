@@ -721,8 +721,8 @@ const handleClaim = async (tokenSymbol) => {
     </h3>
     {allowances == 1 && (<>
       <h2 className="text-xl text-pink-500 font-bold">Claimable</h2>
-<div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-full mb-4">
-  <div className="flex flex-wrap gap-4 justify-center">
+<div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl mb-4">
+  <div className="flex flex-wrap gap-4 justify-center flex-col md:flex-row">
     {/* Claim‑all button */}
     <button
       onClick={() => handleClaim()}
