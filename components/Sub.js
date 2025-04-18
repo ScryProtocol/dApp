@@ -112,7 +112,7 @@ function useLocalBrandSettings() {
 // ----------------------------------------------------------------------------
 // Main Component
 // ----------------------------------------------------------------------------
-export default function CustomizedSubscriptionFront() {
+export default function Sub() {
   const { address: userAddress } = useAccount();
   const signer = useEthersSigner();
   const provider = useEthersProvider();
