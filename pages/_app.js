@@ -63,11 +63,12 @@ function MyApp({ Component, pageProps }) {
     let location = window.location.href;
     if (location.includes('?sub')) {
       setActiveTab('sub');
+      console.log('sub');
     }
-    if (location.includes('?spot')) {
+   else if (location.includes('?spot')) {
       setActiveTab('spot');
     }
-    if (location.includes('give')) {
+    else if (location.includes('give')) {
       setActiveTab('charity');
     }
     else {
