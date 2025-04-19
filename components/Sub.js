@@ -822,6 +822,24 @@ export default function FullDapp() {
               >
                 Share link
               </button>
+              
+              <button
+                onClick={async () => {
+    const dataToShare = {
+      brand: brandSettings,
+      fronts,
+      // or if you prefer only the first front => singleFront: fronts[0]
+    };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataToShare))));
+    const url = `${window.location.origin}${window.location.pathname}?sub=${encoded}`;
+    let res = await fetch('https://tinyurl.com/api-create.php?url='+url)
+    navigator.clipboard.writeText(await(res.text())).then(() => {
+      toast.success('Link copied!');
+    });}}
+                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-600 transition-colors"
+              >
+                Share link (short)
+              </button>
             </>
           )}
         </p>
