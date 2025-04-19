@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }) {
     }
     return false;
   });
-  const [activeTab, setActiveTab] = useState('charity');
+  const [activeTab, setActiveTab] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   
   useEffect(() => {
@@ -117,7 +117,7 @@ function MyApp({ Component, pageProps }) {
       <RainbowKitProvider>
         <title>Boop - Simple Finance</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Onchain finance made simple" />
+        <meta name="description" content="Onchain finance made simple" />{activeTab&&(
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
          ><a href={0!==1?'https://twitter.com/0xboop':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
@@ -138,7 +138,7 @@ function MyApp({ Component, pageProps }) {
           {activeTab === 'charity' &&
           <Charity/>}
         </div>
-
+        )}
         {showInfo && (
             <Info
               app={activeTab}
