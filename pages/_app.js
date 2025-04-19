@@ -115,6 +115,9 @@ function MyApp({ Component, pageProps }) {
     <WagmiProvider  config={config}>
       <QueryClientProvider client={queryClient}>
       <RainbowKitProvider>
+        <title>Boop - Simple Finance</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Onchain finance made simple" />
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
           <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
          ><a href={0!==1?'https://twitter.com/0xboop':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
