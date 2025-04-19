@@ -1,40 +1,12 @@
-import React, { useState, useEffect, use } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { ethers } from 'ethers';
-const FormData = require('form-data');
-import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
-import { chainId } from 'wagmi'; 
+import { useAccount, useEnsName, useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEthersProvider, useEthersSigner } from './tl';
-import { useAccount, useEnsName, useChainId } from 'wagmi';
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Paper,
-  ListItemText
-} from '@mui/material';
 
-// Example placeholder token address for “no token” fallback
-const tokenaddress = '0x0000000000000000000000000000000000000000';
-
-let signer;
-let provider;
-
-/**
- * Replace with your new contract address & updated ABI.
- */
+// ~~~~~~~~ YOUR CONTRACT DETAILS ~~~~~~~~
 const ContractAddress = '0x6b8dcac6af8e93438cdb8eaeef2da95b8e9d372d';
-
-// NEW Contract ABI (with getSpotInfo, interestRate, etc.)
 const ContractABI = [
   'constructor(address payable feeAddrs)',
   'function allowBorrow(address token, address friend, uint256 amount, uint256 interestRate)',
@@ -63,378 +35,82 @@ const tokenABI = [
   'function allowance(address, address) view returns (uint)'
 ];
 
-const Spot = () => {
-  // Wagmi
+// For a “no token” fallback
+const tokenaddress = '0x0000000000000000000000000000000000000000';
+
+// ~~~~~~~~ MAIN SPOT COMPONENT ~~~~~~~~
+export default function Spot() {
+  // Wagmi, ethers, and state
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const chainIdNow = useChainId();
   const { address: userAddress } = useAccount();
 
-  provider = ethersProvider;
-  signer = ethersSigner;
+  const provider = ethersProvider;
+  const signer = ethersSigner;
+  const contract = new ethers.Contract(ContractAddress, ContractABI, provider);
 
-  // UI state
   const [initialized, setInitialized] = useState(false);
   const [allowances, setAllowances] = useState([]);
   const [borrows, setBorrows] = useState([]);
 
-  // For creating or updating allowances
+  // Form fields
   const [friend, setFriend] = useState('');
   const [amount, setAmount] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [stoken, setToken] = useState(null);
 
-  // A small address->name map for token addresses & ENS
+  // Simple mapping of known addresses => names
   const [maps, setMaps] = useState({
     '0x94373a4919B3240D86eA41593D5eBa789FEF3848': 'wETH',
     '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'PR0',
     '0x0987654321098765432109876543210987654321': 'USDC',
   });
 
-  const contract = new ethers.Contract(ContractAddress, ContractABI, provider);
-
-  // Helper to add new name->address mapping
+  // Resolve addresses → names
   const addMapping = (address, name) => {
     setMaps((prev) => ({
       ...prev,
-      [address.toLowerCase()]: name
+      [address.toLowerCase()]: name,
     }));
   };
-
-  // Very simple function to display known addresses or fallback
   const map = (addr) => {
     addr = addr.toLowerCase();
-    if (maps[addr]) return maps[addr];
-    return addr;
+    return maps[addr] || addr;
   };
 
-  // For re-initializing data
+  // For ENS lookups of lender/friend addresses
+  const [ENS, setENS] = useState({});
   useEffect(() => {
-    if (!initialized) {
-      setInitialized(true);
-      fetchData();
-    }
-  }, [initialized, userAddress, contract]);
-
-  // Listen for account changes
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', () => {
-        setInitialized(false);
-      });
-    }
-  }, []);
-
-  // Main data fetch
-  const fetchData = async () => {
-    await fetchLenderAllowances();
-    await fetchFriendAllowances();
-  };
-
-  // Multicall
-  const MULTICALL_ADDRESS = '0xca11bde05977b3631167028862be2a173976ca11';
-  const MULTICALL_ABI = [
-    'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
-  ];
-  
-  // -----------------------------
-  // Fetch LENDER allowances
-  // -----------------------------
-  const fetchLenderAllowances = async () => {
-    if (!contract || !userAddress) return;
-
-    let lenderAllowances = await contract.viewLenderAllowances(userAddress);
-    if (!lenderAllowances?.length) {
-      setAllowances([]);
-      return;
-    }
-    
-lenderAllowances=[...lenderAllowances]
-console.log(lenderAllowances);
-let spotResult = await contract.getSpotInfo(lenderAllowances);
-console.log(spotResult);
-    // Step 4: final UI array
-let spotResults=await Promise.all(
-  spotResult.details.map(async (info, idx) => {
-    const [
-      lender,
-      friend,
-      token,
-      totalBorrowed,
-      outstanding,
-      allowable,
-      interestRate,
-      lastAccrualTimestamp,
-      interestAccrued
-    ] = info;
-const decimals = spotResult.decimalsArr[idx];
-const name = spotResult.names[idx];
-const symbol = spotResult.symbols[idx];
-const fee = spotResult.updatedTotalOwed[idx];
-const interestRateFee = spotResult.updatedInterest[idx];
-const outstandingFee = fee;
-    return {
-      lender,
-      friend,
-      token,
-      totalBorrowed,
-      outstanding,
-      allowable,
-      interestRate,
-      lastAccrualTimestamp,
-      interestAccrued,
-      fee,
-      outstandingFee,
-      interestRateFee,
-      decimals,
-      name,
-      symbol
+    const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
+    const getAddressENS = async (address) => {
+      if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
+      try {
+        const ensName = await pr.lookupAddress(address);
+        if (ensName) addMapping(address, ensName);
+        return ensName || address;
+      } catch {
+        return address;
+      }
     };
-  }))
-     
-    const finalAllowances = await Promise.all(
-      spotResults.map(async (info, idx) => {
-        console.log(info);
 
-        const friendENS = info.friend.toLowerCase();
-let dec=info.decimals; 
-        // Parse out the numeric fields
-        return {
-          lender: info.lender,
-          friend: info.friend,
-          friendENS,
-          token: info.token,
-          totalBorrowed: Number(ethers.formatUnits(info.totalBorrowed, dec)),
-          outstanding: Number(ethers.formatUnits(info.outstanding, dec)),
-          allowable: Number(ethers.formatUnits(info.allowable, dec)),
-          interestRate: Number(info.interestRate),
-          fee: Number(ethers.formatUnits(info.fee, dec)), 
-          outstandingFee: Number(ethers.formatUnits(info.outstandingFee, dec)),
-          interestRateFee: Number(ethers.formatUnits(info.interestRateFee, dec)),
-          hash: lenderAllowances[idx],
-          name: info.name,
-          symbol: info.symbol
-        };
-      })
-    );
-
-    setAllowances(finalAllowances);
-  };
-
-  // -----------------------------
-  // Fetch FRIEND allowances (where I am the borrower)
-  // -----------------------------
-  const fetchFriendAllowances = async () => {
-    if (!contract || !userAddress) return;
-
-    let friendAllowances = await contract.viewFriendAllowances(userAddress);
-    if (!friendAllowances?.length) {
-      setBorrows([]);
-      return;
-    }
-friendAllowances=[...friendAllowances];
-    const multicallContract = new ethers.Contract(MULTICALL_ADDRESS, MULTICALL_ABI, provider);
-const spotResult=await contract.getSpotInfo(friendAllowances);
-let spotResults=await Promise.all(
-  spotResult.details.map(async (info, idx) => {
-    const [
-      lender,
-      friend,
-      token,
-      totalBorrowed,
-      outstanding,
-      allowable,
-      interestRate,
-      lastAccrualTimestamp,
-      interestAccrued
-    ] = info;
-const decimals = spotResult.decimalsArr[idx];
-const name = spotResult.names[idx];
-const symbol = spotResult.symbols[idx];
-const fee = spotResult.updatedTotalOwed[idx];
-const interestRateFee = spotResult.updatedInterest[idx];
-const outstandingFee = fee;
-    return {
-      lender,
-      friend,
-      token,
-      totalBorrowed,
-      outstanding,
-      allowable,
-      interestRate,
-      lastAccrualTimestamp,
-      interestAccrued,
-      fee,
-      outstandingFee,
-      interestRateFee,
-      decimals,
-      name,
-      symbol
-    };
-  })
-);
-    // Step 4: final UI array
-    const finalBorrows = await Promise.all(
-      spotResults.map(async (info, idx) => {
-        const lenderENS = info.lender.toLowerCase();
-let dec=info.decimals;
-        return {
-          lender: info.lender,
-          lenderENS,
-          friend: info.friend,
-          token: info.token,
-          totalBorrowed: Number(ethers.formatUnits(info.totalBorrowed, dec)),
-          outstanding: Number(ethers.formatUnits(info.outstanding, dec)),
-          allowable: Number(ethers.formatUnits(info.allowable, dec)),
-          interestRate: Number(info.interestRate),
-          fee: Number(ethers.formatUnits(info.fee, dec)),
-          outstandingFee: Number(ethers.formatUnits(info.outstandingFee, dec)),
-          interestRateFee: Number(ethers.formatUnits(info.interestRateFee, dec)),
-          hash: friendAllowances[idx],
-          name: info.name,
-          symbol: info.symbol
-        };
-      })
-    );
-
-    setBorrows(finalBorrows);
-  };
-  const [ENS, setENS] = useState('');
-useEffect(() => {
-  const pr = new ethers.JsonRpcProvider('https://1rpc.io/eth');
-  const getAddressENS = async (address) => {
-    if (maps[address.toLowerCase()]) return maps[address.toLowerCase()];
-  try {
-     const ensName = await pr.lookupAddress(address);
-    if (ensName) addMapping(address, ensName);
-    return ensName || address;
-     
-  } catch (error) {
-    return address;
-  }
-  };
-  for (const allowance of allowances) {
-  if (!ENS[allowance.friend]) {
-    getAddressENS(allowance.friend).then((ens) => {
-      setENS((prev) => ({ ...prev, [allowance.friend]: ens }));
+    allowances.forEach((a) => {
+      if (!ENS[a.friend]) {
+        getAddressENS(a.friend).then((ens) =>
+          setENS((prev) => ({ ...prev, [a.friend]: ens }))
+        );
+      }
     });
-  }
-  }
-  for (const borrow of borrows) {
-  if (!ENS[borrow.lender]) {
-    getAddressENS(borrow.lender).then((ens) => {
-      setENS((prev) => ({ ...prev, [borrow.lender]: ens }));
+    borrows.forEach((b) => {
+      if (!ENS[b.lender]) {
+        getAddressENS(b.lender).then((ens) =>
+          setENS((prev) => ({ ...prev, [b.lender]: ens }))
+        );
+      }
     });
-  }
-  }
-}, [allowances, borrows]);
+  }, [allowances, borrows]);
 
-  // --------------------------------
-  // allowBorrow => sets allowance w/ interestRate
-  // --------------------------------
-  const requestBorrow = async (stoken, friend, amount) => {
-    if (!signer) return;
-    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
-
-    try {
-      let decimals = 18;
-      // If not the dummy 0x000.. token
-      if (ethers.isAddress(stoken) && stoken !== tokenaddress) {
-        const tokenContract = new ethers.Contract(stoken, tokenABI, signer);
-        decimals = await tokenContract.decimals();
-      }
-      const parsedAmount = ethers.parseUnits(amount || '0', decimals);
-
-      // Approve if necessary
-      if (ethers.isAddress(stoken) && stoken !== tokenaddress) {
-        const tokenContract = new ethers.Contract(stoken, tokenABI, signer);
-        const allowance = await tokenContract.allowance(userAddress, ContractAddress);
-        if (allowance < parsedAmount) {
-          const txApprove = await tokenContract.approve(ContractAddress, parsedAmount);
-          await txApprove.wait();
-        }
-      }
-
-      // Resolve ENS if needed
-      if (!ethers.isAddress(friend)) {
-        const pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
-        const resolved = await pr.resolveName(friend);
-        if (!resolved) {
-          toast.error('ENS not found');
-          return;
-        }
-        friend = resolved;
-      }
-
-      const interestRateBN = parseInt(interestRate, 10) || 0;
-      const tx = await contractWithSigner.allowBorrow(stoken, friend, parsedAmount, interestRateBN);
-      await tx.wait();
-
-      toast.success('Allowance + interestRate set!');
-      fetchLenderAllowances();
-    } catch (error) {
-      console.error('Error requesting borrow:', error);
-      toast.error('Error requesting borrow');
-    }
-  };
-
-  // --------------------------------
-  // Borrow => friend calls this to actually pull tokens
-  // --------------------------------
-  const handleBorrow = async (tokenAddress, lender) => {
-    if (!signer) return;
-    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
-    try {
-      let decimals = 18;
-      if (ethers.isAddress(tokenAddress) && tokenAddress !== tokenaddress) {
-        const tokenContract = new ethers.Contract(tokenAddress, tokenABI, provider);
-        decimals = await tokenContract.decimals();
-      }
-      const parsedAmount = ethers.parseUnits(amount || '0', decimals);
-
-      const tx = await contractWithSigner.borrow(tokenAddress, lender, parsedAmount);
-      await tx.wait();
-      toast.success('Borrow successful');
-      fetchFriendAllowances();
-    } catch (error) {
-      console.error('Error borrowing:', error);
-      toast.error('Error borrowing');
-    }
-  };
-
-  // --------------------------------
-  // Repay => friend calls repay
-  // --------------------------------
-  const handleRepay = async (tokenAddress, lender) => {
-    if (!signer) return;
-    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
-    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
-    
-    try {
-      let decimals = 18;
-      if (ethers.isAddress(tokenAddress) && tokenAddress !== tokenaddress) {
-        decimals = await tokenContract.decimals();
-      }
-      const parsedAmount = ethers.parseUnits(amount || '0', decimals);
-
-      // Approve the contract to spend your tokens
-      const allowance = await tokenContract.allowance(userAddress, ContractAddress);
-      if (allowance < parsedAmount) {
-        const txApprove = await tokenContract.approve(ContractAddress, parsedAmount);
-        await txApprove.wait();
-      }
-
-      const tx = await contractWithSigner.repay(tokenAddress, lender, parsedAmount);
-      await tx.wait();
-      toast.success('Repayment successful');
-      fetchFriendAllowances();
-    } catch (error) {
-      console.error('Error repaying:', error);
-      toast.error('Error repaying');
-    }
-  };
-
-  // Example token lists by chain
+  // Simple token lists by chain
   const tokenOptions = {
     1: [
       { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI' },
@@ -448,267 +124,663 @@ useEffect(() => {
     ],
     8453: [
       { address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', symbol: 'USDC' },
-    { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
+      { address: '0x4200000000000000000000000000000000000006', symbol: 'WETH' },
     ],
     534352: [],
-  };    useEffect(() => {
-    let params = new URLSearchParams(window.location.search);
-    setToken(params.get('token'));
-    setFriend(params.get('friend'));
-  setAmount(params.get('amount'));
-  setInterestRate(params.get('interest'));
-  console.log(params.get('token'),params.get('friend'),params.get('amount'),params.get('interest'));
-  console.log(params);
-  if (params.get('token')) {
-    setShowModal(true);
-  }}, []);
+  };
 
-const [showModal, setShowModal] = useState(false);
-  const LoanModal = ({}) => {
-    return (<>{showModal && (
-      <div className={`bg-black bg-opacity-50 fixed top-0 left-0 w-full h-full z-50`}>
-      <div className="container lg:w-1/2 mx-auto">
-        <h1 className="section-title mb-2">📝 Loan Request</h1>
-        <button onClick={() => setShowModal(!showModal)} className='bg-red-500 text-white p-2 rounded-full px-3 py-1 top-2 right-2 fixed'>X</button>
-        <label className="subtitle">
-          🌈 Lend a friend tokens from your wallet, with optional interest!
-        </label>
-        <div className="form-container">
-        <div className="form-group">
-        <label htmlFor="token" className="form-label">🪙 Token Address:</label>
-        {stoken&&<p className="form-input">{stoken}</p>}
-        <label htmlFor="friend" className="form-label">👥 Borrower Address/ENS:</label>
-        {friend&&<p className="form-input">{friend}</p>}
-        {!friend&&(<><input
-          type="text"
-          id="friend"
-          name="friend"
-          value={friend}
-          onChange={(e) => setFriend(e.target.value)}
-          required
-          className="form-input"
-        /></>)}
-        <label htmlFor="amount" className="form-label">💸 Loan Limit:</label>
-<input
-          type="number"
-          id="amount"
-          value={amount}
-          name="amount"
-          step="0.01"
-          onChange={(e) => setAmount(e.target.value)}
-          required
-          className="form-input"
-        />
-        <label htmlFor="interestRate" className="form-label">
-          🏦 Interest Rate (e.g. 50 = 5%):
-        </label>
-<input type="number" id="interestRate" name="interestRate" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} required className="form-input" />
-        <button onClick={() => requestBorrow(stoken, friend, amount)} className="submit-button">
-          Set Allowance
-        </button>
-        <div style={{ marginTop: '16px' }}>
-          <ConnectButton style={{ margin: '10px' }} />
+  // For the “borrow/repay” modals from URL
+  const [showModal, setShowModal] = useState(false);
+
+  // On load, parse query string for ?token=..., etc.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('token')) setToken(params.get('token'));
+    if (params.get('friend')) setFriend(params.get('friend'));
+    if (params.get('amount')) setAmount(params.get('amount'));
+    if (params.get('interest')) setInterestRate(params.get('interest'));
+    if (params.get('token')) setShowModal(true);
+  }, []);
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  Contract Interactions
+  // ~~~~~~~~~~~~~~~~~~~~~
+  const requestBorrow = async (stoken, friendAddr, amt) => {
+    if (!signer) return;
+    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
+
+    try {
+      // decimals
+      let decimals = 18;
+      if (ethers.isAddress(stoken) && stoken !== tokenaddress) {
+        const tokenContract = new ethers.Contract(stoken, tokenABI, signer);
+        decimals = await tokenContract.decimals();
+      }
+      const parsedAmount = ethers.parseUnits(amt || '0', decimals);
+
+      // Approve if needed
+      if (ethers.isAddress(stoken) && stoken !== tokenaddress) {
+        const tokenContract = new ethers.Contract(stoken, tokenABI, signer);
+        const currentAllowance = await tokenContract.allowance(
+          userAddress,
+          ContractAddress
+        );
+        if (currentAllowance < parsedAmount) {
+          const txApprove = await tokenContract.approve(ContractAddress, parsedAmount);
+          await txApprove.wait();
+        }
+      }
+
+      // Resolve ENS if needed
+      if (!ethers.isAddress(friendAddr)) {
+        const pr = new ethers.JsonRpcProvider('https://eth.llamarpc.com');
+        const resolved = await pr.resolveName(friendAddr);
+        if (!resolved) {
+          toast.error('ENS not found.');
+          return;
+        }
+        friendAddr = resolved;
+      }
+
+      const interestRateBN = parseInt(interestRate, 10) || 0;
+      const tx = await contractWithSigner.allowBorrow(
+        stoken,
+        friendAddr,
+        parsedAmount,
+        interestRateBN
+      );
+      await tx.wait();
+
+      toast.success('Allowance + interestRate set!');
+      fetchLenderAllowances();
+    } catch (error) {
+      console.error(error);
+      toast.error('Error requesting borrow');
+    }
+  };
+
+  const handleBorrow = async (tokenAddress, lender) => {
+    if (!signer) return;
+    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
+    try {
+      let decimals = 18;
+      if (ethers.isAddress(tokenAddress) && tokenAddress !== tokenaddress) {
+        const tokenContract = new ethers.Contract(tokenAddress, tokenABI, provider);
+        decimals = await tokenContract.decimals();
+      }
+      const parsedAmount = ethers.parseUnits(amount || '0', decimals);
+      const tx = await contractWithSigner.borrow(tokenAddress, lender, parsedAmount);
+      await tx.wait();
+      toast.success('Borrow successful');
+      fetchFriendAllowances();
+    } catch (error) {
+      console.error(error);
+      toast.error('Error borrowing');
+    }
+  };
+
+  const handleRepay = async (tokenAddress, lender) => {
+    if (!signer) return;
+    const contractWithSigner = new ethers.Contract(ContractAddress, ContractABI, signer);
+    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
+
+    try {
+      let decimals = 18;
+      if (ethers.isAddress(tokenAddress) && tokenAddress !== tokenaddress) {
+        decimals = await tokenContract.decimals();
+      }
+      const parsedAmount = ethers.parseUnits(amount || '0', decimals);
+
+      // Approve if needed
+      const allowance = await tokenContract.allowance(userAddress, ContractAddress);
+      if (allowance < parsedAmount) {
+        const txApprove = await tokenContract.approve(ContractAddress, parsedAmount);
+        await txApprove.wait();
+      }
+      const tx = await contractWithSigner.repay(tokenAddress, lender, parsedAmount);
+      await tx.wait();
+      toast.success('Repayment successful');
+      fetchFriendAllowances();
+    } catch (error) {
+      console.error(error);
+      toast.error('Error repaying');
+    }
+  };
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  FETCH DATA
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // We call these after metamask changes or on page load
+  useEffect(() => {
+    if (!initialized && userAddress && contract) {
+      setInitialized(true);
+      fetchData();
+    }
+  }, [initialized, userAddress, contract]);
+
+  // Listen for account changes to re-initialize
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', () => {
+        setInitialized(false);
+      });
+    }
+  }, []);
+
+  const fetchData = async () => {
+    await fetchLenderAllowances();
+    await fetchFriendAllowances();
+  };
+
+  // getSpotInfo references
+  const fetchLenderAllowances = async () => {
+    if (!contract || !userAddress) return;
+    let lenderAllowances = await contract.viewLenderAllowances(userAddress);
+    lenderAllowances = Array.from(lenderAllowances);
+    if (!lenderAllowances?.length) {
+      setAllowances([]);
+      return;
+    }
+    const spotResult = await contract.getSpotInfo(lenderAllowances);
+
+    // map them out
+    const results = spotResult.details.map((info, idx) => {
+      const [
+        lender,
+        friend,
+        token,
+        totalBorrowed,
+        outstanding,
+        allowable,
+        iRate,
+      ] = info;
+      return {
+        lender,
+        friend,
+        token,
+        totalBorrowed,
+        outstanding,
+        allowable,
+        interestRate: iRate,
+        lastAccrualTimestamp: info[7],
+        interestAccrued: info[8],
+        fee: spotResult.updatedTotalOwed[idx],
+        outstandingFee: spotResult.updatedTotalOwed[idx],
+        interestRateFee: spotResult.updatedInterest[idx],
+        decimals: spotResult.decimalsArr[idx],
+        name: spotResult.names[idx],
+        symbol: spotResult.symbols[idx],
+        hash: lenderAllowances[idx],
+      };
+    });
+
+    const finalAllowances = results.map((info) => {
+      const dec = info.decimals;
+      return {
+        lender: info.lender,
+        friend: info.friend,
+        token: info.token,
+        totalBorrowed: Number(ethers.formatUnits(info.totalBorrowed, dec)),
+        outstanding: Number(ethers.formatUnits(info.outstanding, dec)),
+        allowable: Number(ethers.formatUnits(info.allowable, dec)),
+        interestRate: Number(info.interestRate),
+        fee: Number(ethers.formatUnits(info.fee, dec)),
+        outstandingFee: Number(ethers.formatUnits(info.outstandingFee, dec)),
+        interestRateFee: Number(ethers.formatUnits(info.interestRateFee, dec)),
+        hash: info.hash,
+        name: info.name,
+        symbol: info.symbol || info.token,
+      };
+    });
+
+    setAllowances(finalAllowances);
+  };
+
+  const fetchFriendAllowances = async () => {
+    if (!contract || !userAddress) return;
+    let friendAllowances = await contract.viewFriendAllowances(userAddress);
+    friendAllowances = Array.from(friendAllowances);
+    if (!friendAllowances?.length) {
+      setBorrows([]);
+      return;
+    }
+    const spotResult = await contract.getSpotInfo(friendAllowances);
+
+    const results = spotResult.details.map((info, idx) => {
+      const [
+        lender,
+        friend,
+        token,
+        totalBorrowed,
+        outstanding,
+        allowable,
+        iRate,
+      ] = info;
+      return {
+        lender,
+        friend,
+        token,
+        totalBorrowed,
+        outstanding,
+        allowable,
+        interestRate: iRate,
+        lastAccrualTimestamp: info[7],
+        interestAccrued: info[8],
+        fee: spotResult.updatedTotalOwed[idx],
+        outstandingFee: spotResult.updatedTotalOwed[idx],
+        interestRateFee: spotResult.updatedInterest[idx],
+        decimals: spotResult.decimalsArr[idx],
+        name: spotResult.names[idx],
+        symbol: spotResult.symbols[idx],
+        hash: friendAllowances[idx],
+      };
+    });
+
+    const finalBorrows = results.map((info) => {
+      const dec = info.decimals;
+      return {
+        lender: info.lender,
+        friend: info.friend,
+        token: info.token,
+        totalBorrowed: Number(ethers.formatUnits(info.totalBorrowed, dec)),
+        outstanding: Number(ethers.formatUnits(info.outstanding, dec)),
+        allowable: Number(ethers.formatUnits(info.allowable, dec)),
+        interestRate: Number(info.interestRate),
+        fee: Number(ethers.formatUnits(info.fee, dec)),
+        outstandingFee: Number(ethers.formatUnits(info.outstandingFee, dec)),
+        interestRateFee: Number(ethers.formatUnits(info.interestRateFee, dec)),
+        hash: info.hash,
+        name: info.name,
+        symbol: info.symbol || info.token,
+      };
+    });
+
+    setBorrows(finalBorrows);
+  };
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  LOAN MODAL
+  // ~~~~~~~~~~~~~~~~~~~~~
+  const LoanModal = () => {
+    if (!showModal) return null;
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        {/* Modal Content */}
+        <div className="relative bg-white shadow-2xl rounded-3xl w-full max-w-lg p-8 bg-blur-md">
+          <button
+            onClick={() => setShowModal(false)}
+            className="absolute top-4 right-4 font-bold text-gray-500 hover:text-red-500"
+          >
+            X
+          </button>
+          <h1 className="text-2xl font-bold text-pink-500 mb-4">
+            📝 Loan Request
+          </h1>
+          <label className="block text-gray-700 font-semibold mb-2">
+            🌈 Lend a friend tokens from your wallet, with optional interest!
+          </label>
+          <div className="space-y-4">
+            {/* Display or ask for Token */}
+            {stoken ? (
+              <div>
+                <span className="text-gray-700 font-semibold">Token Address:</span>
+                <p className="bg-pink-100 rounded-xl px-3 py-2 mt-1 text-gray-800 break-all">
+                  {stoken}
+                </p>
+              </div>
+            ) : (
+              <>
+                <label htmlFor="modal-token" className="text-gray-700 font-semibold">
+                  Token Address
+                </label>
+                <input
+                  id="modal-token"
+                  type="text"
+                  onChange={(e) => setToken(e.target.value)}
+                  className="w-full p-2 rounded-xl border focus:ring-2 focus:ring-pink-300"
+                />
+              </>
+            )}
+
+            {/* Borrower */}
+            <div>
+              <span className="text-gray-700 font-semibold">Borrower Address/ENS:</span>
+              <p className="bg-pink-100 rounded-xl px-3 py-2 mt-1 text-gray-800 break-all">
+                {friend || 'N/A'}
+              </p>
+            </div>
+
+            {/* Amount */}
+            <label htmlFor="modal-amount" className="text-gray-700 font-semibold">
+              💸 Loan Limit:
+            </label>
+            <input
+              id="modal-amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full p-2 rounded-xl border focus:ring-2 focus:ring-pink-300"
+            />
+
+            {/* Interest */}
+            <label htmlFor="modal-interest" className="text-gray-700 font-semibold">
+              🏦 Interest Rate (e.g. 50 = 5%):
+            </label>
+            <input
+              id="modal-interest"
+              type="number"
+              value={interestRate}
+              onChange={(e) => setInterestRate(e.target.value)}
+              className="w-full p-2 rounded-xl border focus:ring-2 focus:ring-pink-300"
+            />
+
+            {/* ACTION */}
+            <button
+              onClick={() => requestBorrow(stoken, friend, amount)}
+              className="
+                w-full bg-pink-500 hover:bg-pink-500 text-white 
+                font-semibold py-2 px-4 rounded-full 
+                transition-colors
+              "
+            >
+              Set Allowance
+            </button>
+          </div>
         </div>
-        </div>
-        </div>
-        </div>
-      </div>)}</>
+      </div>
     );
-  }
+  };
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  RENDER
+  // ~~~~~~~~~~~~~~~~~~~~~
   return (
-    <div className="main-container font-sans">          <Toaster />
-          <LoanModal className=" top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 float" />
-      
-          <h1 className="text-center text-4xl mt-12 relative text-white font-extrabold">Spot a Friend</h1>
-          <div className="bg-white rounded-3xl p-4 mt-4 mb-8">
-        <label className="text-center text-xl font-semibold text-pink-500">
-          🌈 Allow friends to borrow tokens from your wallet, with optional interest!
-        </label>
+    <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 relative overflow-hidden font-sans">
+      {/* Glass/blur overlay */}
+      <div className="absolute inset-0 bg-white bg-opacity-30 backdrop-filter backdrop-blur-md"></div>
+      <Toaster />
 
-        <div>
-          <div className="form-container">
-            <div className="form-group">
-              <label htmlFor="token" className="form-label">🪙 Token Address:</label>
+      {/* Page Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 text-center">
+        {/* Header Row: “Powered By Boop” in center, ConnectButton on right */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 mb-4 items-center justify-center">
+          <div className="hidden sm:block"></div>
+          <div className="text-center">
+            <p className="bg-gradient-to-r from-pink-400 to-yellow-400 text-white text-center py-2 rounded-full w-fit mx-auto px-4 font-semibold">
+              Powered by Boop.Finance
+            </p>
+            <div className="text-center mt-2 flex items-center justify-center gap-2">
+              <a
+                href="https://boop.finance"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://boop.finance/logo.png"
+                  alt="Boop.Finance Logo"
+                  className="w-8 h-8"
+                />
+              </a>
+              <a
+                href="https://discord.gg/vrV4YpUccq"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://cdn.simpleicons.org/discord/db2777"
+                  alt="Discord"
+                  className="w-8 h-8"
+                />
+              </a>
+              <a
+                href="https://x.com/0xboop"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://cdn.simpleicons.org/x/db2777"
+                  alt="Twitter"
+                  className="w-8 h-8"
+                />
+              </a>
+            </div>
+          </div>
+          <div className="mx-auto sm:ml-auto sm:mr-0 my-0 text-center">
+            <ConnectButton />
+          </div>
+        </div>
+
+        {/* Main Title */}
+        <h1 className="text-center text-4xl font-extrabold text-pink-500 mb-3 drop-shadow">
+          Spot a Friend
+        </h1>
+        <p className="text-lg text-center text-gray-700 mb-8 max-w-xl mx-auto">
+          Let friends borrow tokens from your wallet with an optional interest rate!
+        </p>
+
+        {/* Loan Modal for Querystring-based requests */}
+        <LoanModal />
+
+        {/* ALLOW BORROW FORM */}
+        <div className="bg-white bg-opacity-90 shadow-xl rounded-3xl p-6 mb-8 max-w-xl mx-auto text-center">
+          <h2 className="text-xl font-bold text-pink-500 mb-4">
+            🌈 Allow friends to borrow
+          </h2>
+          <div className="gap-4 mb-4">
+            {/* Token Select */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                🪙 Token:
+              </label>
               <select
                 id="token"
-                name="token"
                 value={stoken || ''}
                 onChange={(e) => setToken(e.target.value)}
-                required
-                className="form-input"
+                className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300"
               >
-                <option value="">{stoken ? stoken : 'Select a token'}</option>
-                {tokenOptions[chainIdNow]?.map((token) => (
-                  <option key={token.address} value={token.address}>
-                    {token.symbol}
+                <option value="">
+                  {stoken ? stoken : 'Select a token'}
+                </option>
+                {tokenOptions[chainIdNow]?.map((tk) => (
+                  <option key={tk.address} value={tk.address}>
+                    {tk.symbol}
                   </option>
                 ))}
                 <option value="custom">Custom</option>
               </select>
-
               {stoken === 'custom' && (
                 <input
                   type="text"
-                  id="customToken"
-                  name="customToken"
                   onChange={(e) => setToken(e.target.value)}
-                  required
                   placeholder="Enter custom token address"
-                  className="form-input"
+                  className="mt-2 w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300"
                 />
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="friend" className="form-label">👥 Borrower Address/ENS:</label>
+            {/* Friend / Borrower */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                👥 Borrower Address/ENS:
+              </label>
               <input
                 type="text"
-                id="friend"
-                name="friend"
                 value={friend}
                 onChange={(e) => setFriend(e.target.value)}
-                required
-                className="form-input"
+                className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300"
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="amount" className="form-label">💸 Loan Limit:</label>
+            {/* Amount */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">
+                💸 Loan Limit:
+              </label>
               <input
                 type="number"
-                id="amount"
-                name="amount"
                 step="0.01"
                 onChange={(e) => setAmount(e.target.value)}
-                required
-                className="form-input"
+                className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300"
               />
             </div>
 
-            {/* NEW: Interest Rate Input */}
-            <div className="form-group">
-              <label htmlFor="interestRate" className="form-label">
+            {/* Interest Rate */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">
                 🏦 Interest Rate (e.g. 50 = 5%):
               </label>
               <input
                 type="number"
-                id="interestRate"
-                name="interestRate"
                 value={interestRate}
                 onChange={(e) => setInterestRate(e.target.value)}
-                required
-                className="form-input"
+                className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300"
               />
             </div>
+          </div>
 
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => requestBorrow(stoken, friend, amount)}
-              className="submit-button"
+              className="
+                bg-pink-500 text-white font-semibold py-2 px-4 
+                rounded-full hover:bg-pink-500 transition-colors 
+              "
             >
               Set Allowance
             </button>
-            <div style={{ marginTop: '16px' }} className="flex justify-between">
-              <ConnectButton style={{ margin: '10px' }} />
-              <button className="submit-button w-1/4 bg-blue-400 m-0
-              " onClick={() => {
-              if(!stoken||!friend||!amount||!interestRate){toast.error('Please fill all fields!');return;}
-              navigator.clipboard.writeText('https://spot.pizza'+'?spot=1&token='+stoken+'&friend='+friend+'&amount='+amount+'&interest='+interestRate);toast.success('Loan request link copied to clipboard!');}}>📃Request</button>
 
-            </div>
+            <button
+              className="
+                bg-blue-400 text-white font-semibold py-2 px-4 
+                rounded-full hover:bg-blue-500 transition-colors 
+              "
+              onClick={() => {
+                if (!stoken || !friend || !amount || !interestRate) {
+                  toast.error('Please fill all fields!');
+                  return;
+                }
+                navigator.clipboard.writeText(
+                  `https://spot.pizza?spot=1&token=${stoken}&friend=${friend}&amount=${amount}&interest=${interestRate}`
+                );
+                toast.success('Loan request link copied to clipboard!');
+              }}
+            >
+              📃 Copy Request Link
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* LENDER VIEW */}
-      <div className="container lg:w-1/2" id="subscriptionsContainer">
-        <h1 className="section-title">🤝 Allowances to Friends</h1>
-        <div id="allowances">
+        {/* LENDER VIEW */}
+        <div className="bg-white bg-opacity-90 shadow-xl rounded-3xl p-6 mb-8 max-w-5xl w-fit mx-auto">
+          <h2 className="text-xl font-bold text-pink-500 mb-4">
+            🤝 Allowances to Friends
+          </h2>
           {Object.entries(
             allowances
-              .filter((a) => a.lender.toLowerCase() === userAddress?.toLowerCase())
+              .filter(
+                (a) => a.lender.toLowerCase() === userAddress?.toLowerCase()
+              )
               .reduce((acc, a) => {
                 if (!acc[a.friend]) acc[a.friend] = [];
                 acc[a.friend].push(a);
                 return acc;
               }, {})
           ).map(([friendAddr, friendAllowances]) => (
-            <div key={friendAddr} className="subscription-item">
-              <h3 className="subscription-title">
-                {ENS[friendAddr] || map(friendAddr).substring(0, 20)}{" "}
-              </h3>
-              <div className="token-grid">
+            <div key={friendAddr} className="mb-6 max-w-xl mx-auto">
+              <div className="flex flex-row items-center justify-center mb-4 gap-6">
                 {friendAllowances.map((allowance) => (
-                  <div key={allowance.hash} className="token-card">
-                    <div className="allowance-item">
-                      <p className="item-label">🪙 Token:</p>
-                      <p className="token">
-                        {allowance.symbol || allowance.token
-                        }
-                      </p>
-
-                      <div className="item-row">
-                        <div className="item-column">
-                          <p className="item-label">🎯 Limit:</p>
-                          <p className="item-value">{allowance.allowable}</p>
-                        </div>
-                        <div className="item-column">
-                          <p className="item-label">💸 Owed:</p>
-                          <p className="item-value">{allowance.outstandingFee}</p>
-                        </div>
-                      </div>
-
-                      <p className="item-label">📊 Volume Borrowed:</p>
-                      <p className="item-value">{allowance.totalBorrowed}</p>
-
-                      <p className="item-label">🏦 Interest Rate:</p>
-                      <p className="item-value">
-                        <span className="item-label bg-gray-400 rounded-full p-1 text-white">
-                        {(allowance.interestRate / 10).toFixed(2)}%
-                        </span>
-                        <span className="item-label bg-orange-300 rounded-full p-1 text-white ml-2">
-                          Fee: {allowance.interestRateFee}
-                        </span>
-                      </p>
-
-                      <div className="progress-bar">
-                        <div
-                          className="progress-bar-inner"
-                          style={{
-                            width: `${
-                              allowance.allowable > 0
-                                ? ((allowance.outstanding / allowance.allowable) * 100).toFixed(2)
-                                : 0
-                            }%`,
-                          }}
-                        >
-                          {allowance.allowable > 0
-                            ? ((allowance.outstanding / allowance.allowable) * 100).toFixed(2)
-                            : 0}
-                          %
-                        </div>
-                      </div>
+                  <div
+                    key={allowance.hash}
+                    className="border border-pink-100 bg-pink-100 rounded-3xl p-4 shadow-sm space-y-2 items-center justify-center max-w-xs mx-auto"
+                  >
+                    <div className="flex flex-row items-center mx-auto gap-2 justify-center">
+                                  <h3 className="bg-pink-400 py-1 px-3 rounded-full text-white font-semibold w-fit">
+                {ENS[friendAddr] ||
+                  map(friendAddr).slice(0, 16) + '...'}
+              </h3>
+                    <p className="font-semibold bg-blue-400 py-1 px-3 rounded-full text-white w-fit">
+                      {allowance.symbol}
+                    </p>
                     </div>
-
-                    {/* Quick update */}
+                    <div className="items-center justify-center text-center">
+                      <div className="items-center justify-center grid grid-cols-2 gap-4">
+                        <div>
+                        <p className="font-semibold text-pink-500">
+                          Limit
+                        </p>
+                        <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                          {allowance.allowable}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-pink-500">
+                          Owed
+                        </p>
+                        <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                        {allowance.outstandingFee}
+                        </p>
+                      </div>
+                      <div className="">
+                    <p className="text-pink-500 font-semibold">
+                      📊 Borrowed
+                    </p>
+                    <p className="text-white bg-pink-300 rounded-3xl px-3 py-1 mt-1">
+                      {allowance.totalBorrowed}
+                    </p>
+                      </div>
+                    <div>
+                    <p className="text-pink-500 font-semibold">
+                      🏦 Interest Rate
+                      <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                        {(allowance.interestRate / 10).toFixed(2)}%
+                      </p>
+                    </p>
+                  </div>
+                  </div>
+                    </div>
+                    {/* Quick progress bar */}
+                    <div className="bg-gray-200 rounded-full h-2 w-full mt-2">
+                      <div
+                        className="bg-pink-500 h-2 rounded-full"
+                        style={{width:
+                            allowance.allowable > 0
+                              ? `${(allowance.outstanding / allowance.allowable) * 100}%`
+                              : '0%',
+                        }}
+                      />
+                    </div>
+<div className="grid grid-cols-2 gap-4 mt-4 text-center">
+  <div>
+                    <label className="text-pink-500 font-semibold">
+                      New Amount
+                    </label>
                     <input
-                      type="text"
-                      placeholder="New Amount"
+                      type="number"
+                      step="0.01"
                       onChange={(e) => setAmount(e.target.value)}
-                      className="form-input"
+                      className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300 border-pink-300 bg-pink-50"
                     />
+</div>
+<div>
+                    <label className="text-pink-500 font-semibold">
+                      Interest 50=5%
+                    </label>
                     <input
-                      type="text"
-                      placeholder="New Interest Rate"
+                      type="number"
                       onChange={(e) => setInterestRate(e.target.value)}
-                      className="form-input"
-                      style={{ marginTop: 4 }}
+                      className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300 border-pink-300 bg-pink-50"
                     />
+</div>
+                  </div>
                     <button
                       onClick={() =>
                         requestBorrow(allowance.token, allowance.friend, amount)
                       }
-                      className="submit-button"
+                      className="
+                        mt-2 w-full bg-pink-500 hover:bg-pink-500 
+                        text-white font-semibold py-1 px-2 rounded-full 
+                        text-sm transition-colors
+                      "
                     >
                       Update Allowance
                     </button>
@@ -718,108 +790,109 @@ const [showModal, setShowModal] = useState(false);
             </div>
           ))}
         </div>
-      </div>
 
-      {/* BORROWER VIEW */}
-      <div className="container lg:w-1/2" id="subscriptionsContainer">
-        <h1 className="section-title">🙌 Friends That Have Spotted Me</h1>
-        <div id="borrows">
-          {Object.entries(
-            borrows
-              .filter((b) => b.friend.toLowerCase() === userAddress?.toLowerCase())
-              .reduce((acc, b) => {
-                if (!acc[b.lender]) acc[b.lender] = [];
-                acc[b.lender].push(b);
-                return acc;
-              }, {})
-          ).map(([lender, lenderBorrows]) => (
-            <div key={lender} className="subscription-item">
-              <h3 className="subscription-title">
-                {ENS[lender] || map(lender).substring(0, 20)}{" "}
-              </h3>
-              <div className="token-grid">
-                {lenderBorrows.map((borrow) => (
-                  <div key={borrow.hash} className="token-card">
-                    <div className="borrow-item">
-                      <p className="item-label">🪙 Token:</p>
-                      <p className="token">
-                        {borrow.symbol || borrow.token
-                        }
-                      </p>
-                      <div className="item-row">
-                        <div className="item-column">
-                          <p className="item-label">💸 Limit:</p>
-                          <p className="item-value">{borrow.allowable}</p>
-                        </div>
-                        <div className="item-column">
-                          <p className="item-label">🏦 Outstanding:</p>
-                          <p className="item-value">{borrow.outstandingFee}</p>
-                        </div>
-                      </div>
+        {/* BORROWER VIEW */}
+        <div className="bg-white bg-opacity-90 shadow-xl rounded-3xl p-6 mb-8 max-w-5xl w-fit mx-auto">
+          <h2 className="text-xl font-bold text-pink-500 mb-4">
+            🙌 Friends That Have Spotted Me
+          </h2>
+  {Object.entries(
+    borrows
+      .filter((b) => b.friend.toLowerCase() === userAddress?.toLowerCase())
+      .reduce((acc, b) => {
+        if (!acc[b.lender]) acc[b.lender] = [];
+        acc[b.lender].push(b);
+        return acc;
+      }, {})
+  ).map(([lender, lenderBorrows]) => (
+    <div key={lender} className="flex flex-row items-center justify-center mb-4 gap-6">
+      {lenderBorrows.map((borrow) => (
+        <div
+          key={borrow.hash}
+          className="border border-pink-100 bg-pink-100 rounded-3xl p-4 shadow-sm space-y-2 max-w-xs mx-auto mb-4"
+        >
+          <div className="flex flex-row items-center mx-auto gap-2 justify-center">
+            <h3 className="bg-pink-400 py-1 px-3 rounded-full text-white font-semibold">
+              {ENS[lender] || map(lender).slice(0, 16) + '...'}
+            </h3>
+            <p className="font-semibold bg-blue-400 py-1 px-3 rounded-full text-white">
+              {borrow.symbol}
+            </p>
+          </div>
 
-                      <p className="item-label">📊 Volume Borrowed:</p>
-                      <p className="item-value">{borrow.totalBorrowed}</p>
-
-                      <p className="item-label">🏦 Interest Rate:</p>
-                      <p className="item-value">
-                                                <span className="item-label bg-gray-400 rounded-full p-1 text-white">
-
-                        {(borrow.interestRate / 10).toFixed(2)}%
-                        </span>
-                        <span className="item-label bg-orange-300 rounded-full p-1 text-white ml-2">
-                          Fee: {borrow.interestRateFee}
-                        </span>
-                      </p>
-
-                      <div className="progress-bar">
-                        <div
-                          className="progress-bar-inner"
-                          style={{
-                            width: `${
-                              borrow.allowable > 0
-                                ? ((borrow.outstanding / borrow.allowable) * 100).toFixed(2)
-                                : 0
-                            }%`,
-                          }}
-                        >
-                          {borrow.allowable > 0
-                            ? ((borrow.outstanding / borrow.allowable) * 100).toFixed(2)
-                            : 0}
-                          %
-                        </div>
-                      </div>
-                    </div>
-
-                    <input
-                      type="text"
-                      placeholder="Amount"
-                      onChange={(e) => setAmount(e.target.value)}
-                      required
-                      className="form-input"
-                    />
-                    <div className="button-group">
-                      <button
-                        onClick={() => handleBorrow(borrow.token, borrow.lender)}
-                        className="borrow-button"
-                      >
-                        Borrow
-                      </button>
-                      <button
-                        onClick={() => handleRepay(borrow.token, borrow.lender)}
-                        className="repay-button"
-                      >
-                        Repay
-                      </button>
-                    </div>
-                  </div>
-                ))}
+          <div className="items-center justify-center text-center">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="font-semibold text-pink-500">Limit</p>
+                <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                  {borrow.allowable}
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold text-pink-500">Owed</p>
+                <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                  {borrow.outstandingFee}
+                </p>
+              </div>
+              <div>
+                <p className="text-pink-500 font-semibold">📊 Borrowed</p>
+                <p className="text-white bg-pink-300 rounded-3xl px-3 py-1 mt-1">
+                  {borrow.totalBorrowed}
+                </p>
+              </div>
+              <div>
+                <p className="text-pink-500 font-semibold">🏦 Interest Rate</p>
+                <p className="bg-pink-300 rounded-3xl px-3 py-1 mt-1 text-white">
+                  {(borrow.interestRate / 10).toFixed(2)}%
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Quick progress bar */}
+          <div className="bg-gray-200 rounded-full h-2 w-full mt-2">
+            <div
+              className="bg-pink-500 h-2 rounded-full"
+              style={{
+                width:
+                  borrow.allowable > 0
+                    ? `${(borrow.outstanding / borrow.allowable) * 100}%`
+                    : '0%',
+              }}
+            />
+          </div>
+
+          <div className="">
+            <div>
+              <label className="text-pink-500 font-semibold">Amount</label>
+              <input
+                type="number"
+                step="0.01"
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full p-2 rounded-full border focus:ring-2 focus:ring-pink-300 border-pink-300 bg-pink-50"
+              />
+            </div>
+            <div className="flex flex-row gap-4 mt-4">
+              <button
+                onClick={() => handleBorrow(borrow.token, borrow.lender)}
+                className="bg-pink-500 hover:bg-pink-500 text-white font-semibold py-1 px-2 rounded-full w-full"
+              >
+                Borrow
+              </button>
+              <button
+                onClick={() => handleRepay(borrow.token, borrow.lender)}
+                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded-full w-full"
+              >
+                Repay
+              </button>
+            </div>
+          </div>
         </div>
+      ))}
+    </div>
+  ))}
+</div>
       </div>
     </div>
   );
-};
-
-export default Spot;
+}
