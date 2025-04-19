@@ -307,7 +307,8 @@ export default function FullDapp() {
     }
     if (!plan) return toast.error('Pick an amount or custom value');
 
-    const numeric = parseFloat(plan === 'custom' ? customValue : plan);
+    let numeric = parseFloat(plan === 'custom' ? customValue : plan);
+    numeric = subType === 'once'? numeric * (onceInterval || 1) : numeric;
     if (isNaN(numeric) || numeric <= 0) {
       return toast.error('Invalid subscription amount');
     }
@@ -994,7 +995,7 @@ export default function FullDapp() {
                   </div>
 
                   {/* amount selection */}
-                  <span className="block text-gray-700 mb-1 text-sm font-medium">Pick Amount:</span>
+                  <span className="block text-gray-700 mb-1 text-sm font-medium">Pick Amount Per Month:</span>
                   <div className="flex items-center gap-2 flex-wrap justify-center mb-3">
                     {chosenTokenObj.presetAmounts.map((amt) => (
                       <button
