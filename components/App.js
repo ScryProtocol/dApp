@@ -1135,7 +1135,7 @@ const handleCancelTransaction = async (txIndex) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-300 to-green-300 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 text-gray-800">
       <Toaster />
       <main className=" mx-auto py-8 px-4 sm:px-8">
         <head>

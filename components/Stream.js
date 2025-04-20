@@ -749,7 +749,7 @@ const handleClaim = async (token) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-300 via-pink-300 to-yellow-300 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 text-gray-800">
     {0==1&&(  <a href="https://addrs.to/">
         <img
           className="absolute top-4 right-4 rounded-full"
