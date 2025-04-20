@@ -849,7 +849,7 @@ getDeployed()
   );
 
       return(
-  <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 w-full" onClick={handleClose}>
+  <div className="absolute top-0 left-0 w-full min-h-screen  bg-black bg-opacity-50 w-full" onClick={handleClose}>
         <div
         style={{ overflowY: 'auto', scrollbarWidth: 'thin', WebkitScrollbarWidth: 'thin', WebkitScrollbarTrack: { backgroundColor: '#e5e7eb', borderRadius: '9999px', }, WebkitScrollbarThumb: { backgroundColor: '#9ca3af', borderRadius: '9999px', border: '2px solid #e5e7eb', }, }}
       id="info-section" className="absolute top-2 bg-white p-8 overflow-y-auto max-w-3xl m-4 mx-auto rounded-3xl shadow-lg justify-center inset-0">

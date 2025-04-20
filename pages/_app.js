@@ -131,6 +131,7 @@ function MyApp({ Component, pageProps }) {
             <Info
               app={activeTab}
               handleClose={() => setShowInfo(false)}
+              className="z-20"
             />
           )}      </RainbowKitProvider>
       </QueryClientProvider>
