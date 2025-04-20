@@ -93,7 +93,7 @@ function MyApp({ Component, pageProps }) {
         <option value="charity">Charity</option>
         </select>
       </div>
-          <button className="w-2 rounded-full pl-2 pr-3.5 font-bold border border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white text-center" onClick={() => setShowInfo(!showInfo)}>?</button>
+          <button className="w-2 rounded-full pl-2 pr-3.5 font-bold border border-pink-400 text-pink-400 hover:bg-pink-500 hover:text-white text-center" onClick={() => setShowInfo(!showInfo)}>?</button>
       
       </div>
     );
@@ -106,9 +106,9 @@ function MyApp({ Component, pageProps }) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Onchain finance made simple" />{activeTab&&(
         <div className={`app ${isDarkTheme ? 'dark-theme' : 'light-theme'} `}>
-          <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
-         ><a href={0!==1?'https://twitter.com/0xboop':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
-          <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} className="bg-gradient-to-r from-blue-100 via-blue-300 to-green-300" />
+         {// <label style={{ left: '200px', top: '4px', fontSize: '42px' }} onClick={{}}//toggleTheme} 
+         }{//><a href={0!==1?'https://twitter.com/0xboop':"https://sub.spot.pizza/"}><img style={{position: 'absolute', left: '10px', top: '10px', width: '50px' }}src='./favicon.ico'/></a> </label>
+} <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} className="bg-gradient-to-r from-blue-100 via-blue-300 to-green-300" />
           {activeTab === 'vault' && 
           <App /> }
           {activeTab === 'stream' &&
