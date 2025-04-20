@@ -83,7 +83,7 @@ function MyApp({ Component, pageProps }) {
     
     return (
       
-      <div className="tab-switcher absolute top-0 left-0 items-center">
+      <div className="tab-switcher z-20 absolute top-0 left-0 items-center">
       <div className="tab-switcher justify-center text-gray-500 bg-white rounded-full opacity-50 md:my-4 md:ml-4 m-2 font-semibold p-1">
         <select className="bg-white/50 text-gray-500 rounded-full" value={activeTab} onChange={(e) => onTabChange(e.target.value)}>
         <option value="vault">Vault</option>

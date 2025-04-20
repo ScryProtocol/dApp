@@ -1,20 +1,20 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId } from 'wagmi';
 import 'tailwindcss/tailwind.css';
 import { useEthersProvider, useEthersSigner } from './tl';
-import { Alchemy, Network } from 'alchemy-sdk';
 
-const defaultVaultAddress = '0x4CcfC47F4631B6e9a24A0BD18391E9De29B75381'//'0x757Db67ef173678115a2E7F080eaD93d6aD76E00'; // Replace with your Vault contract address
+// Default vault address (if user has no vaults).
+const defaultVaultAddress = '0x4CcfC47F4631B6e9a24A0BD18391E9De29B75381';
 
 // Define the Vault contract ABI
 const vaultAbi = [
   "event TokenDeposited(address indexed token, uint256 amount, address indexed depositor)",
   "event TokenWithdrawn(address indexed token, uint256 amount)",
   "event NftDeposited(address indexed token, uint256 indexed tokenId, address indexed depositor)",
-  "event NftWithdrawn(address indexed token, uint256 indexed tokenId)",  
+  "event NftWithdrawn(address indexed token, uint256 indexed tokenId)",
   "function depositAsset(address token, uint256 amountorID, uint256 ERC20orERC721) external payable",
   "function withdrawToken(address to, address token, uint256 amount) external",
   "function getLimit(address to, address token, uint256 amount) external view returns(uint)",
@@ -42,9 +42,8 @@ const vaultAbi = [
   "function lastWithdrawTimestamp(address) external view returns (uint256)",
   "function tokenLimits(address) external view returns (uint256, uint256, uint256)",
   "function queuedTransactions(uint256) external view returns (address, bytes memory, uint256, bool, uint256, uint256)",
-  "function queuedTxs() external view returns (uint)",  "function getAssetDetails(uint256[] calldata indices) external view returns (address[] memory tokens, uint256[] memory amountsOrIDs, uint256[] memory wallet, uint256[] memory assetTypes, uint8[] memory decimals, string[] memory tokenNames, string[] memory tokenSymbols, string[] memory tokenURIs, uint256[] memory remainingLimits, uint256[] memory limitAmounts)"
-
-  
+  "function queuedTxs() external view returns (uint)",
+  "function getAssetDetails(uint256[] calldata indices) external view returns (address[] memory tokens, uint256[] memory amountsOrIDs, uint256[] memory wallet, uint256[] memory assetTypes, uint8[] memory decimals, string[] memory tokenNames, string[] memory tokenSymbols, string[] memory tokenURIs, uint256[] memory remainingLimits, uint256[] memory limitAmounts)"
 ];
 
 // Define the VaultFactory contract ABI
@@ -65,13 +64,13 @@ const bgColors = [
   'bg-gradient-to-r from-teal-400 to-blue-500'
 ];
 
+// Example token logos if desired
 const tokenLogos = {
   '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
   '0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
   '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf': 'https://basescan.org/token/images/cbbtc_32.png',
   '0x94373a4919b3240d86ea41593d5eba789fef3848': 'https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png',
-  '0x4200000000000000000000000000000000000042': 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png',
-  // Add more token addresses and their corresponding logos here
+  '0x4200000000000000000000000000000000000042': 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png'
 };
 
 const App = () => {
@@ -90,20 +89,18 @@ const App = () => {
   const [isCreateInfoModalOpen, setIsCreateInfoModalOpen] = useState(false);
   const [isCustomTxModalOpen, setIsCustomTxModalOpen] = useState(false);
   const [customTx, setCustomTx] = useState({ to: '', value: '', fnSig: '', params: [] });
-const [todeposit,settodeposit]=useState([]);
-const [todepositnft,settodepositnft]=useState([]);
+
+  // We’ve removed the additional deposit-lists for “tokens not in vault” since that used Alchemy.
+  
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
-  const provider =  useEthersProvider()//chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') :  useEthersProvider()//chainId == 8453?new ethers.JsonRpcProvider('https://base.meowrpc.com') : chainId == 1 ? new ethers.JsonRpcProvider('https://eth.meowrpc.com ') : chainId == 10 ? new ethers.JsonRpcProvider('https://optimism.meowrpc.com') : new ethers.JsonRpcProvider('https://base.meowrpc.com') ;
-   //useEthersProvider();
+  const provider = useEthersProvider();
   const signer = useEthersSigner();
-  const factoryAddress ='0x5684295a97e32af4a9574d90ef593f5b2d963ed0'//chainId == 8453 ? '0x79eEcdf70Fb11c4dB97eA35e2374E18413bE3EcF':chainId==10?'0x28681650075edBf22e43200c8424D76D2a35cF9B' : '0x47830f55B25624940E9e1Af437a69e91203CFaf2'; // Replace with your VaultFactory contract address
 
-  const alchemyConfig = {
-    apiKey: 'Z-ifXLmZ9T3-nfXiA0B8wp5ZUPXTkWlg', // Replace with your Alchemy API key
-    network: chainId == 8453 ? Network.BASE_MAINNET : chainId == 1 ? Network.ETH_MAINNET : chainId == 137?Network.MATIC_MAINNET:chainId==534352 ?Network.SCROLL_MAINNET:chainId == 42161 ? Network.ARB_MAINNET : chainId==57073 ?Network.INK: Network.OPT_MAINNET,
-  };
-  const alchemy = new Alchemy(alchemyConfig);
+  // Update with your deployed factory address
+  const factoryAddress = '0x5684295a97e32af4a9574d90ef593f5b2d963ed0';
+
+  // Track the network to force reload if changed
   const [net, setNet] = useState(null);
   useEthersProvider().addListener('network', (newNetwork, oldNetwork) => {
     if (net != null) {
@@ -112,18 +109,26 @@ const [todepositnft,settodepositnft]=useState([]);
     setNet(newNetwork);
   });
 
+  /************************************************************************
+   * FETCH FUNCTIONS
+   ***********************************************************************/
+
   const fetchVaults = async () => {
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
       const userVaults = await factory.getVaultsByOwner(userAddress);
-    //userVaults.length == 0&&toast('Create a vault to get started',{style:{backgroundColor:'#00aaff',color:'#fff',fontWeight:'bold'}});
-      const allVaults = userVaults.length > 0 ? userVaults : [chainId==1?'0x5bC3bB0d396072f0a86ACb4F3790505A54a25579':defaultVaultAddress];
+      // If user has no vaults, default to your fallback
+      const allVaults = userVaults.length > 0
+        ? userVaults
+        : [chainId === 1 ? '0x5bC3bB0d396072f0a86ACb4F3790505A54a25579' : defaultVaultAddress];
       setVaults(allVaults);
+
+      // Auto-select first vault, or show create modal if none
       if (!selectedVault) {
-        if(userVaults.length==0){
-        setIsCreateInfoModalOpen(true);
-        }else{
-        setSelectedVault(allVaults[0]);
+        if (userVaults.length === 0) {
+          setIsCreateInfoModalOpen(true);
+        } else {
+          setSelectedVault(allVaults[0]);
         }
       }
     } catch (error) {
@@ -131,17 +136,14 @@ const [todepositnft,settodepositnft]=useState([]);
       toast.error('Failed to fetch user vaults.');
     }
   };
+
+  // We rely entirely on the contract’s getAssetDetails for tokens/NFTs
   const fetchTokenBalances = async (vault) => {
-    const chainIds = []//[8453, 1, 137, 534352, 42161, 10, 56, 43114, 250,57073 ];
-    if (chainIds.includes(chainId)) {
-     fetchTokenBalances2(vault);
-    return;
-    }
     setLoading(true);
     try {
       const contract = new ethers.Contract(vault, vaultAbi, provider);
-  
-      // Fetch assets data using getAssetDetails
+
+      // 1) Fetch assets data from the contract
       const [
         tokens,
         amountsOrIDs,
@@ -153,11 +155,11 @@ const [todepositnft,settodepositnft]=useState([]);
         tokenURIs,
         remainingLimits,
         limitAmounts
-      ] = await contract.connect(signer).getAssetDetails([]); // Pass empty array to get all assets
-  
+      ] = await contract.connect(signer).getAssetDetails([]);
+
       const tokenDetails = [];
       const nftDetails = [];
-  
+
       for (let i = 0; i < tokens.length; i++) {
         const asset = {
           address: tokens[i],
@@ -165,33 +167,32 @@ const [todepositnft,settodepositnft]=useState([]);
           decimals: Number(decimals[i]),
           name: tokenNames[i],
           symbol: tokenSymbols[i],
-          dailyLimit: Number(limitAmounts[i]) / Math.pow(10, Number(decimals[i])), // Adjust daily limit
-          limit: Number(remainingLimits[i]) / Math.pow(10, Number(decimals[i])), // Adjust limit
+          dailyLimit: Number(limitAmounts[i]) / Math.pow(10, Number(decimals[i])),
+          limit: Number(remainingLimits[i]) / Math.pow(10, Number(decimals[i])),
           wallet: Number(walletBalances[i]) / Math.pow(10, Number(decimals[i]))
         };
-  
-        if (asset.type === 0) { // ERC20 token
+
+        // ERC20
+        if (asset.type === 0) {
           const adjustedBalance = Number(amountsOrIDs[i]) / Math.pow(10, asset.decimals);
           asset.balance = adjustedBalance;
-          
-         
           tokenDetails.push(asset);
-        } else if (asset.type === 1) { // ERC721 NFT
+
+        // ERC721
+        } else if (asset.type === 1) {
           asset.tokenId = amountsOrIDs[i];
-          
-          // Fetch image for NFT
           asset.imageUrl = tokenURIs[i] ? await fetchNftImage(tokenURIs[i]) : './favicon.ico';
           if (amountsOrIDs[i] > 0) {
-          nftDetails.push(asset);
+            nftDetails.push(asset);
           }
         }
       }
-  
-      // Retrieve ETH balance and limits separately
+
+      // 2) Include native chain balance (e.g. ETH)
       const ethBalance = await provider.getBalance(vault);
       const ethLimit = await contract.getLimit(userAddress, ethers.ZeroAddress, 0);
       const ethDailyLimit = await contract.getLimitAmount(ethers.ZeroAddress);
-      
+
       tokenDetails.unshift({
         name: 'Ether',
         symbol: 'ETH',
@@ -201,15 +202,15 @@ const [todepositnft,settodepositnft]=useState([]);
         limit: Number(ethLimit) / Math.pow(10, 18),
         wallet: ethers.formatEther(await provider.getBalance(userAddress))
       });
-  
-      // Retrieve additional vault settings
+
+      // 3) Fetch vault’s general settings
       const name = await contract.name();
       const recoveryAddress = await contract.recoveryAddress();
       const dailyLimit = await contract.dailyLimit();
       const threshold = await contract.threshold();
       const delay = await contract.delay();
       const owner = await contract.owner();
-  
+
       // Update state
       setTokenBalances(tokenDetails);
       setNftAssets(nftDetails);
@@ -221,218 +222,36 @@ const [todepositnft,settodepositnft]=useState([]);
         delay: Number(delay),
         owner
       });
-  
     } catch (error) {
       console.error("Failed to fetch token balances:", error);
       toast.error('Failed to fetch token balances.');
     } finally {
       setLoading(false);
     }
-  };const fetchNftImage = async (uri) => {
+  };
+
+  // Fetch image by tokenURI (supports IPFS)
+  const fetchNftImage = async (uri) => {
     try {
-      // Check if the URI is an IPFS URI and replace with an IPFS gateway URL if needed
+      // If IPFS, convert to ipfs.io
       if (uri.startsWith("ipfs://")) {
         uri = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
       }
-  
       const response = await fetch(uri);
       if (!response.ok) throw new Error("Failed to fetch NFT metadata");
       const metadata = await response.json();
-      
-      // Check if the image is also an IPFS URI and convert it if necessary
       let imageUri = metadata.image || './favicon.ico';
       if (imageUri.startsWith("ipfs://")) {
         imageUri = imageUri.replace("ipfs://", "https://ipfs.io/ipfs/");
       }
-  
-      return imageUri; // Return the image URL or default icon
+      return imageUri;
     } catch (error) {
       console.error("Error fetching NFT image:", error);
       return './favicon.ico';
     }
   };
-  
-  
-  const fetchTokenBalances2 = async (vault) => {
-    setLoading(true);
-    try {
-      const contract = new ethers.Contract(vault, vaultAbi, provider);
-      const balances = await alchemy.core.getTokenBalances(vault);
-      let symbols = [];
-      const Details = await Promise.all(balances.tokenBalances.map(async (token, index) => {
-        let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
-        if (metadata.symbol.length > 7) {
-          symbols.push(token.contractAddress);
-        }
-      }));
 
-      const nonZeroBalances = balances.tokenBalances.filter(token => token.tokenBalance !== "0").filter(token => !symbols.includes(token.contractAddress));
-
-      const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
-console.log(nonZeroBalances);
-      const calls = nonZeroBalances.map(token => ({
-        target: token.contractAddress,
-        callData: new ethers.Interface(["function decimals() view returns (uint8)"]).encodeFunctionData('decimals')
-      })).concat([
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('name')
-        },
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('recoveryAddress')
-        },
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('dailyLimit')
-        },
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('threshold')
-        },
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('delay')
-        },
-        {
-          target: vault,
-          callData: contract.interface.encodeFunctionData('owner')
-        },
-      ]);
-
-      const { returnData } = await multicallContract.aggregate(calls);
-      console.log(returnData);
-
-      const name = contract.interface.decodeFunctionResult('name', returnData[nonZeroBalances.length])[0];
-      const recoveryAddress = contract.interface.decodeFunctionResult('recoveryAddress', returnData[nonZeroBalances.length + 1])[0];
-      const dailyLimit = Number(contract.interface.decodeFunctionResult('dailyLimit', returnData[nonZeroBalances.length + 2])[0]);
-      const threshold = Number(contract.interface.decodeFunctionResult('threshold', returnData[nonZeroBalances.length + 3])[0]);
-      const delay = Number(contract.interface.decodeFunctionResult('delay', returnData[nonZeroBalances.length + 4])[0]);
-      const owner = contract.interface.decodeFunctionResult('owner', returnData[nonZeroBalances.length + 5])[0];
-      const tokenDetails = await Promise.all(nonZeroBalances.map(async (token, index) => {
-        console.log(token);
-        let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
-        const balance = token.tokenBalance;
-        let mybals = await alchemy.core.getTokenBalances(userAddress);
-        console.log(mybals);
-        console.log(returnData);
-        try {
-        const decimals = Number(returnData[index] ? Number(returnData[index]) : 18); // Default to 18 decimals if undefined
-        const adjustedBalance = balance / Math.pow(10, decimals);
-        const tokenLimit = await contract.getLimit(userAddress, token.contractAddress, 0);
-        const lim = await contract.getLimitAmount(token.contractAddress);
-        return {
-          ...token,
-          ...metadata,
-          balance: adjustedBalance,
-          address: token.contractAddress,
-          dailyLimit: Number(lim) / Math.pow(10, decimals),
-          limit: Number(tokenLimit) / Math.pow(10, decimals),
-          wallet: mybals.tokenBalances.find(bal => bal.contractAddress == token.contractAddress) 
-          ? Number(mybals.tokenBalances.find(bal => bal.contractAddress == token.contractAddress).tokenBalance) / Math.pow(10, decimals) 
-          : 0
-        
-        };
-      
-        } catch (error) {
-          
-        }}));
-
-      const ethBalance = await provider.getBalance(vault);
-      const adjustedEthBalance = ethers.formatEther(ethBalance);
-      const ethLimit = await contract.getLimit(userAddress, '0x0000000000000000000000000000000000000000', 0);
-      const lim = await contract.getLimitAmount('0x0000000000000000000000000000000000000000');
-
-      tokenDetails.unshift({
-        name: 'Ether',
-        symbol: 'ETH',
-        balance: adjustedEthBalance,
-        address: '0x0000000000000000000000000000000000000000',
-        dailyLimit: Number(lim) / Math.pow(10, 18),
-        limit: (Number(ethLimit) / Math.pow(10, 18)),
-        wallet: ethers.formatEther( await provider.getBalance(userAddress))
-      });
-      console.log(tokenDetails);
-let tokenDetail =tokenDetails.filter(token => token).filter(token => token.symbol.length <10)
-      setTokenBalances(tokenDetail);//tokenDetails);
-      console.log(tokenDetails);
-
-      let whitelistedAddresses = [];
-      let i = 0;
-      while (true) {
-        try {
-          const address = await contract.whitelistedAddresses(i);
-          whitelistedAddresses.push(address);
-          i++;
-          if (address === '0x0000000000000000000000000000000000000000') {
-            break;
-          }
-        } catch (error) {
-          break;
-        }
-      }
-
-      setVaultSettings({ name, recoveryAddress, dailyLimit, threshold, delay, whitelistedAddresses, owner });
-      await fetchNftAssets(vault);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to fetch token balances.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchNftAssets = async (vault) => {
-    try {
-      const nftsForOwner = await alchemy.nft.getNftsForOwner(vault);
-      const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
-        ...nft,
-        imageUrl: nft.image.cachedUrl || './favicon.ico',
-        address:nft.contract.address
-      }));
-      
-      console.log(nftDetails);
-      setNftAssets(nftDetails);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to fetch NFT assets.');
-    }
-  };
-async function fetchDeps(){
-  
-  let mybals = await alchemy.core.getTokenBalances(userAddress);
-  const Bals = mybals.tokenBalances.filter(token => token.tokenBalance !== "0");
-  console.log(Bals);
-  const tokenDets = await Promise.all(Bals.map(async (token, index) => {
-    console.log('boop',token);
-    let metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
-    console.log(metadata);
-      const balance = token.tokenBalance;
-      const decimals = metadata.decimals ? Number(metadata.decimals) : 18; // Default to 18 decimals if undefined
-      const adjustedBalance = balance / Math.pow(10, decimals);
-      return {
-        ...token,
-        ...metadata,
-        balance: adjustedBalance,
-        address: token.contractAddress
-      };
-    }))
-    const balances = await alchemy.core.getTokenBalances(selectedVault);
-
-    settodeposit(tokenDets.filter(token => token.symbol? token.symbol.length <10:token.symbol).filter(token => token.balance!==0).filter(token => !balances.tokenBalances.find(t => t.contractAddress === token.contractAddress)).sort((a, b) => b.balance - a.balance));
-    
-  try {
-    const nftsForOwner = await alchemy.nft.getNftsForOwner(userAddress);
-    const nftDetails = nftsForOwner.ownedNfts.map(nft => ({
-      ...nft,
-      imageUrl: nft.image.cachedUrl || './favicon.ico'
-    }));
-    settodepositnft(nftDetails);
-  } catch (error) {
-    console.error(error);
-    toast.error('Failed to fetch NFT assets.');
-  }
-  }
+  // Queued transactions
   const fetchQueuedTransactions = async (vault) => {
     setLoading(true);
     try {
@@ -441,47 +260,50 @@ async function fetchDeps(){
       const startTx = totalTxs > 100 ? totalTxs - 100 : 0;
       const endTx = totalTxs;
 
-      const multicallContract = new ethers.Contract('0xcA11bde05977b3631167028862bE2a173976CA11', ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'], provider);
-
-      const calls = [];
-      for (let i = startTx; i < endTx; i++) {
-        calls.push({
-          target: vault,
-          callData: contract.interface.encodeFunctionData('queuedTransactions', [i])
-        });
-      }
-
-      const { returnData } = await multicallContract.aggregate(calls);
+      // We'll just loop individually (no multicall) to keep it simpler
+      let arr = [];
       const threshold = Number(await contract.threshold());
 
-      let queuedTransactions = [];
-      for (let i = 0; i < returnData.length; i++) {
-        let [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
-        //const [to, data, timestamp, executed, numConfirmations, amount] = contract.interface.decodeFunctionResult('queuedTransactions', returnData[i]);
-        let token =''
-        if(data.startsWith('0xa9059cbb')) {
-          const abi = new ethers.Interface(['function transfer(address to, uint256 amount)']);
-          const decodedData = abi.decodeFunctionData('transfer', data);
-          const amt = decodedData.amount;
-          token = to;
-          to = decodedData.to;
-amount = amt;
-      }
-        const tx = {
-          id: startTx + i,
-          to,
-          data,
-          timestamp: Number(timestamp),
-          executed,
-          numConfirmations: Number(numConfirmations),
-          threshold: threshold,
-          amount: ethers.formatUnits(amount, 'ether') < 0.000000001 ? ethers.formatUnits(amount, 6) : ethers.formatUnits(amount, 'ether')
-        ,token
-        };
-        queuedTransactions.push(tx);
+      for (let i = startTx; i < endTx; i++) {
+        try {
+          const [to, data, timestamp, executed, numConfirmations, amount] =
+            await contract.queuedTransactions(i);
+
+          let token = '';
+          let finalTo = to;
+          let finalAmount = amount;
+
+          // If function signature is an ERC20 transfer, decode for clarity
+          if (data.startsWith('0xa9059cbb')) {
+            const abi = new ethers.Interface(['function transfer(address to, uint256 amount)']);
+            const decodedData = abi.decodeFunctionData('transfer', data);
+            finalAmount = decodedData.amount;
+            token = to;
+            finalTo = decodedData.to;
+          }
+
+          arr.push({
+            id: i,
+            to: finalTo,
+            data,
+            timestamp: Number(timestamp),
+            executed,
+            numConfirmations: Number(numConfirmations),
+            threshold,
+            amount:
+              +Number(finalAmount) === 0
+                ? '0'
+                : ethers.formatUnits(finalAmount, 'ether'),
+            token
+          });
+        } catch (err) {
+          // If we can't decode, break
+          console.error(err);
+        }
       }
 
-      setQueuedTransactions(queuedTransactions.reverse());
+      // Reverse chronological
+      setQueuedTransactions(arr.reverse());
     } catch (error) {
       console.error(error);
       toast.error('Failed to fetch queued transactions.');
@@ -490,40 +312,18 @@ amount = amt;
     }
   };
 
-  function convert(n) {
-    var sign = +n < 0 ? "-" : "",
-      toStr = n.toString();
-    if (!/e/i.test(toStr)) {
-      return n;
-    }
-    var [lead, decimal, pow] = n.toString()
-      .replace(/^-/, "")
-      .replace(/^([0-9]+)(e.*)/, "$1.$2")
-      .split(/e|\./);
-    return +pow < 0 ?
-      sign + "0." + "0".repeat(Math.max(Math.abs(pow) - 1 || 0, 0)) + lead + decimal :
-      sign + lead + (+pow >= decimal.length ? (decimal + "0".repeat(Math.max(+pow - decimal.length || 0, 0))) : (decimal.slice(0, +pow) + "." + decimal.slice(+pow)))
-  }
-  const handleConfirmTransaction = async (txIndex) => {
-    try {
-      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      const tx = await contract.confirmTransaction(txIndex);
-      await tx.wait();
-      toast.success('Transaction confirmed successfully!');
-      fetchQueuedTransactions(selectedVault);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to confirm transaction.');
-    }
-  };
+  /************************************************************************
+   * EFFECTS & INIT
+   ***********************************************************************/
 
   useEffect(() => {
     if (userAddress) {
       fetchVaults();
-    }
-    else {
+    } else {
       setIsCreateInfoModalOpen(true);
-toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',color:'#fff',fontWeight:'bold'}});
+      toast('Connect your wallet to get started', {
+        style: { backgroundColor: '#00aaff', color: '#fff', fontWeight: 'bold' }
+      });
     }
   }, [userAddress]);
 
@@ -533,67 +333,97 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       fetchQueuedTransactions(selectedVault);
     }
   }, [selectedVault]);
-  const handleDepositToken = async (tokenAddress, amountOrID, assetType) => {
-    assetType=assetType?assetType:0;
+
+  /************************************************************************
+   * ACTION HANDLERS
+   ***********************************************************************/
+
+  const createVault = async (
+    name,
+    recoveryAddress,
+    whitelistedAddresses,
+    dailyLimit,
+    threshold,
+    delay
+  ) => {
     try {
-      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-  
-      if (tokenAddress === ethers.ZeroAddress) {
-        // For ETH deposit, send as `msg.value`
-        const tx = await contract.depositAsset(tokenAddress, ethers.parseEther(amountOrID.toString()), 0, { value: ethers.parseEther(amountOrID.toString()) });
-        await tx.wait();
-      } else if (assetType === 0) {
-        // For ERC20 token
-        const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 amount)", "function decimals() view returns (uint8)"], signer);
-  
-        // Approve the vault to spend tokens on behalf of the user if necessary
-        const approvalTx = await tokenContract.approve(selectedVault, ethers.parseUnits(amountOrID.toString(), await tokenContract.decimals()));
-        await approvalTx.wait();
-  
-        const tx = await contract.depositAsset(tokenAddress, ethers.parseUnits(amountOrID.toString(), await tokenContract.decimals()), 0);
-        await tx.wait();
-      } else if (assetType === 1) {
-        // For ERC721 token (NFT)
-        const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 tokenId)", "function decimals() view returns (uint8)"], signer);
-  
-        // Approve the vault to transfer the NFT on behalf of the user
-       let tx = await tokenContract.approve(selectedVault, amountOrID);
-  await tx.wait();
-        // Call depositAsset without needing to transfer value
-        tx = await contract.depositAsset(tokenAddress, amountOrID, 1);
-        await tx.wait();
+      const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
+
+      if (
+        !whitelistedAddresses ||
+        !name ||
+        !recoveryAddress ||
+        !dailyLimit ||
+        !threshold ||
+        !delay
+      ) {
+        toast.error('Please fill all fields.');
+        return;
       }
-  
-      toast.success('Asset deposited successfully!');
-      fetchTokenBalances(selectedVault); // Refresh balances after deposit
-  
-    } catch (error) {
-      console.error("Deposit failed:", error);
-      toast.error('Failed to deposit asset.');
-    }
-  };
-  
-  const handleDepositToken2 = async (tokenAddress, amount) => {
-    try {
-      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      if (tokenAddress === '0x0000000000000000000000000000000000000000') {
-        const tx = await contract.depositToken(tokenAddress, ethers.parseEther(amount), { value: ethers.parseEther(amount) });
-        await tx.wait();
-      } else {
-        const token = new ethers.Contract(tokenAddress, ['function approve(address spender, uint256 amount)', 'function allowance(address owner, address spender) view returns (uint256)', 'function decimals() view returns (uint8)'], signer);
-        const allowance = await token.allowance(userAddress, selectedVault);
-        if (allowance < ethers.parseUnits(amount.toString(), await token.decimals())) {
-          const approveTx = await token.approve(selectedVault, ethers.parseUnits('1000000000000000000', await token.decimals()));
-          await approveTx.wait();
+
+      // Check if name is taken
+      try {
+        let vaultAddr = await contract.vaultNames(name);
+        if (vaultAddr !== ethers.ZeroAddress) {
+          toast.error('Vault name already exists.');
+          return;
         }
-        const tx = await contract.depositToken(tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
-        await tx.wait();
+      } catch (error) {
+        // do nothing
       }
-      toast.success('Token deposited successfully!');
-      fetchTokenBalances(selectedVault);
+
+      if (whitelistedAddresses.length < threshold) {
+        toast.error('Threshold must be <= number of whitelisted addresses.');
+        return;
+      }
+
+      // Convert days to seconds
+      const finalDelay = (delay * 84000).toFixed(0);
+      // encode call
+      const iface = new ethers.Interface(factoryAbi);
+      const data = iface.encodeFunctionData('createVault', [
+        name,
+        recoveryAddress,
+        whitelistedAddresses,
+        dailyLimit,
+        threshold,
+        finalDelay,
+        0
+      ]);
+
+      const queryParams = new URLSearchParams(window.location.search);
+      let ref = queryParams.get('ref') || '';
+      // We'll append 'gstagref=...' to data
+      const tx = await signer.sendTransaction({
+        to: factoryAddress,
+        data: data + ethers.hexlify(ethers.toUtf8Bytes('gstagref=' + ref)).slice(2)
+      });
+      await tx.wait();
+
+      // If you have Google Analytics set up
+      if (typeof window !== 'undefined') {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'G-L8YDH0NR8C');
+        gtag('event', 'createVault', {
+          event_category: 'Vault',
+          event_label: 'Create Vault',
+          ref: ref || '0x',
+          user: userAddress,
+          vault: name
+        });
+      }
+
+      window.location.reload();
+      toast.success('Vault created successfully!');
+      await fetchVaults();
+      await fetchTokenBalances(selectedVault);
     } catch (error) {
       console.error(error);
-      toast.error('Failed to deposit token.');
+      toast.error('Failed to create vault.');
     }
   };
 
@@ -601,7 +431,7 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
     try {
       const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
       const vaultAddress = await factory.vaultNames(vaultName);
-      if (vaultAddress === '0x0000000000000000000000000000000000000000') {
+      if (vaultAddress === ethers.ZeroAddress) {
         toast.error('Vault not found.');
       } else {
         setSelectedVault(vaultAddress);
@@ -615,155 +445,99 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
     }
   };
 
-  const createVault = async (name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay) => {
-    try {    
-      const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
-      delay==0?delay=2*52:delay;
-      if (!whitelistedAddresses || name === '' || recoveryAddress === '' || dailyLimit === '' || threshold === '' || delay === '') {
-        toast.error('Please fill all fields.');
-        return;
-      }
-      try {
-        let vault = await contract.vaultNames(name);
-        if (vault !== '0x0000000000000000000000000000000000000000') {
-          toast.error('Vault name already exists.');
-          return;
-        }
-      } catch (error) { }
-      if (whitelistedAddresses.length < threshold) {
-        toast.error('Threshold must be less than or equal to the number of whitelisted addresses.');
-        return;
-      }
-      let iface = new ethers.Interface(factoryAbi);
-
-      const queryParams = new URLSearchParams(window.location.search);
-      let ref = queryParams.get('ref'); // Replace 'paramName' with the actual parameter you want to retrieve
-
-      let data = iface.encodeFunctionData("createVault", [name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0),0]);
-      const tx = await signer.sendTransaction({
-        to: factoryAddress,
-        data: data+ethers.hexlify(ethers.toUtf8Bytes('gstagref='+ref)).toString().slice(2),
-      });
-      await tx.wait();
-      //const tx = await contract.createVault(name, recoveryAddress, whitelistedAddresses, dailyLimit, threshold, (delay * 84000).toFixed(0));
-      //await tx.wait();
-      
-    if (typeof window !== 'undefined') {
-      console.log('gtag'); // This should show in your console
-      
-      window.dataLayer = window.dataLayer || [];
-      
-      function gtag(){
-        window.dataLayer.push(arguments);
-      }
-      
-      gtag('js', new Date());
-      gtag('config', 'G-L8YDH0NR8C');
-      
-    const queryParams = new URLSearchParams(window.location.search);
-         let ref = queryParams.get('ref'); // Replace 'paramName' with the actual parameter you want to retrieve
-
-      console.log(ref);
-      gtag('event', 'createVault', {
-        event_category: 'Vault',
-        event_label: 'Create Vault',
-        ref: ref?ref.toString():'0x',
-        user:userAddress,
-        vault:name
-      });
-    }
-      window.location.reload();
-      toast.success('Vault created successfully!');
-      await fetchVaults();
-      await fetchTokenBalances(selectedVault);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to create vault.');
-    }
-  };
-
-  const updateSettings = async (recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits) => {
+  // Deposit (ERC20, ETH, or NFT)
+  const handleDepositToken = async (tokenAddress, amountOrID, assetType) => {
+    assetType = assetType || 0; // 0 => ERC20, 1 => ERC721
     try {
-      let abi = new ethers.Interface(vaultAbi);
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      !whitelistedAddresses ? whitelistedAddresses = [] : whitelistedAddresses;
-      !tokens ? tokens = [] : tokens;
-      !fixedLimits ? fixedLimits = [] : fixedLimits;
-      !percentageLimits ? percentageLimits = [] : percentageLimits;
-      !useBaseLimits ? useBaseLimits = [] : useBaseLimits;
-      !dailyLimit ? dailyLimit = 0 : dailyLimit;
-      !threshold ? threshold = 0 : threshold;
-      !delay ? delay = 0 : delay;
-      !recoveryAddress ? recoveryAddress = '0x0000000000000000000000000000000000000000' : recoveryAddress;
-      if (userAddress === vaultSettings.recoveryAddress) {
-        const tx = await contract.updateSettings(recoveryAddress, whitelistedAddresses, dailyLimit, threshold, delay, tokens, fixedLimits, percentageLimits, useBaseLimits);
+
+      // ETH
+      if (tokenAddress === ethers.ZeroAddress) {
+        const tx = await contract.depositAsset(
+          tokenAddress,
+          ethers.parseEther(amountOrID.toString()),
+          0,
+          { value: ethers.parseEther(amountOrID.toString()) }
+        );
         await tx.wait();
-      } else 
-      {
-        
-    tokens.forEach((tokenAddress) => {
-      tokens.push(tokenAddress);
-      fixedLimits.push(document.getElementById(`fixed-limit-${tokenAddress}`).value || 0);
-      percentageLimits.push(document.getElementById(`percentage-limit-${tokenAddress}`).value || 0);
-      useBaseLimits.push(document.getElementById(`use-base-limit-${tokenAddress}`).value || 0);
-    });
 
-    // Encode the function data for updateSettings
-    const data = abi.encodeFunctionData("updateSettings", [
-      recoveryAddress,
-      whitelistedAddresses,
-      dailyLimit || 0,
-      threshold || 0,
-      delay*84000 || 0,
-      tokens,
-      fixedLimits,
-      percentageLimits,
-      useBaseLimits
-    ]);
-      
-    // Queue the transaction if necessary or execute it directly if allowed
-    const tx = await contract.queueTransaction(selectedVault, data, 0);
-    await tx.wait();
+      } else if (assetType === 0) {
+        // ERC20
+        const tokenContract = new ethers.Contract(
+          tokenAddress,
+          [
+            "function approve(address spender, uint256 amount)",
+            "function decimals() view returns (uint8)"
+          ],
+          signer
+        );
+        const decimals = await tokenContract.decimals();
+
+        // Approve
+        const approvalTx = await tokenContract.approve(
+          selectedVault,
+          ethers.parseUnits(amountOrID.toString(), decimals)
+        );
+        await approvalTx.wait();
+
+        // Then deposit
+        const tx = await contract.depositAsset(
+          tokenAddress,
+          ethers.parseUnits(amountOrID.toString(), decimals),
+          0
+        );
+        await tx.wait();
+
+      } else {
+        // ERC721
+        const tokenContract = new ethers.Contract(
+          tokenAddress,
+          ["function approve(address spender, uint256 tokenId)"],
+          signer
+        );
+        let tx = await tokenContract.approve(selectedVault, amountOrID);
+        await tx.wait();
+
+        tx = await contract.depositAsset(tokenAddress, amountOrID, 1);
+        await tx.wait();
       }
-      toast.success('Settings updated successfully!');
+
+      toast.success('Asset deposited successfully!');
       fetchTokenBalances(selectedVault);
-      fetchQueuedTransactions(selectedVault);
+
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to update settings.');
+      console.error("Deposit failed:", error);
+      toast.error('Failed to deposit asset.');
     }
   };
 
-  const [tokenLimit, setTokenLimit] = useState({ fixedLimit: '', percentageLimit: '', useBaseLimit: '' });
-
-  const updateTokenLimit = async () => {
-    try {
-      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      let fixedLimits = tokenLimit.fixedLimit != '' ? tokenLimit.fixedLimit : 0;
-      let percentageLimits = tokenLimit.percentageLimit != '' ? tokenLimit.percentageLimit : 0;
-      let useBaseLimits = tokenLimit.useBaseLimit != '' ? tokenLimit.useBaseLimit : 0;
-      let abi = new ethers.Interface(vaultAbi);
-      const data = abi.encodeFunctionData("setTokenLimit", [selectedToken, fixedLimits, percentageLimits, useBaseLimits]);
-      const tx = await contract.queueTransaction(selectedVault, data, 0);
-      await tx.wait();
-      toast.success('Settings updated successfully!');
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to update settings.');
-    }
-  };
-
+  // Withdraw
   const handleWithdrawToken = async (tokenAddress, amount) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      if (tokenAddress === '0x0000000000000000000000000000000000000000') {
-        const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.parseEther(amount));
+
+      if (tokenAddress === ethers.ZeroAddress) {
+        const tx = await contract.withdrawToken(
+          userAddress,
+          tokenAddress,
+          ethers.parseEther(amount)
+        );
         await tx.wait();
       } else {
-        const token = new ethers.Contract(tokenAddress, ['function decimals() view returns (uint8)'], signer);
-        const tx = await contract.withdrawToken(userAddress, tokenAddress, ethers.parseUnits(amount.toString(), await token.decimals()));
+        const token = new ethers.Contract(
+          tokenAddress,
+          ["function decimals() view returns (uint8)"],
+          signer
+        );
+        const decimals = await token.decimals();
+        const tx = await contract.withdrawToken(
+          userAddress,
+          tokenAddress,
+          ethers.parseUnits(amount.toString(), decimals)
+        );
         await tx.wait();
       }
+
       toast.success('Token withdrawn successfully!');
       fetchTokenBalances(selectedVault);
       fetchQueuedTransactions(selectedVault);
@@ -773,13 +547,18 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
     }
   };
 
+  // Withdraw NFT (queues a transaction to call transferFrom)
   const handleWithdrawNft = async (nft) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
       const abi = new ethers.Interface([
         "function transferFrom(address from, address to, uint256 tokenId)"
       ]);
-      const data = abi.encodeFunctionData("transferFrom", [selectedVault, userAddress, nft.tokenId]);
+      const data = abi.encodeFunctionData("transferFrom", [
+        selectedVault,
+        userAddress,
+        nft.tokenId
+      ]);
       const tx = await contract.queueTransaction(nft.address, data, 0);
       await tx.wait();
       toast.success('NFT withdrawal queued successfully!');
@@ -790,7 +569,48 @@ toast('Connect your wallet to get started',{style:{backgroundColor:'#00aaff',col
       toast.error('Failed to withdraw NFT.');
     }
   };
-const handleCancelTransaction = async (txIndex) => {
+
+  // Queue a custom transaction
+  const handleSendCustomTx = async () => {
+    try {
+      const { to, value, fnSig, params } = customTx;
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+
+      // e.g. "function transfer(address to, uint256 amount)"
+      const abi = new ethers.Interface([`function ${fnSig}`]);
+      // If user selected "calldata", we pass raw params[0]. Otherwise, encode
+      const data = fnSig.startsWith('calldata')
+        ? params[0]
+        : abi.encodeFunctionData(fnSig.split('(')[0], params);
+
+      const tx = await contract.queueTransaction(to, data, ethers.parseUnits(value.toString(), 'ether'));
+      await tx.wait();
+
+      toast.success('Custom transaction queued successfully!');
+      fetchQueuedTransactions(selectedVault);
+      handleCustomTxModalToggle();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to queue custom transaction.');
+    }
+  };
+
+  // Confirm queued tx
+  const handleConfirmTransaction = async (txIndex) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const tx = await contract.confirmTransaction(txIndex);
+      await tx.wait();
+      toast.success('Transaction confirmed successfully!');
+      fetchQueuedTransactions(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to confirm transaction.');
+    }
+  };
+
+  // Cancel queued tx
+  const handleCancelTransaction = async (txIndex) => {
     try {
       const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
       const tx = await contract.cancelTransaction(txIndex);
@@ -801,40 +621,152 @@ const handleCancelTransaction = async (txIndex) => {
       console.error(error);
       toast.error('Failed to cancel transaction.');
     }
+  };
+
+  // Update vault settings
+  const updateSettings = async (
+    recoveryAddress,
+    whitelistedAddresses,
+    dailyLimit,
+    threshold,
+    delay,
+    tokens,
+    fixedLimits,
+    percentageLimits,
+    useBaseLimits
+  ) => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const abi = new ethers.Interface(vaultAbi);
+
+      // Default or fallback if nothing is provided
+      !whitelistedAddresses && (whitelistedAddresses = []);
+      !tokens && (tokens = []);
+      !fixedLimits && (fixedLimits = []);
+      !percentageLimits && (percentageLimits = []);
+      !useBaseLimits && (useBaseLimits = []);
+      !dailyLimit && (dailyLimit = 0);
+      !threshold && (threshold = 0);
+      !delay && (delay = 0);
+      !recoveryAddress && (recoveryAddress = ethers.ZeroAddress);
+
+      // If recovery is controlling address, can call directly
+      if (userAddress === vaultSettings.recoveryAddress) {
+        const tx = await contract.updateSettings(
+          recoveryAddress,
+          whitelistedAddresses,
+          dailyLimit,
+          threshold,
+          delay,
+          tokens,
+          fixedLimits,
+          percentageLimits,
+          useBaseLimits
+        );
+        await tx.wait();
+      } else {
+        // Otherwise, queue a transaction
+        tokens.forEach((tokenAddress) => {
+          tokens.push(tokenAddress);
+          fixedLimits.push(
+            document.getElementById(`fixed-limit-${tokenAddress}`)?.value || 0
+          );
+          percentageLimits.push(
+            document.getElementById(`percentage-limit-${tokenAddress}`)?.value || 0
+          );
+          useBaseLimits.push(
+            document.getElementById(`use-base-limit-${tokenAddress}`)?.value || 0
+          );
+        });
+
+        const finalData = abi.encodeFunctionData("updateSettings", [
+          recoveryAddress,
+          whitelistedAddresses,
+          dailyLimit || 0,
+          threshold || 0,
+          delay * 84000 || 0,
+          tokens,
+          fixedLimits,
+          percentageLimits,
+          useBaseLimits
+        ]);
+
+        const tx = await contract.queueTransaction(selectedVault, finalData, 0);
+        await tx.wait();
+      }
+
+      toast.success('Settings updated successfully!');
+      fetchTokenBalances(selectedVault);
+      fetchQueuedTransactions(selectedVault);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update settings.');
+    }
+  };
+
+  // Set per-token limit
+  const [tokenLimit, setTokenLimit] = useState({
+    fixedLimit: '',
+    percentageLimit: '',
+    useBaseLimit: ''
+  });
+
+  const updateTokenLimit = async () => {
+    try {
+      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
+      const abi = new ethers.Interface(vaultAbi);
+
+      let fixedLimits = tokenLimit.fixedLimit !== '' ? tokenLimit.fixedLimit : 0;
+      let percentageLimits = tokenLimit.percentageLimit !== '' ? tokenLimit.percentageLimit : 0;
+      let useBaseLimits = tokenLimit.useBaseLimit !== '' ? tokenLimit.useBaseLimit : 0;
+
+      const data = abi.encodeFunctionData('setTokenLimit', [
+        selectedToken,
+        fixedLimits,
+        percentageLimits,
+        useBaseLimits
+      ]);
+
+      const tx = await contract.queueTransaction(selectedVault, data, 0);
+      await tx.wait();
+
+      toast.success('Settings updated successfully!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update settings.');
+    }
+  };
+
+  /************************************************************************
+   * RENDER HELPERS
+   ***********************************************************************/
+
+  function convert(num) {
+    // Quick helper to convert large exponent values to standard string
+    const n = +num;
+    if (!Number.isFinite(n)) return num;
+    return Number(n.toPrecision(9)).toString();
   }
-  const handleTabChange = (tab) => {
-    setCurrentTab(tab);
-  };
 
-  const handleDepositModalToggle = () => {
-    setIsDepositModalOpen(!isDepositModalOpen);
-  };
+  const handleTabChange = (tab) => setCurrentTab(tab);
 
-  const handleLimitModalToggle = () => {
-    setIsLimitModalOpen(!isLimitModalOpen);
-  };
+  const handleDepositModalToggle = () => setIsDepositModalOpen(!isDepositModalOpen);
+  const handleLimitModalToggle = () => setIsLimitModalOpen(!isLimitModalOpen);
+  const handleCreateInfoModalToggle = () => setIsCreateInfoModalOpen(!isCreateInfoModalOpen);
+  const handleCustomTxModalToggle = () => setIsCustomTxModalOpen(!isCustomTxModalOpen);
 
-  const handleCreateInfoModalToggle = () => {
-    setIsCreateInfoModalOpen(!isCreateInfoModalOpen);
-  };
+  const handleVaultChange = (e) => setSelectedVault(e.target.value);
 
-  const handleCustomTxModalToggle = () => {
-    setIsCustomTxModalOpen(!isCustomTxModalOpen);
-  };
-
-  const handleVaultChange = (e) => {
-    setSelectedVault(e.target.value);
-  };
-  const [showVaultOnly, setShowVaultOnly] = useState(true);const displayAssets = () => {
+  // Renders the user’s tokens + NFTs inside the vault
+  const displayAssets = () => {
     return (
       <>
-        {/* Display token balances */}
         {tokenBalances.map((asset, index) => (
           <div
-            key={asset.symbol}
+            key={`${asset.address}-${asset.symbol}`}
             className={`${bgColors[index % bgColors.length]} px-4 py-2 md:px-6 md:py-4 rounded-3xl shadow-lg flex flex-col items-center text-white relative space-y-2 md:space-y-2`}
           >
-            {/* Settings Gear Icon */}
+            {/* Gear (limit settings) */}
             <div
               className="gear-icon text-lg absolute top-3 right-3 cursor-pointer"
               onClick={() => {
@@ -844,95 +776,93 @@ const handleCancelTransaction = async (txIndex) => {
             >
               ⚙️
             </div>
-  
-            {/* Token Logo and Symbol - Logo on the Left */}
+            {/* Token Logo + Symbol */}
             <div className="flex items-center mb-2">
               <img
                 src={
-                  asset.logo
-                    ? asset.logo
-                    : tokenLogos[asset.address.toLowerCase()] ||
-                      'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+                  tokenLogos[asset.address.toLowerCase()] ||
+                  'https://cryptologos.cc/logos/ethereum-eth-logo.png'
                 }
                 alt={`${asset.symbol} logo`}
                 className="h-8 mr-2"
               />
               <div className="text-lg md:text-2xl font-bold">{asset.symbol}</div>
             </div>
-  
-            {/* Balance and Wallet Info */}
+            {/* Balances */}
             <div className="w-full flex flex-col md:flex-row justify-between items-center text-center space-y-2 md:space-x-6 font-semibold overflow-hidden">
               <div className="w-full md:w-1/2 text-md">
                 <span>Balance:</span>
                 <div className="mt-1 rounded-full py-2 px-3 bg-blue-500">
-                  {convert(asset.balance).toString().substring(0, 12)}
+                  {convert(asset.balance)}
                 </div>
               </div>
               <div className="w-full md:w-1/2 text-md">
                 <span>Wallet:</span>
                 <div className="rounded-full py-2 px-3 bg-orange-400">
-                  {asset.wallet}
+                  {convert(asset.wallet)}
                 </div>
               </div>
             </div>
-  
             {/* Token Limit */}
             <div className="w-full text-center text-md font-semibold">
-              {convert(asset.limit).toString().substring(0, 12)} <span>Available</span>
+              {convert(asset.limit)} <span>Available</span>
               <div className="w-full bg-gray-300 rounded-full h-3 mt-2">
                 <div
                   className="bg-blue-400 h-3 rounded-full"
-                  style={{ width: `${(asset.limit / asset.dailyLimit) * 100}%` }}
-                ></div>
+                  style={{
+                    width:
+                      asset.dailyLimit !== 0
+                        ? `${(asset.limit / asset.dailyLimit) * 100}%`
+                        : '0%'
+                  }}
+                />
               </div>
             </div>
-  {/* Deposit and Withdraw Buttons */}
-<div className="flex flex-wrap items-center w-full space-y-2 mt-4">
-  <input
-    id={`amount-${asset.symbol}`}
-    style={{ minWidth: '50px' }}
-    className="w-full lg:w-1/4 md:w-full mt-2 text-center text-gray-800 rounded-full p-2 text-sm w-full mx-auto"
-    placeholder="Amount"
-  />
-  <button
-    className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
-    style={{ minWidth: '80px' }}
-    onClick={() =>
-      handleDepositToken(
-        asset.address,
-        document.getElementById(`amount-${asset.symbol}`).value
-      )
-    }
-  >
-    Deposit
-  </button>
-  <button
-    className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
-    style={{ minWidth: '80px' }}
-
-    onClick={() =>
-      handleWithdrawToken(
-        asset.address,
-        document.getElementById(`amount-${asset.symbol}`).value
-      )
-    }
-  >
-    Withdraw
-  </button>
-</div>
-</div>
+            {/* Deposit / Withdraw */}
+            <div className="flex flex-wrap items-center w-full space-y-2 mt-4">
+              <input
+                id={`amount-${asset.symbol}`}
+                style={{ minWidth: '50px' }}
+                className="w-full lg:w-1/4 md:w-full mt-2 text-center text-gray-800 rounded-full p-2 text-sm mx-auto"
+                placeholder="Amount"
+              />
+              <button
+                className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+                style={{ minWidth: '80px' }}
+                onClick={() =>
+                  handleDepositToken(
+                    asset.address,
+                    document.getElementById(`amount-${asset.symbol}`).value
+                  )
+                }
+              >
+                Deposit
+              </button>
+              <button
+                className="w-full lg:w-1/4 md:w-full bg-white text-blue-500 font-semibold py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition duration-300 ease-in-out mx-auto"
+                style={{ minWidth: '80px' }}
+                onClick={() =>
+                  handleWithdrawToken(
+                    asset.address,
+                    document.getElementById(`amount-${asset.symbol}`).value
+                  )
+                }
+              >
+                Withdraw
+              </button>
+            </div>
+          </div>
         ))}
-  
-        {/* Display NFT Assets */}
+        {/* NFTs */}
         {nftAssets.map((nft, index) => (
           <div
-            key={nft.tokenId}
+            key={`${nft.address}-${nft.tokenId}`}
             className={`${bgColors[index % bgColors.length]} p-6 rounded-3xl flex flex-col items-center shadow-lg text-white relative`}
             style={{
               backgroundImage: `url(${nft.imageUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              minHeight: '250px',
+              minHeight: '250px'
             }}
           >
             <div
@@ -941,8 +871,6 @@ const handleCancelTransaction = async (txIndex) => {
             >
               ⚙️
             </div>
-  
-            {/* NFT Details */}
             <div className="flex flex-col items-center mb-2 space-y-2">
               <img
                 src={nft.imageUrl}
@@ -953,8 +881,6 @@ const handleCancelTransaction = async (txIndex) => {
                 {nft.name} #{nft.tokenId}
               </div>
             </div>
-  
-            {/* Withdraw Button */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <button
                 className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4 text-sm"
@@ -965,221 +891,1016 @@ const handleCancelTransaction = async (txIndex) => {
             </div>
           </div>
         ))}
-  
-        {/* Conditionally show tokens and NFTs not secured in vault */}
-        {!showVaultOnly && (
-          <>
-            {/* Display tokens not secured in vault */}
-            {todeposit.map((asset, index) => (
-              <div
-                key={asset.symbol}
-                className="bg-gradient-to-r from-purple-300 via-pink-300 to-red-300 px-6 py-4 rounded-3xl shadow-lg flex flex-col items-center text-white space-y-2"
-              >
-                <div className="flex items-center mb-2">
-                  <img
-                    src={
-                      asset.logo ||
-                      tokenLogos[asset.address.toLowerCase()] ||
-                      'https://cryptologos.cc/logos/ethereum-eth-logo.png'
-                    }
-                    alt={`${asset.symbol} logo`}
-                    className="w-8 h-8 mr-2"
-                  />
-                  <div className="text-xl font-bold">{asset.symbol}</div>
-                </div>
-  
-                <div className="text-lg font-semibold text-center">
-                  <span>My Wallet:</span>
-                  <div className="mt-1 rounded-full py-2 px-3 bg-orange-500">
-                    {convert(asset.balance).toString().substring(0, 12)}
-                  </div>
-                </div>
-  
-                <input
-                  id={`amt-${asset.symbol}`}
-                  className="rounded-full text-center text-gray-800 p-2 text-sm"
-                  placeholder="Amount"
-                />
-  
-                <button
-                  className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out text-sm"
-                  onClick={() =>
-                    handleDepositToken(
-                      asset.address,
-                      document.getElementById(`amt-${asset.symbol}`).value
-                    )
-                  }
-                >
-                  Deposit
-                </button>
-              </div>
-            ))}
-  
-            {/* Display NFT Assets not secured in vault */}
-            {todepositnft.map((nft, index) => (
-              <div
-                key={nft.tokenId}
-                className="bg-pink-300 p-6 rounded-3xl shadow-lg flex flex-col items-center text-white relative"
-                style={{
-                  backgroundImage: `url(${nft.imageUrl})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  minHeight: '250px',
-                  overflow: 'hidden'
-                }}
-              >
-                <div className="flex items-center mb-2 space-y-2">
-                  <img
-                    src={nft.imageUrl}
-                    alt={`${nft.name} logo`}
-                    className="w-8 h-8 rounded-full border border-white shadow-lg"
-                  />
-                  <div className="bg-pink-300 rounded-full text-lg font-bold px-3 py-1 shadow-md">
-                    {nft.name} {nft.symbol} #{nft.tokenId}
-                  </div>
-                </div>
-                  <p className="font-bold rounded-full bg-pink-500 px-3 py-1 text-sm">
-                    NFT Not Secured
-                  </p>
-  
-                {/* Deposit Button */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                  <button
-                    className="bg-white text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 ease-in-out mt-4 text-sm"
-                    onClick={() => handleDepositToken(nft.contract.address, nft.tokenId, 1)}
-                  >
-                    Deposit
-                  </button>
-                </div>
-              </div>
-            ))}
-          </>
-        )}
       </>
     );
   };
-  
-  
-  
-  
 
+  // Renders the queued transactions
   const displayTransactions = () => {
-    return queuedTransactions.map((transaction, index) => (
-      <div key={transaction.id} style={{ borderRadius: screen.availWidth < 1000 ? '20px' : '' }} className={`${bgColors[index % bgColors.length]} text-white grid grid-cols-1 sm:grid-cols-5 text-center rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105`}>
-        <div className="flex items-center justify-center sm:justify-left space-x-4 mb-2 sm:mb-0 lg:relative lg:right-20" style={{ right: window.innerWidth < 1500 ? '40px' : '' }}>
-          <div className={`${transaction.executed ? 'bg-blue-200' : 'bg-red-200'} text-${transaction.executed ? 'blue' : 'red'}-800 text-lg rounded-full p-2 relative sm:right-4`}>
-            {transaction.to !== selectedVault ?
-              <img className="h-6 w-6" src={tokenLogos[transaction.token.toLowerCase()] ? tokenLogos[transaction.token.toLowerCase()] : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'} />
-              : '⚙️'}
+    return queuedTransactions.map((txData, index) => (
+      <div
+        key={txData.id}
+        className={`${bgColors[index % bgColors.length]} text-white grid grid-cols-1 sm:grid-cols-5 text-center rounded-full p-4 mb-4 shadow-lg transition-transform transform hover:scale-105`}
+      >
+        {/* ID + Icon */}
+        <div className="flex items-center justify-center space-x-4 mb-2 sm:mb-0">
+          <div
+            className={`${
+              txData.executed ? 'bg-blue-200' : 'bg-red-200'
+            } text-${
+              txData.executed ? 'blue' : 'red'
+            }-800 text-lg rounded-full p-2`}
+          >
+            {txData.to !== selectedVault ? (
+              <img
+                className="h-6 w-6"
+                src={
+                  txData.token && tokenLogos[txData.token.toLowerCase()]
+                    ? tokenLogos[txData.token.toLowerCase()]
+                    : 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
+                }
+                alt=""
+              />
+            ) : (
+              '⚙️'
+            )}
           </div>
-          <div className=" font-semibold">{transaction.id}</div>
-        </div><a href={'https://etherscan.io/address/' + transaction.to}>
-          <div className="text-pink-100 font-semibold text-left text-center relative lg:right-20 lg:top-2" style={{ top: window.innerWidth < 1000 && window.innerWidth > 600 ? '40px' : '' }}>{window.innerWidth < 1500 ? transaction.to.slice(0, 10) + '...' + transaction.to.slice(30, 40) : transaction.to}</div></a>
-        <div className="font-semibold relative lg:top-2">{transaction.amount}</div>
-        <div className="relative lg:top-2">{new Date(transaction.timestamp * 1000).toLocaleString()}</div>
-        <div className="flex items-center relative lg:top-2">
-          <div className={`${transaction.executed ? transaction.numConfirmations==404?'text-red-100 bg-red-500':'text-green-100 bg-green-500' : 'text-yellow-100 bg-yellow-500'} rounded-full px-1 font-bold mb-2 mx-auto`}>{transaction.executed ? transaction.numConfirmations==404?'Canceled':'Completed' : 'Pending'} {!transaction.executed && (
-            <button className="bg-pink-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2 mx-auto" onClick={() => handleConfirmTransaction(transaction.id)}>Sign {transaction.numConfirmations}/{transaction.threshold}</button>
+          <div className="font-semibold">{txData.id}</div>
+        </div>
+        {/* To */}
+        <a
+          href={`https://etherscan.io/address/${txData.to}`}
+          target="_blank"
+          rel="noreferrer"
+          className="font-semibold text-pink-100 text-left flex justify-center"
+        >
+          {txData.to.length > 40
+            ? txData.to.slice(0, 10) + '...' + txData.to.slice(-10)
+            : txData.to}
+        </a>
+        {/* Amount */}
+        <div className="font-semibold">{txData.amount}</div>
+        {/* Date */}
+        <div>{new Date(txData.timestamp * 1000).toLocaleString()}</div>
+        {/* Status / Confirm / Cancel */}
+        <div className="flex items-center justify-center">
+          {!txData.executed ? (
+            <div className="text-yellow-100 bg-yellow-500 rounded-full px-2 font-bold">
+              Pending
+            </div>
+          ) : (
+            <div
+              className={`font-bold rounded-full px-2 ${
+                txData.numConfirmations === 404
+                  ? 'bg-red-500 text-red-100'
+                  : 'bg-green-500 text-green-100'
+              }`}
+            >
+              {txData.numConfirmations === 404 ? 'Canceled' : 'Completed'}
+            </div>
           )}
-          </div>{(!transaction.executed &&userAddress==vaultSettings.owner)&&<button className="bg-red-300 text-white font-semibold relative left-1 py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2 bottom-1 mx-auto" onClick={() => handleCancelTransaction(transaction.id)}>Cancel</button>
-          }
+          {!txData.executed && (
+            <button
+              className="bg-pink-300 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2"
+              onClick={() => handleConfirmTransaction(txData.id)}
+            >
+              Sign {txData.numConfirmations}/{txData.threshold}
+            </button>
+          )}
+          {!txData.executed && userAddress === vaultSettings.owner && (
+            <button
+              className="bg-red-300 text-white font-semibold py-1 px-3 rounded-full hover:bg-orange-600 transition duration-300 ease-in-out ml-2"
+              onClick={() => handleCancelTransaction(txData.id)}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     ));
   };
-  const handleSendCustomTx = async () => {
-    try {
-      const { to, value, fnSig, params } = customTx;
-      const contract = new ethers.Contract(selectedVault, vaultAbi, signer);
-      console.log(fnSig);
-      // Create the function fragment
-      const abi = new ethers.Interface([`function ${fnSig}`]);
-      
-      // Encode the function data
-      const data = fnSig.startsWith('calldata')?params[0]:abi.encodeFunctionData(fnSig.split('(')[0], params);
-      console.log(data);
-      
-      // Queue the transaction
-      console.log(data);
-      const tx = await contract.queueTransaction(to, data, ethers.parseUnits(value.toString(), 'ether'));
-      await tx.wait();
-      
-      toast.success('Custom transaction queued successfully!');
-      fetchQueuedTransactions(selectedVault);
-      handleCustomTxModalToggle();
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to queue custom transaction.');
-    }
-  };
-  
 
-  const commonFunctionSignatures = [
-    "transfer(address to, uint256 amount)",
-    "approve(address to, uint256 amount)",
-    "transferFrom(address from, address to, uint256 amount)",
-    "delegate(address delegatee)"
-  ];
+  /************************************************************************
+   * COMPONENTS
+   ***********************************************************************/
 
-  const handleCustomTxChange = (index, value) => {
-    const newParams = [...customTx.params];
-    newParams[index] = value;
-    setCustomTx({ ...customTx, params: newParams });
-  };
+  function Header() {
+    return (
+      <>
+        <h1 className="text-center text-4xl amb-8 relative text-white font-extrabold">
+          Welcome to Vault
+        </h1>
+        <div className="flex justify-center items-center">
+          <a
+            href="https://twitter.com/heyboop"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white font-semibold hover:underline"
+          >
+            <img
+              src="https://cdn.simpleicons.org/x/ffffff"
+              alt="x (twitter) Logo"
+              className="w-4 h-4 m-2"
+            />
+          </a>
+          <a
+            href="https://discord.gg/vrV4YpUccq"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white font-semibold hover:underline"
+          >
+            <img
+              src="https://cdn.simpleicons.org/discord/ffffff"
+              alt="Discord Logo"
+              className="w-4 h-4 m-2"
+            />
+          </a>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText('https://spot.pizza/?ref=' + userAddress);
+              toast.success('Referral Link copied to clipboard');
+            }}
+          >
+            <p className="text-white font-bold ml-1">+1</p>
+          </button>
+        </div>
+      </>
+    );
+  }
 
-  const handleFnSigChange = (e) => {
-    const fnSig = e.target.value;
-    const paramsCount = fnSig.split(',').length - 1;
-    const params = Array(paramsCount).fill('');
-    setCustomTx({ ...customTx, fnSig, params });
-  };
+  function TabSwitcher({ activeTab, onTabChange }) {
+    return (
+      <div className="tab-switcher mb-4 flex justify-center space-x-4">
+        <div
+          className={`tab ${activeTab === 'open' ? 'tab-active' : ''}`}
+          onClick={() => onTabChange('open')}
+        >
+          Open
+        </div>
+        <div
+          className={`tab ${activeTab === 'create' ? 'tab-active' : ''}`}
+          onClick={() => onTabChange('create')}
+        >
+          Create
+        </div>
+        <div
+          className={`tab ${activeTab === 'settings' ? 'tab-active' : ''}`}
+          onClick={() => onTabChange('settings')}
+        >
+          Settings
+        </div>
+      </div>
+    );
+  }
+
+  function OpenVaultSection() {
+    return (
+      <div className="space-y-6">
+        <div>
+          <label htmlFor="vault-search" className="block mb-2 font-semibold text-gray-600">
+            Search Vault:
+          </label>
+          <input
+            type="text"
+            id="vault-search"
+            name="vault-search"
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+            placeholder="Enter vault name to search"
+          />
+        </div>
+        <button
+          className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+          onClick={() => handleSearch(document.getElementById('vault-search').value)}
+        >
+          Search
+        </button>
+      </div>
+    );
+  }
+
+  function CreateVaultSection() {
+    return (
+      <div className="space-y-6 relative">
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">
+            Vault Name:
+          </label>
+          <button
+            className="absolute font-semibold w-6 h-6 right-0 rounded-full border border-pink-500 top-0 text-pink-500 cursor-pointer"
+            onClick={handleCreateInfoModalToggle}
+          >
+            ?
+          </button>
+          <div className="flex items-center">
+            <input
+              type="text"
+              id="vault-name"
+              name="vault-name"
+              required
+              className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+              placeholder="Enter vault name"
+            />
+            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vlt.eth</span>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="recovery" className="block mb-2 font-semibold text-gray-600">
+            Recovery Address:
+          </label>
+          <input
+            type="text"
+            id="recovery"
+            name="recovery"
+            placeholder="Backup address (cold wallet)..."
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="custom-whitelist" className="block mb-2 font-semibold text-gray-600">
+            Custom Whitelist Addresses:
+          </label>
+          <input
+            type="text"
+            id="custom-whitelist"
+            name="custom-whitelist"
+            placeholder="Enter addresses separated by commas"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="transaction-delay" className="block mb-2 font-semibold text-gray-600">
+            Safety Delay (in days):
+          </label>
+          <input
+            type="number"
+            id="transaction-delay"
+            name="transaction-delay"
+            step="1"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">
+            Threshold:
+          </label>
+          <input
+            type="number"
+            id="threshold"
+            name="threshold"
+            step="1"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+            placeholder="Signers needed to confirm txs"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="custom-limits" className="block mb-2 font-semibold text-gray-600">
+            Limit per day of an asset (%):
+          </label>
+          <input
+            type="number"
+            id="custom-limits"
+            name="custom-limits"
+            step="1"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+
+        <button
+          className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+          onClick={() =>
+            createVault(
+              document.getElementById('vault-name').value,
+              document.getElementById('recovery').value,
+              document.getElementById('custom-whitelist').value.split(','),
+              document.getElementById('custom-limits').value,
+              document.getElementById('threshold').value,
+              document.getElementById('transaction-delay').value
+            )
+          }
+        >
+          Create Vault
+        </button>
+      </div>
+    );
+  }
+
+  function SettingsSection() {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-pink-600 text-center text-lg font-semibold">Info</h1>
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">
+            Owner Address:
+          </label>
+          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">
+            {vaultSettings.owner}
+          </p>
+        </div>
+        <div>
+          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">
+            Recovery Address:
+          </label>
+          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">
+            {vaultSettings.recoveryAddress}
+          </p>
+        </div>
+        <div className="space-x-6 col-3 flex items-center justify-center ">
+          <div>
+            <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">
+              Daily Limit:
+            </label>
+            <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">
+              {vaultSettings.dailyLimit}%
+            </p>
+          </div>
+          <div>
+            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">
+              Threshold:
+            </label>
+            <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">
+              {vaultSettings.threshold}
+            </p>
+          </div>
+          <div>
+            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">
+              Delay:
+            </label>
+            <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">
+              D:{(vaultSettings.delay / 84000).toFixed(0)} H:
+              {((vaultSettings.delay % 84000) / 3600).toFixed(0)} M:
+              {((vaultSettings.delay % 3600) / 60).toFixed(0)} S:
+              {(vaultSettings.delay % 60).toFixed(0)}
+            </p>
+          </div>
+        </div>
+        <div>
+          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">
+            Whitelisted Addresses:
+          </label>
+        </div>
+        {vaultSettings.whitelistedAddresses && vaultSettings.whitelistedAddresses.length > 0 ? (
+          vaultSettings.whitelistedAddresses.map((address, idx) => (
+            <p
+              key={idx}
+              className="text-gray-600 text-center bg-pink-100 rounded-3xl m-0 overflow-hidden"
+            >
+              {address}
+            </p>
+          ))
+        ) : (
+          <p className="text-gray-600">No whitelisted addresses found.</p>
+        )}
+
+        <h1 className="text-pink-600 text-center text-lg m-2 font-semibold">Update</h1>
+        <div className="flex items-center justify-center col-3 space-x-4">
+          <div>
+            <label htmlFor="withdraw-limit" className="block mb-2 font-semibold text-gray-600">
+              Limit Per Day of An Asset (%):
+            </label>
+            <input
+              type="number"
+              id="withdraw-limit"
+              name="withdraw-limit"
+              step="0.01"
+              required
+              className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+            />
+          </div>
+          <div>
+            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">
+              Threshold:
+            </label>
+            <input
+              type="number"
+              id="threshold"
+              name="threshold"
+              step="1"
+              required
+              className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+            />
+          </div>
+          <div>
+            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">
+              Delay:
+            </label>
+            <input
+              type="number"
+              id="delay"
+              name="delay"
+              step="1"
+              required
+              className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="recovery-addresses" className="block mb-2 font-semibold text-gray-600">
+            Recovery Addresses:
+          </label>
+          <input
+            type="text"
+            id="recovery-addresses"
+            name="recovery-addresses"
+            placeholder="Enter recovery addresses separated by commas"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+        <div>
+          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">
+            Whitelisted Addresses:
+          </label>
+          <input
+            type="text"
+            id="whitelisted-addresses"
+            name="whitelisted-addresses"
+            placeholder="Enter whitelisted addresses separated by commas"
+            required
+            className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+          />
+        </div>
+        <button
+          className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+          onClick={() =>
+            updateSettings(
+              document.getElementById('recovery-addresses').value,
+              document.getElementById('whitelisted-addresses').value.split(','),
+              document.getElementById('withdraw-limit').value,
+              document.getElementById('threshold').value,
+              document.getElementById('delay').value
+            )
+          }
+        >
+          Save Settings
+        </button>
+        {(userAddress === vaultSettings.owner ||
+          userAddress === vaultSettings.recoveryAddress ||
+          (vaultSettings.whitelistedAddresses &&
+            vaultSettings.whitelistedAddresses.includes(userAddress))) && (
+          <button
+            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+            onClick={async () => {
+              // Example: freezeLock(2)
+              const contract = new ethers.Contract(selectedVault, ["function freezeLock(uint) external"], signer);
+              try {
+                const tx = await contract.freezeLock(2);
+                await tx.wait();
+                toast.success('Vault is frozen!');
+              } catch (err) {
+                toast.error('Failed to freeze vault');
+                console.error(err);
+              }
+            }}
+          >
+            Freeze Vault
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  function DepositModal({ handleClose, handleDepositToken }) {
+    const [selectedToken, setSelectedToken] = useState('');
+    const [amount, setAmount] = useState('');
+    const [nft, setNft] = useState(false);
+
+    const handleDeposit = () => {
+      handleDepositToken(selectedToken, amount, nft ? 1 : 0);
+      handleClose();
+    };
+
+    return (
+      <div
+        className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={handleClose}
+      >
+        <div
+          style={{ width: '400px' }}
+          className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span
+            className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4"
+            onClick={handleClose}
+          >
+            &times;
+          </span>
+          <section id="deposit-tokens">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Deposit Tokens/NFT</h2>
+            </div>
+            <div className="space-y-6">
+              <div className="tab-switcher mb-4 flex justify-center space-x-4">
+                <div
+                  className={`tab ${nft ? 'tab-active' : ''}`}
+                  onClick={() => setNft(true)}
+                >
+                  NFT
+                </div>
+                <div
+                  className={`tab ${!nft ? 'tab-active' : ''}`}
+                  onClick={() => setNft(false)}
+                >
+                  Token
+                </div>
+              </div>
+              {!nft && (
+                <>
+                  <div>
+                    <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">
+                      Token Address:
+                    </label>
+                    <input
+                      type="text"
+                      id="token"
+                      name="token"
+                      required
+                      className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                      onChange={(e) => setSelectedToken(e.target.value)}
+                      placeholder="0x0000... for ETH"
+                    />
+                  </div>
+                  <div className="flex space-x-4">
+                    <div className="flex-1">
+                      <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">
+                        Amount:
+                      </label>
+                      <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        step="0.01"
+                        required
+                        className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                        onChange={(e) => setAmount(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+                    onClick={handleDeposit}
+                  >
+                    Deposit
+                  </button>
+                </>
+              )}
+              {nft && (
+                <>
+                  <div>
+                    <label htmlFor="nft" className="block mb-2 font-semibold text-gray-600">
+                      NFT Address:
+                    </label>
+                    <input
+                      type="text"
+                      id="nft"
+                      name="nft"
+                      required
+                      className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                      onChange={(e) => setSelectedToken(e.target.value)}
+                    />
+                    <label
+                      htmlFor="tokenId"
+                      className="block mb-2 font-semibold text-gray-600"
+                    >
+                      Token ID:
+                    </label>
+                    <input
+                      type="text"
+                      id="tokenId"
+                      name="tokenId"
+                      required
+                      className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                    <button
+                      className="w-full mt-2 py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+                      onClick={handleDeposit}
+                    >
+                      Deposit NFT
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  function LimitModal({ handleClose }) {
+    return (
+      <div
+        className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={handleClose}
+      >
+        <div
+          className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span
+            className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4"
+            onClick={handleClose}
+          >
+            &times;
+          </span>
+          <section id="limit-settings">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">Set Token Limits</h2>
+            </div>
+            <div className="tab-switcher mb-4 flex justify-center space-x-4">
+              <div
+                className={`tab px-4 py-2 rounded-full cursor-pointer ${
+                  limitSection === 'fixed' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+                onClick={() => setLimitSection('fixed')}
+              >
+                Fixed Limit
+              </div>
+              <div
+                className={`tab px-4 py-2 rounded-full cursor-pointer ${
+                  limitSection === 'percentage'
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-gray-200 text-gray-600'
+                }`}
+                onClick={() => setLimitSection('percentage')}
+              >
+                Percentage Limit (%)
+              </div>
+              <div
+                className={`tab px-4 py-2 rounded-full cursor-pointer ${
+                  limitSection === 'no-limit' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+                onClick={() => setLimitSection('no-limit')}
+              >
+                No Specific Limit
+              </div>
+            </div>
+
+            {limitSection === 'fixed' && (
+              <div id="fixed-limit-section" className="space-y-6">
+                <div>
+                  <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">
+                    Fixed Limit:
+                  </label>
+                  <input
+                    type="number"
+                    value={tokenLimit.fixedLimit}
+                    id="fixed-limit"
+                    name="fixed-limit"
+                    step="1"
+                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    onChange={(e) =>
+                      setTokenLimit({ ...tokenLimit, fixedLimit: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+            {limitSection === 'percentage' && (
+              <div id="percentage-limit-section" className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="percentage-limit"
+                    className="block mb-2 font-semibold text-gray-600"
+                  >
+                    Percentage Limit (%):
+                  </label>
+                  <input
+                    type="number"
+                    value={tokenLimit.percentageLimit}
+                    id="percentage-limit"
+                    name="percentage-limit"
+                    step="0.01"
+                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    onChange={(e) =>
+                      setTokenLimit({ ...tokenLimit, percentageLimit: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            )}
+            {limitSection === 'no-limit' && (
+              <div id="no-limit-section" className="space-y-6">
+                <div className="text-center text-gray-600 font-semibold">
+                  No limit set for this token.
+                </div>
+                <select
+                  id="use-base-limits"
+                  value={tokenLimit.useBaseLimit}
+                  name="use-base-limits"
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  onChange={(e) =>
+                    setTokenLimit({ ...tokenLimit, useBaseLimit: e.target.value })
+                  }
+                >
+                  <option value="0">Use Base Limit</option>
+                  <option value="1">Disable withdrawals</option>
+                  <option value="2">Unlimited withdrawals</option>
+                </select>
+              </div>
+            )}
+            <button
+              className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2"
+              onClick={updateTokenLimit}
+            >
+              Set Limits
+            </button>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  function CreateInfoModal({ handleClose }) {
+    return (
+      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
+        <div
+          className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto max-h-screen overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4 focus:outline-none"
+            onClick={handleClose}
+          >
+            &times;
+          </button>
+          <section id="create-info">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl text-pink-500 font-extrabold">
+                Crypto Vault Survival Guide
+              </h2>
+              <p className="text-gray-600 mt-2 text-lg">
+                Learn how to create a vault and keep your assets safe.
+              </p>
+            </div>
+            {/* Your guide text can go here. For brevity, omitted. */}
+            <button
+              className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
+              onClick={handleClose}
+            >
+              Got it
+            </button>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  function CustomTxModal({ handleClose, customTx, setCustomTx, handleSendCustomTx }) {
+    const [paramInputs, setParamInputs] = useState([]);
+
+    useEffect(() => {
+      const fnSig = customTx.fnSig || '';
+      const params = fnSig.match(/\(([^)]+)\)/)?.[1].split(',') || [];
+      setParamInputs(params);
+    }, [customTx.fnSig]);
+
+    const handleParamChange = (index, value) => {
+      const newParams = [...customTx.params];
+      newParams[index] = value;
+      setCustomTx({ ...customTx, params: newParams });
+    };
+
+    return (
+      <div
+        className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={handleClose}
+      >
+        <div
+          className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span
+            className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4"
+            onClick={handleClose}
+          >
+            &times;
+          </span>
+          <section id="custom-tx">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl text-pink-500 font-bold">
+                Queue Custom Transaction
+              </h2>
+            </div>
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="to" className="block mb-2 font-semibold text-gray-600">
+                  To Address:
+                </label>
+                <input
+                  type="text"
+                  id="to"
+                  name="to"
+                  value={customTx.to}
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  onChange={(e) => setCustomTx({ ...customTx, to: e.target.value })}
+                />
+              </div>
+              <div>
+                <label htmlFor="value" className="block mb-2 font-semibold text-gray-600">
+                  ETH Value:
+                </label>
+                <input
+                  type="number"
+                  id="value"
+                  name="value"
+                  step="0.01"
+                  value={customTx.value}
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  onChange={(e) => setCustomTx({ ...customTx, value: e.target.value })}
+                />
+              </div>
+              <div>
+                <label htmlFor="fnSig" className="block mb-2 font-semibold text-gray-600">
+                  Function Signature:
+                </label>
+                <select
+                  id="fnSig"
+                  name="fnSig"
+                  value={customTx.fnSig}
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  onChange={(e) =>
+                    setCustomTx({
+                      ...customTx,
+                      fnSig: e.target.value,
+                      params: Array(e.target.value.split(',').length - 1).fill('')
+                    })
+                  }
+                >
+                  <option value="">Select a function</option>
+                  {/* Common signatures */}
+                  <option value="transfer(address to, uint256 amount)">transfer(address,uint256)</option>
+                  <option value="approve(address to, uint256 amount)">approve(address,uint256)</option>
+                  <option value="transferFrom(address from, address to, uint256 amount)">
+                    transferFrom(address,address,uint256)
+                  </option>
+                  <option value="delegate(address delegatee)">delegate(address)</option>
+                  <option value="custom">Custom</option>
+                  <option value="calldata">Call Data</option>
+                </select>
+                {customTx.fnSig === 'custom' && (
+                  <input
+                    type="text"
+                    id="customFnSig"
+                    name="customFnSig"
+                    className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    placeholder="functionName(address,uint256)"
+                    onChange={(e) =>
+                      setCustomTx({
+                        ...customTx,
+                        fnSig: e.target.value,
+                        params: Array(e.target.value.split(',').length - 1).fill('')
+                      })
+                    }
+                  />
+                )}
+              </div>
+              {paramInputs.map((param, idx) => (
+                <div key={idx}>
+                  <label
+                    htmlFor={`param${idx}`}
+                    className="block mb-2 font-semibold text-gray-600"
+                  >
+                    {`Param ${idx + 1} (${param.trim()}):`}
+                  </label>
+                  <input
+                    type="text"
+                    id={`param${idx}`}
+                    name={`param${idx}`}
+                    value={customTx.params[idx] || ''}
+                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    onChange={(e) => handleParamChange(idx, e.target.value)}
+                  />
+                </div>
+              ))}
+              {customTx.fnSig === 'calldata' && (
+                <div>
+                  <label className="block mb-2 font-semibold text-gray-600">
+                    Enter call data
+                  </label>
+                  <input
+                    type="text"
+                    value={customTx.params[0] || ''}
+                    className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                    onChange={(e) => handleParamChange(0, e.target.value)}
+                  />
+                </div>
+              )}
+              <button
+                className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+                onClick={handleSendCustomTx}
+              >
+                Queue Custom Transaction
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
+  /************************************************************************
+   * MAIN RENDER
+   ***********************************************************************/
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 text-gray-800">
       <Toaster />
-      <main className=" mx-auto py-8 px-4 sm:px-8">
+      <main className="mx-auto py-8 px-4 sm:px-8">
         <head>
           <title>Boop - Simple Finance</title>
-          <meta name="description" content="Boop is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans." />
-          </head>
+          <meta
+            name="description"
+            content="Boop is a fully onchain dapp that allows you to keep your assets safe, stream payments, subscribe to others and use on-demand loans."
+          />
+        </head>
         <Header />
-        <section id="vault-management" className="bg-white p-8 rounded-3xl shadow-2xl mb-8  max-w-xl mx-auto">
+        <section
+          id="vault-management"
+          className="bg-white p-8 rounded-3xl shadow-2xl mb-8 max-w-xl mx-auto"
+        >
           <TabSwitcher activeTab={currentTab} onTabChange={handleTabChange} />
-          {currentTab === 'open' && <>
-            <OpenVaultSection />
-            <div className="mt-2">
-              <label htmlFor="vault-select" className="block mb-2 font-semibold text-gray-600">My Vaults:</label>
-              <select id="vault-select" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleVaultChange} value={selectedVault}>
-                {vaults.map(vault => (
-                  <option key={vault} value={vault}>{vault}</option>
-                ))}
-              </select>
-            </div>
-          </>}
+          {currentTab === 'open' && (
+            <>
+              <OpenVaultSection />
+              <div className="mt-2">
+                <label
+                  htmlFor="vault-select"
+                  className="block mb-2 font-semibold text-gray-600"
+                >
+                  My Vaults:
+                </label>
+                <select
+                  id="vault-select"
+                  className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out"
+                  onChange={handleVaultChange}
+                  value={selectedVault}
+                >
+                  {vaults.map((vault) => (
+                    <option key={vault} value={vault}>
+                      {vault}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
           {currentTab === 'create' && <CreateVaultSection />}
           {currentTab === 'settings' && <SettingsSection />}
           <div className="relative top-4">
             <ConnectButton />
           </div>
         </section>
-        <h1 className='text-4xl text-center text-white font-bold mb-1'>{vaultSettings.name}</h1>
-        <div className='text-center items-center'>
-          <h1 className='inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2 text-xs sm:text-base md:text-base xl:text-base'>{selectedVault}</h1>
+
+        <h1 className="text-4xl text-center text-white font-bold mb-1">
+          {vaultSettings.name}
+        </h1>
+        <div className="text-center items-center">
+          <h1 className="inline-block bg-pink-500 rounded-3xl text-center text-white mx-auto font-bold mb-8 px-2 text-xs sm:text-base md:text-base xl:text-base">
+            {selectedVault}
+          </h1>
         </div>
-        <section id="vault-assets" className="bg-white p-8 rounded-3xl shadow-2xl mb-8 max-w-7xl mx-auto">
-          <div className="justify-between items-center mb-8 grid grid-cols-1 sm:grid-cols-2">
-            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2><div className="flex justify-end items-center space-x-1 sm:space-x-4">
-            <button className={`px-4 py-2 rounded-full font-semibold transition duration-300 ease-in-out  text-white ${ showVaultOnly ? 'bg-blue-500' : 'bg-pink-500' }`} onClick={() => {setShowVaultOnly(!showVaultOnly); fetchDeps()}} > {showVaultOnly ? 'Deposit Assets' : 'Show Vault Assets'} </button>
-            <button className="bg-pink-500 text-white font-semibold py-2 px-4 my-6 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDepositModalToggle}>Deposit New Token</button>
-            </div ></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="asset-list">
+
+        <section
+          id="vault-assets"
+          className="bg-white p-8 rounded-3xl shadow-2xl mb-8 max-w-7xl mx-auto"
+        >
+          <div className="justify-between items-center mb-8 flex flex-col sm:flex-row">
+            <h2 className="text-2xl text-pink-500 font-bold">Assets in Vault</h2>
+            <button
+              className="bg-pink-500 text-white font-semibold py-2 px-4 my-6 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out"
+              onClick={handleDepositModalToggle}
+            >
+              Deposit New Token
+            </button>
+          </div>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            id="asset-list"
+          >
             {displayAssets()}
           </div>
         </section>
+
         <section id="allowance-list" className="mt-8">
           <div className="bg-white p-8 rounded-3xl shadow-2xl overflow-x-auto max-w-7xl mx-auto">
-
-          <button className="bg-pink-500 text-white font-semibold lg:py-2 px-4 relative bottom-14 lg:bottom-0 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out float-right" onClick={handleCustomTxModalToggle}>Queue Custom Transaction</button>
+            <button
+              className="bg-pink-500 text-white font-semibold lg:py-2 px-4 mb-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out float-right"
+              onClick={handleCustomTxModalToggle}
+            >
+              Queue Custom Transaction
+            </button>
             <h2 className="text-xl text-pink-600 font-bold mb-4">Vault Transactions</h2>
             <div className="grid grid-cols-5 text-center font-semibold text-gray-600 mb-4">
               <div>Transaction ID</div>
@@ -1194,520 +1915,28 @@ const handleCancelTransaction = async (txIndex) => {
           </div>
         </section>
       </main>
-      {isDepositModalOpen && <DepositModal handleClose={handleDepositModalToggle} handleDepositToken={handleDepositToken} />}
+
+      {/* Modals */}
+      {isDepositModalOpen && (
+        <DepositModal
+          handleClose={handleDepositModalToggle}
+          handleDepositToken={handleDepositToken}
+        />
+      )}
       {isLimitModalOpen && <LimitModal handleClose={handleLimitModalToggle} />}
-      {isCreateInfoModalOpen && <CreateInfoModal handleClose={handleCreateInfoModalToggle} />}
-      {isCustomTxModalOpen && <CustomTxModal handleClose={handleCustomTxModalToggle} customTx={customTx} setCustomTx={setCustomTx} handleSendCustomTx={handleSendCustomTx} />}
+      {isCreateInfoModalOpen && (
+        <CreateInfoModal handleClose={handleCreateInfoModalToggle} />
+      )}
+      {isCustomTxModalOpen && (
+        <CustomTxModal
+          handleClose={handleCustomTxModalToggle}
+          customTx={customTx}
+          setCustomTx={setCustomTx}
+          handleSendCustomTx={handleSendCustomTx}
+        />
+      )}
     </div>
   );
-
-  function Header() {
-    return (
-      <>
-      <h1 className="text-center text-4xl amb-8 relative text-white font-extrabold">Welcome to Vault</h1>
-      <div className="flex justify-center items-center">
-        <a href="https://twitter.com/heyboop" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
-        <img src="https://cdn.simpleicons.org/x/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
-        <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline">
-          <img src="https://cdn.simpleicons.org/discord/ffffff" alt="Ethereum Logo" className="w-4 h-4 m-2" /></a>
-          <button onClick={() => {navigator.clipboard.writeText('https://spot.pizza/?ref='+userAddress);toast.success('Referal Link copied to clipboard') }}><p className="text-white font-bold ml-1">+1</p>
-          </button>
-
-</div></>
-    );
-  }
-
-  function TabSwitcher({ activeTab, onTabChange }) {
-    return (
-      <div className="tab-switcher mb-4 flex justify-center space-x-4">
-        <div className={`tab ${activeTab === 'open' ? 'tab-active' : ''}`} onClick={() => onTabChange('open')}>Open</div>
-        <div className={`tab ${activeTab === 'create' ? 'tab-active' : ''}`} onClick={() => onTabChange('create')}>Create</div>
-        <div className={`tab ${activeTab === 'settings' ? 'tab-active' : ''}`} onClick={() => onTabChange('settings')}>Settings</div>
-      </div>
-    );
-  }
-
-  function OpenVaultSection() {
-    return (
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="vault-search" className="block mb-2 font-semibold text-gray-600">Search Vault:</label>
-          <input type="text" id="vault-search" name="vault-search" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name to search" />
-        </div>
-        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => handleSearch(document.getElementById('vault-search').value)}>Search</button>
-      </div>
-    );
-  }
-
-  function CreateVaultSection() {
-    return (
-      <div className="space-y-6 relative">
-        <div>
-          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Vault Name:</label><button className="absolute font-semibold w-6 h-6 right-0 rounded-full border border-pink-500 top-0 text-pink-500 cursor-pointer" onClick={handleCreateInfoModalToggle}>
-            ?
-          </button>
-          <div className="flex items-center">
-            <input type="text" id="vault-name" name="vault-name" required className="w-full p-3 bg-pink-100 border-none rounded-l-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter vault name" />
-            <span className="bg-pink-100 p-3 rounded-r-full text-gray-600">.vlt.eth</span>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="recovery" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
-          <input type="text" id="recovery" name="recovery" placeholder="Enter address. This address is for backup and should be a cold wallet, has full control." required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="custom-whitelist" className="block mb-2 font-semibold text-gray-600">Custom Whitelist Addresses:</label>
-          <input type="text" id="custom-whitelist" name="custom-whitelist" placeholder="Enter addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="transaction-delay" className="block mb-2 font-semibold text-gray-600">Safety Delay (in days):</label>
-          <input type="number" id="transaction-delay" name="transaction-delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-          <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder='Signers needed to confirm txs' />
-        </div>
-        <div>
-          <label htmlFor="custom-limits" className="block mb-2 font-semibold text-gray-600">Limit per day of an asset (%):</label>
-          <input type="number" id="custom-limits" name="custom-limits" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => createVault(document.getElementById('vault-name').value, document.getElementById('recovery').value, document.getElementById('custom-whitelist').value.split(','), document.getElementById('custom-limits').value, document.getElementById('threshold').value, document.getElementById('transaction-delay').value)}>Create Vault</button>
-      </div>
-    );
-  }
-
-  function SettingsSection() {
-    return (
-      <div className="space-y-6">
-        <h1 className='text-pink-600 text-center text-lg font-semibold'>Info</h1>
-        <div>
-          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Owner Address:</label>
-          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.owner}</p>
-        </div>
-        <div>
-          <label htmlFor="vault-name" className="block mb-2 font-semibold text-gray-600">Recovery Address:</label>
-          <p className="text-gray-600 bg-pink-100 rounded-3xl text-center overflow-hidden">{vaultSettings.recoveryAddress}</p>
-        </div>
-        <div className="space-x-6 col-3 flex items-center justify-center ">
-          <div>
-            <label htmlFor="daily-limit" className="block mb-2 font-semibold text-gray-600">Daily Limit:</label>
-            <p className="text-gray-600 text-center bg-pink-100 rounded-3xl">{vaultSettings.dailyLimit}%</p>
-          </div>
-          <div>
-            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-            <p className="text-gray-600  text-center bg-pink-100 rounded-3xl">{vaultSettings.threshold}</p>
-          </div>
-          <div>
-            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
-            <p className="text-gray-600 w-40 text-center bg-pink-100 rounded-3xl">D:{(vaultSettings.delay / 84000).toFixed(0)} H:{(vaultSettings.delay % 84000 / 3600).toFixed(0)} M:{(vaultSettings.delay % 3600 / 60).toFixed(0)} S:{(vaultSettings.delay % 60).toFixed(0)}</p>
-          </div>
-        </div>
-        <div>
-          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
-        </div>    {vaultSettings.whitelistedAddresses && vaultSettings.whitelistedAddresses.length > 0 ? (
-          vaultSettings.whitelistedAddresses.map((address, index) => (
-            <p key={index} className="text-gray-600 text-center bg-pink-100 rounded-3xl m-0 overflow-hidden">{address}</p>
-          ))
-        ) : (
-          <p className="text-gray-600">No whitelisted addresses found.</p>
-        )}
-        <h1 className='text-pink-600 text-center text-lg m-2 font-semibold'>Update</h1>
-        <div className='flex items-center justify-center col-3 space-x-4'>
-          <div>
-            <label htmlFor="withdraw-limit" className="block mb-2 font-semibold text-gray-600">Limit Per Day of An Asset (%):</label>
-            <input type="number" id="withdraw-limit" name="withdraw-limit" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-          </div>
-          <div>
-            <label htmlFor="threshold" className="block mb-2 font-semibold text-gray-600">Threshold:</label>
-            <input type="number" id="threshold" name="threshold" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-          </div>
-          <div>
-            <label htmlFor="delay" className="block mb-2 font-semibold text-gray-600">Delay:</label>
-            <input type="number" id="delay" name="delay" step="1" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="recovery-addresses" className="block mb-2 font-semibold text-gray-600">Recovery Addresses:</label>
-          <input type="text" id="recovery-addresses" name="recovery-addresses" placeholder="Enter recovery addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <div>
-          <label htmlFor="whitelisted-addresses" className="block mb-2 font-semibold text-gray-600">Whitelisted Addresses:</label>
-          <input type="text" id="whitelisted-addresses" name="whitelisted-addresses" placeholder="Enter whitelisted addresses separated by commas" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" />
-        </div>
-        <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => updateSettings(document.getElementById('recovery-addresses').value, document.getElementById('whitelisted-addresses').value.split(','), document.getElementById('withdraw-limit').value, document.getElementById('threshold').value, document.getElementById('delay').value)}>Save Settings</button>
-        {(userAddress == vaultSettings.owner || userAddress == vaultSettings.recoveryAddress || vaultSettings.whitelistedAddresses&&vaultSettings.whitelistedAddresses.includes(userAddress)) &&
-          <button className="w-full py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={() => {
-            let contract = new ethers.Contract(selectedVault, ["function freezeLock(uint) external"], signer);
-            let tx = contract.freezeLock(2);
-          }}>Freeze Vault</button>}
-      </div>
-    );
-  }
-
-  function DepositModal({ handleClose, handleDepositToken }) {
-    const [selectedToken, setSelectedToken] = useState('');
-    const [amount, setAmount] = useState('');
-    const [nft, setNft] = useState('');
-
-    const handleTokenChange = (e) => {
-      setSelectedToken(e.target.value);
-    };
-
-    const handleAmountChange = (e) => {
-      setAmount(e.target.value);
-    };
-
-    const handleDeposit = () => {
-      handleDepositToken(selectedToken, amount, nft);
-      handleClose();
-    };
-
-    return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div style={{width:'400px'}}className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
-          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
-          <section id="deposit-tokens">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-500 font-bold">Deposit Tokens</h2>
-            </div>
-            <div className="space-y-6">
-              
-      <div className="tab-switcher mb-4 flex justify-center space-x-4">
-        <div className={`tab ${nft ? 'tab-active' : ''}`} onClick={() => setNft(1)}>NFT</div>
-        <div className={`tab ${!nft ? 'tab-active' : ''}`} onClick={() => setNft(0)}>Token</div>
-      </div>
-            {!nft && (<>
-              <div>
-                <label htmlFor="token" className="block mb-2 font-semibold text-gray-600">Token Address:</label>
-                <select id="token" name="token" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)}>
-                  <option value="">Select a token</option>
-                  {chainId === 8453 && <>
-                  <option value="0x0000000000000000000000000000000000000000">ETH</option>
-                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  <option value="0x50c5725949a6f0c72e6c4a641f24049a917db0cb">DAI</option>
-                  <option value="0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42">EURC</option>
-                  </>
-                  }
-                  {chainId === 1 && <>
-                  <option value="0x0000000000000000000000000000000000000000">ETH</option>
-                  <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-                  <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
-                  </>
-                  }
-                  <option value="custom">Custom</option>
-                </select>
-                {selectedToken === 'custom' &&
-                  <input type="text" id="customToken" name="customToken" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom token address" onChange={(e) => { setSelectedToken(e.target.value); toast.success('Token set') }} />}
-              </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label htmlFor="amount" className="block mb-2 font-semibold text-gray-600">Amount:</label>
-                  <input type="number" id="amount" name="amount" step="0.01" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={handleAmountChange} />
-                </div>
-              </div>
-              <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDeposit}>Deposit Tokens</button>
-  </>)}
-  {nft==1 && (<>
-              <div>
-                <label htmlFor="nft" className="block mb-2 font-semibold text-gray-600">NFT Address:</label>
-                <input type="text" id="nft" name="nft" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setSelectedToken(e.target.value)} />
-                <label htmlFor="tokenId" className="block mb-2 font-semibold text-gray-600">Token ID:</label>
-                <input type="text" id="tokenId" name="tokenId" required className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setAmount(e.target.value)} />
-                <button className="w-full mt-2 py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleDeposit}>Deposit NFT</button>
-  </div>
-  </>)}
-  </div>
-          </section>
-        </div>
-      </div>
-    );
-  }
-
-  function LimitModal({ handleClose }) {
-    return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
-          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
-          <section id="limit-settings">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-500 font-bold">Set Token Limits</h2>
-            </div>
-            <div className="tab-switcher mb-4 flex justify-center space-x-4">
-              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'fixed' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('fixed')}>Fixed Limit</div>
-              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'percentage' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('percentage')}>Percentage Limit (%)</div>
-              <div className={`tab px-4 py-2 rounded-full cursor-pointer ${limitSection === 'no-limit' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-600'}`} onClick={() => setLimitSection('no-limit')}>No Specific Limit</div>
-            </div>
-            {limitSection === 'fixed' && (
-              <div id="fixed-limit-section" className="space-y-6">
-                <div>
-                  <label htmlFor="fixed-limit" className="block mb-2 font-semibold text-gray-600">Fixed Limit:</label>
-                  <input type="number" value={tokenLimit.fixedLimit} id="fixed-limit" name="fixed-limit" step="1" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, fixedLimit: e.target.value })} />
-                </div>
-              </div>
-            )}
-            {limitSection === 'percentage' && (
-              <div id="percentage-limit-section" className="space-y-6">
-                <div>
-                  <label htmlFor="percentage-limit" className="block mb-2 font-semibold text-gray-600">Percentage Limit (%):</label>
-                  <input type="number" value={tokenLimit.percentageLimit} id="percentage-limit" name="percentage-limit" step="0.01" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, percentageLimit: e.target.value })} />
-                </div>
-              </div>
-            )}
-            {limitSection === 'no-limit' && (
-              <div id="no-limit-section" className="space-y-6">
-                <div className="text-center text-gray-600 font-semibold">No limit set for this token.</div>
-                <select id="use-base-limits" value={tokenLimit.useBaseLimit} name="use-base-limits" className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setTokenLimit({ ...tokenLimit, useBaseLimit: e.target.value })}>
-                  <option value="0">Use Base Limit</option>
-                  <option value="1">Disable withdrawals</option>
-                  <option value="2">Unlimited withdrawals</option>
-                </select>
-              </div>
-            )}
-            <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-2" onClick={() => updateTokenLimit()}>Set Limits</button>
-          </section>
-        </div>
-      </div>
-    );
-  }
-  function CreateInfoModal({ handleClose }) {
-    return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative w-full sm:max-w-3xl lg:max-w-2xl m-auto max-h-screen overflow-y-auto " onClick={e => e.stopPropagation()}>
-          <button className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4 focus:outline-none" onClick={handleClose}>
-            &times;
-          </button>
-          <section id="create-info">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl text-pink-500 font-extrabold">Crypto Vault Survival Guide</h2>
-              <p className="text-gray-600 mt-2 text-lg">Learn how to create a vault and keep your assets safe.</p>
-            </div>
-  
-            {/* Section 1: Crypto Vault Survival Guide */}
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">What is a Vault?</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  A Vault is a secure smart contract that functions as a simple, safe savings account for your hot wallet. It allows you to deposit tokens and NFTs, set withdrawal limits, whitelist addresses, and require multiple signers for transactions. Vaults help keep your assets safe from drainers, hacks, open approvals, and lost or leaked private keys, making it an effective way to enhance the security and management of your digital assets.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Benefits of Using a Vault</h3>
-                <div className="text-gray-700 space-y-2">
-                  <p>🔒 <strong>Protection from Drainers:</strong> Vaults limit daily withdrawals, making it nearly impossible for malicious contracts to drain your account in one go.</p>
-                  <p>🛡️ <strong>Mitigation Against Hacks:</strong> Even if a hacker gains access to your wallet, vault security measures like multisig approvals and daily limits give you time to react.</p>
-                  <p>⚙️ <strong>Protection from Contract Hacks:</strong> Vaults prevent open token approvals from allowing unauthorized access to your assets.</p>
-                  <p>🔑 <strong>Safety from Leaked Private Keys:</strong> Vaults offer multiple layers of security, such as requiring multiple signers and utilizing a recovery address, ensuring your assets are safe even if your private key is compromised.</p>
-                </div>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Key Features of Crypto Vaults</h3>
-                <div className="text-gray-700 space-y-2">
-                  <p>💰 <strong>Deposit & Withdraw Any Token/NFT:</strong> Vaults allow for easy deposit and withdrawal of any tokens or NFTs, offering flexibility in managing assets.</p>
-                  <p>🌐 <strong>Universal Vaults:</strong> Vaults are universal, using the same address for every user across all chains.</p>
-                  <p>📊 <strong>Daily Withdrawal Limits:</strong> Set daily limits to protect your assets from large losses due to hacks or mistakes.</p>
-                  <p>🖊️ <strong>Multisig Approval:</strong> Require multiple signatures to approve transactions, adding extra protection.</p>
-                  <p>✅ <strong>Whitelist Addresses:</strong> Authorize trusted addresses to interact with your vault and confirm transactions.</p>
-                  <p>⏳ <strong>Safety Delays:</strong> Set a delay before certain transactions are executed to detect suspicious activity.</p>
-                  <p>🛑 <strong>Freeze and Recovery:</strong> Freeze the vault to stop all activity and use the recovery address to regain access when needed.</p>
-                </div>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">How to Use a Vault Effectively</h3>
-                <div className="text-gray-700 space-y-2">
-                  <p>⚖️ <strong>Set Realistic Daily Limits:</strong> Balance security with flexibility by adjusting withdrawal limits based on your usage patterns.</p>
-                  <p>🤝 <strong>Choose Trusted Signers:</strong> Select reliable, knowledgeable signers for multisig transactions to enhance protection.</p>
-                  <p>📦 <strong>Use a Cold Wallet for Recovery:</strong> Ensure your recovery address is a secure cold wallet that’s stored safely offline.</p>
-                </div>
-              </div>
-            </div>
-  
-            {/* Section 2: Creating a Vault */}
-            <div className="space-y-8 mt-12">
-              <h3 className="text-2xl font-bold text-pink-500 text-center">Creating a Vault</h3>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Vault Name</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  Select a unique name for your vault on the chosen blockchain. The vault may be associated with a `.vlt.eth` domain if available, but this should not be relied upon for security purposes.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Recovery Address</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  The recovery address is a secure cold wallet address used to recover access to your vault. Keep this address offline and stored securely to safeguard your assets.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Whitelist Addresses</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  Specify trusted addresses allowed to interact with your vault as signers. These addresses will confirm transactions according to your defined threshold. Separate multiple addresses with commas.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Safety Delay</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  Set a delay period (in days) to add an extra layer of security for non-daily transactions. After the delay, you can self-approve transactions. Set it to 0 to always require signers.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Threshold</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  Define the number of signers required to approve a transaction. This threshold ensures that no single signer has complete control over your assets.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Daily Limit</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  Set a daily withdrawal limit to control the amount of assets that can be withdrawn from the vault. This limits exposure to potential risks.
-                </p>
-              </div>
-  
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">Freeze</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  The vault can be frozen to stop all withdrawals and transactions. The vault owner, recovery address, or whitelisted addresses can initiate the freeze, but only the recovery address can unfreeze the vault.
-                </p>
-              </div>
-            </div>
-  {/* Using a Vault */}
-<div className="space-y-8 mt-12">
-  <h3 className="text-2xl font-bold text-pink-500 text-center">Using a Vault</h3>
-  
-  {/* Depositing into the Vault */}
-  <div>
-    <h3 className="text-xl font-bold text-gray-900">Depositing into the Vault</h3>
-    <p className="text-gray-700 leading-relaxed">
-      💰 <strong>Deposit Tokens/NFTs using dApp:</strong> Select a token to deposit from the presets or use the "Deposit New Token" option in the Vault interface. Enter the amount you wish to deposit and follow the prompts to complete the transaction.
-      <br />
-      💸 <strong>Direct Deposit:</strong> You can also deposit tokens or NFTs by sending them directly to the vault’s address from your wallet, bypassing the dApp interface.
-    </p>
-  </div>
-  
-  {/* Managing Assets */}
-  <div>
-    <h3 className="text-xl font-bold text-gray-900">Managing Assets</h3>
-    <div className="text-gray-700 space-y-2">
-      <p>💼 <strong>View Balances:</strong> You can view the tokens and NFTs stored in your vault at any time within the app interface.</p>
-      <p>📊 <strong>Set Token Limits:</strong> You can define fixed or percentage-based withdrawal limits for each asset, ensuring that only a portion of the asset can be withdrawn in a single day.</p>
-      <p>❄️ <strong>Freeze Functionality:</strong> You can freeze the vault to stop all activity and withdrawals. Only the recovery address or a majority of signers can unfreeze it.</p>
-    </div>
-  </div>
-  
-  {/* Withdrawing Assets */}
-  <div>
-    <h3 className="text-xl font-bold text-gray-900">Withdrawing Assets</h3>
-    <div className="text-gray-700 space-y-2">
-      <p>🏦 <strong>Queue a Withdrawal:</strong> Use the Vault interface to queue a withdrawal of tokens or NFTs. Depending on your vault’s configuration, additional signers may need to approve the transaction. You can withdraw up to the daily limit without needing signers, but larger amounts or NFTs will require approval.</p>
-      <p>📝 <strong>Approval Process:</strong> The whitelisted signers, according to the set threshold, must approve the transaction before it can be executed.</p>
-      <p>⏳ <strong>Delayed Transactions:</strong> For large withdrawals, custom transactions, or NFTs, there may be a delay period. Once the delay passes without cancellation, the transaction can be executed without signers.</p>
-    </div>
-  </div>
-  
-  {/* Custom Transactions */}
-  <div>
-    <h3 className="text-xl font-bold text-gray-900">Custom Transactions</h3>
-    <p className="text-gray-700 leading-relaxed">
-      ⚙️ <strong>Vaults allow you to queue custom transactions.</strong> Specify a target address, an Ethereum value, and a function signature to call specific contract functions from the vault. This gives you advanced control over your assets.
-    </p>
-  </div>
-
-  {/* Signers Confirming or Canceling Transactions */}
-  <div>
-    <h3 className="text-xl font-bold text-gray-900">Signers Confirming or Canceling Transactions</h3>
-    <p className="text-gray-700 leading-relaxed">
-      ✍️ <strong>Signers’ Role in Approval:</strong> Once a transaction is queued, any of the signers can review and approve it. If enough signers confirm, the transaction will be executed.
-      <br />
-      🛑 <strong>Canceling Transactions:</strong> During the delay period for large withdrawals, custom transactions, or NFTs, any signer or the vault owner can cancel the transaction, preventing it from being executed.
-    </p>
-  </div>
-  
-</div>
-
-            <button
-              className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out mt-12"
-              onClick={handleClose}
-            >
-              Got it
-            </button>
-          </section>
-        </div>
-      </div>
-    );
-  }
-  
-  function CustomTxModal({ handleClose, customTx, setCustomTx, handleSendCustomTx }) {
-    const [paramInputs, setParamInputs] = useState([]);
-  
-    useEffect(() => {
-      const params = customTx.fnSig.match(/\(([^)]+)\)/)?.[1].split(',') || [];
-      setParamInputs(params);
-    }, [customTx.fnSig]);
-  
-    const handleParamChange = (index, value) => {
-      const newParams = [...customTx.params];
-      newParams[index] = value;
-      setCustomTx({ ...customTx, params: newParams });
-    };
-  
-    return (
-      <div className="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={handleClose}>
-        <div className="modal-content bg-white p-8 rounded-3xl shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
-          <span className="close cursor-pointer text-gray-600 text-2xl absolute top-4 right-4" onClick={handleClose}>&times;</span>
-          <section id="custom-tx">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl text-pink-500 font-bold">Queue Custom Transaction</h2>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="to" className="block mb-2 font-semibold text-gray-600">To Address:</label>
-                <input type="text" id="to" name="to" value={customTx.to} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, to: e.target.value })} />
-              </div>
-              <div>
-                <label htmlFor="value" className="block mb-2 font-semibold text-gray-600">ETH Value:</label>
-                <input type="number" id="value" name="value" step="0.01" value={customTx.value} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, value: e.target.value })} />
-              </div>
-              <div>
-                <label htmlFor="fnSig" className="block mb-2 font-semibold text-gray-600">Function Signature:</label>
-                <select id="fnSig" name="fnSig" value={customTx.fnSig} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })}>
-                  <option value="">Select a function</option>
-                  {commonFunctionSignatures.map((sig, index) => (
-                    <option key={index} value={sig}>{sig}</option>
-                  ))}
-                  <option value="custom">Custom</option>
-                  <option value="calldata">Call Data</option>
-
-                </select>
-                {customTx.fnSig === 'custom' &&
-                  <input type="text" id="customFnSig" name="customFnSig" className="w-full p-3 mt-2 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" placeholder="Enter custom function signature" onChange={(e) => setCustomTx({ ...customTx, fnSig: e.target.value, params: Array(e.target.value.split(',').length - 1).fill('') })} />}
-              </div>
-              {paramInputs.map((param, index) => (
-                <div key={index}>
-                  <label htmlFor={`param${index}`} className="block mb-2 font-semibold text-gray-600">{param.split(' ')[1] || `param${index}`}:</label>
-                  <input type="text" id={`param${index}`} name={`param${index}`} value={customTx.params[index] || ''} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => handleParamChange(index, e.target.value)} />
-                </div>
-              ))}
-              {customTx.fnSig === 'calldata' &&
-              (<div>    
-                  <label className="block mb-2 font-semibold text-gray-600">Enter call data</label>
-                  <input type="text" value={customTx.params || ''} className="w-full p-3 bg-pink-100 border-none rounded-full focus:ring-2 focus:ring-pink-500 transition duration-300 ease-in-out" onChange={(e) => handleParamChange(0, e.target.value)} />
-                </div>
-              )}
-              <button className="w-full py-3 bg-pink-500 text-white font-semibold rounded-full hover:bg-pink-600 transition duration-300 ease-in-out" onClick={handleSendCustomTx}>Queue Custom Transaction</button>
-            </div>
-          </section>
-        </div>
-      </div>
-    );
-  }
-  
 };
+
 export default App;
