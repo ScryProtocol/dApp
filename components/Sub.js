@@ -707,14 +707,14 @@ export default function FullDapp() {
                 {isBorrow ? (
                   <button
                     onClick={() => claimForFront(item.recipient, item.token)}
-                    className="py-1 px-2 rounded-full font-semibold text-white bg-pink-300 hover:bg-pink-600 transition-colors"
+                    className="py-1 px-2 rounded-full font-semibold text-white bg-pink-300 hover:bg-pink-500 transition-colors"
                   >
                     Claim
                   </button>
                 ) : (
                   <button
                     onClick={() => handleCancelSubscription(item.recipient)}
-                    className="py-1 px-2 rounded-full font-semibold text-white bg-red-300 hover:bg-red-600 transition-colors"
+                    className="py-1 px-2 rounded-full font-semibold text-white bg-red-300 hover:bg-red-500 transition-colors"
                   >
                     Cancel
                   </button>
@@ -743,7 +743,7 @@ export default function FullDapp() {
   // --------------------------------------------------------------------------
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: pageBackground }}>
-      <div className="absolute inset-0 backdrop-filter backdrop-blur-md"></div>
+      <div className="absolute backdrop-filter backdrop-blur-md"></div>
       <Toaster />
 
       <title>{brandSettings.brandName || 'My Custom Subscriptions'}</title>
@@ -806,19 +806,19 @@ export default function FullDapp() {
             <>
               <button
                 onClick={() => setShowForm((p) => !p)}
-                className="bg-pink-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-pink-600 transition-colors"
+                className="bg-pink-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-pink-500 transition-colors"
               >
                 Add new sub
               </button>
               <button
                 onClick={() => setShowBrandForm((p) => !p)}
-                className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-blue-600 transition-colors"
+                className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-blue-500 transition-colors"
               >
                 Brand settings
               </button>
               <button
                 onClick={handleCopyLink}
-                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-600 transition-colors"
+                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-500 transition-colors"
               >
                 Share link
               </button>
@@ -836,7 +836,7 @@ export default function FullDapp() {
     navigator.clipboard.writeText(await(res.text())).then(() => {
       toast.success('Link copied!');
     });}}
-                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-600 transition-colors"
+                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-500 transition-colors"
               >
                 Share link (short)
               </button>
@@ -846,7 +846,7 @@ export default function FullDapp() {
 
         {/* Brand form */}
         {showBrandForm && !hasParam && (
-          <div className="bg-white p-4 mt-3 rounded-3xl max-w-xl text-pink-600 mx-auto mb-4 text-center">
+          <div className="bg-white p-4 mt-3 rounded-3xl max-w-xl text-pink-500 mx-auto mb-4 text-center">
             <h2
               className="text-2xl font-extrabold mb-4"
               style={{ color: brandSettings.primaryColor }}
@@ -905,7 +905,7 @@ export default function FullDapp() {
             </div>
             <button
               onClick={handleSaveBrand}
-              className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-blue-600 transition-colors"
+              className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-blue-500 transition-colors"
             >
               Save Brand
             </button>
@@ -951,7 +951,7 @@ export default function FullDapp() {
                 {!hasParam && (
                   <button
                     onClick={() => handleDeleteFront(front.address)}
-                    className="bg-red-300 text-white font-semibold rounded-full px-2 py-2 hover:bg-red-600 transition-colors absolute top-3 right-3"
+                    className="bg-red-300 text-white font-semibold rounded-full px-2 py-2 hover:bg-red-500 transition-colors absolute top-3 right-3"
                   >
                     🗑️
                   </button>
@@ -1128,7 +1128,7 @@ export default function FullDapp() {
                         onChange={(e) => handleOnceIntervalChange(front.address, e.target.value)}
                         className="w-full"
                       />
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-gray-500">
                         {planState.onceInterval || 1} months
                       </div>
                     </div>
@@ -1146,7 +1146,7 @@ export default function FullDapp() {
                     {subInfoObj && (
                       <button
                         onClick={() => handleCancelSubscription(front.address)}
-                        className="py-2 px-4 bg-gray-500 text-white font-semibold rounded-full hover:bg-gray-600 transition-colors"
+                        className="py-2 px-4 bg-gray-500 text-white font-semibold rounded-full hover:bg-gray-500 transition-colors"
                       >
                         Cancel
                       </button>
@@ -1175,7 +1175,7 @@ export default function FullDapp() {
                         </span>
                         <button
                           onClick={() => claimForFront(front.address, tAddr)}
-                          className="text-xs font-semibold text-white bg-green-400 rounded-full px-3 py-0.5 hover:bg-green-600 transition-colors"
+                          className="text-xs font-semibold text-white bg-green-400 rounded-full px-3 py-0.5 hover:bg-green-500 transition-colors"
                         >
                           Claim
                         </button>
@@ -1183,7 +1183,7 @@ export default function FullDapp() {
                     ))}
                     <button
                       onClick={() => claimForFront(front.address)}
-                      className="block w-full text-sm font-semibold text-white bg-green-400 rounded-full py-2 hover:bg-green-600 transition-colors mt-2"
+                      className="block w-full text-sm font-semibold text-white bg-green-400 rounded-full py-2 hover:bg-green-500 transition-colors mt-2"
                     >
                       Claim All
                     </button>
@@ -1256,7 +1256,7 @@ export default function FullDapp() {
               </h3>
               <button
                 onClick={handleAddTokenRow}
-                className="px-3 py-1 text-white rounded-full text-sm hover:bg-pink-600"
+                className="px-3 py-1 text-white rounded-full text-sm hover:bg-pink-500"
                 style={{ backgroundColor: brandSettings.primaryColor }}
               >
                 Add Token
@@ -1344,7 +1344,7 @@ export default function FullDapp() {
                 {newFront.tokens.length > 1 && (
                   <button
                     onClick={() => handleRemoveTokenRow(i)}
-                    className="mt-3 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-sm"
+                    className="mt-3 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-500 text-sm"
                   >
                     Remove
                   </button>

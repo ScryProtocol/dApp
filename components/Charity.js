@@ -123,7 +123,7 @@ const defaultCharities = [
     address: '0x98f5A404991Cc74590564cbECA88c8d8B76D6407',
     about: 'Supports Indigenous‑led protection of tropical rainforests across the Americas.',
     link: 'https://rainforestfoundation.org/give/cryptocurrency/',
-    image: 'https://pbs.twimg.com/profile_banners/20268832/1732543962/600x200', // 879 × 144 JPG :contentReference[oaicite:1]{index=1}
+    image: 'https://pbs.twimg.com/profile_banners/20268832/1732543962/500x200', // 879 × 144 JPG :contentReference[oaicite:1]{index=1}
     chain: 1,
     tokens: [{ token: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', presetAmounts: [5, 10,25] }],
   },
@@ -633,7 +633,7 @@ newCharity.chain=chainID;
   // ----------------------------------------------
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-200 via-orange-200 to-yellow-200 relative overflow-hidden">
-      <div className="absolute inset-0 bg-white bg-opacity-30 backdrop-filter backdrop-blur-md"></div>
+      <div className="absolute bg-white bg-opacity-30 backdrop-filter backdrop-blur-md"></div>
       <Toaster />
 <title>Charity Subscriptions</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -681,7 +681,7 @@ newCharity.chain=chainID;
         </div>
 
         {/* Title & Subtitle */}
-        <h1 className="text-4xl md:text-5xl font-extrabold text-center text-pink-600 mb-6 drop-shadow-sm">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-center text-pink-500 mb-6 drop-shadow-sm">
           Subscribe to a Charity
         </h1>
         <p className="text-lg text-center text-gray-700 mb-10 max-w-3xl mx-auto">
@@ -729,7 +729,7 @@ console.log('charitySubs',charity.share);
 </div>
                 <div className="p-6 flex flex-col flex-grow text-center">
                   <h2 className="text-xl font-bold text-pink-500">{charity.name}</h2>
-                  <p className="text-sm text-gray-600 mt-2 font-semibold">{charity.about}</p>
+                  <p className="text-sm text-gray-500 mt-2 font-semibold">{charity.about}</p>
                   {charity.link && (
                     <a
                       href={charity.link}
@@ -773,8 +773,8 @@ console.log('charitySubs',charity.share);
                             ${
                               planState.selectedToken === token.address ||
                               (!planState.selectedToken && token === charity.tokens[0])
-                                ? 'bg-pink-600 border-pink-600 text-white'
-                                : 'bg-white border-pink-600 text-pink-600'
+                                ? 'bg-pink-500 border-pink-500 text-white'
+                                : 'bg-white border-pink-500 text-pink-500'
                             }`}
                         >
                           {token.token}
@@ -796,8 +796,8 @@ console.log('charitySubs',charity.share);
                         className={`px-3 py-1 rounded-full border text-sm transition-colors 
                           ${
                             planState.plan === String(amt)
-                              ? 'bg-pink-600 border-pink-600 text-white'
-                              : 'bg-white border-pink-600 text-pink-600'
+                              ? 'bg-pink-500 border-pink-500 text-white'
+                              : 'bg-white border-pink-500 text-pink-500'
                           }`}
                       >
                         {amt}
@@ -810,8 +810,8 @@ console.log('charitySubs',charity.share);
                       className={`px-3 py-1 rounded-full border text-sm transition-colors 
                         ${
                           isCustom
-                            ? 'bg-pink-600 border-pink-600 text-white'
-                            : 'bg-white border-pink-600 text-pink-600'
+                            ? 'bg-pink-500 border-pink-500 text-white'
+                            : 'bg-white border-pink-500 text-pink-500'
                         }`}
                     >
                       Custom
@@ -839,8 +839,8 @@ console.log('charitySubs',charity.share);
                       className={`px-3 py-1 rounded-full border text-sm transition-colors 
                         ${
                           planState.subType !== 'once'
-                            ? 'bg-pink-600 border-pink-600 text-white'
-                            : 'bg-white border-pink-600 text-pink-600'
+                            ? 'bg-pink-500 border-pink-500 text-white'
+                            : 'bg-white border-pink-500 text-pink-500'
                         }`}
                     >
                       Recurring
@@ -854,8 +854,8 @@ console.log('charitySubs',charity.share);
                       className={`px-3 py-1 rounded-full border text-sm transition-colors 
                         ${
                           planState.subType === 'once' && sub === 30
-                            ? 'bg-pink-600 border-pink-600 text-white'
-                            : 'bg-white border-pink-600 text-pink-600'
+                            ? 'bg-pink-500 border-pink-500 text-white'
+                            : 'bg-white border-pink-500 text-pink-500'
                         }`}
                     >
                       1 month
@@ -869,8 +869,8 @@ console.log('charitySubs',charity.share);
                       className={`px-3 py-1 rounded-full border text-sm transition-colors 
                         ${
                           planState.subType === 'once' && sub === 90
-                            ? 'bg-pink-600 border-pink-600 text-white'
-                            : 'bg-white border-pink-600 text-pink-600'
+                            ? 'bg-pink-500 border-pink-500 text-white'
+                            : 'bg-white border-pink-500 text-pink-500'
                         }`}
                     >
                       3 months
@@ -884,8 +884,8 @@ console.log('charitySubs',charity.share);
                       className={`px-3 py-1 rounded-full border text-sm transition-colors 
                         ${
                           planState.subType === 'once' && sub === 180
-                            ? 'bg-pink-600 border-pink-600 text-white'
-                            : 'bg-white border-pink-600 text-pink-600'
+                            ? 'bg-pink-500 border-pink-500 text-white'
+                            : 'bg-white border-pink-500 text-pink-500'
                         }`}
                     >
                       6 months
@@ -963,9 +963,9 @@ console.log('charitySubs',charity.share);
           })}
         {/* Create a New Charity Form */}
         {showForm && (
-          <div className="max-w-sm mx-auto mb-10 p-6 bg-white bg-opacity-90 rounded-3xl shadow-2xl border border-pink-100 text-pink-600">
+          <div className="max-w-sm mx-auto mb-10 p-6 bg-white bg-opacity-90 rounded-3xl shadow-2xl border border-pink-100 text-pink-500">
             <h2 className="text-2xl font-extrabold mb-4 drop-shadow-sm">Add Charity Info</h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-500 mb-6">
               Fill out the details below to add your own charity. Once added, you'll be provided a share link so others can subscribe! You can claim all your subscriptions at <a href="https://boop.finance/?token=" target="_blank" rel="noopener noreferrer" className="text-pink-500 underline">Boop.Finance</a>. Press "`" to see claimable balances and claim from all supporters.
             </p>
 
@@ -1025,7 +1025,7 @@ console.log('charitySubs',charity.share);
               <h3 className="text-xl font-semibold">Tokens</h3>
               <button
                 onClick={handleAddTokenRow}
-                className="px-3 py-1 bg-pink-500 text-white rounded-full text-sm hover:bg-pink-600"
+                className="px-3 py-1 bg-pink-500 text-white rounded-full text-sm hover:bg-pink-500"
               >
                 Add Token
               </button>
@@ -1056,7 +1056,7 @@ console.log('charitySubs',charity.share);
                 </div>
 
                 <div className="mt-3">
-                  <label className="block text-sm font-semibold text-pink-600 mb-1">
+                  <label className="block text-sm font-semibold text-pink-500 mb-1">
                     Preset Amounts (comma-separated)
                   </label>
                   <input
@@ -1072,7 +1072,7 @@ console.log('charitySubs',charity.share);
                 {newCharity.tokens.length > 1 && (
                   <button
                     onClick={() => handleRemoveTokenRow(index)}
-                    className="mt-3 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-sm"
+                    className="mt-3 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-500 text-sm"
                   >
                     Remove Token
                   </button>
@@ -1082,7 +1082,7 @@ console.log('charitySubs',charity.share);
 
             <button
               onClick={handleAddCharity}
-              className="block mt-6 mx-auto px-6 py-3 bg-pink-600 text-white font-semibold 
+              className="block mt-6 mx-auto px-6 py-3 bg-pink-500 text-white font-semibold 
                          rounded-full hover:bg-pink-700 text-base"
             >
               Add Charity
