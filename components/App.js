@@ -132,7 +132,7 @@ const [todepositnft,settodepositnft]=useState([]);
     }
   };
   const fetchTokenBalances = async (vault) => {
-    const chainIds = [8453, 1, 137, 534352, 42161, 10, 56, 43114, 250,57073 ];
+    const chainIds = []//[8453, 1, 137, 534352, 42161, 10, 56, 43114, 250,57073 ];
     if (chainIds.includes(chainId)) {
      fetchTokenBalances2(vault);
     return;
