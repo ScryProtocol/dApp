@@ -83,31 +83,18 @@ function MyApp({ Component, pageProps }) {
     
     return (
       
-      <div className="tab-switcher justify-center">
-      <div className="tab-switcher absolute justify-center text-gray-500 bg-white rounded-full opacity-50 mx-1/2 mt-1">
-        <button className={`ta ${activeTab === 'vault' ? 'tab-active' : ''}`} onClick={() => setActiveTab('vault')}>
-          Vault
-          </button>
-        <button className={`ta ${activeTab === 'stream' ? 'tab-active' : ''}`} onClick={() => setActiveTab('stream')}>
-          Stream
-          </button>
-        <button className={`ta ${activeTab === 'spot' ? 'tab-active' : ''}`} onClick={() => setActiveTab('spot')}>
-          Spot
-          </button>
-          <button className={`ta ${activeTab === 'sub' ? 'tab-active' : ''}`} onClick={() => setActiveTab('sub')}>
-          Sub
-          </button>
-          {1==0&&(<><button className={`ta ${activeTab === 'feed' ? 'tab-active' : ''}`} onClick={() => setActiveTab('feed')}>
-          Feed
-          </button>
-      <button className={`ta ${activeTab === 'wall' ? 'tab-active' : ''}`} onClick={() => setActiveTab('wall')}>
-          Wall
-          </button></>)}
-          <button className={`ta ${activeTab === 'charity' ? 'tab-active' : ''}`} onClick={() => setActiveTab('charity')}>
-          🎁
-          </button>
+      <div className="tab-switcher absolute top-0 left-0 items-center">
+      <div className="tab-switcher justify-center text-gray-500 bg-white rounded-full opacity-50 md:my-4 md:ml-4 m-2 font-semibold p-1">
+        <select className="bg-white/50 text-gray-500 rounded-full" value={activeTab} onChange={(e) => onTabChange(e.target.value)}>
+        <option value="vault">Vault</option>
+        <option value="stream">Stream</option>
+        <option value="spot">Spot</option>
+        <option value="sub">Sub</option>
+        <option value="charity">Charity</option>
+        </select>
       </div>
-      <button className="absolute right-2 top-2 w-9 rounded-full bg-white p-1 font-bold text-xl" onClick={() => setShowInfo(!showInfo)}>?</button>
+          <button className="w-2 rounded-full pl-2 pr-3.5 font-bold border border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white text-center" onClick={() => setShowInfo(!showInfo)}>?</button>
+      
       </div>
     );
   }
@@ -138,7 +125,8 @@ function MyApp({ Component, pageProps }) {
           {activeTab === 'charity' &&
           <Charity/>}
         </div>
-        )}
+        )}<TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} className="bg-gradient-to-r from-blue-100 via-blue-300 to-green-300" />
+          
         {showInfo && (
             <Info
               app={activeTab}
