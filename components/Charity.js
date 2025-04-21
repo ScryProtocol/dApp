@@ -340,7 +340,7 @@ console.log('availableAmounts',str,st);
       return;
     }
 
-    const numeric = parseFloat(plan === 'custom' && customValue ? customValue : plan);
+    const numeric = parseFloat(plan === 'custom' && customValue ? customValue : plan)*(subType== 'once' ? 1 : sub/30);
     if (numeric <= 0) {
       toast.error('Invalid subscription amount.');
       return;
