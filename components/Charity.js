@@ -123,7 +123,7 @@ const defaultCharities = [
     address: '0x98f5A404991Cc74590564cbECA88c8d8B76D6407',
     about: 'Supports Indigenous‑led protection of tropical rainforests across the Americas.',
     link: 'https://rainforestfoundation.org/give/cryptocurrency/',
-    image: 'https://pbs.twimg.com/profile_banners/20268832/1732543962/500x200', // 879 × 144 JPG :contentReference[oaicite:1]{index=1}
+    image: 'https://pbs.twimg.com/profile_banners/20268832/1732543962/1500x500', // 879 × 144 JPG :contentReference[oaicite:1]{index=1}
     chain: 1,
     tokens: [{ token: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', presetAmounts: [5, 10,25] }],
   },
