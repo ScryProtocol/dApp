@@ -799,7 +799,7 @@ export default function FullDapp() {
         </h1>
         <p className="text-base md:text-lg text-center text-gray-700 mb-6 max-w-4xl mx-auto">
           {brandSettings.about ||
-            'Let fans or supporters subscribe on-chain. Recurring or one-shot—choose intervals, tokens, etc. Press "`" to see claimable if you’re the owner.'}
+            'Let fans or supporters subscribe on-chain. Recurring or one-shot—choose intervals, tokens, etc. Tokens are streamed directly from your wallet, no deposits. Press "`" to see claimable if you’re the owner.'}
           <br />
           {/* Show these only if no param */}
           {!hasParam && (
