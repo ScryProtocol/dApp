@@ -333,7 +333,7 @@ console.log('availableAmounts',str,st);
     const planObj = charityPlans[charityAddress] || {};
     let { selectedToken, plan, customValue, subType } = planObj;
     if (!selectedToken) {
-      selectedToken = charities.find((c) => c.address === charityAddress)?.tokens?.[0]?.address;
+      selectedToken = charities.find((c) => c.address === charityAddress && c.chain === chainID)?.tokens?.[0]?.address;
     }
     if (!plan) {
       toast.error('Please select an amount or custom value.');
@@ -349,6 +349,7 @@ console.log('availableAmounts',str,st);
     try {
       const once = subType === 'once';
       const tokenContract = new ethers.Contract(selectedToken, tokenABI, signer);
+      console.log('tokenContract', tokenContract);
       const decimals = await tokenContract.decimals();
       const parsed = ethers.parseUnits(String(numeric), decimals);
 
