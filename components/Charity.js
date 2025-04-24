@@ -71,10 +71,10 @@ const defaultCharities = [
   },
   {
     name: 'Protocol Guild',
-    address: '0x32e3C7fD24e175701A35c224f2238d18439C7dBC',
+    address: '0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79',
     about:
-      'independent non-profit funding 190 Ethereum L1 R&D maintainers 🌿 $100mm from the ecosystem in an onchain 4yr vest 🌿 stewarding our commons infra.',
-    link: 'https://example.org/water-for-all',
+      'Independent non-profit funding 190 Ethereum L1 R&D maintainers 🌿 $100mm from the ecosystem in an onchain 4yr vest 🌿 Stewarding our commons infra.',
+    link: 'https://protocol-guild.readthedocs.io/en/latest/04-donate.html',
     image: 'https://pbs.twimg.com/profile_images/1529206083390255110/UkK0Hc6q_400x400.jpg',
     chain: 8453,
     tokens: [
@@ -85,16 +85,16 @@ const defaultCharities = [
       },
       {
         token: 'wETH',
-        address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+        address: '0x4200000000000000000000000000000000000006',
         presetAmounts: [0.005, 0.01, 0.05],
       },
     ],
   },{
     name: 'Protocol Guild',
-    address: '0x32e3C7fD24e175701A35c224f2238d18439C7dBC',
+    address: '0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79',
     about:
       'Independent non-profit funding 190 Ethereum L1 R&D maintainers 🌿 $100mm from the ecosystem in an onchain 4yr vest 🌿 Stewarding our commons infra.',
-    link: 'https://example.org/water-for-all',
+    link: 'https://protocol-guild.readthedocs.io/en/latest/04-donate.html',
     image: 'https://pbs.twimg.com/profile_images/1529206083390255110/UkK0Hc6q_400x400.jpg',
     chain: 1,
     tokens: [
