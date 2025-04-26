@@ -28,7 +28,7 @@ const GGLoanManagerABI = [
   "function swapRouter() external view returns (address)",
   "function wethAddress() external view returns (address)",
   "function priceFeed() external view returns (address)",
-
+"function totalLoans() external view returns (uint256)",
   // Manager-level writes
   "function setRole(address _address, uint256 _role) external",
   "function startLoan(uint256 _loanGoal, address _token, uint256 _annualInterestRate, uint256 _platformFeeRate, address _feeAddress, uint256 _loanIOUConversionRate) external",
@@ -82,10 +82,7 @@ const IOUMintABI = [
     ")[]"
     + ")"
 ];
-const MULTICALL3_ADDRESS = '0xca11bde05977b3631167028862be2a173976ca11';
-const Multicall3ABI = [
-  
-];
+
 // ------------------------------
 // 3) Individual Loan ABI
 // ------------------------------
@@ -117,15 +114,18 @@ function GGLoanManagerUI() {
   // Wagmi/Provider context
   const provider = useChainId()==8453?new ethers.JsonRpcProvider('https://1rpc.io/base'):useEthersProvider();
   const signer = useEthersSigner();
-  const { address: userAddress } = useAccount()||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x2d968421537e8bAbe7fc849274396F0ED3452Ae2'
-
+  let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
+  console.log('userAddress',userAddress)
+  userAddress = userAddress.address||userAddress
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x5311Bf85F3ab4e8cf296BD72C8d69f6A5aA018F8'
+const multicallContract = new ethers.Contract(
+  '0xcA11bde05977b3631167028862bE2a173976CA11',
+  ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
+  provider
+);
 let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanManagerAddress
   // Contracts in React.useMemo
-  const managerContract = React.useMemo(() => {
-    if (!provider) return null;
-    return new ethers.Contract(addrs, GGLoanManagerABI, provider);
-  }, [provider]);
+  const managerContract = new ethers.Contract(addrs, GGLoanManagerABI, provider);
 
   const IOUMintContract = React.useMemo(() => {
     if (!provider) return null;
@@ -199,130 +199,146 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
   // -------------------------------------------------------------------
   // 1) fetchManagerData
   // -------------------------------------------------------------------
-async function fetchManagerData() {
-  if (!managerContract || !provider) return;
-
-  try {
-    const multicall = new ethers.Contract(MULTICALL3_ADDRESS, Multicall3ABI, provider);
-
-    const iface = managerContract.interface;
-
-    const calls = [
-      { target: managerContract.target, callData: iface.encodeFunctionData('ethFromMint') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('name') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('symbol') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('decimals') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('totalSupply') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('ioUMint') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('usdcToken') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('swapRouter') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('wethAddress') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('priceFeed') },
-      { target: managerContract.target, callData: iface.encodeFunctionData('getLatestPrice') },
-    ];
-
-    if (userAddress) {
-      calls.push({ target: managerContract.target, callData: iface.encodeFunctionData('balanceOf', [userAddress]) });
+  async function fetchManagerData() {
+    if (!managerContract || !provider) return;
+  
+    try {
+      const iface = managerContract.interface;
+  
+      const calls = [
+        { target: managerContract.target, callData: iface.encodeFunctionData('ethFromMint') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('name') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('symbol') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('decimals') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('totalSupply') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('ioUMint') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('usdcToken') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('swapRouter') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('wethAddress') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('priceFeed') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('getLatestPrice') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('balanceOf', [userAddress]) }
+      ];
+  
+      const { returnData } = await multicallContract.aggregate(calls);
+      console.log('returnData',returnData)
+      const [
+        _ethFromMint,
+        _GGName,
+        _GGSymbol,
+        _GGDecimals,
+        _GGSupply,
+        _ioUMint,
+        _usdcToken,
+        _swapRouter,
+        _wethAddress,
+        _priceFeed,
+        _latestPrice,
+        myGGBal,
+      ] = [
+        iface.decodeFunctionResult('ethFromMint', returnData[0])[0],
+        iface.decodeFunctionResult('name', returnData[1])[0],
+        iface.decodeFunctionResult('symbol', returnData[2])[0],
+        iface.decodeFunctionResult('decimals', returnData[3])[0],
+        iface.decodeFunctionResult('totalSupply', returnData[4])[0],
+        iface.decodeFunctionResult('ioUMint', returnData[5])[0],
+        iface.decodeFunctionResult('usdcToken', returnData[6])[0],
+        iface.decodeFunctionResult('swapRouter', returnData[7])[0],
+        iface.decodeFunctionResult('wethAddress', returnData[8])[0],
+        iface.decodeFunctionResult('priceFeed', returnData[9])[0],
+        iface.decodeFunctionResult('getLatestPrice', returnData[10])[0],
+        iface.decodeFunctionResult('balanceOf', returnData[11])[0],
+      ];
+      
+      const contractEthBal = await provider.getBalance(managerContract.target);
+  
+      setEthFromMint(ethers.formatEther(_ethFromMint));
+      setGGName(_GGName);
+      setGGSymbol(_GGSymbol);
+      setGGDecimals(Number(_GGDecimals));
+      setGGSupply(ethers.formatUnits(_GGSupply, _GGDecimals));
+      setMyGGBalance(ethers.formatUnits(myGGBal, _GGDecimals));
+      setIoUMint(_ioUMint);
+      setUsdcToken(_usdcToken);
+      setSwapRouter(_swapRouter);
+      setWethAddress(_wethAddress);
+      setPriceFeed(_priceFeed);
+      setLatestPrice(ethers.formatUnits(_latestPrice, 8));
+      setGGEthBalance(ethers.formatEther(contractEthBal));
+  
+      const discovered = await fetchLoans();
+      setLoans(discovered);
+      setCanOpenLoan(discovered[discovered.length - 1]?.loanGoal === discovered[discovered.length - 1]?.totalFunded);
+    } catch (err) {
+      console.error(err);
+      toast.error('Error fetching manager data');
     }
-
-    const response = await multicall.aggregate3(calls);
-
-    const decoded = response.map((r, i) => iface.decodeFunctionResult(iface.fragments[i].name, r.returnData));
-
-    const [
-      _ethFromMint,
-      _GGName,
-      _GGSymbol,
-      _GGDecimals,
-      _GGSupply,
-      _ioUMint,
-      _usdcToken,
-      _swapRouter,
-      _wethAddress,
-      _priceFeed,
-      _latestPrice,
-      myGGBal,
-    ] = decoded.map(d => d[0]);
-
-    const contractEthBal = await provider.getBalance(managerContract.target);
-
-    setEthFromMint(ethers.formatEther(_ethFromMint));
-    setGGName(_GGName);
-    setGGSymbol(_GGSymbol);
-    setGGDecimals(Number(_GGDecimals));
-    setGGSupply(ethers.formatUnits(_GGSupply, _GGDecimals));
-    setMyGGBalance(userAddress ? ethers.formatUnits(myGGBal, _GGDecimals) : '0');
-    setIoUMint(_ioUMint);
-    setUsdcToken(_usdcToken);
-    setSwapRouter(_swapRouter);
-    setWethAddress(_wethAddress);
-    setPriceFeed(_priceFeed);
-    setLatestPrice(ethers.formatUnits(_latestPrice, 8));
-    setGGEthBalance(ethers.formatEther(contractEthBal));
-
-    const discovered = await fetchLoans();
-    setLoans(discovered);
-    setCanOpenLoan(discovered[discovered.length - 1]?.loanGoal === discovered[discovered.length - 1]?.totalFunded);
-  } catch (err) {
-    console.error(err);
-    toast.error('Error fetching manager data');
   }
-}
-
-// Simplified loans fetching with batch multicall
-async function fetchLoans() {
-  if (!managerContract || !IOUMintContract || !userAddress) return [];
-
-  const MAX_LOANS = 50;
-  const loanCalls = [];
-  const loanIface = managerContract.interface;
-
-  for (let i = 0; i < MAX_LOANS; i++) {
-    loanCalls.push({ target: managerContract.target, callData: loanIface.encodeFunctionData('loans', [i]) });
+  
+  async function fetchLoans() {
+    if (!managerContract || !IOUMintContract) return [];
+  
+    const MAX_LOANS = Number( await managerContract.totalLoans())
+    const loanIface = managerContract.interface;
+  
+    const loanCalls = Array.from({ length: MAX_LOANS }, (_, i) => ({
+      target: managerContract.target,
+      callData: loanIface.encodeFunctionData('loans', [i]),
+    }));
+  
+    const { returnData } = await multicallContract.aggregate(loanCalls);
+  
+    const results = [];
+    for (let i = 0; i < returnData.length; i++) {
+      if (!returnData[i] || returnData[i] === '0x') break;
+  
+      const ln = loanIface.decodeFunctionResult('loans', returnData[i]);
+      results.push({
+        index: i,
+        loanAddress: ln[0],
+        loanGoal: ethers.formatUnits(ln[1], 6),
+        totalDrawnDown: ethers.formatUnits(ln[2], 6),
+        loanDrawn: ln[3],
+        loanDrawnTime: ln[4].toString(),
+        fullyRepaid: ln[5],
+        iouConversionRate: ethers.formatUnits(ln[6], 18),
+        totalBuyETH: ethers.formatEther(ln[7]),
+        soldETH: ethers.formatEther(ln[8]),
+        profitETH: ethers.formatEther(ln[9]),
+      });
+    }
+  
+    if (results.length) {
+      const addresses = results.map(r => r.loanAddress);
+      const infoArray = await IOUMintContract.getSpotInfo(addresses, userAddress);
+  
+      infoArray.forEach((info, i) => {
+        results[i].userIOUBalance = ethers.formatUnits(info.myIOUs, 18);
+        results[i].iouName = info.iouName;
+        results[i].iouSymbol = info.iouSymbol;
+        results[i].claimableInterest = ethers.formatUnits(info.interestClaimable, info.underlyingDecimals);
+        results[i].totalFunded = ethers.formatUnits(info.totalFunded, 6);
+        results[i].repayments = ethers.formatUnits(info.repayments, info.underlyingDecimals);
+        results[i].interestRepayments = ethers.formatUnits(info.interestrepayments, info.underlyingDecimals);
+        results[i].underlyingBalance = ethers.formatUnits(info.underlyingBalance, info.underlyingDecimals);
+        results[i].underlyingName = info.underlyingName;
+        results[i].underlyingSymbol = info.underlyingSymbol;
+        results[i].underlyingDecimals = info.underlyingDecimals;
+        results[i].updatedInterest = ethers.formatUnits(info.updatedInterest, info.underlyingDecimals);
+        results[i].updatedTotalOwed = ethers.formatUnits(info.updatedTotalOwed, info.underlyingDecimals);
+        results[i].flexible = info.flexible;
+        results[i].accruedInterest = ethers.formatUnits(info.accruedInterest, info.underlyingDecimals);
+        results[i].totalSupply = ethers.formatUnits(info.totalSupply, 18);
+        results[i].totalDrawnDown = ethers.formatUnits(info.totalDrawnDown, 6);
+        results[i].totalFunded = ethers.formatUnits(info.totalFunded, 6);
+        results[i].totalSupply = ethers.formatUnits(info.totalSupply, 18);
+        results[i].totalDrawnDown = ethers.formatUnits(info.totalDrawnDown, 6);
+      });
+    }
+  
+    return results;
   }
-
-  const multicall = new ethers.Contract(MULTICALL3_ADDRESS, Multicall3ABI, provider);
-
-  const loanResponses = await multicall.aggregate3(loanCalls);
-  const results = [];
-
-  for (let i = 0; i < loanResponses.length; i++) {
-    if (!loanResponses[i].success) break;
-
-    const ln = loanIface.decodeFunctionResult('loans', loanResponses[i].returnData);
-    results.push({
-      index: i,
-      loanAddress: ln.loanAddress,
-      loanGoal: ethers.formatUnits(ln.loanGoal, 6),
-      totalDrawnDown: ethers.formatUnits(ln.totalDrawnDown, 6),
-      loanDrawn: ln.loanDrawn,
-      loanDrawnTime: ln.loanDrawnTime.toString(),
-      fullyRepaid: ln.fullyRepaid,
-      iouConversionRate: ethers.formatUnits(ln.iouConversionRate, 18),
-      totalBuyETH: ethers.formatEther(ln.totalBuyETH),
-      soldETH: ethers.formatEther(ln.soldETH),
-      profitETH: ethers.formatEther(ln.profitETH),
-    });
-  }
-
-  // Fetch IOUMint info
-  if (results.length) {
-    const addresses = results.map(r => r.loanAddress);
-    const infoArray = await IOUMintContract.getSpotInfo(addresses, userAddress);
-
-    infoArray.forEach((info, i) => {
-      results[i].userIOUBalance = ethers.formatUnits(info.myIOUs, 18);
-      results[i].iouName = info.iouName;
-      results[i].iouSymbol = info.iouSymbol;
-      results[i].claimableInterest = ethers.formatUnits(info.interestClaimable, info.underlyingDecimals);
-      results[i].totalFunded = ethers.formatUnits(info.totalFunded, 6);
-      results[i].repayments = ethers.formatUnits(info.repayments, info.underlyingDecimals);
-    });
-  }
-
-  return results;
-}
-
+  
 
   // -------------------------------------------------------------------
   // 3) Manager-level writes
@@ -687,7 +703,7 @@ console.log('fundLoan',loanAddr,parsed,amount,ln)
       fetchManagerData();
     }
     // eslint-disable-next-line
-  }, [managerContract, userAddress]);
+  }, [userAddress]);
   const [showModal, setShowModal] = useState(true);
 const InfoModal = () => {
   return (
