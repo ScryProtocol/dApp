@@ -849,24 +849,12 @@ function GigaStratModal({ show, onClose }) {
             struggle to cover loan repayments, and GG tokens may lose value. GigaStrat also 
             depends on stablecoins and DeFi components (like Uniswap swaps), which carry their 
             own technical risks.
-          </p>
-<strong className="text-lg font-semibold text-pink-500">Actions</strong>
-              <p className="">
-            
-<strong className="font-semibold text-pink-500"> 💰 Draw Down &amp; Buy</strong> draws the funded USDC and immediately 
-              swaps for ETH.  
-             </p>
-             <p className="">
+          </p> <p className="">
             
 <strong className="font-semibold text-pink-500"> 💵 Repay Loan</strong> sells ETH to repay ~1% of the total 
               owed principal + interest.  
             </p>
-            <p className="">
-          
-<strong className="font-semibold text-pink-500">💱 Redeem IOUs &amp; Swap</strong> allows the manager to redeem any leftover 
-              IOUs in the contract and convert them into ETH for the treasury after the loan is fully repaid. 
-           </p> 
-          <h3 className="text-lg font-semibold text-gray-700 mt-4">Summary</h3>
+            <h3 className="text-lg font-semibold text-gray-700 mt-4">Summary</h3>
           <p>
             GigaStrat allows lenders to earn interest by funding loans while giving them the 
             choice to convert their positions into a stake in the protocol’s ETH-centric treasury. 
@@ -1168,16 +1156,6 @@ function GigaStratModal({ show, onClose }) {
 
                 {/* The quick combo calls with new emojis */}
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  {/* Draw Down & Buy -> 💰 */}
-                  {!ln.fullyRepaid && (
-                    <button
-                      onClick={() => handleDrawDownAndBuy(ln.index)}
-                      className="bg-green-200 hover:bg-green-300 text-green-600 px-2 py-1 rounded-full font-bold"
-                      title="Draw down 1/10 of the total funded USDC and immediately buy ETH with it."
-                    >
-                      💰
-                    </button>
-                  )}
                   {/* Repay Loan -> 💵 */}
                   {!ln.fullyRepaid && (
                     <button
@@ -1186,16 +1164,6 @@ function GigaStratModal({ show, onClose }) {
                       title="Repay 1% of the total owed USDC by selling the required ETH."
                     >
                       💵
-                    </button>
-                  )}
-                  {/* Redeem IOUs & Swap -> 💱, only if managerIOUBalance > 0 */}
-                  {parseFloat(ln.managerIOUBalance || "0") > 0 && (
-                    <button
-                      onClick={() => handleRedeemIOUs(ln.index)}
-                      className="bg-purple-200 hover:bg-purple-300 text-purple-600 px-2 py-1 rounded-full font-bold"
-                      title="Redeem any IOUs still held by the manager contract and swap to ETH."
-                    >
-                      💱
                     </button>
                   )}
                 </div>
