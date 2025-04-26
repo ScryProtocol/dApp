@@ -741,7 +741,7 @@ function GigaStratModal({ show, onClose }) {
         onClick={(e) => e.stopPropagation()} // Prevent outside-click close if user clicks inside
       >
         <h2 className="text-xl font-bold text-pink-600 mb-3">
-          GigaStrat: An On-Chain Microstrategy for ETH
+          GigaStrat: An Onchain Microstrategy for ETH
         </h2>
         <div className="align-items-center items-center justify-center">
           <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
@@ -809,8 +809,7 @@ function GigaStratModal({ show, onClose }) {
           </h3>
           <p className="mb-4">
             The manager contract can start fresh SpotIOULoans at any point, allowing GigaStrat 
-            to continually raise new capital to buy ETH. As soon as a loan reaches its funding 
-            goal, the manager draws down the stablecoins and acquires ETH through an on-chain 
+            to continually raise new capital to buy ETH. As soon as a loans funded, the manager draws down the stablecoins and acquires ETH through an on-chain 
             swap. This cycle repeats, with each new SpotIOULoan following the same pattern of 
             raising capital, purchasing ETH, and repaying lenders in scheduled increments. Because 
             the manager can deploy loans whenever market conditions are favorable or there is a 
