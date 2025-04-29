@@ -50,7 +50,7 @@ const GGLoanManagerABI = [
 // ------------------------------
 // 2) IOUMint (factory) Contract
 // ------------------------------
-const IOUMintAddress = '0x38E6C8C5E566937E72C793FE0C229f9063cDE381';
+const IOUMintAddress = '0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
 const IOUMintABI = [
   "function getSpotInfo(address[] memory, address) external view returns (" +
     "tuple(" +
@@ -117,7 +117,7 @@ function GGLoanManagerUI() {
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x5311Bf85F3ab4e8cf296BD72C8d69f6A5aA018F8'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x8437f170ef6249Ca2a2a3BeB35c93B4a4B2F650C'
 const multicallContract = new ethers.Contract(
   '0xcA11bde05977b3631167028862bE2a173976CA11',
   ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
@@ -296,7 +296,7 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
       results.push({
         index: i,
         loanAddress: ln[0],
-        loanGoal: ethers.formatUnits(ln[1], 6),
+//        loanGoal: ethers.formatUnits(ln[1], 6),
         totalDrawnDown: ethers.formatUnits(ln[2], 6),
         loanDrawn: ln[3],
         loanDrawnTime: ln[4].toString(),
@@ -333,6 +333,7 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
         results[i].totalFunded = ethers.formatUnits(info.totalFunded, 6);
         results[i].totalSupply = ethers.formatUnits(info.totalSupply, 18);
         results[i].totalDrawnDown = ethers.formatUnits(info.totalDrawnDown, 6);
+        results[i].loanGoal = ethers.formatUnits(info.loanGoal, 6);
       });
     }
   
