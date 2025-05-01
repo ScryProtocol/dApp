@@ -15,7 +15,7 @@ import { info } from 'autoprefixer';
 
 // Updated ABI to match the new contract
 const GGLoanManagerABI = [
-  "function loans(uint256) external view returns (address loanAddress, uint256 loanGoal, uint256 totalDrawnDown, bool loanDrawn, uint256 loanDrawnTime, bool fullyRepaid, uint256 iouConversionRate, uint256 totalBuyETH, uint256 soldETH, uint256 profitETH)",
+  "function loans(uint256) external view returns (address loanAddress, uint256 loanGoal, uint256 totalDrawnDown, bool loanDrawn, uint256 loanDrawnTime, bool fullyRepaid, uint256 iouConversionRate, uint256 totalBuyETH, uint256 soldETH, uint256 profitETH, uint256 lossETH)",
   "function ethFromMint() external view returns (uint256)",
   "function name() view returns (string)",
   "function symbol() view returns (string)",
@@ -117,7 +117,7 @@ function GGLoanManagerUI() {
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x8437f170ef6249Ca2a2a3BeB35c93B4a4B2F650C'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x2103490755DD51837a318B0ddD0cD89CD717E915'
 const multicallContract = new ethers.Contract(
   '0xcA11bde05977b3631167028862bE2a173976CA11',
   ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
@@ -268,7 +268,7 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
   
       const discovered = await fetchLoans();
       setLoans(discovered);
-      setCanOpenLoan(discovered[discovered.length - 1]?.loanGoal === discovered[discovered.length - 1]?.totalFunded);
+      setCanOpenLoan(Number(discovered[discovered.length - 1]?.loanGoal) === Number(discovered[discovered.length - 1]?.totalFunded));
     } catch (err) {
       console.error(err);
       toast.error('Error fetching manager data');
@@ -296,7 +296,7 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
       results.push({
         index: i,
         loanAddress: ln[0],
-//        loanGoal: ethers.formatUnits(ln[1], 6),
+        loanGoal: ethers.formatUnits(ln[1], 6),
         totalDrawnDown: ethers.formatUnits(ln[2], 6),
         loanDrawn: ln[3],
         loanDrawnTime: ln[4].toString(),
@@ -329,11 +329,9 @@ let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanMan
         results[i].flexible = info.flexible;
         results[i].accruedInterest = ethers.formatUnits(info.accruedInterest, info.underlyingDecimals);
         results[i].totalSupply = ethers.formatUnits(info.totalSupply, 18);
-        results[i].totalDrawnDown = ethers.formatUnits(info.totalDrawnDown, 6);
-        results[i].totalFunded = ethers.formatUnits(info.totalFunded, 6);
-        results[i].totalSupply = ethers.formatUnits(info.totalSupply, 18);
-        results[i].totalDrawnDown = ethers.formatUnits(info.totalDrawnDown, 6);
-        results[i].loanGoal = ethers.formatUnits(info.loanGoal, 6);
+        results[i].totalDrawnDown = Number(ethers.formatUnits(info.totalDrawnDown, 6))+Number(results[i].loanGoal)-Number(ethers.formatUnits(info.loanGoal, 6));
+        results[i].totalFunded = Number(ethers.formatUnits(info.totalFunded, 6))+Number(results[i].loanGoal)-Number(ethers.formatUnits(info.loanGoal, 6));
+        results[i].loanGoal2 = ethers.formatUnits(info.loanGoal, 6);
       });
     }
   
