@@ -33,6 +33,7 @@ const GGLoanManagerABI = [
   "function setRole(address _address, uint256 _role) external",
   "function startLoan(uint256 _loanGoal, address _token, uint256 _annualInterestRate, uint256 _platformFeeRate, address _feeAddress, uint256 _loanIOUConversionRate) external",
   "function openLoan() external",
+    "function getProfit() external view returns (uint256)",
 
   // Combined "quick" calls
   "function drawDownAndBuyETH(uint256 loanIndex) external",
@@ -117,7 +118,7 @@ function GGLoanManagerUI() {
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0x2103490755DD51837a318B0ddD0cD89CD717E915'
+  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
 const multicallContract = new ethers.Contract(
   '0xcA11bde05977b3631167028862bE2a173976CA11',
   ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
@@ -681,17 +682,10 @@ console.log('fundLoan',loanAddr,parsed,amount,ln)
       setBurnPreview('0');
       return;
     }
-
-    let totalProfit = 0;
-    for (const ln of loans) {
-      totalProfit += parseFloat(ln.profitETH) || 0;
-    }
-
-    const totalDistribution = totalProfit + parseFloat(ethFromMint || '0');
-    const fraction = parseFloat(burnAmount) / parseFloat(GGSupply);
-    const userShare = fraction * totalDistribution;
-
-    setBurnPreview(userShare.toFixed(6));
+   async function getBurnPreview() {
+let userShare = ethers.formatEther(await managerContract.getProfit());
+    setBurnPreview(Number(userShare).toFixed(6)*parseFloat(burnAmount)/parseFloat(GGSupply));}
+    getBurnPreview();
   }, [burnAmount, loans, ethFromMint, GGSupply]);
 
   // -------------------------------------------------------------------
