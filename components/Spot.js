@@ -892,7 +892,7 @@ function GigaStratModal({ show, onClose }) {
         {Number(GGEthBalance).toFixed(4)} ETH HODLD
       </h2>
       <h2 className="text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1">
-        {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
+      {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
       </h2>
 
       {/* Swap IOU → GG & Burn GG → ETH */}
@@ -950,13 +950,21 @@ function GigaStratModal({ show, onClose }) {
           <h3 className="text-lg font-semibold text-pink-600 mt-6 mb-3">
             🔥 Burn GG for ETH
           </h3>
+          <div className="flex w-full bg-white rounded-full border border-pink-100 mb-2 px-3 py-1">
           <input
-            className="w-full px-3 py-2 bg-white rounded-full border border-pink-100"
+            className=" flex-grow outline-none"
             placeholder={`Amount of ${GGSymbol}`}
             value={burnAmount}
             onChange={(e) => setBurnAmount(e.target.value)}
             title="How many GG tokens you want to burn in exchange for ETH."
           />
+            <button
+              onClick={() => setBurnAmount(myGGBalance)}
+              className="text-white bg-pink-400 rounded-full px-2 py-1 font-semibold"
+              >
+                Max
+            </button>
+          </div>
           {burnAmount && parseFloat(burnAmount) > 0 && (
             <p className="text-pink-600 font-semibold">
               {burnAmount} {GGSymbol} → ~{burnPreview} ETH
