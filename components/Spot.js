@@ -1060,10 +1060,10 @@ function GigaStratModal({ show, onClose }) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Bought</p>
+                    <p className="text-pink-600 font-semibold text-lg">Reserved</p>
                     <p
                       className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
-                      title="Total ETH the manager purchased for this loan."
+                      title="Total ETH the manager purchased for this loan that is reserved for debt."
                     >
                       {Number(ln.totalBuyETH).toFixed(4)} ETH
                     </p>
