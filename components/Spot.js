@@ -51,7 +51,7 @@ const GGLoanManagerABI = [
 // ------------------------------
 // 2) IOUMint (factory) Contract
 // ------------------------------
-const IOUMintAddress = '0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
+const IOUMintAddress = '0xeFF111b48622C1cab239E2105e19B05C73Bc9dA6';
 const IOUMintABI = [
   "function getSpotInfo(address[] memory, address) external view returns (" +
     "tuple(" +
@@ -118,13 +118,13 @@ function GGLoanManagerUI() {
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
-  let GGLoanManagerAddress = useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
+  let GGLoanManagerAddress = useChainId()==1?'0xa682458ED97977834b9Fc07B0da7C3f7b9510cA8':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
 const multicallContract = new ethers.Contract(
   '0xcA11bde05977b3631167028862bE2a173976CA11',
   ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
   provider
 );
-let addrs=useChainId()==1?'0xbC8CFE2fD32EA32003af9D6C94488bd1A8266A0c':GGLoanManagerAddress
+let addrs=useChainId()==1?'0xa682458ED97977834b9Fc07B0da7C3f7b9510cA8':GGLoanManagerAddress
   // Contracts in React.useMemo
   const managerContract = new ethers.Contract(addrs, GGLoanManagerABI, provider);
 
