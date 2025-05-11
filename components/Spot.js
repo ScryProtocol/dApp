@@ -701,8 +701,8 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
   const InfoModal = () => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center">
-          <h2 className="text-lg font-semibold text-pink-600 mb-2">GG Loan Manager ALPHA</h2>
+        <div className={getThemeClass('bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center', 'bg-gray-700 p-6 rounded-3xl max-w-lg mx-auto text-center')}>
+          <h2 className="text-lg font-semibold text-pink-500 mb-2">GG Loan Manager ALPHA</h2>
           <p className="font-semibold">
             This is a demo UI for the GigaStrat Protocol on Base. It allows you to interact with
             the contract and perform various actions such as opening loans, swapping IOUs for GG,
@@ -716,7 +716,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
           </p>
           <button
             onClick={() => setShowModal(false)}
-            className="text-sm text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
+            className="text-sm text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-500"
           >
             I understand, continue
           </button>
@@ -783,7 +783,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
         title: 'How GigaStrat Works',
         content: (
           <>
-            <h2 className="font-semibold text-pink-600">Fully On-Chain</h2>
+            <h2 className="font-semibold text-pink-500">Fully On-Chain</h2>
             <p className="mb-4">
               All core actions happen through verified smart contracts, removing any reliance on
               centralized actors. The manager sets up loans, draws down funds, executes trades,
@@ -794,7 +794,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               No single party can divert or mismanage the treasury since every transaction is
               enforced at the contract level and can be reviewed on-chain.
             </p>
-            <h2 className="font-semibold text-pink-600">Funding IOU Loans</h2>
+            <h2 className="font-semibold text-pink-500">Funding IOU Loans</h2>
             <p className="mb-4">
               Funding happens when you send stablecoins to a <strong>IOU Loan</strong> contract.
               You receive IOU tokens in return. These IOUs represent your share of the loan’s
@@ -803,7 +803,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
               your IOUs for GG tokens instead.
             </p>
-            <h2 className="font-semibold text-pink-600">On Demand Loan Deployment</h2>
+            <h2 className="font-semibold text-pink-500">On Demand Loan Deployment</h2>
             <p className="mb-4">
               The manager contract can start fresh IOUs at any point, allowing GigaStrat to
               continually raise new capital to buy ETH. As soon as a loan’s funded, the manager
@@ -814,7 +814,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               expand the treasury, GigaStrat can keep accumulating ETH even as previous loans
               wind down.
             </p>
-            <h2 className="font-semibold text-pink-600">Treasury Growth</h2>
+            <h2 className="font-semibold text-pink-500">Treasury Growth</h2>
             <p className="mb-4">
               GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH
               remaining after loan obligations are satisfied stays in the treasury, which benefits
@@ -822,7 +822,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               enhancing the backing of each GG token. If the price of ETH decreases, the treasury’s
               value decreases, using ETH from GG holders to pay back the IOU loans.
             </p>
-            <h2 className="font-semibold text-pink-600">Repayments</h2>
+            <h2 className="font-semibold text-pink-500">Repayments</h2>
             <p className="mb-4">
               The manager contract sells ETH to repay lenders. This is done in small increments
               over time, allowing the manager to take advantage of favorable market conditions.
@@ -843,7 +843,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               rate is set per loan. After swapping, you hold GG tokens, which do not expire or
               require redemption like IOUs do.
             </p>
-            <h2 className="font-semibold text-pink-600">Holding and Burning GG for ETH</h2>
+            <h2 className="font-semibold text-pink-500">Holding and Burning GG for ETH</h2>
             <p className="mb-4">
               GG represents a fraction of the entire treasury. Its value depends on how effectively
               the manager invests in ETH and how many outstanding GG tokens exist. If you hold GG
@@ -851,7 +851,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               This creates a liquidity mechanism and ensures that every GG token is backed by real
               assets in the treasury.
             </p>
-            <h2 className="font-semibold text-pink-600">Inflation and Fees</h2>
+            <h2 className="font-semibold text-pink-500">Inflation and Fees</h2>
             <p className="mb-4">
               There are no protocol fees for loans, swaps, mints, or burns. GigaStrat’s inflation
               is set at 10% of IOU-to-GG swaps minted to the fee address for security and past
@@ -883,18 +883,18 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
               your IOUs for GG tokens instead.
             </p>
-            <h2 className="font-semibold text-pink-600">Funding IOU Loans</h2>
+            <h2 className="font-semibold text-pink-500">Funding IOU Loans</h2>
             <p className="mb-4">
               Funding happens when you lend stablecoins to a <strong>IOU Loan</strong> contract.
               You receive IOU tokens in return. These IOUs represent your share of the loan’s
               principal and entitle you to principal + interest back as ETH is sold.
             </p>
-            <h2 className="font-semibold text-pink-600">Claiming Interest</h2>
+            <h2 className="font-semibold text-pink-500">Claiming Interest</h2>
             <p className="mb-4">
               You can claim interest on your IOUs at any time without burning them. This will not
               reduce your IOU principal.
             </p>
-            <h2 className="font-semibold text-pink-600">Redeeming IOUs</h2>
+            <h2 className="font-semibold text-pink-500">Redeeming IOUs</h2>
             <p className="mb-4">
               Redeeming IOUs allows you to convert them back into stablecoins. This is useful if
               you want to exit your position in a loan without holding GG or prefer to keep your
@@ -916,7 +916,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               movements. A significant drop in ETH price could leave the treasury insufficient to
               repay loans fully, impacting IOU or GG holders.
             </p>
-            <h2 className="font-semibold text-pink-600">Smart Contract Risks</h2>
+            <h2 className="font-semibold text-pink-500">Smart Contract Risks</h2>
             <p className="mb-4">
               As with any smart contract, there is a risk of bugs or vulnerabilities. No system is
               completely secure, and you should be cautious.
@@ -942,8 +942,8 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
           <div className="w-1/3 border-r border-gray-200 overflow-y-auto rounded-l-xl">
             <div
               className={getThemeClass(
-                'flex align-items-center items-center justify-center mt-2 mb-2 gap-2',
-                'bg-pink-100 rounded-3xl w-1/2 mx-auto p-1'
+                'flex align-items-center items-center justify-center my-2 mb-2 gap-2',
+                'bg-pink-100 rounded-3xl w-1/2 flex align-items-center items-center justify-center my-2 mb-2 gap-2 mx-auto p-1'
               )}
             >
               <a
@@ -1012,7 +1012,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
 
           {/* Right-side content */}
           <div className="w-2/3 p-6 overflow-y-auto">
-            <h2 className="text-xl font-bold text-pink-600 mb-2">
+            <h2 className="text-xl font-bold text-pink-500 mb-2">
               {docs[activeTab].title}
             </h2>
             <div className={getThemeClass('text-gray-700', 'text-gray-100')}>
@@ -1071,7 +1071,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
 
       <h1
         className={getThemeClass(
-          'text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4',
+          'text-5xl font-extrabold text-pink-500 tracking-tight text-center mx-auto mt-4 mb-4',
           'text-5xl font-extrabold text-purple-400 tracking-tight text-center mx-auto mt-4 mb-4'
         )}
       >
@@ -1180,7 +1180,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
 
           <h3
             className={getThemeClass(
-              'text-lg font-semibold text-pink-600 mt-6 mb-3',
+              'text-lg font-semibold text-pink-500 mt-6 mb-3',
               'text-lg font-semibold text-purple-400 mt-6 mb-3'
             )}
           >
@@ -1213,7 +1213,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             </button>
           </div>
           {burnAmount && parseFloat(burnAmount) > 0 && (
-            <p className={getThemeClass('text-pink-600 font-semibold', 'text-purple-400 font-semibold')}>
+            <p className={getThemeClass('text-pink-500 font-semibold', 'text-purple-400 font-semibold')}>
               {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
             </p>
           )}
@@ -1243,7 +1243,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
 
         {loans.length === 0 ? (
           <p
-            className={getThemeClass('text-pink-600 text-center font-medium', 'text-purple-400 text-center font-medium')}
+            className={getThemeClass('text-pink-500 text-center font-medium', 'text-purple-400 text-center font-medium')}
           >
             No loans found or none discovered so far.
           </p>
@@ -1330,7 +1330,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1349,7 +1349,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1368,7 +1368,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1387,7 +1387,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1406,7 +1406,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1463,7 +1463,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1482,7 +1482,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-600 font-semibold text-lg',
+                        'text-pink-500 font-semibold text-lg',
                         'text-purple-400 font-semibold text-lg'
                       )}
                     >
@@ -1636,7 +1636,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               'max-w-6xl mx-auto mb-6 bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
             )}
           >
-            <h2 className={getThemeClass('text-lg font-semibold text-pink-600', 'text-lg font-semibold text-purple-400')}>
+            <h2 className={getThemeClass('text-lg font-semibold text-pink-500', 'text-lg font-semibold text-purple-400')}>
               Global Status 🌸
             </h2>
             <div className="text-sm space-y-2 mt-2">
@@ -1707,7 +1707,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                 'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
               )}
             >
-              <h3 className="text-lg font-semibold text-pink-600 mb-3">💖 Start a New Loan</h3>
+              <h3 className="text-lg font-semibold text-pink-500 mb-3">💖 Start a New Loan</h3>
               <div className="space-y-2 text-sm">
                 <input
                   className={getThemeClass(
