@@ -698,211 +698,424 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
     // eslint-disable-next-line
   }, [userAddress]);
   const [showModal, setShowModal] = useState(true);
-const InfoModal = () => {
-  return (
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-  <div className="bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center">
-    <h2 className="text-lg font-semibold text-pink-600 mb-2">GG Loan Manager ALPHA</h2>
-    <p className="font-semibold">
-      This is a demo UI for the GigaStrat Protocol on Base. It allows you to interact with the contract and perform various actions such as opening loans, swapping IOUs for GG, and burning GG for ETH. 
-    </p>
-    <p className="font-semibold mt-2">
-      Please note that this is an ALPHA version and may contain bugs or incomplete features. This deployment is for test purposes only and is not for use with real funds and should be considered lost on deposit with UI and contracts updates happening on with no notice. Please use at your own risk.
-    </p>
-    <button
-      onClick={() => setShowModal(false)}
-      className="text-sm text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
-    >
-      I understand, continue
-    </button>
-  </div>
-</div>
-);
-};
-const [showGigaStratModal, setShowGigaStratModal] = useState(true);
-function GigaStratModal({ show, onClose }) {
-  if (!show) return null; // Don't render anything if show is false
-
-  return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4"
-      onClick={onClose} // Close if user clicks outside the content
-    >
-      <div 
-        className="max-w-3xl bg-white p-6 rounded-3xl overflow-y-scroll text-center h-4/5"
-        style={{ scrollbarWidth: 'thin' }}
-        onClick={(e) => e.stopPropagation()} // Prevent outside-click close if user clicks inside
-      >
-        <h2 className="text-xl font-bold text-pink-600 mb-3">
-          GigaStrat: An Onchain Microstrategy for ETH
-        </h2>
-        <div className="align-items-center items-center justify-center">
-          <a href="https://discord.gg/vrV4YpUccq" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-          <img src="https://simpleicons.org/icons/discord.svg" alt="discord" className="w-6 h-6 inline-block mr-2" />
-          </a>
-          <a href="https://twitter.com/not_pr0" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-          <img src="https://simpleicons.org/icons/x.svg" alt="twitter" className="w-6 h-6 inline-block mr-2" />
-          </a>
-          <a href="https://basescan.org/address/0x67961f3f6ae5b9b251bccaed54e7c0db7b9d5265" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-          <img src="https://basescan.org/assets/base/images/svg/brandassets/logo-symbol.svg?v=25.1.4.0" alt="basescan" className="w-6 h-6 inline-block mr-2" />
-          </a>
-          </div>
-        <div className="">
-          <p className="mb-4">
-            GigaStrat is an on-chain system that blends lending and borrowing with a treasury 
-            strategy focused on accumulating ETH. The core contract is the DAOLoanManager, which 
-            creates separate loan contracts called SpotIOULoans. Each SpotIOULoan mints IOU 
-            tokens for lenders, while the manager simultaneously issues a governance token 
-            called <strong>GG</strong>, backed by the protocol’s ETH treasury.
+  const InfoModal = () => {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center">
+          <h2 className="text-lg font-semibold text-pink-600 mb-2">GG Loan Manager ALPHA</h2>
+          <p className="font-semibold">
+            This is a demo UI for the GigaStrat Protocol on Base. It allows you to interact with
+            the contract and perform various actions such as opening loans, swapping IOUs for GG,
+            and burning GG for ETH.
           </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">How GigaStrat Works</h3>
-          <p className="mb-4">
-            A SpotIOULoan accepts stablecoins (like USDC) from lenders in exchange for newly 
-            minted IOU tokens. These IOU tokens track the lender’s share of that specific loan. 
-            The DAOLoanManager draws down stablecoins from the funded loan, swaps them for ETH, 
-            and then repays the loan in installments by selling small amounts of ETH. Over time, 
-            lenders can either redeem IOUs for principal and interest or convert these IOUs into GG tokens.
-          </p>
-          <p className="mb-4">
-            GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH 
-            remaining after loan obligations are satisfied stays in the treasury, which benefits 
-            holders of the GG token. If the price of ETH increases, the treasury’s value grows, 
-            enhancing the backing of each GG token.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Fully On-Chain and Decentralized
-          </h3>
-          <p className="mb-4">
-            All core actions happen through verified smart contracts, removing any reliance on 
-            centralized actors. The manager sets up loans, draws down funds, executes trades, 
-            and repays lenders, all according to the code’s logic. Participants see precisely 
-            how much ETH the system holds and exactly when trades occur. Once a loan is funded, 
-            the manager’s established protocol ensures that selling portions of ETH for 
-            repayment takes place automatically, gradually returning principal plus interest to 
-            lenders. No single party can divert or mismanage the treasury since every transaction 
-            is enforced at the contract level and can be reviewed on-chain.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Funding a Loan and Getting IOUs
-          </h3>
-          <p className="mb-4">
-            Funding happens when you send stablecoins to a SpotIOULoan contract. You receive IOU 
-            tokens in return. These IOUs represent your share of the loan’s principal and will 
-            allow you to claim repayment plus interest as the manager sells ETH. If you simply 
-            want your principal back (plus accrued interest), redeeming IOUs will give you 
-            stablecoins. If you want exposure to the treasury’s ETH, you can swap your IOUs 
-            for GG tokens instead.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            On-Demand Loan Deployment
-          </h3>
-          <p className="mb-4">
-            The manager contract can start fresh SpotIOULoans at any point, allowing GigaStrat 
-            to continually raise new capital to buy ETH. As soon as a loans funded, the manager draws down the stablecoins and acquires ETH through an on-chain 
-            swap. This cycle repeats, with each new SpotIOULoan following the same pattern of 
-            raising capital, purchasing ETH, and repaying lenders in scheduled increments. Because 
-            the manager can deploy loans whenever market conditions are favorable or there is a 
-            desire to expand the treasury, GigaStrat can keep accumulating ETH even as previous 
-            loans wind down.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Swapping IOUs for GG
-          </h3>
-          <p className="mb-4">
-            IOU holders can transform their lender position into ownership of the broader system 
-            by swapping IOUs for GG. This conversion pivots you from earning interest on a single 
-            loan to a more general stake in the protocol’s growing ETH treasury. The conversion 
-            rate is set per loan. After swapping, you hold GG tokens, which do not expire or 
-            require redemption like IOUs do. The ETH bought using the IOUs used to back the loans.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Holding GG and Burning for ETH
-          </h3>
-          <p className="mb-4">
-            GG represents a fraction of the entire treasury. Its value depends on how effectively 
-            the manager invests in ETH and how many outstanding GG tokens exist. If you hold GG 
-            and want to exit, burning GG returns your proportional share of the treasury’s ETH. 
-            This creates a liquidity mechanism and ensures that every GG token is backed by real 
-            assets in the treasury.
-          </p>
-
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Risks and Rewards
-          </h3>
-          <p className="mb-4">
-            The system relies on ETH price movement. If ETH appreciates, the treasury gains, and 
-            GG tokens become more valuable. If ETH declines significantly, the treasury may 
-            struggle to cover loan repayments, and GG tokens may lose value. GigaStrat also 
-            depends on stablecoins and DeFi components (like Uniswap swaps), which carry their 
-            own technical risks.
-          </p> <p className="">
-            
-<strong className="font-semibold text-pink-500"> 💵 Repay Loan</strong> sells ETH to repay ~1% of the total 
-              owed principal + interest.  
-            </p>
-            <h3 className="text-lg font-semibold text-gray-700 mt-4">Summary</h3>
-          <p>
-            GigaStrat allows lenders to earn interest by funding loans while giving them the 
-            choice to convert their positions into a stake in the protocol’s ETH-centric treasury. 
-            It combines traditional lending mechanics (IOUs, repayment schedules) with a 
-            treasury-backed governance token (GG), aiming to capture the upside of ETH in a 
-            transparent, on-chain manner. Lenders who swap into GG become co-owners of the protocol. 
-            GG holders can burn their tokens to withdraw ETH if they ever want to exit.
+          <p className="font-semibold mt-2">
+            Please note that this is an ALPHA version and may contain bugs or incomplete features.
+            This deployment is for test purposes only and is <strong>not</strong> for use with real
+            funds. Funds could be considered lost on deposit with no notice if the UI or contracts
+            get updated. Please use at your own risk.
           </p>
           <button
-            onClick={onClose}
-            className="text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
+            onClick={() => setShowModal(false)}
+            className="text-sm text-white bg-pink-500 rounded-full px-3 py-1 mt-4 font-semibold hover:bg-pink-600"
           >
-            Got it!
+            I understand, continue
           </button>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  };
+
+  const [showGigaStratModal, setShowGigaStratModal] = useState(true);
+
+  // Multi-tab doc modal with theming:
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const storedMode = localStorage.getItem('darkMode');
+    if (storedMode) {
+      setDarkMode(storedMode === 'true');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
+
+  function getThemeClass(lightClass, darkClass) {
+    return darkMode ? darkClass : lightClass;
+  }
+
+  function GigaStratModal({ show, onClose }) {
+    const [activeTab, setActiveTab] = useState('overview');
+    if (!show) return null;
+
+    // You can store each doc section in separate variables or inline
+    const docs = {
+      overview: {
+        title: 'GigaStrat',
+        content: (
+          <>
+            <p className="mb-4">
+              GigaStrat is an on-chain system that blends lending and borrowing with a treasury
+              strategy focused on accumulating ETH. The core contract is GigaStrat, which creates
+              separate loan contracts called IOUs. Each IOU Loan mints IOU tokens for lenders,
+              while the manager simultaneously issues a governance token called GG, backed by
+              the protocol’s ETH treasury.
+            </p>
+            <p className="mb-4">
+              An <strong>IOU Loan</strong> accepts stablecoins (like USDC) from lenders in exchange
+              for newly minted IOU tokens. These IOU tokens track the lender’s share of that
+              specific loan. The GigaStrat contract draws down stablecoins from the funded loan,
+              swaps them for ETH, and then repays the loan in installments by selling small amounts
+              of ETH. Over time, lenders can either redeem IOUs for principal and interest or
+              convert these IOUs into GG tokens.
+            </p>
+            <p className="mb-4">
+              GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH
+              remaining after loan obligations are satisfied stays in the treasury, which benefits
+              holders of the GG token. If the price of ETH increases, the treasury’s value grows,
+              enhancing the backing of each GG token.
+            </p>
+          </>
+        )
+      },
+      fullyOnChain: {
+        title: 'How GigaStrat Works',
+        content: (
+          <>
+            <h2 className="font-semibold text-pink-600">Fully On-Chain</h2>
+            <p className="mb-4">
+              All core actions happen through verified smart contracts, removing any reliance on
+              centralized actors. The manager sets up loans, draws down funds, executes trades,
+              and repays lenders, all according to the code’s logic. Participants see precisely
+              how much ETH the system holds and exactly when trades occur. Once a loan is funded,
+              the manager’s established protocol ensures that selling portions of ETH for repayment
+              takes place automatically, gradually returning principal plus interest to lenders.
+              No single party can divert or mismanage the treasury since every transaction is
+              enforced at the contract level and can be reviewed on-chain.
+            </p>
+            <h2 className="font-semibold text-pink-600">Funding IOU Loans</h2>
+            <p className="mb-4">
+              Funding happens when you send stablecoins to a <strong>IOU Loan</strong> contract.
+              You receive IOU tokens in return. These IOUs represent your share of the loan’s
+              principal and will allow you to claim repayment plus interest as the manager sells
+              ETH. If you simply want your principal back (plus accrued interest), redeeming IOUs
+              will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
+              your IOUs for GG tokens instead.
+            </p>
+            <h2 className="font-semibold text-pink-600">On Demand Loan Deployment</h2>
+            <p className="mb-4">
+              The manager contract can start fresh IOUs at any point, allowing GigaStrat to
+              continually raise new capital to buy ETH. As soon as a loan’s funded, the manager
+              draws down the stablecoins and acquires ETH through an on-chain swap. This cycle
+              repeats, with each new SpotIOULoan following the same pattern of raising capital,
+              purchasing ETH, and repaying lenders in scheduled increments. Because the manager
+              can deploy loans whenever market conditions are favorable or there is a desire to
+              expand the treasury, GigaStrat can keep accumulating ETH even as previous loans
+              wind down.
+            </p>
+            <h2 className="font-semibold text-pink-600">Treasury Growth</h2>
+            <p className="mb-4">
+              GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH
+              remaining after loan obligations are satisfied stays in the treasury, which benefits
+              holders of the GG token. If the price of ETH increases, the treasury’s value grows,
+              enhancing the backing of each GG token. If the price of ETH decreases, the treasury’s
+              value decreases, using ETH from GG holders to pay back the IOU loans.
+            </p>
+            <h2 className="font-semibold text-pink-600">Repayments</h2>
+            <p className="mb-4">
+              The manager contract sells ETH to repay lenders. This is done in small increments
+              over time, allowing the manager to take advantage of favorable market conditions.
+              Anyone can do the repayment using the 💵 button, which will pay back the loan
+              over 4 years.
+            </p>
+          </>
+        )
+      },
+      swapping: {
+        title: 'Swapping IOUs for GG',
+        content: (
+          <>
+            <p className="mb-4">
+              IOU holders can transform their lender position into ownership of the broader system
+              by swapping IOUs for GG. This conversion pivots you from earning interest on a single
+              loan to a more general stake in the protocol’s growing ETH treasury. The conversion
+              rate is set per loan. After swapping, you hold GG tokens, which do not expire or
+              require redemption like IOUs do.
+            </p>
+            <h2 className="font-semibold text-pink-600">Holding and Burning GG for ETH</h2>
+            <p className="mb-4">
+              GG represents a fraction of the entire treasury. Its value depends on how effectively
+              the manager invests in ETH and how many outstanding GG tokens exist. If you hold GG
+              and want to exit, burning GG returns your proportional share of the treasury’s ETH.
+              This creates a liquidity mechanism and ensures that every GG token is backed by real
+              assets in the treasury.
+            </p>
+            <h2 className="font-semibold text-pink-600">Inflation and Fees</h2>
+            <p className="mb-4">
+              There are no protocol fees for loans, swaps, mints, or burns. GigaStrat’s inflation
+              is set at 10% of IOU-to-GG swaps minted to the fee address for security and past
+              development. This address can be updated by the DAO. This fee helps:
+            </p>
+            <ul className="mb-4 list-disc list-inside">
+              <li>
+                🛠️ Offset costs for having built the GG protocol and allow continued open source
+                development.
+              </li>
+              <li>
+                🛡️ Create a deterrent to governance attacks via minted GG.
+              </li>
+              <li>
+                🚫 There is no VC allocation, no team allocation and no presale.
+              </li>
+            </ul>
+          </>
+        )
+      },
+      ious: {
+        title: 'IOUs',
+        content: (
+          <>
+            <p className="mb-4">
+              IOUs are the tokens you receive when you fund a loan. They represent your share of
+              the loan’s principal and let you claim repayment plus interest as the manager sells
+              ETH. If you simply want your principal back (plus accrued interest), redeeming IOUs
+              will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
+              your IOUs for GG tokens instead.
+            </p>
+            <h2 className="font-semibold text-pink-600">Funding IOU Loans</h2>
+            <p className="mb-4">
+              Funding happens when you lend stablecoins to a <strong>IOU Loan</strong> contract.
+              You receive IOU tokens in return. These IOUs represent your share of the loan’s
+              principal and entitle you to principal + interest back as ETH is sold.
+            </p>
+            <h2 className="font-semibold text-pink-600">Claiming Interest</h2>
+            <p className="mb-4">
+              You can claim interest on your IOUs at any time without burning them. This will not
+              reduce your IOU principal.
+            </p>
+            <h2 className="font-semibold text-pink-600">Redeeming IOUs</h2>
+            <p className="mb-4">
+              Redeeming IOUs allows you to convert them back into stablecoins. This is useful if
+              you want to exit your position in a loan without holding GG or prefer to keep your
+              funds in stablecoins. <strong>Be careful:</strong> Redeeming IOUs will only give you
+              however much principal has been repaid to-date. If the loan is not fully repaid, you
+              won’t get the entire principal unless enough ETH has been sold to cover it.
+            </p>
+          </>
+        )
+      },
+      risks: {
+        title: 'Risks',
+        content: (
+          <>
+            <p className="mb-4">
+              GigaStrat is a new protocol; there are inherent risks. The code is open source but
+              has not undergone formal audits. Please do your own research and only risk funds you
+              can afford to lose. The protocol’s performance depends heavily on ETH price
+              movements. A significant drop in ETH price could leave the treasury insufficient to
+              repay loans fully, impacting IOU or GG holders.
+            </p>
+            <h2 className="font-semibold text-pink-600">Smart Contract Risks</h2>
+            <p className="mb-4">
+              As with any smart contract, there is a risk of bugs or vulnerabilities. No system is
+              completely secure, and you should be cautious.
+            </p>
+          </>
+        )
+      }
+    };
+
+    const tabItems = Object.keys(docs);
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        {/* Modal container */}
+        <div
+          className={getThemeClass(
+            'bg-white w-full max-w-4xl rounded-3xl shadow-lg flex',
+            'bg-gray-800 max-w-4xl text-white rounded-3xl shadow-lg flex'
+          )}
+          style={{ maxHeight: '90vh' }}
+        >
+          {/* Sidebar tabs */}
+          <div className="w-1/3 border-r border-gray-200 overflow-y-auto rounded-l-xl">
+            <div
+              className={getThemeClass(
+                'flex align-items-center items-center justify-center mt-2 mb-2 gap-2',
+                'bg-pink-100 rounded-3xl w-1/2 mx-auto p-1'
+              )}
+            >
+              <a
+                href="https://discord.gg/vrV4YpUccq"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                <img
+                  src="https://simpleicons.org/icons/discord.svg"
+                  alt="discord"
+                  className="w-6 h-6 inline-block mr-2"
+                />
+              </a>
+              <a
+                href="https://twitter.com/not_pr0"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                <img
+                  src="https://simpleicons.org/icons/x.svg"
+                  alt="twitter"
+                  className="w-6 h-6 inline-block mr-2"
+                />
+              </a>
+              <a
+                href="https://basescan.org/address/0x67961f3f6ae5b9b251bccaed54e7c0db7b9d5265"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                <img
+                  src="https://basescan.org/assets/base/images/svg/brandassets/logo-symbol.svg?v=25.1.4.0"
+                  alt="basescan"
+                  className="w-6 h-6 inline-block mr-2"
+                />
+              </a>
+            </div>
+            {tabItems.map((key) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`block w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-pink-50 ${
+                  activeTab === key
+                    ? 'bg-pink-100 text-pink-500 font-semibold'
+                    : ''
+                } ${getThemeClass(
+                  '',
+                  activeTab === key ? 'bg-purple-700 text-white' : 'bg-gray-800 text-gray-100'
+                )}`}
+              >
+                {docs[key].title}
+              </button>
+            ))}
+            {/* Close button */}
+            <div className="mt-4 text-center">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-pink-400 hover:bg-pink-500 text-white rounded-full mb-4"
+              >
+                I Understand
+              </button>
+            </div>
+          </div>
+
+          {/* Right-side content */}
+          <div className="w-2/3 p-6 overflow-y-auto">
+            <h2 className="text-xl font-bold text-pink-600 mb-2">
+              {docs[activeTab].title}
+            </h2>
+            <div className={getThemeClass('text-gray-700', 'text-gray-100')}>
+              {docs[activeTab].content}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // -------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-pink-50 to-rose-100 text-gray-800 px-4 py-6">
-      <Toaster position="top-right" />
-      {showModal &&
-<InfoModal />
-}
-< GigaStratModal show={showGigaStratModal} onClose={() => setShowGigaStratModal(false)} />
+    <div
+      className={getThemeClass(
+        'min-h-screen w-full bg-gradient-to-br from-pink-50 to-rose-100 text-gray-800 px-4 py-6',
+        'min-h-screen w-full bg-gray-900 text-gray-100 px-4 py-6'
+      )}
+    >
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: darkMode
+            ? {
+                background: '#333',
+                color: '#fff',
+                borderRadius: '8px',
+                border: '1px solid #6b46c1'
+              }
+            : {}
+        }}
+      />
+      {showModal && <InfoModal />}
+      <GigaStratModal show={showGigaStratModal} onClose={() => setShowGigaStratModal(false)} />
+
       {/* Header */}
       <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center">
-        <div className="absolute top-0 right-0 p-4">
+        <button onClick={() => setDarkMode(!darkMode)} className="text-3xl absolute top-0 left-0 p-2">
+          {darkMode ? '🌙' : '☀️'}
+        </button>
+        <div className="absolute flex top-0 right-0 p-4">
+          <button
+            onClick={() => setShowGigaStratModal(true)}
+            className={getThemeClass(
+              'text-xl rounded-full border border-pink-500 text-pink-500 px-3.5 py-0 font-semibold hover:bg-pink-100 transition-colors mx-2',
+              'text-xl rounded-full border border-purple-400 text-purple-400 px-3.5 py-0 font-semibold hover:bg-gray-800 transition-colors mx-2'
+            )}
+          >
+            ?
+          </button>
           <ConnectButton />
         </div>
       </header>
-      
-      <h1 className="text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4">
+
+      <h1
+        className={getThemeClass(
+          'text-5xl font-extrabold text-pink-600 tracking-tight text-center mx-auto mt-4 mb-4',
+          'text-5xl font-extrabold text-purple-400 tracking-tight text-center mx-auto mt-4 mb-4'
+        )}
+      >
         ✨ GigaStrat ✨
       </h1>
 
-      <h2 className="text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]">
+      <h2
+        className={getThemeClass(
+          'text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]',
+          'text-3xl font-semibold bg-purple-700 text-white p-2 rounded-full text-center mx-auto md:w-[400px]'
+        )}
+      >
         {Number(GGEthBalance).toFixed(4)} ETH HODLD
       </h2>
-      <h2 className="text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1">
-      {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
+      <h2
+        className={getThemeClass(
+          'text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1',
+          'text-xl font-semibold bg-purple-700 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1'
+        )}
+      >
+        {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
       </h2>
 
       {/* Swap IOU → GG & Burn GG → ETH */}
       <div className="max-w-6xl mx-auto mt-6 text-center">
-        <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px] mx-auto">
-          <h3 className="text-lg font-semibold text-green-600 mb-3">
+        <div
+          className={getThemeClass(
+            'bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px] mx-auto',
+            'bg-gray-800 rounded-[50px] p-4 md:w-[400px] mx-auto border border-purple-800'
+          )}
+        >
+          <h3
+            className={getThemeClass(
+              'text-lg font-semibold text-green-600 mb-3',
+              'text-lg font-semibold text-green-400 mb-3'
+            )}
+          >
             🌱 Swap IOU → GG
           </h3>
           <select
-            className="w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold"
+            className={getThemeClass(
+              'w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold',
+              'w-full px-3 py-2 bg-gray-700 rounded-full border border-green-700 mb-2 text-green-400 font-semibold'
+            )}
             value={swapIndex}
             onChange={(e) => setSwapIndex(e.target.value)}
             title="Select which loan's IOU you want to swap for GG tokens."
@@ -913,66 +1126,103 @@ function GigaStratModal({ show, onClose }) {
               </option>
             ))}
           </select>
-          <div className="flex w-full bg-green-200 rounded-full border border-green-100 mb-2 px-3 py-1">
-          <input
-            className="bg-green-200 flex-grow outline-none"
-            placeholder="IOU amount"
-            value={swapIOUAmount}
-            onChange={(e) => setSwapIOUAmount(e.target.value)}
-            title="Enter how many IOU tokens you want to swap for GG tokens."
-          />
+          <div
+            className={getThemeClass(
+              'flex w-full bg-green-200 rounded-full border border-green-100 mb-2 px-3 py-1',
+              'flex w-full bg-gray-700 rounded-full border border-green-700 mb-2 px-3 py-1'
+            )}
+          >
+            <input
+              className={getThemeClass(
+                'bg-green-200 flex-grow outline-none',
+                'bg-gray-700 flex-grow outline-none text-white'
+              )}
+              placeholder="IOU amount"
+              value={swapIOUAmount}
+              onChange={(e) => setSwapIOUAmount(e.target.value)}
+              title="Enter how many IOU tokens you want to swap for GG tokens."
+            />
             <button
-              onClick={() => setSwapIOUAmount(loans[swapIndex].userIOUBalance)}
-              className="text-white bg-pink-400 rounded-full px-2 py-1 font-semibold"
+              onClick={() => {
+                const i = parseInt(swapIndex);
+                if (!loans[i]) return;
+                setSwapIOUAmount(loans[i].userIOUBalance || '0');
+              }}
+              className={getThemeClass(
+                'text-white bg-pink-400 rounded-full px-2 py-1 font-semibold',
+                'text-white bg-purple-600 rounded-full px-2 py-1 font-semibold'
+              )}
               title="Swap all your IOU tokens for GG tokens."
             >
               Max
             </button>
           </div>
-          <p className="text-green-500 font-semibold">
-            {swapIOUAmount || 0} IOU →{" "}
+          <p className={getThemeClass('text-green-500 font-semibold', 'text-green-400 font-semibold')}>
+            {swapIOUAmount || 0} IOU →{' '}
             {loans[swapIndex]
               ? (
                   Number(swapIOUAmount || 0) /
                   Number(loans[swapIndex].iouConversionRate || 1)
                 ).toFixed(4)
-              : 0}{" "}
-            {GGSymbol}
+              : 0}{' '}
+            {GGSymbol || 'GG'}
           </p>
           <button
             onClick={handleSwapIOU}
-            className="w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors"
+            className={getThemeClass(
+              'w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors',
+              'w-full py-2 bg-green-800 rounded-full font-medium hover:bg-green-700 text-green-300 transition-colors'
+            )}
             title="Swap your IOU tokens to mint new GG tokens."
           >
             Mint GG
           </button>
 
-          <h3 className="text-lg font-semibold text-pink-600 mt-6 mb-3">
+          <h3
+            className={getThemeClass(
+              'text-lg font-semibold text-pink-600 mt-6 mb-3',
+              'text-lg font-semibold text-purple-400 mt-6 mb-3'
+            )}
+          >
             🔥 Burn GG for ETH
           </h3>
-          <div className="flex w-full bg-white rounded-full border border-pink-100 mb-2 px-3 py-1">
-          <input
-            className=" flex-grow outline-none"
-            placeholder={`Amount of ${GGSymbol}`}
-            value={burnAmount}
-            onChange={(e) => setBurnAmount(e.target.value)}
-            title="How many GG tokens you want to burn in exchange for ETH."
-          />
+          <div
+            className={getThemeClass(
+              'flex w-full bg-white rounded-full border border-pink-100 mb-2 px-3 py-1',
+              'flex w-full bg-gray-700 rounded-full border border-purple-700 mb-2 px-3 py-1'
+            )}
+          >
+            <input
+              className={getThemeClass(
+                'flex-grow outline-none',
+                'flex-grow outline-none bg-gray-700 text-white'
+              )}
+              placeholder={`Amount of ${GGSymbol || 'GG'}`}
+              value={burnAmount}
+              onChange={(e) => setBurnAmount(e.target.value)}
+              title="How many GG tokens you want to burn in exchange for ETH."
+            />
             <button
               onClick={() => setBurnAmount(myGGBalance)}
-              className="text-white bg-pink-400 rounded-full px-2 py-1 font-semibold"
-              >
-                Max
+              className={getThemeClass(
+                'text-white bg-pink-400 rounded-full px-2 py-1 font-semibold',
+                'text-white bg-purple-600 rounded-full px-2 py-1 font-semibold'
+              )}
+            >
+              Max
             </button>
           </div>
           {burnAmount && parseFloat(burnAmount) > 0 && (
-            <p className="text-pink-600 font-semibold">
-              {burnAmount} {GGSymbol} → ~{burnPreview} ETH
+            <p className={getThemeClass('text-pink-600 font-semibold', 'text-purple-400 font-semibold')}>
+              {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
             </p>
           )}
           <button
             onClick={handleBurnDAOForETH}
-            className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2"
+            className={getThemeClass(
+              'w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2',
+              'w-full py-2 bg-purple-800 rounded-full font-medium hover:bg-purple-700 text-purple-300 transition-colors mt-2'
+            )}
             title="Burn the specified amount of GG tokens for your share of the treasury ETH."
           >
             Burn GG
@@ -982,12 +1232,19 @@ function GigaStratModal({ show, onClose }) {
 
       {/* Loans list */}
       <div className="max-w-7xl mx-auto mt-8 p-2">
-        <h2 className="text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400">
+        <h2
+          className={getThemeClass(
+            'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400',
+            'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400'
+          )}
+        >
           GG Loans
         </h2>
 
         {loans.length === 0 ? (
-          <p className="text-pink-600 text-center font-medium">
+          <p
+            className={getThemeClass('text-pink-600 text-center font-medium', 'text-purple-400 text-center font-medium')}
+          >
             No loans found or none discovered so far.
           </p>
         ) : (
@@ -995,161 +1252,269 @@ function GigaStratModal({ show, onClose }) {
             {loans.map((ln) => (
               <div
                 key={ln.index}
-                className="bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto"
+                className={getThemeClass(
+                  'bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto',
+                  'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 relative text-center max-w-3xl mx-auto'
+                )}
               >
                 {/* Repaid or not */}
                 <div className="mt-1 mx-auto">
                   {ln.fullyRepaid ? (
                     <span
-                      className="inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full"
+                      className={getThemeClass(
+                        'inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full',
+                        'inline-block px-2 py-1 text-xs font-bold text-green-100 bg-green-500 rounded-full'
+                      )}
                       title="This loan has been fully repaid."
                     >
                       Fully Repaid
                     </span>
                   ) : (
                     <span
-                      className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full"
+                      className={getThemeClass(
+                        'inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full',
+                        'inline-block px-2 py-1 text-xs font-bold text-red-100 bg-red-500 rounded-full'
+                      )}
                       title="This loan is not fully repaid yet."
                     >
                       Not Repaid
                     </span>
                   )}
                   {ln.loanDrawnTime !== '0' && (
-                    <span className="text-xs text-gray-500 ml-1">
-                      (drawn on{" "}
-                      {new Date(
-                        parseInt(ln.loanDrawnTime, 10) * 1000
-                      ).toLocaleDateString()}
-                      )
+                    <span className={getThemeClass('text-xs text-gray-500 ml-1', 'text-xs text-gray-400 ml-1')}>
+                      (drawn on {new Date(parseInt(ln.loanDrawnTime, 10) * 1000).toLocaleDateString()})
                     </span>
                   )}
                 </div>
 
-                <p className="text-lg font-semibold text-pink-600 mt-2">
+                <div className="my-2 flex justify-center gap-2">
                   <span
-                    className="text-white bg-blue-300 rounded-full px-2 py-1 font-semibold"
+                    className={getThemeClass(
+                      'text-white bg-blue-300 rounded-full px-2 py-1 font-semibold',
+                      'text-white bg-blue-700 rounded-full px-2 py-1 font-semibold'
+                    )}
                     title="IOU token name"
                   >
                     {ln.iouName}
-                  </span>{" "}
+                  </span>{' '}
                   <span
-                    className="text-white bg-blue-200 rounded-full px-2 py-1 ml-1 font-semibold"
+                    className={getThemeClass(
+                      'text-white bg-blue-200 rounded-full px-2 py-1 font-semibold',
+                      'text-white bg-blue-800 rounded-full px-2 py-1 font-semibold'
+                    )}
                     title="IOU token symbol"
                   >
                     {ln.iouSymbol}
                   </span>
-                </p>
+                </div>
+
                 <p
-                  className="text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto font-semibold text-xl mt-2 mb-0"
+                  className={getThemeClass(
+                    'text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto text-xl mt-2 mb-2',
+                    'text-lg font-semibold bg-green-700 text-white rounded-full px-2 py-1 w-3/4 mx-auto text-xl mt-2 mb-2'
+                  )}
                   title="The rate of IOU tokens per 1 GG token."
                 >
-                  {ln.iouConversionRate} IOU per {GGSymbol}
+                  {ln.iouConversionRate} IOU per {GGSymbol || 'GG'}
                 </p>
 
                 <div className="text-sm text-gray-700 mb-3 text-center grid grid-cols-2 gap-2 mt-2">
-                  <p className="absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl">
+                  <p
+                    className={getThemeClass(
+                      'absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl',
+                      'absolute top-2 left-2 mb-1 font-bold bg-purple-700 text-white rounded-full px-2 py-1 w-9 text-xl'
+                    )}
+                  >
                     {ln.index}
                   </p>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Goal</p>
                     <p
-                      className="text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      Goal
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1',
+                        'text-xl font-semibold text-white bg-purple-700 rounded-full px-1 py-1'
+                      )}
                       title="The total principal goal (in USDC)."
                     >
                       {ln.loanGoal} USDC
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Loan ETH</p>
                     <p
-                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      Loan ETH
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Total ETH the manager purchased for this loan that is reserved for debt."
                     >
                       {Number(ln.totalBuyETH).toFixed(4)} ETH
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Funded</p>
                     <p
-                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      Funded
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Total USDC currently funded by backers (not necessarily drawn)."
                     >
                       {Number(ln.totalFunded || '0').toFixed(4)} USDC
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Drawn</p>
                     <p
-                      className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      Drawn
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Amount of USDC that has actually been drawn by the borrower."
                     >
                       {Number(ln.totalDrawnDown).toFixed(4)} USDC
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">My IOUs</p>
                     <p
-                      className="bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      My IOUs
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-blue-700 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Your personal IOU balance in this loan."
                     >
                       {ln.userIOUBalance} {ln.iouSymbol}
                     </p>
                   </div>
                   <div>
-                    <p className="text-yellow-600 font-semibold text-lg">
+                    <p
+                      className={getThemeClass(
+                        'text-orange-600 font-semibold text-lg',
+                        'text-orange-400 font-semibold text-lg'
+                      )}
+                    >
                       Repaid
                     </p>
                     <p
-                      className="bg-yellow-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="How much has been repaid so far (principal + interest)."
                     >
-                      {Number(ln.repayments || '0').toFixed(4)}{" "}
-                      {ln.underlyingSymbol}
+                      {Number(ln.repayments || '0').toFixed(4)} {ln.underlyingSymbol}
                     </p>
                   </div>
                   <div>
-                    <p className="text-green-600 font-semibold text-lg">
+                    <p
+                      className={getThemeClass(
+                        'text-green-600 font-semibold text-lg',
+                        'text-green-400 font-semibold text-lg'
+                      )}
+                    >
                       Interest
                     </p>
                     <p
-                      className="bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-green-700 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Interest available for you to claim."
                     >
                       {ln.claimableInterest} {ln.underlyingSymbol}
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">
+                    <p
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
                       Balance
                     </p>
                     <p
-                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Your current balance of the underlying asset."
                     >
-                      {Number(ln.underlyingBalance || '0').toFixed(4)}{" "}
-                      {ln.underlyingSymbol}
+                      {Number(ln.underlyingBalance || '0').toFixed(4)} {ln.underlyingSymbol}
                     </p>
                   </div>
                   <div>
-                    <p className="text-pink-600 font-semibold text-lg">Owed</p>
                     <p
-                      className="bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'text-pink-600 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      Owed
+                    </p>
+                    <p
+                      className={getThemeClass(
+                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Total owed = principal + accrued interest so far."
                     >
-                      {Number(ln.updatedTotalOwed || '0').toFixed(4)}{" "}
-                      {ln.underlyingSymbol}
+                      {Number(ln.updatedTotalOwed || '0').toFixed(4)} {ln.underlyingSymbol}
                     </p>
                   </div>
                   <div>
-                    <p className="text-orange-600 font-semibold text-lg">
+                    <p
+                      className={getThemeClass(
+                        'text-orange-600 font-semibold text-lg',
+                        'text-orange-400 font-semibold text-lg'
+                      )}
+                    >
                       Redeemable
                     </p>
                     <p
-                      className="bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl"
+                      className={getThemeClass(
+                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                      )}
                       title="Estimated principal returned per IOU (approx share)."
                     >
-                      {ln.redeemable ? ln.redeemable.toFixed(4) : '0'}{" "}
-                      {ln.underlyingSymbol}/IOU
+                      {ln.redeemable ? ln.redeemable.toFixed(4) : '0'} {ln.underlyingSymbol}/IOU
                     </p>
                   </div>
                 </div>
@@ -1160,7 +1525,10 @@ function GigaStratModal({ show, onClose }) {
                   {!ln.fullyRepaid && (
                     <button
                       onClick={() => handleQuickRepay(ln.index)}
-                      className="bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold"
+                      className={getThemeClass(
+                        'bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold',
+                        'bg-orange-500 hover:bg-orange-500 text-orange-400 px-2 py-1 rounded-full font-bold'
+                      )}
                       title="Repay 1% of the total owed USDC by selling the required ETH."
                     >
                       💵
@@ -1172,36 +1540,51 @@ function GigaStratModal({ show, onClose }) {
                 <input
                   type="text"
                   placeholder="Amount"
-                  className="w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-white'
+                  )}
                   value={fundInput}
                   onChange={(e) => setFundInput(e.target.value)}
                   title="Amount for Fund/Redeem/Unfund calls."
                 />
                 <div className="flex items-center gap-1 justify-center">
                   <button
-                    onClick={() => fundLoan(ln.index,ln.loanAddress, fundInput)}
-                    className="bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    onClick={() => fundLoan(ln.index, ln.loanAddress, fundInput)}
+                    className={getThemeClass(
+                      'bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                      'bg-purple-700 hover:bg-purple-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+                    )}
                     title="Fund the loan with this USDC amount."
                   >
                     Fund
                   </button>
                   <button
                     onClick={() => redeemIOUs(ln.loanAddress, fundInput)}
-                    className="bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    className={getThemeClass(
+                      'bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                      'bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+                    )}
                     title="Redeem this many IOUs, receiving principal from the repaid portion."
                   >
                     Redeem
                   </button>
                   <button
                     onClick={() => claimInterest(ln.loanAddress)}
-                    className="bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    className={getThemeClass(
+                      'bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                      'bg-green-700 hover:bg-green-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+                    )}
                     title="Claim your accrued interest for this loan."
                   >
                     Claim
                   </button>
                   <button
                     onClick={() => unfundLoan(ln.loanAddress, fundInput)}
-                    className="bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors"
+                    className={getThemeClass(
+                      'bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                      'bg-red-700 hover:bg-red-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+                    )}
                     title="Unfund (withdraw) your yet-undrawn principal from this loan."
                   >
                     Unfund
@@ -1211,21 +1594,29 @@ function GigaStratModal({ show, onClose }) {
             ))}
 
             {/* "Open Loan" if canCreateLoan is true, else a placeholder */}
-            <div 
-              className="bg-green-100 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 
-                        text-center flex items-center justify-center"
+            <div
+              className={getThemeClass(
+                'bg-green-100 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 text-center flex items-center justify-center',
+                'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 text-center flex items-center justify-center'
+              )}
             >
               {canOpenLoan ? (
                 <button
                   onClick={handleOpenLoan}
-                  className="text-3xl font-semibold text-white bg-pink-400 rounded-full p-4 hover:bg-pink-500"
+                  className={getThemeClass(
+                    'text-3xl font-semibold text-white bg-pink-400 rounded-full p-4 hover:bg-pink-500',
+                    'text-3xl font-semibold text-white bg-purple-600 rounded-full p-4 hover:bg-purple-500'
+                  )}
                   title="Create a new loan contract once all existing ones are fully funded."
                 >
                   🌱 Open Next Loan
                 </button>
               ) : (
                 <h3
-                  className="text-3xl font-semibold text-white bg-gray-300 rounded-full p-4"
+                  className={getThemeClass(
+                    'text-3xl font-semibold text-white bg-gray-300 rounded-full p-4',
+                    'text-3xl font-semibold text-white bg-gray-700 rounded-full p-4'
+                  )}
                   title="You must ensure all existing loans are fully funded before creating a new one."
                 >
                   Fill all loans to create more.
@@ -1236,11 +1627,16 @@ function GigaStratModal({ show, onClose }) {
         )}
       </div>
 
-      {/* Manager summary only if the user is the special address */}
+      {/* Manager summary & advanced calls if user is the special address */}
       {userAddress?.toLowerCase() === '0x9d31e30003f253563ff108bc60b16fdf2c93abb5'.toLowerCase() && (
         <>
-          <div className="max-w-6xl mx-auto mb-6 bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-            <h2 className="text-lg font-semibold text-pink-600">
+          <div
+            className={getThemeClass(
+              'max-w-6xl mx-auto mb-6 bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+              'max-w-6xl mx-auto mb-6 bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+            )}
+          >
+            <h2 className={getThemeClass('text-lg font-semibold text-pink-600', 'text-lg font-semibold text-purple-400')}>
               Global Status 🌸
             </h2>
             <div className="text-sm space-y-2 mt-2">
@@ -1269,7 +1665,12 @@ function GigaStratModal({ show, onClose }) {
                 </div>
               </div>
 
-              <hr className="border-rose-200 my-2"/>
+              <hr
+                className={getThemeClass(
+                  'border-rose-200 my-2',
+                  'border-purple-700 my-2'
+                )}
+              />
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
                   <p>
@@ -1300,46 +1701,69 @@ function GigaStratModal({ show, onClose }) {
           {/* Manager-level calls */}
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
             {/* startLoan */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
               <h3 className="text-lg font-semibold text-pink-600 mb-3">💖 Start a New Loan</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan Goal (USDC, 6 decimals)"
                   value={startLoanGoal}
                   onChange={(e) => setStartLoanGoal(e.target.value)}
                   title="The total principal goal for the new loan (in USDC)."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Underlying token address"
                   value={startLoanToken}
                   onChange={(e) => setStartLoanToken(e.target.value)}
                   title="Address of the ERC20 token to be borrowed (e.g., USDC)."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Annual Interest Rate (bps)"
                   value={annualInterest}
                   onChange={(e) => setAnnualInterest(e.target.value)}
                   title="Annual interest rate in basis points, e.g., 100 = 1% APR."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Platform Fee Rate (bps)"
                   value={platformFee}
                   onChange={(e) => setPlatformFee(e.target.value)}
                   title="Platform fee in basis points (bps)."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Fee Address"
                   value={feeAddress}
                   onChange={(e) => setFeeAddress(e.target.value)}
                   title="Where platform fees should be sent."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-rose-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-rose-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="IOU→GG rate (e.g. 1.0 => 1e18)"
                   value={loanIOUConversionRate}
                   onChange={(e) => setLoanIOUConversionRate(e.target.value)}
@@ -1347,7 +1771,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleStartLoan}
-                  className="w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Deploy a new Spot IOU Loan via the IOUMint factory."
                 >
                   startLoan
@@ -1356,18 +1783,29 @@ function GigaStratModal({ show, onClose }) {
             </div>
 
             {/* buyETH */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
               <h3 className="text-lg font-semibold text-yellow-600 mb-3">🌻 Buy ETH</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-yellow-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan Index"
                   value={buyLoanIndex}
                   onChange={(e) => setBuyLoanIndex(e.target.value)}
                   title="Which loan (by index) to buy ETH for."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-yellow-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-yellow-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="USDC Amount"
                   value={buyUsdcAmount}
                   onChange={(e) => setBuyUsdcAmount(e.target.value)}
@@ -1375,7 +1813,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleBuyETH}
-                  className="w-full py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 text-yellow-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 text-yellow-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Swaps USDC for ETH on Uniswap (manager-level function)."
                 >
                   buyETH
@@ -1386,13 +1827,19 @@ function GigaStratModal({ show, onClose }) {
 
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mt-6">
             {/* redeemHeldIOUsAndSwapToETH */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-              <h3 className="text-lg font-semibold text-orange-600 mb-3">
-                🪄 Redeem IOUs &amp; Swap
-              </h3>
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
+              <h3 className="text-lg font-semibold text-orange-600 mb-3">🪄 Redeem IOUs & Swap</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-orange-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-orange-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan Index"
                   value={redeemLoanIndex}
                   onChange={(e) => setRedeemLoanIndex(e.target.value)}
@@ -1400,7 +1847,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={() => handleRedeemIOUs(parseInt(redeemLoanIndex || '0', 10))}
-                  className="w-full py-2 bg-orange-200 rounded-full font-medium hover:bg-orange-300 text-orange-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-orange-200 rounded-full font-medium hover:bg-orange-300 text-orange-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Redeems any IOUs this manager contract is still holding, then swaps USDC→ETH."
                 >
                   redeemHeldIOUsAndSwapToETH
@@ -1409,20 +1859,29 @@ function GigaStratModal({ show, onClose }) {
             </div>
 
             {/* drawDownLoan */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-              <h3 className="text-lg font-semibold text-purple-600 mb-3">
-                🚰 Draw Down Loan
-              </h3>
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
+              <h3 className="text-lg font-semibold text-purple-600 mb-3">🚰 Draw Down Loan</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-purple-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan index"
                   value={drawLoanIndex}
                   onChange={(e) => setDrawLoanIndex(e.target.value)}
                   title="Which loan index to draw from."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-purple-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-purple-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Amount in USDC"
                   value={drawAmount}
                   onChange={(e) => setDrawAmount(e.target.value)}
@@ -1430,7 +1889,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleDrawDownLoan}
-                  className="w-full py-2 bg-purple-200 rounded-full font-medium hover:bg-purple-300 text-purple-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-purple-200 rounded-full font-medium hover:bg-purple-300 text-purple-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Borrower function: draws these USDC from the funded portion."
                 >
                   drawDownLoan
@@ -1439,13 +1901,19 @@ function GigaStratModal({ show, onClose }) {
             </div>
 
             {/* repayLoan (aggregator) */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-              <h3 className="text-lg font-semibold text-red-600 mb-3">
-                💵 Repay Loan (Aggregator)
-              </h3>
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
+              <h3 className="text-lg font-semibold text-red-600 mb-3">💵 Repay Loan (Aggregator)</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-red-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan index"
                   value={repayLoanIndex}
                   onChange={(e) => setRepayLoanIndex(e.target.value)}
@@ -1453,7 +1921,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleRepayLoan}
-                  className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Calls repayLoan(loanIndex) which repays 1% of the total owed USDC."
                 >
                   repayLoan
@@ -1462,20 +1933,29 @@ function GigaStratModal({ show, onClose }) {
             </div>
 
             {/* repayLoanUSDC (manual) */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-              <h3 className="text-lg font-semibold text-red-600 mb-3">
-                💵 Repay Loan (USDC)
-              </h3>
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
+              <h3 className="text-lg font-semibold text-red-600 mb-3">💵 Repay Loan (USDC)</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-red-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan index"
                   value={repayLoanIndexUSDC}
                   onChange={(e) => setRepayLoanIndexUSDC(e.target.value)}
                   title="Which loan index to repay."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-red-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-red-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="USDC amount"
                   value={repayUsdcAmount}
                   onChange={(e) => setRepayUsdcAmount(e.target.value)}
@@ -1483,7 +1963,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleRepayLoanUSDC}
-                  className="w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-red-200 rounded-full font-medium hover:bg-red-300 text-red-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="Manually repay the loan with a specific USDC amount."
                 >
                   repayLoanUSDC
@@ -1492,20 +1975,29 @@ function GigaStratModal({ show, onClose }) {
             </div>
 
             {/* setIOUConversionRate (if needed) */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200">
-              <h3 className="text-lg font-semibold text-blue-600 mb-3">
-                ⚙️ Update IOU Rate
-              </h3>
+            <div
+              className={getThemeClass(
+                'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
+                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              )}
+            >
+              <h3 className="text-lg font-semibold text-blue-600 mb-3">⚙️ Update IOU Rate</h3>
               <div className="space-y-2 text-sm">
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-blue-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="Loan index"
                   value={setIndex}
                   onChange={(e) => setSetIndex(e.target.value)}
                   title="Which loan index to modify the rate for."
                 />
                 <input
-                  className="w-full px-3 py-2 bg-white rounded-full border border-blue-100"
+                  className={getThemeClass(
+                    'w-full px-3 py-2 bg-white rounded-full border border-blue-100',
+                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 text-white'
+                  )}
                   placeholder="New rate in 1e18"
                   value={newRate}
                   onChange={(e) => setNewRate(e.target.value)}
@@ -1513,7 +2005,10 @@ function GigaStratModal({ show, onClose }) {
                 />
                 <button
                   onClick={handleSetIOURate}
-                  className="w-full py-2 bg-blue-200 rounded-full font-medium hover:bg-blue-300 text-blue-800 transition-colors"
+                  className={getThemeClass(
+                    'w-full py-2 bg-blue-200 rounded-full font-medium hover:bg-blue-300 text-blue-800 transition-colors',
+                    'w-full py-2 bg-purple-700 rounded-full font-medium hover:bg-purple-600 text-white transition-colors'
+                  )}
                   title="(Example) Update IOU conversion rate for a given loan."
                 >
                   setIOUConversionRate
