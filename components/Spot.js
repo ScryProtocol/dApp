@@ -777,6 +777,10 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               holders of the GG token. If the price of ETH increases, the treasury’s value grows,
               enhancing the backing of each GG token.
             </p>
+                    <p className="mb-4 font-semibold">
+          Example: If you hold 1 GG token, the system raises $100,000 in loans, and then ETH price doubles. After the protocol repays the original $100,000 plus interest, approximately $100,000 worth of ETH remains as profit in the treasury. If no other GG tokens exist, your single GG token now directly represents this additional ETH, allowing you to burn your GG to claim this increased value.
+        </p>
+
           </>
         )
       },
