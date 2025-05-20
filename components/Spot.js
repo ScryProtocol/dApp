@@ -1039,6 +1039,8 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
         'min-h-screen w-full bg-gray-900 text-gray-100 px-4 py-6'
       )}
     >
+    <title>GigaStrat</title>
+      <meta name="description" content="GigaStrat - A fully onchain ETH treasury" />
       <Toaster
         position="top-right"
         toastOptions={{
