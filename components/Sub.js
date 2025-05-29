@@ -677,7 +677,7 @@ export default function FullDapp() {
             {data.map((item) => (
               <div
                 key={item.hash}
-                className="relative bg-green-100 bg-opacity-90 rounded-3xl border border-green-200 w-full justify-between p-2 gap-2 mb-4 grid lg:flex"
+                className={`relative ${streamable[item.hash] ?'bg-green-100 border-green-200': 'bg-orange-100 border-orange-200 '} bg-opacity-90 rounded-3xl border w-full justify-between p-2 gap-2 mb-4 grid lg:flex`}
               >
                 {/* label */}
                 <div className="bg-green-400 text-white font-semibold rounded-full px-3 py-1">
@@ -752,7 +752,7 @@ export default function FullDapp() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-4">
         {/* Header */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 mb-4 items-center justify-center">
-          <div>.</div>
+          <div></div>
           <div>
             <p className="bg-gradient-to-r from-pink-400 to-yellow-400 text-white text-center py-2 rounded-full w-fit mx-auto px-4 font-semibold">
               Powered by Boop.Finance
