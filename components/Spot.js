@@ -1275,7 +1275,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             </button>
           </div>
           {showSimple && (
-            <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 ring-1 ring-pink-200 relative text-center max-w-xl mx-auto mb-4">
+            <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4">
           <h2
             className={getThemeClass(
               'text-2xl font-semibold text-pink-500 mb-4',
