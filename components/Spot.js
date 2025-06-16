@@ -699,6 +699,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
     // eslint-disable-next-line
   }, [userAddress]);
   const [showModal, setShowModal] = useState(true);
+  const [showSimple, setShowSimple] = useState(false);
   const InfoModal = () => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -1237,34 +1238,188 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
         </div>
       </div>
 
-      {/* Loans list */}
-      <div className="max-w-7xl mx-auto mt-8 p-2">
-        <h2
-          className={getThemeClass(
-            'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400',
-            'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400'
-          )}
-        >
-          GG Loans
-        </h2>
-
-        {loans.length === 0 ? (
-          <p
-            className={getThemeClass('text-pink-500 text-center font-medium', 'text-purple-400 text-center font-medium')}
+        <div className="max-w-7xl mx-auto mt-8 p-2">
+          <h2
+            className={getThemeClass(
+          'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400',
+          'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400'
+            )}
           >
-            No loans found or none discovered so far.
-          </p>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {loans.map((ln) => (
-              <div
-                key={ln.index}
-                className={getThemeClass(
-                  'bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto',
-                  'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 relative text-center max-w-3xl mx-auto'
-                )}
-              >
-                {/* Repaid or not */}
+            GG Loans
+          </h2>
+          <div className="flex justify-center mb-4">
+            <button
+          onClick={() => setShowSimple(!showSimple)}
+          className={getThemeClass(
+            'px-4 py-2 bg-pink-300 text-white rounded-full font-semibold hover:bg-pink-400 transition-colors',
+            'px-4 py-2 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-500 transition-colors'
+          )}
+          title="Toggle between simple and advanced view"
+            >
+          {showSimple ? 'Show Advanced' : 'Show Simple'}
+            </button>
+          </div>
+          {showSimple && (
+            <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 ring-1 ring-pink-200 relative text-center max-w-xl mx-auto mb-4">
+          <h2
+            className={getThemeClass(
+              'text-2xl font-semibold text-pink-500 mb-4',
+              'text-2xl font-semibold text-purple-400 mb-4'
+            )}
+          >
+            Fund Current Loan
+          </h2>
+          <h3
+            className={getThemeClass(
+              'text-lg font-semibold text-pink-500 mb-2',
+              'text-lg font-semibold text-purple-400 mb-2'
+            )}
+          >
+            Current Loan</h3>
+            <div 
+            className={getThemeClass(
+              'text-lg font-semibold text-pink-500 mb-2',
+              'text-lg font-semibold text-purple-400 mb-2'
+            )}>
+            <span className="bg-pink-100 rounded-full px-2">#{loans[0]?.index || 'N/A'}</span> <span className="bg-pink-300 rounded-full px-2 text-white">{loans[0]?.interestRate || 'N/A'}% APR</span>
+            </div>
+          {/* Simple fund UI */}
+          {loans.length > 0 && (
+            <div className="">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mb-2">
+                <h3 className={getThemeClass(
+                  'text-pink-500 font-semibold',
+                  'text-purple-400 font-semibold'
+                )}>
+                  Loan Goal
+                </h3>
+                <p className={getThemeClass(
+                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
+                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                )}>
+                  {Number(loans[0].loanGoal || '0').toFixed(4)} USDC
+                </p>
+              </div>
+              <div className="mb-2">
+                <h3 className={getThemeClass(
+                  'text-pink-500 font-semibold',
+                  'text-purple-400 font-semibold'
+                )}>
+                  Funded
+                </h3>
+                <p className={getThemeClass(
+                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
+                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                )}>
+                  {Number(loans[0].fundedAmount || '0').toFixed(4)} USDC
+                </p>
+              </div>
+              <div className="mb-2">
+                <h3 className={getThemeClass(
+                  'text-pink-500 font-semibold',
+                  'text-purple-400 font-semibold'
+                )}>
+                  My IOUs
+                </h3>
+                <p className={getThemeClass(
+                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
+                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                )}>
+                  {Number(loans[0].userIOUBalance || '0').toFixed(4)} {loans[0].iouSymbol}
+                </p>
+              </div>
+              <div className="mb-2">
+                <h3 className={getThemeClass(
+                  'text-pink-500 font-semibold',
+                  'text-purple-400 font-semibold'
+                )}>
+                  My {loans[0].underlyingSymbol || 'USDC'} Balance
+                </h3>
+                <p className={getThemeClass(
+                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
+                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                )}>
+                  {Number(loans[0].underlyingBalance || '0').toFixed(4)} {loans[0].underlyingSymbol || 'USDC'}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center">
+              <input
+            type="text"
+            placeholder="Amount"
+            className={getThemeClass(
+              'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2',
+              'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-white'
+            )}
+            value={fundInput}
+            onChange={(e) => setFundInput(e.target.value)}
+            title="Amount for Fund/Redeem/Unfund calls."
+              />
+              <div className="flex items-center gap-1 justify-center">
+            <button
+              onClick={() => fundLoan(loans[0].index, loans[0].loanAddress, fundInput)}
+              className={getThemeClass(
+                'bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                'bg-purple-700 hover:bg-purple-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+              )}
+              title="Fund the loan with this USDC amount."
+            >
+              Fund
+            </button>
+            <button
+              onClick={() => redeemIOUs(loans[0].loanAddress, fundInput)}
+              className={getThemeClass(
+                'bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                'bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+              )}
+              title="Redeem this many IOUs, receiving principal from the repaid portion."
+            >
+              Redeem
+            </button>
+            <button
+              onClick={() => claimInterest(loans[0].loanAddress)}
+              className={getThemeClass(
+                'bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                'bg-green-700 hover:bg-green-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+              )}
+              title="Claim your accrued interest for this loan."
+            >
+              Claim
+            </button>
+            <button
+              onClick={() => unfundLoan(loans[0].loanAddress, fundInput)}
+              className={getThemeClass(
+                'bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
+                'bg-red-700 hover:bg-red-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+              )}
+              title="Unfund (withdraw) your yet-undrawn principal from this loan."
+            >
+              Unfund
+            </button>
+              </div>
+            </div>
+          </div>
+          )}
+            </div>
+          )}
+          {loans.length === 0 ? (
+            <p
+          className={getThemeClass('text-pink-500 text-center font-medium', 'text-purple-400 text-center font-medium')}
+            >
+          No loans found or none discovered so far.
+            </p>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {loans.map((ln) => (
+            <div
+              key={ln.index}
+              className={getThemeClass(
+            'bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto',
+            'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 relative text-center max-w-3xl mx-auto'
+              )}
+            >
+              {/* Repaid or not */}
                 <div className="mt-1 mx-auto">
                   {ln.fullyRepaid ? (
                     <span
