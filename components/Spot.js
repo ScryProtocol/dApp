@@ -116,7 +116,7 @@ function GGLoanManagerUI() {
   const provider = useChainId()==8453?new ethers.JsonRpcProvider('https://1rpc.io/base'):useEthersProvider();
   const signer = useEthersSigner();
   const IOUMintAddress =useChainId()==1? '0xeFF111b48622C1cab239E2105e19B05C73Bc9dA6':'0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
-  let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
+  let userAddress = useAccount().address||'0x00000000000000C0D7D3017B342ff039B55b0879'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
   let GGLoanManagerAddress = useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
@@ -926,6 +926,18 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <p className="mb-4">
               As with any smart contract, there is a risk of bugs or vulnerabilities. No system is
               completely secure, and you should be cautious.
+            </p>
+            <h2 className="font-semibold text-pink-500">Market Risks</h2>
+            <p className="mb-4">
+              The protocol’s value is tied to ETH price. If ETH drops significantly, the treasury
+              may not be able to cover all IOU redemptions or GG burns. This could lead to losses
+              for holders.
+            </p>
+            <h2 className="font-semibold text-pink-500">Liability</h2>
+            <p className="mb-4">
+              GigaStrat is provided "as is" without warranties of any kind or guarantees of any kind inc safety of funds. By using the protocol,
+              you acknowledge that you understand the risks and agree not to hold the developers
+              liable for any losses incurred.
             </p>
           </>
         )
