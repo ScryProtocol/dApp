@@ -290,7 +290,7 @@ let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanMan
   
     const { returnData } = await multicallContract.aggregate(loanCalls);
   
-    const results = [];
+    let results = [];
     for (let i = 0; i < returnData.length; i++) {
       if (!returnData[i] || returnData[i] === '0x') break;
   
@@ -334,9 +334,12 @@ let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanMan
         results[i].totalDrawnDown = Number(ethers.formatUnits(info.totalDrawnDown, 6))+Number(results[i].loanGoal)-Number(ethers.formatUnits(info.loanGoal, 6));
         results[i].totalFunded = Number(ethers.formatUnits(info.totalFunded, 6))+Number(results[i].loanGoal)-Number(ethers.formatUnits(info.loanGoal, 6));
         results[i].loanGoal2 = ethers.formatUnits(info.loanGoal, 6);
+        results[i].interestRate = Number(info.annualInterestRate / 10000n); // Convert basis points to percentage
       });
     }
-  
+    let res=results[results.length-1]
+  results = results.filter((r) => r.index!=results.length-1);
+  results.unshift(res);
     return results;
   }
   
@@ -1288,16 +1291,16 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             )}
           >
             Current Loan</h3>
+          {/* Simple fund UI */}
+          {loans.length > 0 && (
+            <div className="">
             <div 
             className={getThemeClass(
               'text-lg font-semibold text-pink-500 mb-2',
               'text-lg font-semibold text-purple-400 mb-2'
             )}>
-            <span className="bg-pink-100 rounded-full px-2">#{loans[0]?.index || 'N/A'}</span> <span className="bg-pink-300 rounded-full px-2 text-white">{loans[0]?.interestRate || 'N/A'}% APR</span>
+            <span className="bg-pink-100 rounded-full px-2">#{Number(loans[0].index) ?? 'N/A'}</span> <span className="bg-pink-300 rounded-full px-2 text-white">{Number(loans[0].interestRate) ?? 'N/A'}% APR</span>
             </div>
-          {/* Simple fund UI */}
-          {loans.length > 0 && (
-            <div className="">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="mb-2">
                 <h3 className={getThemeClass(
