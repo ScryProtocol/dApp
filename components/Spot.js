@@ -699,7 +699,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
     // eslint-disable-next-line
   }, [userAddress]);
   const [showModal, setShowModal] = useState(true);
-  const [showSimple, setShowSimple] = useState(false);
+  const [showSimple, setShowSimple] = useState(true);
   const InfoModal = () => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -1079,7 +1079,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
 
       <h1
         className={getThemeClass(
-          'text-5xl font-extrabold text-pink-500 tracking-tight text-center mx-auto mt-4 mb-4',
+          'text-5xl font-extrabold text-pink-500 tracking-tight text-center mx-auto mt-10 mb-4',
           'text-5xl font-extrabold text-purple-400 tracking-tight text-center mx-auto mt-4 mb-4'
         )}
       >
@@ -1344,12 +1344,27 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                 </p>
               </div>
             </div>
+            {Number(loans[0].interestClaimable || '0') > 0 && (
+            <div className="">
+              <h3 className={getThemeClass(
+                'text-green-500 font-semibold',
+                'text-green-400 font-semibold'
+              )}>
+                Interest Claimable
+              </h3>
+              <p className={getThemeClass(
+                'bg-green-200 text-green-500 rounded-full px-3 py-1 w-full mx-auto font-semibold',
+                'bg-green-800 text-green-300 rounded-full px-3 py-1 w-full mx-auto font-semibold')}>
+                {Number(loans[0].interestClaimable || '0').toFixed(4)} {loans[0].underlyingSymbol || 'USDC'}
+              </p>
+            </div>
+              )}
             <div className="flex flex-col items-center">
               <input
             type="text"
             placeholder="Amount"
             className={getThemeClass(
-              'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2',
+              'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2 text-center text-pink-500 font-semibold',
               'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-white'
             )}
             value={fundInput}
@@ -1409,7 +1424,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             >
           No loans found or none discovered so far.
             </p>
-          ) : (
+          ) : !showSimple&&(
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {loans.map((ln) => (
             <div
