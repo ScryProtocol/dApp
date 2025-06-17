@@ -964,7 +964,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'flex align-items-center items-center justify-center my-2 mb-2 gap-2',
-                'bg-pink-100 rounded-3xl w-1/2 flex align-items-center items-center justify-center my-2 mb-2 gap-2 mx-auto p-1'
+                'bg-white rounded-3xl w-1/2 flex align-items-center items-center justify-center my-2 mb-2 gap-2 mx-auto p-1'
               )}
             >
               <a
