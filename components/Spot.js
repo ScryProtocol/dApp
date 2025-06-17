@@ -1309,8 +1309,14 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             }>{Number(loans[0].interestRate) ?? 'N/A'}% APR</span>
             </div>
             <div className="items-center justify-center mb-2">
-              <div className="bg-pink-100 rounded-full w-full mx-auto text-pink-500 font-semibold h-2">
-                <div className="bg-green-200 text-green-500 rounded-full h-2 left-0"
+              <div className={getThemeClass(
+                "bg-pink-100 rounded-full w-full mx-auto text-pink-500 font-semibold h-2",
+                "bg-purple-100 rounded-full w-full mx-auto text-purple-300 font-semibold h-2"
+              )}>
+                <div className={getThemeClass(
+                  "bg-green-200 text-green-500 rounded-full h-2 left-0",
+                  "bg-green-400 text-purple-300 rounded-full h-2 left-0"
+                )}
                 style={{ width: Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1') * 100 + '%' }}>
                 </div>
               </div>
@@ -1325,7 +1331,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                 </h3>
                 <p className={getThemeClass(
                   'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                  'bg-purple-700 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold'
                 )}>
                   {Number(loans[0].loanGoal || '0').toFixed(4)} USDC
                 </p>
@@ -1339,7 +1345,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                 </h3>
                 <p className={getThemeClass(
                   'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1'
+                  'bg-purple-700 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold'
                 )}>
                   {Number(loans[0].totalFunded || '0').toFixed(4)} USDC
                 </p>
