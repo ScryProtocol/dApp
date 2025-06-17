@@ -1123,7 +1123,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
         <div
           className={getThemeClass(
             'bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px] mx-auto',
-            'bg-gray-800 rounded-[50px] p-4 md:w-[400px] mx-auto border border-purple-800'
+            'bg-gray-800 rounded-[50px] p-4 md:w-[400px] mx-auto '
           )}
         >
           <h3
@@ -1276,7 +1276,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
           </div>
           {showSimple && (
             <div className={getThemeClass("bg-white/70 backdrop-blur-sm rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4",
-"bg-gray-800 rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4 border border-purple-800"
+"bg-gray-800 rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4 "
 )}>
           <h2
             className={getThemeClass(
@@ -1465,7 +1465,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               key={ln.index}
               className={getThemeClass(
             'bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto',
-            'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 relative text-center max-w-3xl mx-auto'
+            'bg-gray-800 rounded-3xl p-4 shadow-md  relative text-center max-w-3xl mx-auto'
               )}
             >
               {/* Repaid or not */}
@@ -1825,7 +1825,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-green-100 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 text-center flex items-center justify-center',
-                'bg-gray-800 rounded-3xl p-4 shadow-md border border-purple-800 text-center flex items-center justify-center'
+                'bg-gray-800 rounded-3xl p-4 shadow-md  text-center flex items-center justify-center'
               )}
             >
               {canOpenLoan ? (
@@ -1861,7 +1861,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
           <div
             className={getThemeClass(
               'max-w-6xl mx-auto mb-6 bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-              'max-w-6xl mx-auto mb-6 bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+              'max-w-6xl mx-auto mb-6 bg-gray-800 rounded-xl p-4 shadow-md '
             )}
           >
             <h2 className={getThemeClass('text-lg font-semibold text-pink-500', 'text-lg font-semibold text-purple-400')}>
@@ -1932,7 +1932,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-pink-500 mb-3">💖 Start a New Loan</h3>
@@ -2014,7 +2014,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-yellow-600 mb-3">🌻 Buy ETH</h3>
@@ -2058,7 +2058,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-orange-600 mb-3">🪄 Redeem IOUs & Swap</h3>
@@ -2090,7 +2090,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-purple-600 mb-3">🚰 Draw Down Loan</h3>
@@ -2132,7 +2132,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-red-600 mb-3">💵 Repay Loan (Aggregator)</h3>
@@ -2164,7 +2164,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-red-600 mb-3">💵 Repay Loan (USDC)</h3>
@@ -2206,7 +2206,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             <div
               className={getThemeClass(
                 'bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md ring-1 ring-rose-200',
-                'bg-gray-800 rounded-xl p-4 shadow-md border border-purple-800'
+                'bg-gray-800 rounded-xl p-4 shadow-md '
               )}
             >
               <h3 className="text-lg font-semibold text-blue-600 mb-3">⚙️ Update IOU Rate</h3>
