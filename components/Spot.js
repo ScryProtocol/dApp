@@ -1498,28 +1498,17 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   >
                     {ln.iouSymbol}
                   </span>
+                  <span
+                  className={getThemeClass(
+                    'text-white bg-green-200 rounded-full px-2 py-1 font-semibold',
+                    'text-white bg-blue-900 rounded-full px-2 py-1 font-semibold'
+                  )}
+                  title="Interest rate of the loan."
+                  >
+                    {ln.interestRate}% APR
+                  </span>
                 </div>
 
-                <p
-                  className={getThemeClass(
-                    'text-lg font-semibold bg-green-300 text-white rounded-full px-2 py-1 w-3/4 mx-auto text-xl mt-2 mb-2',
-                    'text-lg font-semibold bg-green-700 text-white rounded-full px-2 py-1 w-3/4 mx-auto text-xl mt-2 mb-2'
-                  )}
-                  title="The rate of IOU tokens per 1 GG token."
-                >
-                  {ln.iouConversionRate} IOU per {GGSymbol || 'GG'}
-                </p>
-
-                <div className="text-sm text-gray-700 mb-3 text-center grid grid-cols-2 gap-2 mt-2">
-                  <p
-                    className={getThemeClass(
-                      'absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl',
-                      'absolute top-2 left-2 mb-1 font-bold bg-purple-700 text-white rounded-full px-2 py-1 w-9 text-xl'
-                    )}
-                  >
-                    {ln.index}
-                  </p>
-                  <div>
                     <p
                       className={getThemeClass(
                         'text-pink-500 font-semibold text-lg',
@@ -1537,6 +1526,34 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                     >
                       {ln.loanGoal} USDC
                     </p>
+
+                <div className="text-sm text-gray-700 mb-3 text-center grid grid-cols-2 gap-2 mt-2">
+                  <p
+                    className={getThemeClass(
+                      'absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl',
+                      'absolute top-2 left-2 mb-1 font-bold bg-purple-700 text-white rounded-full px-2 py-1 w-9 text-xl'
+                    )}
+                  >
+                    {ln.index}
+                  </p>
+                  <div>
+                    <p
+                      className={getThemeClass(
+                        'text-pink-500 font-semibold text-lg',
+                        'text-purple-400 font-semibold text-lg'
+                      )}
+                    >
+                      IOU Rate
+                    </p>
+                <p
+                  className={getThemeClass(
+                    'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
+                    'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
+                  )}
+                  title="The rate of IOU tokens per 1 GG token."
+                >
+                  {ln.iouConversionRate} IOU per {GGSymbol || 'GG'}
+                </p>
                   </div>
                   <div>
                     <p
@@ -1579,8 +1596,8 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
+                        'text-orange-600 font-semibold text-lg',
+                        'text-orange-400 font-semibold text-lg'
                       )}
                     >
                       Drawn
@@ -1636,11 +1653,11 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
                   <div>
                     <p
                       className={getThemeClass(
-                        'text-green-600 font-semibold text-lg',
+                        'text-green-500 font-semibold text-lg',
                         'text-green-400 font-semibold text-lg'
                       )}
                     >
-                      Interest
+                      Interest Claimable
                     </p>
                     <p
                       className={getThemeClass(
