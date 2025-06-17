@@ -1275,7 +1275,9 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             </button>
           </div>
           {showSimple && (
-            <div className="bg-white/70 backdrop-blur-sm rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4">
+            <div className={getThemeClass("bg-white/70 backdrop-blur-sm rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4",
+"bg-gray-800 rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4 border border-purple-800"
+)}>
           <h2
             className={getThemeClass(
               'text-2xl font-semibold text-pink-500 mb-4',
@@ -1299,7 +1301,12 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               'text-lg font-semibold text-pink-500 mb-2',
               'text-lg font-semibold text-purple-400 mb-2'
             )}>
-            <span className="bg-pink-100 rounded-full px-2">#{Number(loans[0].index) ?? 'N/A'}</span> <span className="bg-pink-300 rounded-full px-2 text-white">{Number(loans[0].interestRate) ?? 'N/A'}% APR</span>
+            <span className={getThemeClass(
+"bg-pink-100 rounded-full px-2",
+"bg-purple-500 rounded-full px-2 text-white")}>#{Number(loans[0].index) ?? 'N/A'}</span> <span className={
+              getThemeClass("bg-pink-300 rounded-full px-2 text-white",
+                "bg-purple-500 rounded-full px-2 text-white")
+            }>{Number(loans[0].interestRate) ?? 'N/A'}% APR</span>
             </div>
             <div className="items-center justify-center mb-2">
               <div className="bg-pink-100 rounded-full w-full mx-auto text-pink-500 font-semibold h-2">
@@ -1387,8 +1394,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             placeholder="Amount"
             className={getThemeClass(
               'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2 text-center text-pink-500 font-semibold',
-              'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-white'
-            )}
+              'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-center text-purple-400 font-semibold')}
             value={fundInput}
             onChange={(e) => setFundInput(e.target.value)}
             title="Amount for Fund/Redeem/Unfund calls."
