@@ -1475,240 +1475,279 @@ function StakingSection() {
         </button>
         {showStaking && <StakingSection />}
       </div>
-      {/* Deploy a new IOU */}
-      <div
-        className="max-w-xl w-full mt-6 p-6 md:p-8 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
-                   ring-1 ring-[#36444c] hover:scale-105 transform transition duration-300"
-      >
-        <h1 className="text-blue-400 text-3xl font-bold mt-2 mb-4 uppercase tracking-wide">
-          Mint an IOU
-        </h1>
-
-        <div className="w-full space-y-4 text-left">
-          {/* Loan Token */}
-          <div>
-            <label className="block font-semibold text-gray-200 mb-1">
-              🪙 ERC20 Token Address:
-            </label>
-            <select
-              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                          focus:outline-none focus:ring-2 focus:ring-blue-400 transition mb-2"
-              value={loanToken}
-              onChange={(e) => setLoanToken(e.target.value)}
-            >
-              <option value="">{!loanToken ? 'Select Token' : loanToken}</option>
-              {chainId === 1 && (
-                <>
-                  <option value="0x6B175474E89094C44Da98b954EedeAC495271d0F">DAI</option>
-                  <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
-                  <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
-                  <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">WETH</option>
-                  <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
-                </>
-              )}
-              {chainId === 8453 && (
-                <>
-                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
-                  <option value="0x4200000000000000000000000000000000000006">WETH</option>
-                </>
-              )}
-              <option value="custom">Custom Token</option>
-            </select>
-            {loanToken === 'custom' && (
-              <input
-                type="text"
-                placeholder="0x..."
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                onChange={(e) => setLoanToken(e.target.value)}
-              />
-            )}
-          </div>
-
-          {/* Borrower */}
-          <div>
-            <label className="block font-semibold text-gray-200 mb-1">
-              🤝 Borrower Address / ENS:
-            </label>
-            {0==1&&<input
-              type="text"
-              value={borrower}
-              placeholder="0x... or user.eth"
-              className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              onChange={(e) => setBorrower(e.target.value)}
-            />}
-            <p className="bg-gray-700 text-gray-200 rounded-full px-4 py-2 mt-2 w-full overflow-hidden">
-              {borrower || '0x14B214'}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-gray-200 mb-1">
-                🎯 Loan Goal:
-              </label>
-              <input
-                type="text"
-                placeholder="1000"
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                value={loanGoal}
-                onChange={(e) => setLoanGoal(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-200 mb-1">
-                📊 Annual Interest Rate (bps):
-              </label>
-              <input
-                type="text"
-                placeholder="500 = 5%"
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                value={annualInterestRate}
-                onChange={(e) => setAnnualInterestRate(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-gray-200 mb-1">
-                🏷 IOU Name:
-              </label>
-              <input
-                type="text"
-                placeholder="SpotIOU"
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                value={iouName}
-                onChange={(e) => setIouName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-200 mb-1">
-                🔖 IOU Symbol:
-              </label>
-              <input
-                type="text"
-                placeholder="IOU"
-                className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                value={iouSymbol}
-                onChange={(e) => setIouSymbol(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={deployNewLoan}
-            className="w-full py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold rounded-full transition
-                       focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            Deploy Loan
-          </button>
-        </div>
-
-        {/* Example ConnectButton at bottom of this section */}
-        <div className="flex justify-between items-center mt-6">
-          <div className="">
-          <ConnectButton />
-</div>
-          <div className=""><button
-            onClick={() => {
-              setFlexible(!flexible);
-            }
-            }
-            className={`w-28 p-2 ${flexible ? 'bg-green-400' : 'bg-blue-400'} hover:bg-[#356195] text-white font-semibold rounded-full transition
-                       focus:outline-none focus:ring-2 focus:ring-blue-400 mx-auto ml-2`}
-          >
-            {flexible ? 'Flexible' : 'Non-Flexible'}
-          </button>
-          </div>
-        </div>
-      </div>
-
-      {/* FIND A LOAN */}
-      <div className="w-full max-w-lg mx-auto mt-6 text-center flex flex-col">
-        <h2 className="text-blue-400 text-lg sm:text-2xl font-bold mb-4 uppercase mt-2">
-          Find a Loan
-        </h2>
-        <input
-          type="text"
-          placeholder="Search by borrower address or loan address"
-          value={searchAddress}
-          className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
-                     focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-          onChange={(e) => setSearchAddress(e.target.value)}
-        />
-      </div>
-
-      {/* SEARCH RESULTS (Accordion) */}
-      {searchResults.length > 0 && (
         <div
-          className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl shadow-lg
-                     text-center flex flex-col ring-1 ring-[#36444c]
-                     md:hover:scale-105 transition-transform duration-300"
+          className="max-w-lg w-full mt-6 p-4 bg-gray-800 rounded-2xl shadow-lg text-center flex flex-col
+             ring-1 ring-gray-600 hover:scale-105 transform transition-all duration-300"
         >
-          <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase">🔍 IOUs</h1>
-          <button
-            onClick={() => {
-              setSearchResults([]);
-              setSearchAddress('');
-            }}
-            className="w-40 py-2 bg-blue-400 hover:bg-[#356195] text-white font-semibold
-                       rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-400 mx-auto mb-4"
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+              <span className="text-lg">🏦</span>
+            </div>
+            <h1 className="text-blue-400 text-xl font-bold uppercase tracking-wide">
+              Mint an IOU
+            </h1>
+          </div>
+
+          <div className="w-full space-y-4 text-left">
+            {/* Loan Token */}
+            <div>
+              <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+          <span className="text-lg mr-2">🪙</span>
+          Token:
+              </label>
+              <div className="relative">
+          <select
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-blue-400 transition
+              border border-gray-600 appearance-none cursor-pointer text-sm"
+            value={loanToken}
+            onChange={(e) => setLoanToken(e.target.value)}
           >
-            Close
-          </button>
+            <option value="">{!loanToken ? 'Select Token' : loanToken}</option>
+            {chainId === 1 && (
+              <>
+                <option value="0x6B175474E89094C44Da98b954EedeAC495271d0F">DAI</option>
+                <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+                <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+                <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">WETH</option>
+                <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
+              </>
+            )}
+            {chainId === 8453 && (
+              <>
+                <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+                <option value="0x4200000000000000000000000000000000000006">WETH</option>
+              </>
+            )}
+            <option value="custom">Custom</option>
+          </select>
+              </div>
+              {loanToken === 'custom' && (
+          <input
+            type="text"
+            placeholder="Token address (0x...)"
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-purple-400 transition
+              border border-gray-600 mt-2 text-sm"
+            onChange={(e) => setLoanToken(e.target.value)}
+          />
+              )}
+            </div>
 
-          <div className="space-y-2 w-full">
-            {searchResults.map((info, i) => {
-              const isBorrower =
-                userAddress?.toLowerCase() === info.borrower.toLowerCase();
+            {/* Borrower */}
+            <div>
+              <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+          <span className="text-lg mr-2">🤝</span>
+          Borrower:
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg 
+          border border-gray-600 font-mono text-xs overflow-hidden flex items-center">
+          <span className="text-green-400 mr-2">👤</span>
+          <span className="truncate">{borrower || '0x14B214CA36249b516B59401B3b221CB87483b53C'}</span>
+              </div>
+            </div>
 
-              return (
-                <div key={info.loanAddress} className="bg-gray-700 rounded-3xl shadow-md">
-                  <button
-                    onClick={() => toggleExpandSearch(i)}
-                    className="flex items-center justify-between px-4 py-3 w-full
-                               cursor-pointer hover:bg-gray-600/50 transition hover:rounded-3xl"
-                  >
-                    <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
-                      <span className="text-sm text-gray-300 flex items-center space-x-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(
-                              window.location.origin + '?loan=' + info.loanAddress
-                            );
-                            toast.success('Copied to clipboard!');
-                          }}
-                          className="bg-gray-600 px-1 py-1 rounded-full"
-                        >
-                          🔗
-                        </button>
-                        <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
-                      </span>
-                      <span className="text-sm text-blue-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      {!info.flexible ? '🔵' : '🟢'}{info.underlyingSymbol || 'TOKEN'}
-                    </span>
-                    <span className="text-sm text-purple-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      Goal: {info.loanGoal}
-                    </span>
-                    <span className="text-sm text-green-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      APR: {(info.annualInterestRate / 100).toFixed(2)}%
-                    </span>
-                    <span className="text-sm text-pink-300 bg-gray-600 px-3 py-1 rounded-full mx-2 sm:mx-0 sm:bg-transparent sm:rounded-none">
-                      Owed: {info.updatedTotalOwed}
-                    </span></div>
-                    <div className="text-gray-400">
-                      {expandedRowsSearch[i] ? '▼' : '▶'}
-                    </div>
-                  </button>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+          <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+            <span className="text-lg mr-2">🎯</span>
+            Goal:
+          </label>
+          <input
+            type="text"
+            placeholder="1000"
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-green-400 transition
+              border border-gray-600 text-sm"
+            value={loanGoal}
+            onChange={(e) => setLoanGoal(e.target.value)}
+          />
+              </div>
+              <div>
+          <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+            <span className="text-lg mr-2">📊</span>
+            APR (bps):
+          </label>
+          <input
+            type="text"
+            placeholder="500 = 5%"
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-yellow-400 transition
+              border border-gray-600 text-sm"
+            value={annualInterestRate}
+            onChange={(e) => setAnnualInterestRate(e.target.value)}
+          />
+              </div>
+            </div>
 
-                  {expandedRowsSearch[i] && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+          <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+            <span className="text-lg mr-2">🏷</span>
+            Name:
+          </label>
+          <input
+            type="text"
+            placeholder="SpotIOU"
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-pink-400 transition
+              border border-gray-600 text-sm"
+            value={iouName}
+            onChange={(e) => setIouName(e.target.value)}
+          />
+              </div>
+              <div>
+          <label className="block font-semibold text-gray-200 mb-2 flex items-center text-sm">
+            <span className="text-lg mr-2">🔖</span>
+            Symbol:
+          </label>
+          <input
+            type="text"
+            placeholder="IOU"
+            className="w-full px-3 py-2 bg-gray-700 text-gray-200 rounded-lg placeholder-gray-400
+              focus:outline-none focus:ring-2 focus:ring-purple-400 transition
+              border border-gray-600 text-sm"
+            value={iouSymbol}
+            onChange={(e) => setIouSymbol(e.target.value)}
+          />
+              </div>
+            </div>
+
+            <button
+              onClick={deployNewLoan}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 
+          text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 
+          focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-lg
+          flex items-center justify-center space-x-2"
+            >
+              <span className="text-lg">🚀</span>
+              <span>Deploy Loan</span>
+            </button>
+          </div>
+
+          {/* Bottom Controls */}
+          <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-600">
+            <div className="flex">
+              <ConnectButton />
+            </div>
+            <div className="flex-1 flex justify-end">
+              <button
+          onClick={() => setFlexible(!flexible)}
+          className={`px-4 py-2 ${
+            flexible 
+              ? 'bg-green-500 hover:bg-green-600' 
+              : 'bg-blue-500 hover:bg-blue-600'
+          } text-white font-semibold rounded-lg transition transform hover:scale-105
+            focus:outline-none focus:ring-2 ${
+              flexible ? 'focus:ring-green-400' : 'focus:ring-blue-400'
+            } shadow-lg flex items-center space-x-2`}
+              >
+          <span className="text-sm">{flexible ? '🟢' : '🔵'}</span>
+          <span className="text-sm">{flexible ? 'Flexible' : 'Non-Flexible'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full max-w-2xl mx-auto mt-6 text-center flex flex-col">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+              <span className="text-lg">🔍</span>
+            </div>
+            <h2 className="text-blue-400 text-xl font-bold uppercase tracking-wide">
+              Discover Loans
+            </h2>
+          </div>
+          
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by address or loan ID..."
+              value={searchAddress}
+              className="w-full px-4 py-3 bg-gray-700 text-gray-200 rounded-lg 
+          placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 
+          transition border border-gray-600 pl-10"
+              onChange={(e) => setSearchAddress(e.target.value)}
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <span className="text-blue-400">🔍</span>
+            </div>
+          </div>
+        </div>
+
+        {/* SEARCH RESULTS */}
+        {searchResults.length > 0 && (
+          <div className="w-full max-w-4xl mx-auto mt-6 p-4 bg-gray-800 rounded-2xl shadow-lg text-center flex flex-col ring-1 ring-gray-600">
+            
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+            <span className="text-lg">🎯</span>
+          </div>
+          <h1 className="text-green-400 text-xl font-bold uppercase tracking-wide">
+            Search Results
+          </h1>
+              </div>
+              
+              <button
+          onClick={() => {
+            setSearchResults([]);
+            setSearchAddress('');
+          }}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg 
+            transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+          Close
+              </button>
+            </div>
+
+            <div className="space-y-3 w-full">
+              {searchResults.map((info, i) => {
+          const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
+
+          return (
+            <div key={info.loanAddress} className="bg-gray-700 rounded-2xl shadow-md">
+              <button
+                onClick={() => toggleExpandSearch(i)}
+                className="flex items-center justify-between px-4 py-3 w-full
+            cursor-pointer hover:bg-gray-600 transition hover:rounded-2xl"
+              >
+                <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
+            <span className="text-sm text-gray-300 flex items-center space-x-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(
+              window.location.origin + '?loan=' + info.loanAddress
+                  );
+                  toast.success('Copied!');
+                }}
+                className="bg-gray-600 px-1 py-1 rounded-full"
+              >
+                🔗
+              </button>
+              <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
+            </span>
+            
+            <span className="text-sm text-blue-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
+              {!info.flexible ? '🔵' : '🟢'} {info.underlyingSymbol || 'TOKEN'}
+            </span>
+            <span className="text-sm text-purple-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
+              Goal: {info.loanGoal}
+            </span>
+            <span className="text-sm text-green-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
+              APR: {(info.annualInterestRate / 100).toFixed(2)}%
+            </span>
+            <span className="text-sm text-pink-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
+              Owed: {info.updatedTotalOwed}
+            </span>
+                </div>
+                <div className="text-gray-400">
+            {expandedRowsSearch[i] ? '▼' : '▶'}
+                </div>
+              </button>
+
+              {expandedRowsSearch[i] && (
                     <div className="px-4 py-4 border-t border-gray-600">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                         <div>
@@ -1825,14 +1864,13 @@ function StakingSection() {
                       </div>
                     </div>
                   )}
-                </div>
-              );
-            })}
-          </div>
+            </div>
+          );
+              })}
         </div>
-      )}
-
-      {/* MY LOANS */}
+        </div>
+        )}
+        {/* MY LOANS */}
       <div
         className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl
                    shadow-lg text-center flex flex-col ring-1 ring-[#36444c]
