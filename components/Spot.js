@@ -146,149 +146,489 @@ const [flexible, setFlexible] = useState(true);
 
     const docs = {
       overview: {
-        title: 'IOU.fi Overview',
-        content: (
-          <>
-            <p className="mb-4">
-              <strong>IOU.fi</strong> is a decentralized platform for creating, funding,
-              and managing on-chain, tokenized loans. Each <strong>IOU</strong> represents
-              a fraction of a loan, letting lenders and borrowers interact transparently
-              and without needing to trust a middleman.
+      title: 'IOU.fi Overview',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 p-6 rounded-2xl mb-6 border border-blue-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">💡</span>
+          </div>
+          <h3 className="text-xl font-bold text-blue-300">What is IOU.fi?</h3>
+          </div>
+          <p className="mb-4 text-gray-200 leading-relaxed">
+          <strong className="text-blue-300">IOU.fi</strong> is a decentralized platform for creating, funding,
+          and managing on-chain, tokenized loans. Each <strong className="text-purple-300">IOU</strong> represents
+          a fraction of a loan, letting lenders and borrowers interact transparently
+          and without needing to trust a middleman.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600/50">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🏦</span>
+            <h4 className="font-semibold text-green-300">For Lenders</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Fund loans and receive IOU tokens representing your share. Interest accrues automatically,
+            and repayments are handled transparently on-chain.
+          </p>
+          </div>
+          
+          <div className="bg-gray-700/50 p-4 rounded-xl border border-gray-600/50">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">💰</span>
+            <h4 className="font-semibold text-orange-300">For Borrowers</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Deploy loan contracts with custom terms, access capital from multiple lenders,
+            and manage repayments at your own pace.
+          </p>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 p-4 rounded-xl border border-green-500/20">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">📊</span>
+          <div>
+            <h4 className="font-semibold text-green-300 mb-2">Example Scenario</h4>
+            <p className="text-sm text-gray-200">
+            If you lend $1,000 to a loan with a 5% annual rate, you'll receive
+            IOU tokens representing your share. As the borrower repays, you can claim
+            your principal plus interest, or redeem your IOUs for immediate liquidity.
             </p>
-            <p className="mb-4">
-              The platform enables borrowers to deploy loan contracts with custom terms,
-              while lenders can fund these loans and receive IOU tokens representing their
-              share. Interest accrues automatically, and repayments are handled transparently
-              on-chain.
-            </p>
-            <p className="mb-4 font-semibold">
-              Example: If you lend $1,000 to a loan with a 5% annual rate, you'll receive
-              IOU tokens representing your share. As the borrower repays, you can claim
-              your principal plus interest, or redeem your IOUs for immediate liquidity.
-            </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+        </>
+      )
       },
+      
       deployment: {
-        title: 'Mint/Deploy an IOU',
-        content: (
-          <>
-            <p className="mb-3">
-              If you're seeking to borrow, you can launch a specialized loan contract by specifying:
+      title: 'Mint/Deploy an IOU',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-purple-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">🚀</span>
+          </div>
+          <h3 className="text-xl font-bold text-purple-300">Launch Your Loan</h3>
+          </div>
+          <p className="text-gray-200 mb-4">
+          Create a specialized loan contract by configuring these key parameters:
+          </p>
+        </div>
+
+        <div className="space-y-4 mb-6">
+          <div className="bg-gray-700/50 p-4 rounded-xl border-l-4 border-blue-400">
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🪙</span>
+            <h4 className="font-semibold text-blue-300">Loan Token</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
+          </p>
+          </div>
+
+          <div className="bg-gray-700/50 p-4 rounded-xl border-l-4 border-purple-400">
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🎯</span>
+            <h4 className="font-semibold text-purple-300">Loan Goal</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            The total principal amount you aim to raise from lenders.
+          </p>
+          </div>
+
+          <div className="bg-gray-700/50 p-4 rounded-xl border-l-4 border-green-400">
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">📊</span>
+            <h4 className="font-semibold text-green-300">Interest Rate</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Annual rate in basis points (e.g., 500 = 5%). Interest accrues automatically.
+          </p>
+          </div>
+
+          <div className="bg-gray-700/50 p-4 rounded-xl border-l-4 border-orange-400">
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🏷️</span>
+            <h4 className="font-semibold text-orange-300">IOU Details</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Custom name and symbol for the ERC20 IOU tokens representing debt shares.
+          </p>
+          </div>
+          <div className="bg-gray-700/50 p-4 rounded-xl border-l-4 border-pink-400">
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🟢</span>
+            <h4 className="font-semibold text-pink-300">Flexible Loans</h4>
+          </div>
+            <p className="text-sm text-gray-300">
+            Choose whether borrowers can withdraw and repay freely (flexible) or if repaid funds are locked for IOU holders (non-flexible).
             </p>
-            <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
-              <li>
-                <strong>Loan Token</strong> – The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
-              </li>
-              <li>
-                <strong>Loan Goal</strong> – The total principal you aim to raise.
-              </li>
-              <li>
-                <strong>Annual Interest Rate</strong> – Stated in basis points (e.g., 500 = 5%).
-              </li>
-              <li>
-                <strong>Borrower</strong> – The address authorized to withdraw loaned funds and initiate repayments.
-              </li>
-              <li>
-                <strong>IOU Token Name & Symbol</strong> – Custom labels for the ERC20 IOU
-                tokens representing a share of the debt.
-              </li>
-            </ul>
-            <p>
-              This contract monitors contributions, accumulates interest on the outstanding
-              principal, and orchestrates repayment logic until the loan is finalized.
+            </div>
+        </div>
+
+        <div className="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">⚡</span>
+          <div>
+            <h4 className="font-semibold text-blue-300 mb-2">Smart Contract Features</h4>
+            <p className="text-sm text-gray-200">
+            Your contract automatically monitors contributions, calculates interest,
+            and orchestrates repayment logic until the loan is fully settled.
             </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+        </>
+      )
       },
+
       funding: {
-        title: 'Provide Funding',
-        content: (
-          <>
-            <p className="mb-4">
-              As a lender, simply select a loan and click "Fund." You'll deposit the designated token
-              into the loan contract, receiving IOUs that reflect your proportion of the total funds
-              raised. These tokens let you claim principal and any accumulated interest once repayments
-              begin.
+      title: 'Provide Funding',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-green-900/30 to-teal-900/30 p-6 rounded-2xl mb-6 border border-green-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">💎</span>
+          </div>
+          <h3 className="text-xl font-bold text-green-300">Earn Interest as a Lender</h3>
+          </div>
+          <p className="text-gray-200 mb-4">
+          Fund loans and receive IOU tokens that automatically earn interest as borrowers repay.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-green-800/20 to-green-900/20 p-4 rounded-xl border border-green-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">📈</span>
+            <h4 className="font-semibold text-green-300">How It Works</h4>
+          </div>
+          <ol className="text-sm text-gray-300 space-y-2">
+            <li>1. Select a loan and click "Fund"</li>
+            <li>2. Deposit tokens into the contract</li>
+            <li>3. Receive IOU tokens (your share)</li>
+            <li>4. Interest accrues automatically</li>
+            <li>5. Claim earnings anytime</li>
+          </ol>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-800/20 to-blue-900/20 p-4 rounded-xl border border-blue-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">⚡</span>
+            <h4 className="font-semibold text-blue-300">Interest Features</h4>
+          </div>
+          <ul className="text-sm text-gray-300 space-y-2">
+            <li>• Real-time calculation</li>
+            <li>• Proportional to your share</li>
+            <li>• Claim whenever you want</li>
+            <li>• No complex manual steps</li>
+            <li>• Transparent on-chain</li>
+          </ul>
+          </div>
+        </div>
+
+        <div className="bg-yellow-900/30 p-4 rounded-xl border border-yellow-500/20">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">💡</span>
+          <div>
+            <h4 className="font-semibold text-yellow-300 mb-2">Pro Tip</h4>
+            <p className="text-sm text-gray-200">
+            Your IOUs represent both principal and interest claims. As repayments flow in,
+            you can either claim accumulated interest or redeem IOUs for principal.
             </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Interest Accrual & Claiming</h2>
-            <p className="mb-4">
-              Interest is calculated in real time based on the annual rate and the remaining principal.
-              As the borrower repays, the contract allocates a share of the interest to each IOU holder.
-              Lenders can claim this interest whenever they choose, without any complex manual calculations
-              or extra steps.
-            </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+        </>
+      )
       },
+
       borrowing: {
-        title: 'Borrower Operations',
-        content: (
-          <>
-            <p className="mb-4">
-              Once enough capital is raised, the borrower can withdraw part or all of the funds to use
-              as needed. Over the loan's duration, they're responsible for repaying the principal plus
-              accrued interest. Partial repayments are possible, and each one updates the amount
-              available to lenders.
+      title: 'Borrower Operations',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-orange-900/30 to-red-900/30 p-6 rounded-2xl mb-6 border border-orange-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">🤝</span>
+          </div>
+          <h3 className="text-xl font-bold text-orange-300">Access Capital & Manage Repayments</h3>
+          </div>
+          <p className="text-gray-200 mb-4">
+          Once funded, withdraw capital as needed and repay on your schedule while interest accrues transparently.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gray-700/50 p-4 rounded-xl border border-blue-500/30">
+          <div className="text-center mb-3">
+            <span className="text-3xl">💰</span>
+            <h4 className="font-semibold text-blue-300 mt-2">Withdraw</h4>
+          </div>
+          <p className="text-sm text-gray-300 text-center">
+            Access funded capital when you need it for your project or business
+          </p>
+          </div>
+
+          <div className="bg-gray-700/50 p-4 rounded-xl border border-green-500/30">
+          <div className="text-center mb-3">
+            <span className="text-3xl">🔄</span>
+            <h4 className="font-semibold text-green-300 mt-2">Repay</h4>
+          </div>
+          <p className="text-sm text-gray-300 text-center">
+            Make partial or full repayments at your convenience
+          </p>
+          </div>
+
+          <div className="bg-gray-700/50 p-4 rounded-xl border border-purple-500/30">
+          <div className="text-center mb-3">
+            <span className="text-3xl">📊</span>
+            <h4 className="font-semibold text-purple-300 mt-2">Track</h4>
+          </div>
+          <p className="text-sm text-gray-300 text-center">
+            Monitor interest accrual and outstanding balance in real-time
+          </p>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 p-5 rounded-xl border border-gray-600/50 mb-4">
+          <h4 className="font-semibold text-blue-300 mb-3 flex items-center">
+          <span className="text-xl mr-2">🔄</span>
+          Loan Types Explained
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-green-900/30 p-3 rounded-lg border border-green-500/30">
+            <div className="flex items-center mb-2">
+            <span className="text-lg mr-2">🟢</span>
+            <h5 className="font-semibold text-green-300">Flexible Loans</h5>
+            </div>
+            <p className="text-sm text-gray-300">
+            Withdraw and repay freely from available funds. Maximum flexibility for borrowers.
             </p>
-            <p className="mb-4">
-              Borrowers can manage the frequency and size of repayments, but interest continues to
-              accrue on any outstanding principal until it's fully settled.
+          </div>
+
+          <div className="bg-blue-900/30 p-3 rounded-lg border border-blue-500/30">
+            <div className="flex items-center mb-2">
+            <span className="text-lg mr-2">🔵</span>
+            <h5 className="font-semibold text-blue-300">Non-Flexible Loans</h5>
+            </div>
+            <p className="text-sm text-gray-300">
+            Repaid funds are locked for IOU holders, guaranteeing lender liquidity.
             </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Flexible vs Non-Flexible Loans</h2>
-            <p className="mb-4">
-              🟢 Flexible loans allow the borrower to withdraw and repay at any time from available funds.
-              🔵 Non-flexible loans lock repaid funds for IOU holders to guarantee liquidity.
+          </div>
+          </div>
+        </div>
+
+        <div className="bg-orange-900/30 p-4 rounded-xl border border-orange-500/20">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">⏰</span>
+          <div>
+            <h4 className="font-semibold text-orange-300 mb-2">Interest Management</h4>
+            <p className="text-sm text-gray-200">
+            Interest continues to accrue on outstanding principal until fully repaid.
+            You control the timing and size of repayments to manage your costs effectively.
             </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+        </>
+      )
       },
+
       redemption: {
-        title: 'Redeeming IOUs',
-        content: (
-          <>
-            <p className="mb-4">
-              When principal repayments take place, that repaid portion becomes available for IOU holders
-              to redeem. Redeeming <strong>burns</strong> the IOUs you surrender, granting you the
-              corresponding share of principal. Once redeemed, those IOUs no longer earn future repayments
-              or interest, so you can decide whether to wait for more principal to accumulate or redeem
-              early for partial liquidity.
+      title: 'Redeeming IOUs',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-blue-900/30 to-indigo-900/30 p-6 rounded-2xl mb-6 border border-blue-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">💎</span>
+          </div>
+          <h3 className="text-xl font-bold text-blue-300">Convert IOUs to Cash</h3>
+          </div>
+          <p className="text-gray-200 mb-4">
+          When borrowers repay principal, those funds become available for IOU holders to redeem.
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 p-5 rounded-xl border border-indigo-500/20 mb-6">
+          <h4 className="font-semibold text-indigo-300 mb-3 flex items-center">
+          <span className="text-xl mr-2">🔄</span>
+          How Redemption Works
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex items-start">
+            <span className="text-lg mr-3 mt-1">1️⃣</span>
+            <div>
+              <h5 className="font-medium text-blue-300">Borrower Repays</h5>
+              <p className="text-sm text-gray-300">Principal repayments flow into the contract</p>
+            </div>
+            </div>
+            
+            <div className="flex items-start">
+            <span className="text-lg mr-3 mt-1">2️⃣</span>
+            <div>
+              <h5 className="font-medium text-purple-300">Funds Available</h5>
+              <p className="text-sm text-gray-300">Repaid principal becomes redeemable</p>
+            </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start">
+            <span className="text-lg mr-3 mt-1">3️⃣</span>
+            <div>
+              <h5 className="font-medium text-green-300">You Redeem</h5>
+              <p className="text-sm text-gray-300">Burn IOUs to claim your share</p>
+            </div>
+            </div>
+            
+            <div className="flex items-start">
+            <span className="text-lg mr-3 mt-1">4️⃣</span>
+            <div>
+              <h5 className="font-medium text-orange-300">Receive Funds</h5>
+              <p className="text-sm text-gray-300">Get proportional principal back</p>
+            </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-yellow-900/30 p-4 rounded-xl border border-yellow-500/20">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">⚖️</span>
+            <h4 className="font-semibold text-yellow-300">Strategic Decision</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Choose between redeeming early for liquidity or holding IOUs longer 
+            to accumulate more interest payments.
+          </p>
+          </div>
+
+          <div className="bg-red-900/30 p-4 rounded-xl border border-red-500/20">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🔥</span>
+            <h4 className="font-semibold text-red-300">Permanent Action</h4>
+          </div>
+          <p className="text-sm text-gray-300">
+            Redeemed IOUs are burned forever. You won't earn future interest 
+            or repayments on those tokens.
+          </p>
+          </div>
+        </div>
+
+        <div className="bg-green-900/30 p-4 rounded-xl border border-green-500/20">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">🔙</span>
+          <div>
+            <h4 className="font-semibold text-green-300 mb-2">Redeeming vs. Holding</h4>
+            <p className="text-sm text-gray-200">
+            Redeeming IOUs gives you immediate liquidity, but holding them allows you to earn
+            more interest over time. Consider your cash flow needs and investment strategy.
             </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Optional "Unfund" Feature</h2>
-            <p className="mb-4">
-              If the borrower hasn't yet withdrawn your contribution, you can back out by "unfunding."
-              This action returns your tokens and burns the IOUs you received, freeing you to reallocate
-              your capital elsewhere if circumstances change.
-            </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+        </>
+      )
       },
       risks: {
-        title: 'Important Notes & Risks',
-        content: (
-          <>
-            <p className="mb-4 font-semibold text-orange-300">
-              IOUs are for use with private loans and not public sale. We do not guarantee any liquidity 
-              or value of loans. Make sure to check local laws or regulations before participating.
+      title: 'Risks and Considerations',
+      content: (
+        <>
+        <div className="bg-gradient-to-br from-red-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-red-500/20">
+          <div className="flex items-center mb-4">
+          <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mr-4">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <h3 className="text-xl font-bold text-red-300">Important Disclaimers</h3>
+          </div>
+          <p className="text-gray-200 mb-4">
+          Please read and understand these risks before using IOU.fi:
+          </p>
+        </div>
+
+        <div className="space-y-4 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-yellow-900/40 p-4 rounded-xl border border-yellow-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">📋</span>
+            <h4 className="font-semibold text-yellow-300">Private Loans Only</h4>
+          </div>
+          <p className="text-sm text-gray-200">
+            IOUs are for use with private loans and not public sale. We do not guarantee any liquidity or value of loans. 
+            Make sure to check local laws or regulations before participating.
+          </p>
+          </div>
+
+          <div className="bg-red-900/40 p-4 rounded-xl border border-red-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🔒</span>
+            <h4 className="font-semibold text-red-300">Smart Contract Risks</h4>
+          </div>
+          <p className="text-sm text-gray-200">
+            As with any smart contract protocol, there are inherent risks including bugs, vulnerabilities, 
+            and potential loss of funds. Use only what you can afford to lose.
+          </p>
+          </div>
+
+          <div className="bg-orange-900/40 p-4 rounded-xl border border-orange-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🤝</span>
+            <h4 className="font-semibold text-orange-300">Counterparty Risk</h4>
+          </div>
+          <p className="text-sm text-gray-200">
+            Borrowers may default on their loans. While IOUs provide transparency, they don't guarantee repayment. 
+            Always assess the creditworthiness of borrowers.
+          </p>
+          </div>
+
+          <div className="bg-purple-900/40 p-4 rounded-xl border border-purple-500/30">
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">⚖️</span>
+            <h4 className="font-semibold text-purple-300">Liability</h4>
+          </div>
+          <p className="text-sm text-gray-200">
+            IOU.fi is provided "as is" without warranties of any kind. By using this platform, you acknowledge 
+            the risks and agree that the developers are not liable for any losses incurred.
+          </p>
+          </div>
+        </div>
+
+        <div className="bg-blue-900/30 p-4 rounded-xl border border-blue-500/20 mb-4">
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">💡</span>
+          <div>
+            <h4 className="font-semibold text-blue-300 mb-2">Stay Informed</h4>
+            <p className="text-sm text-gray-200">
+            Follow IOU.fi updates, community discussions, and security best practices to mitigate risks.
+            Always do your own research before participating in any loan.
             </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Smart Contract Risks</h2>
-            <p className="mb-4">
-              As with any smart contract protocol, there are inherent risks including bugs, 
-              vulnerabilities, and potential loss of funds. Use only what you can afford to lose.
-            </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Counterparty Risk</h2>
-            <p className="mb-4">
-              Borrowers may default on their loans. While IOUs provide transparency, they don't
-              guarantee repayment. Always assess the creditworthiness of borrowers.
-            </p>
-            <h2 className="font-semibold text-blue-300 mb-2">Liability</h2>
-            <p className="mb-4">
-              IOU.fi is provided "as is" without warranties of any kind. By using this platform,
-              you acknowledge the risks and agree that the developers are not liable for any losses
-              incurred.
-            </p>
-          </>
-        )
+          </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-red-800/30 to-pink-800/30 p-4 rounded-xl border border-red-400/30">
+          <div className="text-center">
+          <span className="text-3xl mb-2 block">🛡️</span>
+          <h4 className="font-bold text-red-300 mb-2">Use at Your Own Risk</h4>
+          <p className="text-sm text-gray-200">
+            By proceeding, you acknowledge that you have read, understood, and accepted all risks associated with using IOU.fi.
+          </p>
+          </div>
+        </div>
+        </>
+      )
       }
     };
 
