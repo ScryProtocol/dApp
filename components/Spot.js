@@ -1608,6 +1608,26 @@ function Loan({info, i, fundLoan, drawDown, repayLoan, redeemIOUs, claimInterest
                       >
                         🎁 Claim
                       </button>
+                      {info.myIOUs > 0 && (
+                        <button
+                        onClick={() => unfundLoan(info.loanAddress, actionAmount)}
+                        className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700
+                             text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                             transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400/50 shadow-lg"
+                      >
+                        ❌ Unfund
+                      </button>
+                      )}
+                      {isBorrower && (
+                        <button
+                          onClick={() => updateGoal(info.loanAddress, actionAmount)}
+                          className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700
+                               text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                               transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400/50 shadow-lg"
+                        >
+                          🛠️ Update Goal
+                        </button>
+                      )}
                       </div>
                     </div>
                     </div>
