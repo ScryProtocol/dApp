@@ -712,7 +712,271 @@ provider.on("network", (newNetwork, oldNetwork) => {
       setSearchAddress(loanParam);
     }
   }, []);
+const StakingContractAddress = '0x014B214CA36249b516B59401B3b221CB87483b53C'; // Replace with actual staking contract address
+const StakingABI = [
+  'function stake(uint256 amount) external',
+  'function withdraw(uint256 amount) external',
+  'function getReward() external',
+  'function earned(address account) view returns (uint256)',
+  'function balanceOf(address account) view returns (uint256)',
+  'function rewardToken() view returns (address)'
+];
+const [showStaking, setShowStaking] = useState(false);
+function StakingSection() {
+  const provider = useEthersProvider();
+  const signer = useEthersSigner();
+  const { address: userAddress } = useAccount();
+  const chainId = useChainId();
+  
+  const [stakeToken, setStakeToken] = useState('');
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [stakedBalance, setStakedBalance] = useState('0');
+  const [earnedReward, setEarnedReward] = useState('0');
+  const [rewardTokenAddress, setRewardTokenAddress] = useState(ethers.ZeroAddress);
+  const [rewardTokenSymbol, setRewardTokenSymbol] = useState('');
+  const [stakeTokenSymbol, setStakeTokenSymbol] = useState('');
+  
+  const staking = new ethers.Contract(StakingContractAddress, StakingABI, provider);
 
+  useEffect(() => {
+    if (!provider || !userAddress) return;
+    fetchStakingData();
+  }, [provider, userAddress]);
+
+  const fetchStakingData = async () => {
+    try {
+      const balance = await staking.balanceOf(userAddress);
+      const earned = await staking.earned(userAddress);
+      const rewardAddr = await staking.rewardToken();
+      setStakedBalance(ethers.formatUnits(balance, 18));
+      setEarnedReward(ethers.formatUnits(earned, 18));
+      setRewardTokenAddress(rewardAddr);
+      
+      // Fetch token symbols
+      if (stakeToken && ethers.isAddress(stakeToken)) {
+        try {
+          const token = new ethers.Contract(stakeToken, ['function symbol() view returns (string)'], provider);
+          const symbol = await token.symbol();
+          setStakeTokenSymbol(symbol);
+        } catch (err) {
+          setStakeTokenSymbol('TOKEN');
+        }
+      }
+      
+      if (rewardAddr !== ethers.ZeroAddress) {
+        try {
+          const rewardToken = new ethers.Contract(rewardAddr, ['function symbol() view returns (string)'], provider);
+          const symbol = await rewardToken.symbol();
+          setRewardTokenSymbol(symbol);
+        } catch (err) {
+          setRewardTokenSymbol('REWARD');
+        }
+      }
+    } catch (err) {
+      console.error('Fetch staking data error', err);
+    }
+  };
+
+  const stakeTokens = async () => {
+    if (!signer) return toast.error('Connect wallet first');
+    if (!stakeAmount || Number(stakeAmount) <= 0) return toast.error('Enter valid amount');
+    try {
+      const tok = new ethers.Contract(stakeToken, tokenABI, signer);
+      const decimals = await tok.decimals();
+      const parsed = ethers.parseUnits(stakeAmount, decimals);
+      const allowance = await tok.allowance(userAddress, StakingContractAddress);
+      if (allowance < parsed) {
+        const approveTx = await tok.approve(StakingContractAddress, parsed);
+        await approveTx.wait();
+      }
+      const tx = await staking.connect(signer).stake(parsed);
+      await tx.wait();
+      toast.success('Staked successfully');
+      fetchStakingData();
+      setStakeAmount('');
+    } catch (err) {
+      console.error(err);
+      toast.error('Error staking');
+    }
+  };
+
+  const withdrawTokens = async () => {
+    if (!signer) return toast.error('Connect wallet first');
+    if (!stakeAmount || Number(stakeAmount) <= 0) return toast.error('Enter valid amount');
+    try {
+      const decimals = 18;
+      const parsed = ethers.parseUnits(stakeAmount, decimals);
+      const tx = await staking.connect(signer).withdraw(parsed);
+      await tx.wait();
+      toast.success('Withdrawn successfully');
+      fetchStakingData();
+      setStakeAmount('');
+    } catch (err) {
+      console.error(err);
+      toast.error('Error withdrawing');
+    }
+  };
+
+  const claimRewards = async () => {
+    if (!signer) return toast.error('Connect wallet first');
+    try {
+      const tx = await staking.connect(signer).getReward();
+      await tx.wait();
+      toast.success('Rewards claimed');
+      fetchStakingData();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error claiming rewards');
+    }
+  };
+
+  return (
+    <div className="w-full h-full fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center"
+    onClick={(e) => { if (e.target === e.currentTarget) setShowStaking(false); }}
+    >
+    <div className="w-full fixed inset-0 z-50 top-1/2 h-fit max-w-4xl mx-auto mt-6 p-4 my-auto sm:p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col ring-1 ring-[#36444c] md:hover:scale-105 transition-transform duration-300 -translate-y-1/2 ">
+      <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase tracking-wide">
+        🥩 Staking Rewards
+      </h1>
+      <button
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-200"
+        onClick={() => setShowStaking(false)}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Left Side - Staking Actions */}
+        <div className="space-y-4">
+          <div>
+            <label className="block font-semibold text-gray-200 mb-2 text-left">
+              🪙 Select Token to Stake:
+            </label>
+            <select
+              className="w-full px-4 py-3 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition mb-2"
+              value={stakeToken}
+              onChange={(e) => setStakeToken(e.target.value)}
+            >
+              <option value="">{!stakeToken ? 'Select Token' : stakeToken}</option>
+              {chainId === 1 && (
+                <>
+                  <option value="0x6B175474E89094C44Da98b954EedeAC495271d0F">DAI</option>
+                  <option value="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48">USDC</option>
+                  <option value="0xdac17f958d2ee523a2206206994597c13d831ec7">USDT</option>
+                  <option value="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2">WETH</option>
+                  <option value="0x2260fac5e5542a773aa44fbcfedf7c193bc2c599">WBTC</option>
+                </>
+              )}
+              {chainId === 8453 && (
+                <>
+                  <option value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913">USDC</option>
+                  <option value="0x4200000000000000000000000000000000000006">WETH</option>
+                </>
+              )}
+              <option value="custom">Custom Token</option>
+            </select>
+            {stakeToken === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter token address (0x...)"
+                className="w-full px-4 py-3 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                onChange={(e) => setStakeToken(e.target.value)}
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block font-semibold text-gray-200 mb-2 text-left">
+              💰 Amount to Stake/Withdraw:
+            </label>
+            <input
+              type="text"
+              placeholder="0.0"
+              className="w-full px-4 py-3 bg-gray-700 text-gray-200 rounded-full placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              value={stakeAmount}
+              onChange={(e) => setStakeAmount(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 pt-2">
+            <button 
+              onClick={stakeTokens}
+              className="px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold
+                         rounded-full transition focus:outline-none focus:ring-2 focus:ring-green-400"
+            >
+              Stake
+            </button>
+            <button 
+              onClick={withdrawTokens}
+              className="px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold
+                         rounded-full transition focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              Withdraw
+            </button>
+            <button 
+              onClick={claimRewards}
+              className="px-4 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold
+                         rounded-full transition focus:outline-none focus:ring-2 focus:ring-purple-400"
+            >
+              Claim
+            </button>
+          </div>
+          <div className="bg-gray-700 rounded-2xl p-4">
+            <h3 className="text-lg font-semibold text-orange-300 mb-2">How Staking Works</h3>
+            <ul className="text-gray-300 text-sm space-y-1 text-left">
+              <li>• Stake tokens to earn rewards</li>
+              <li>• Rewards accrue over time</li>
+              <li>• Claim rewards anytime</li>
+              <li>• Withdraw staked tokens anytime</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Side - Staking Stats */}
+        <div className="space-y-4 relative ">
+          <div className="bg-gray-700 rounded-2xl p-4 h-full relative">
+            <h3 className="text-lg font-semibold text-blue-300 mb-3">Staking</h3>
+            
+            <div className="space-y-3">
+              <div className="bg-gray-600 rounded-xl p-3">
+                <p className="text-gray-400 text-sm mb-1">Staked Balance:</p>
+                <p className="text-green-300 font-bold text-lg">
+                  {Number(stakedBalance).toFixed(4)} {stakeTokenSymbol || 'TOKENS'}
+                </p>
+              </div>
+              
+              <div className="bg-gray-600 rounded-xl p-3">
+                <p className="text-gray-400 text-sm mb-1">Earned Rewards:</p>
+                <p className="text-purple-300 font-bold text-lg">
+                  {Number(earnedReward).toFixed(6)} {rewardTokenSymbol || 'REWARDS'}
+                </p>
+              </div>
+              
+              <div className="bg-gray-600 rounded-xl p-3">
+                <p className="text-gray-400 text-sm mb-1">{stakeTokenSymbol || 'Stake'} Available:</p>
+                <p className="text-blue-300 font-bold text-lg">
+                  {Number(stakedBalance).toFixed(4)} {stakeTokenSymbol || 'TOKENS'}
+                </p>
+              </div>
+            <a
+              href="https://gg.iou.fi/"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold
+                         px-4 py-2 rounded-full transition text-center mt-4 md:absolute md:bottom-4 md:left-1/2 md:transform md:-translate-x-1/2 w-3/4"
+            >
+              Go to Gigastrat to Mint {stakeTokenSymbol || 'Stake'}
+            </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-gray-900 to-gray-800 text-gray-200 flex flex-col items-center pb-10 px-4">
 
@@ -774,10 +1038,20 @@ provider.on("network", (newNetwork, oldNetwork) => {
           ?
         </button>
       </span>
-
+<div className="items-center justify-center">
+        <button
+          className="px-4 py-2 bg-gradient-to-r from-green-400 to-blue-400 text-white font-semibold
+                     rounded-full mt-4 hover:from-blue-600 hover:to-blue-700 transition
+                     focus:outline-none focus:ring-2 focus:ring-blue-400"
+          onClick={() => setShowStaking(!showStaking)}
+        >
+          {showStaking ? 'Hide Staking' : 'Stake for $IOU'}
+        </button>
+        {showStaking && <StakingSection />}
+      </div>
       {/* Deploy a new IOU */}
       <div
-        className="max-w-xl w-full mt-10 p-6 md:p-8 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
+        className="max-w-xl w-full mt-6 p-6 md:p-8 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col
                    ring-1 ring-[#36444c] hover:scale-105 transform transition duration-300"
       >
         <h1 className="text-blue-400 text-3xl font-bold mt-2 mb-4 uppercase tracking-wide">
