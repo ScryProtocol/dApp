@@ -1743,10 +1743,10 @@ function StakingSection() {
               </div>
               <div className="text-xs text-pink-300 bg-pink-900/30 border border-pink-500/30 px-2 py-1 rounded-lg font-medium">
                 Owed: {parseFloat(info.updatedTotalOwed).toLocaleString()}
-                </div>
-                <div className="text-gray-400 transition-transform duration-200 fixed right-4">
-              {expandedRowsSearch[i] ? '🔽' : '▶️'}
                 </div></div>
+                <div className="text-gray-400 transition-transform duration-200 right-4 ml-2">
+              {expandedRowsSearch[i] ? '🔽' : '▶️'}
+                </div>
                 </button>
 
                 {expandedRowsSearch[i] && (
@@ -1852,7 +1852,7 @@ function StakingSection() {
                     <h4 className="text-gray-200 font-semibold mb-4 flex items-center">
                       ⚡ Quick Actions
                     </h4>
-                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+                    <div className="flex flex-col lg:flex-row md:items-stretch lg:items-center gap-4">
                       <div className="flex-1">
                       <input
                         type="text"
@@ -1864,7 +1864,7 @@ function StakingSection() {
                              focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200"
                       />
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                       <button
                         onClick={() => fundLoan(info.loanAddress, actionAmount)}
                         className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 
