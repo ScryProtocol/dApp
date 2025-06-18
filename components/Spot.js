@@ -1706,14 +1706,14 @@ function StakingSection() {
           const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
 
           return (
-            <div key={info.loanAddress} className="bg-gray-700 rounded-2xl shadow-md">
+            <div key={info.loanAddress} className="bg-gray-600 rounded-2xl shadow-md">
               <button
                 onClick={() => toggleExpandSearch(i)}
                 className="flex items-center justify-between px-4 py-3 w-full
             cursor-pointer hover:bg-gray-600 transition hover:rounded-2xl"
               >
-                <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2 sm:gap-0">
-            <span className="text-sm text-gray-300 flex items-center space-x-2">
+                <div className="flex items-center grid grid-cols-1 sm:grid-cols-5 w-full gap-2">
+            <div className="text-sm text-gray-300 flex items-center space-x-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1722,155 +1722,203 @@ function StakingSection() {
                   );
                   toast.success('Copied!');
                 }}
-                className="bg-gray-600 px-1 py-1 rounded-full"
-              >
+                className="bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded-lg transition-all duration-200 hover:scale-110 relative"
+                >
                 🔗
-              </button>
-              <span>🧑‍💼 {info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
-            </span>
-            
-            <span className="text-sm text-blue-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
-              {!info.flexible ? '🔵' : '🟢'} {info.underlyingSymbol || 'TOKEN'}
-            </span>
-            <span className="text-sm text-purple-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
-              Goal: {info.loanGoal}
-            </span>
-            <span className="text-sm text-green-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
-              APR: {(info.annualInterestRate / 100).toFixed(2)}%
-            </span>
-            <span className="text-sm text-pink-300 bg-gray-600 px-2 py-1 rounded-full mx-2">
-              Owed: {info.updatedTotalOwed}
-            </span>
+                </button>
+                <span className="text-xs">🧑‍💼</span>
+                <span className="font-mono">{info.borrower.slice(0, 6)}...{info.borrower.slice(-4)}</span>
+                
+              </div>
+              <div className="ml-2 text-xs text-purple-300 bg-purple-900/30 border border-purple-500/30 px-2 py-1 rounded-lg font-medium">
+                {!info.flexible ? '🔵' : '🟢'}
+                {info.underlyingSymbol || 'TOKEN'}
                 </div>
-                <div className="text-gray-400">
-            {expandedRowsSearch[i] ? '▼' : '▶'}
+              
+              <div className="text-xs text-green-300 bg-green-900/30 border border-green-500/30 px-2 py-1 rounded-lg font-medium">
+                Goal: {parseFloat(info.loanGoal).toLocaleString()}
+              </div>
+              <div className="text-xs text-yellow-300 bg-yellow-900/30 border border-yellow-500/30 px-2 py-1 rounded-lg font-medium">
+                {(info.annualInterestRate / 100).toFixed(2)}% APR
+              </div>
+              <div className="text-xs text-pink-300 bg-pink-900/30 border border-pink-500/30 px-2 py-1 rounded-lg font-medium">
+                Owed: {parseFloat(info.updatedTotalOwed).toLocaleString()}
                 </div>
-              </button>
+                <div className="text-gray-400 transition-transform duration-200 fixed right-4">
+              {expandedRowsSearch[i] ? '🔽' : '▶️'}
+                </div></div>
+                </button>
 
-              {expandedRowsSearch[i] && (
-                    <div className="px-4 py-4 border-t border-gray-600">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-                        <div>
-                          <p className="text-gray-400 text-xs">IOU Name:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.iouName} ({info.iouSymbol})
-                          </p>
-                          <p className="text-gray-400 text-xs">{info.underlyingSymbol} Available:</p>
-                          <p className="text-white font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.underlyingBalance}
-                          </p>
+                {expandedRowsSearch[i] && (
+                  <div className="px-6 py-4 border-t border-gray-600/50 bg-gray-700">
+                    <h2 className="bg-gray-600 text-gray-200 text-xs md:text-lg font-semibold mb-2 rounded-full p-3 py-1 w-fit mx-auto">
+                        {info.borrower}
+                    </h2>
+                    
+                    <div className="flex items-center justify-center mb-2">
+                        <div className="bg-blue-500 px-3 py-1 rounded-full mr-2 font-semibold text-white">
+                        {info.iouName || 'IOU'}
                         </div>
-                        <div>
-                          <p className="text-gray-400 text-xs">Available to Borrow:</p>
-                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {(
-                              parseFloat(info.totalFunded) -
-                              parseFloat(info.totalDrawnDown || '0')
-                            ).toFixed(4)}
-                          </p>
-                          <p className="text-gray-400 text-xs">Borrower:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.borrower}
-                          </p>
+                        <div className="bg-blue-400 px-3 py-1 rounded-full font-semibold text-white">
+                        {info.iouSymbol || 'IOU'}
                         </div>
-                        <div>
-                          <p className="text-gray-400 text-xs">Total Funded:</p>
-                          <p className="text-green-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.totalFunded}
-                          </p>
-                          <p className="text-gray-400 text-xs">My IOUs:</p>
-                          <p className="text-pink-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.myIOUs}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-xs">Repayments / Interest:</p>
-                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.repayments} / {info.interestrepayments}
-                          </p>
-                          <p className="text-gray-400 text-xs">Interest Claimable:</p>
-                          <p className="text-orange-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.interestClaimable}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-xs">Total Withdrawn:</p>
-                          <p className="text-yellow-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.totalDrawnDown}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-400 text-xs">Redeemable/IOU:</p>
-                          <p className="text-blue-200 font-semibold mb-2 bg-gray-600 px-3 py-1 rounded-full overflow-x-hidden">
-                            {info.redeemable}
-                          </p>
-                        </div>
+                        <div className="bg-purple-500 px-3 py-1 rounded-full ml-2 font-semibold text-white">
+                          {parseFloat(info.myIOUs).toLocaleString()} {info.iouSymbol}</div>
                       </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    {/* Card 1: Basic Info */}
 
-                      <ProgressBar info={info} />
-
-                      <div className="mt-4 flex flex-col sm:flex-row items-center sm:space-x-2 space-y-2 sm:space-y-0">
-                        <input
-                          type="text"
-                          placeholder="Amount"
-                          value={actionAmount}
-                          onChange={(e) => setActionAmount(e.target.value)}
-                          className="flex-1 px-4 py-2 bg-gray-800 text-gray-100
-                                     rounded-full placeholder-gray-500
-                                     focus:outline-none focus:ring-2
-                                     focus:ring-pink-400 transition"
-                        />
-                        <div className="flex-1 flex flex-wrap gap-2">
-                          <button
-                            onClick={() => fundLoan(info.loanAddress, actionAmount)}
-                            className="bg-pink-500 hover:bg-pink-600 text-white font-semibold
-                                       px-3 py-2 rounded-full text-sm flex-1"
-                          >
-                            Fund
-                          </button>
-                              <button
-                                onClick={() => repayLoan(info.loanAddress, actionAmount)}
-                                className="bg-red-500 hover:bg-red-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
-                              >
-                                Repay
-                              </button>
-                          {isBorrower && (
-                            <>
-                              <button
-                                onClick={() => drawDown(info.loanAddress, actionAmount)}
-                                className="bg-yellow-500 hover:bg-yellow-600 text-white
-                                           font-semibold px-3 py-2 rounded-full text-sm flex-1"
-                              >
-                                Withdraw
-                              </button>
-                            </>
-                          )}
-                          <button
-                            onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white
-                                       font-semibold px-3 py-2 rounded-full text-sm flex-1"
-                          >
-                            Redeem
-                          </button>
-                          <button
-                            onClick={() => claimInterest(info.loanAddress)}
-                            className="bg-[#206a5d] hover:scale-105 text-white
-                                       font-semibold px-3 py-2 rounded-full text-sm flex-1"
-                          >
-                            Claim
-                          </button>
-                        </div>
+                    {/* Card 2: Funding Status */}
+                    <div className="bg-gradient-to-br from-green-900/20 to-green-800/20 p-4 rounded-xl border border-green-500/20">
+                      <h4 className="text-green-300 font-semibold mb-3 flex items-center">
+                      <span className="mr-2">💰</span>Funding Status
+                      </h4>
+                      <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Funded:</span>
+                        <span className="text-green-200 font-semibold text-sm">{parseFloat(info.totalFunded).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Available:</span>
+                        <span className="text-green-200 font-semibold text-sm">
+                        {(parseFloat(info.totalFunded) - parseFloat(info.totalDrawnDown || '0')).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Withdrawn:</span>
+                        <span className="text-green-200 font-semibold text-sm">{parseFloat(info.totalDrawnDown).toLocaleString()}</span>
+                      </div>
                       </div>
                     </div>
+
+                    {/* Card 3: Loan Performance */}
+                    <div className="bg-gradient-to-br from-orange-900/20 to-orange-800/20 p-4 rounded-xl border border-orange-500/20">
+                      <h4 className="text-orange-300 font-semibold mb-3 flex items-center">
+                      <span className="mr-2">📊</span>Performance
+                      </h4>
+                      <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Repayments:</span>
+                        <span className="text-orange-200 font-semibold text-sm">{parseFloat(info.repayments).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Interest Repayments:</span>
+                        <span className="text-orange-200 font-semibold text-sm">{parseFloat(info.interestrepayments).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Debt:</span>
+                        <span className="text-orange-200 font-semibold text-sm">{parseFloat(info.updatedTotalOwed).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Debt Interest:</span>
+                        <span className="text-orange-200 font-semibold text-sm">{parseFloat(info.updatedInterest).toLocaleString()}</span>
+                      </div>
+                      </div>
+                    </div>
+
+                    {/* Card 4: Borrower Info (spans 2 columns on larger screens) */}
+                    <div className="bg-gradient-to-br from-purple-900/20 to-purple-800/20 p-4 rounded-xl border border-purple-500/20">
+                      <h4 className="text-purple-300 font-semibold mb-3 flex items-center">
+                      <span className="mr-2">💰</span>My Assets
+                      </h4>
+                      <div className="">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Interest Claimable:</span>
+                        <span className="text-purple-200 font-semibold text-sm">{parseFloat(info.interestClaimable).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">IOU Balance:</span>
+                        <span className="text-blue-200 font-semibold text-sm">{parseFloat(info.myIOUs).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">{info.underlyingSymbol} Balance:</span>
+                        <span className="text-blue-200 font-semibold text-sm">
+                        {parseFloat(info.underlyingBalance).toLocaleString()}
+                        </span>
+                        </div><div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-sm">Redeemable/IOU:</span>
+                        <span className="text-blue-200 font-semibold text-sm">{info.redeemable}</span>
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                    </div>
+
+                    <ProgressBar info={info} />
+
+                    {/* Enhanced Action Section */}
+                    <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-600/30 text-center">
+                    <h4 className="text-gray-200 font-semibold mb-4 flex items-center">
+                      ⚡ Quick Actions
+                    </h4>
+                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+                      <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="Enter amount..."
+                        value={actionAmount}
+                        onChange={(e) => setActionAmount(e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-900/50 text-gray-100 border border-gray-600/50
+                             rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2
+                             focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200"
+                      />
+                      </div>
+                      <div className="flex gap-2">
+                      <button
+                        onClick={() => fundLoan(info.loanAddress, actionAmount)}
+                        className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 
+                             text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                             transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-400/50 shadow-lg"
+                      >
+                        💸 Fund
+                      </button>
+                      <button
+                        onClick={() => repayLoan(info.loanAddress, actionAmount)}
+                        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700
+                             text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                             transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400/50 shadow-lg"
+                      >
+                        💳 Repay
+                      </button>
+                      {isBorrower && (
+                        <button
+                        onClick={() => drawDown(info.loanAddress, actionAmount)}
+                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700
+                               text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                               transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 shadow-lg"
+                        >
+                        💰 Withdraw
+                        </button>
+                      )}
+                      <button
+                        onClick={() => redeemIOUs(info.loanAddress, actionAmount)}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
+                             text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                             transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400/50 shadow-lg"
+                      >
+                        🔄 Redeem
+                      </button>
+                      <button
+                        onClick={() => claimInterest(info.loanAddress)}
+                        className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700
+                             text-white font-semibold px-4 py-3 rounded-xl text-sm transition-all duration-200
+                             transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 shadow-lg"
+                      >
+                        🎁 Claim
+                      </button>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
                   )}
+              </div>
+              );
+                })}
             </div>
-          );
-              })}
-        </div>
-        </div>
-        )}
-        {/* MY LOANS */}
+            </div>
+            )}
+            {/* MY LOANS */}
       <div
         className="w-full max-w-4xl mx-auto mt-6 p-4 sm:p-6 bg-gray-800 rounded-3xl
                    shadow-lg text-center flex flex-col ring-1 ring-[#36444c]
