@@ -1407,7 +1407,7 @@ function Loan({info, i, fundLoan, drawDown, repayLoan, redeemIOUs, claimInterest
           const isBorrower = userAddress?.toLowerCase() === info.borrower.toLowerCase();
 
           return (
-            <div key={info.loanAddress} className="bg-gray-600 rounded-2xl shadow-md">
+            <div key={info.loanAddress} className="bg-gray-500/20 rounded-2xl shadow-md">
               <button
                 onClick={() => toggleExpandSearch(i)}
                 className="flex items-center justify-between px-4 py-3 w-full
@@ -1640,7 +1640,7 @@ function Loan({info, i, fundLoan, drawDown, repayLoan, redeemIOUs, claimInterest
           href="https://twitter.com/heyvault"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 ml-3 inline-flex items-center relative top-3"
+          className="text-blue-400 ml-3 inline-flex items-center relative top-3 bg-gray-700 rounded-full p-2 hover:bg-blue-500 transition-colors duration-200"
         >
           <svg
             role="img"
@@ -1656,7 +1656,7 @@ function Loan({info, i, fundLoan, drawDown, repayLoan, redeemIOUs, claimInterest
           href="https://discord.gg/vrV4YpUccq"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 ml-3 inline-flex items-center relative top-3"
+          className="text-blue-400 ml-1 inline-flex items-center relative top-3 bg-gray-700 rounded-full p-2 hover:bg-blue-500 transition-colors duration-200"
         >
           <svg
             role="img"
@@ -1671,7 +1671,7 @@ function Loan({info, i, fundLoan, drawDown, repayLoan, redeemIOUs, claimInterest
 
         {/* Toggle modal with "?" */}
         <button
-          className="text-2xl text-white px-2.5 py-0 ml-1.5 relative top-2.5"
+          className="text-2xl text-white px-3.5 py-1 ml-1.5 relative top-3 bg-gray-700 rounded-full hover:bg-blue-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
           onClick={() => setShowModal(!showModal)}
         >
           ?
