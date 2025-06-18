@@ -140,159 +140,235 @@ const [flexible, setFlexible] = useState(true);
 
   // InfoModal component
   const InfoModal = () => {
+    const [activeTab, setActiveTab] = useState('overview');
+    
+    if (!showModal) return null;
+
+    const docs = {
+      overview: {
+        title: 'IOU.fi Overview',
+        content: (
+          <>
+            <p className="mb-4">
+              <strong>IOU.fi</strong> is a decentralized platform for creating, funding,
+              and managing on-chain, tokenized loans. Each <strong>IOU</strong> represents
+              a fraction of a loan, letting lenders and borrowers interact transparently
+              and without needing to trust a middleman.
+            </p>
+            <p className="mb-4">
+              The platform enables borrowers to deploy loan contracts with custom terms,
+              while lenders can fund these loans and receive IOU tokens representing their
+              share. Interest accrues automatically, and repayments are handled transparently
+              on-chain.
+            </p>
+            <p className="mb-4 font-semibold">
+              Example: If you lend $1,000 to a loan with a 5% annual rate, you'll receive
+              IOU tokens representing your share. As the borrower repays, you can claim
+              your principal plus interest, or redeem your IOUs for immediate liquidity.
+            </p>
+          </>
+        )
+      },
+      deployment: {
+        title: 'Mint/Deploy an IOU',
+        content: (
+          <>
+            <p className="mb-3">
+              If you're seeking to borrow, you can launch a specialized loan contract by specifying:
+            </p>
+            <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
+              <li>
+                <strong>Loan Token</strong> – The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
+              </li>
+              <li>
+                <strong>Loan Goal</strong> – The total principal you aim to raise.
+              </li>
+              <li>
+                <strong>Annual Interest Rate</strong> – Stated in basis points (e.g., 500 = 5%).
+              </li>
+              <li>
+                <strong>Borrower</strong> – The address authorized to withdraw loaned funds and initiate repayments.
+              </li>
+              <li>
+                <strong>IOU Token Name & Symbol</strong> – Custom labels for the ERC20 IOU
+                tokens representing a share of the debt.
+              </li>
+            </ul>
+            <p>
+              This contract monitors contributions, accumulates interest on the outstanding
+              principal, and orchestrates repayment logic until the loan is finalized.
+            </p>
+          </>
+        )
+      },
+      funding: {
+        title: 'Provide Funding',
+        content: (
+          <>
+            <p className="mb-4">
+              As a lender, simply select a loan and click "Fund." You'll deposit the designated token
+              into the loan contract, receiving IOUs that reflect your proportion of the total funds
+              raised. These tokens let you claim principal and any accumulated interest once repayments
+              begin.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Interest Accrual & Claiming</h2>
+            <p className="mb-4">
+              Interest is calculated in real time based on the annual rate and the remaining principal.
+              As the borrower repays, the contract allocates a share of the interest to each IOU holder.
+              Lenders can claim this interest whenever they choose, without any complex manual calculations
+              or extra steps.
+            </p>
+          </>
+        )
+      },
+      borrowing: {
+        title: 'Borrower Operations',
+        content: (
+          <>
+            <p className="mb-4">
+              Once enough capital is raised, the borrower can withdraw part or all of the funds to use
+              as needed. Over the loan's duration, they're responsible for repaying the principal plus
+              accrued interest. Partial repayments are possible, and each one updates the amount
+              available to lenders.
+            </p>
+            <p className="mb-4">
+              Borrowers can manage the frequency and size of repayments, but interest continues to
+              accrue on any outstanding principal until it's fully settled.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Flexible vs Non-Flexible Loans</h2>
+            <p className="mb-4">
+              🟢 Flexible loans allow the borrower to withdraw and repay at any time from available funds.
+              🔵 Non-flexible loans lock repaid funds for IOU holders to guarantee liquidity.
+            </p>
+          </>
+        )
+      },
+      redemption: {
+        title: 'Redeeming IOUs',
+        content: (
+          <>
+            <p className="mb-4">
+              When principal repayments take place, that repaid portion becomes available for IOU holders
+              to redeem. Redeeming <strong>burns</strong> the IOUs you surrender, granting you the
+              corresponding share of principal. Once redeemed, those IOUs no longer earn future repayments
+              or interest, so you can decide whether to wait for more principal to accumulate or redeem
+              early for partial liquidity.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Optional "Unfund" Feature</h2>
+            <p className="mb-4">
+              If the borrower hasn't yet withdrawn your contribution, you can back out by "unfunding."
+              This action returns your tokens and burns the IOUs you received, freeing you to reallocate
+              your capital elsewhere if circumstances change.
+            </p>
+          </>
+        )
+      },
+      risks: {
+        title: 'Important Notes & Risks',
+        content: (
+          <>
+            <p className="mb-4 font-semibold text-orange-300">
+              IOUs are for use with private loans and not public sale. We do not guarantee any liquidity 
+              or value of loans. Make sure to check local laws or regulations before participating.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Smart Contract Risks</h2>
+            <p className="mb-4">
+              As with any smart contract protocol, there are inherent risks including bugs, 
+              vulnerabilities, and potential loss of funds. Use only what you can afford to lose.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Counterparty Risk</h2>
+            <p className="mb-4">
+              Borrowers may default on their loans. While IOUs provide transparency, they don't
+              guarantee repayment. Always assess the creditworthiness of borrowers.
+            </p>
+            <h2 className="font-semibold text-blue-300 mb-2">Liability</h2>
+            <p className="mb-4">
+              IOU.fi is provided "as is" without warranties of any kind. By using this platform,
+              you acknowledge the risks and agree that the developers are not liable for any losses
+              incurred.
+            </p>
+          </>
+        )
+      }
+    };
+
+    const tabItems = Object.keys(docs);
+
     return (
-      <div>
-        {showModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
-            onClick={() => setShowModal(false)}
-          >
-            <div
-              className="relative top-0 max-w-3xl w-full bg-gray-800 text-gray-300
-                         rounded-3xl p-8 shadow-xl overflow-y-auto max-h-[90vh]"
-              style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1A202C' }}
-            >
-              <h2 className="text-3xl font-extrabold mb-6 text-blue-400">
-                Welcome to IOU.fi
-              </h2>
-
-              <p className="mb-6">
-                <strong>IOU.fi</strong> is a decentralized platform for creating, funding,
-                and managing on-chain, tokenized loans. Each <strong>IOU</strong> represents
-                a fraction of a loan, letting lenders and borrowers interact transparently
-                and without needing to trust a middleman. Here’s a detailed look at how it all works.
-              </p>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Mint/Deploy an IOU
-                </h3>
-                <p className="mb-3">
-                  If you’re seeking to borrow, you can launch a specialized loan contract by specifying:
-                </p>
-                <ul className="list-disc list-inside pl-4 space-y-2 mb-3">
-                  <li>
-                    <strong>Loan Token</strong> – The ERC20 asset (e.g., DAI, USDC) you plan to borrow and repay.
-                  </li>
-                  <li>
-                    <strong>Loan Goal</strong> – The total principal you aim to raise.
-                  </li>
-                  <li>
-                    <strong>Annual Interest Rate</strong> – Stated in basis points (e.g., 500 = 5%).
-                  </li>
-                  <li>
-                    <strong>Borrower</strong> – The address authorized to withdraw loaned funds and initiate repayments.
-                  </li>
-                  <li>
-                    <strong>IOU Token Name &amp; Symbol</strong> – Custom labels for the ERC20 IOU
-                    tokens representing a share of the debt.
-                  </li>
-                </ul>
-                <p>
-                  This contract monitors contributions, accumulates interest on the outstanding
-                  principal, and orchestrates repayment logic until the loan is finalized.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Provide Funding
-                </h3>
-                <p className="mb-3">
-                  As a lender, simply select a loan and click “Fund.” You’ll deposit the designated token
-                  into the loan contract, receiving IOUs that reflect your proportion of the total funds
-                  raised. These tokens let you claim principal and any accumulated interest once repayments
-                  begin.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Borrower Withdrawals &amp; Repayments
-                </h3>
-                <p className="mb-3">
-                  Once enough capital is raised, the borrower can withdraw part or all of the funds to use
-                  as needed. Over the loan’s duration, they’re responsible for repaying the principal plus
-                  accrued interest. Partial repayments are possible, and each one updates the amount
-                  available to lenders.
-                </p>
-                <p>
-                  Borrowers can manage the frequency and size of repayments, but interest continues to
-                  accrue on any outstanding principal until it’s fully settled.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Interest Accrual &amp; Claiming
-                </h3>
-                <p className="mb-3">
-                  Interest is calculated in real time based on the annual rate and the remaining principal.
-                  As the borrower repays, the contract allocates a share of the interest to each IOU holder.
-                  Lenders can claim this interest whenever they choose, without any complex manual calculations
-                  or extra steps.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Redeeming IOUs for Principal
-                </h3>
-                <p className="mb-3">
-                  When principal repayments take place, that repaid portion becomes available for IOU holders
-                  to redeem. Redeeming <strong>burns</strong> the IOUs you surrender, granting you the
-                  corresponding share of principal. Once redeemed, those IOUs no longer earn future repayments
-                  or interest, so you can decide whether to wait for more principal to accumulate or redeem
-                  early for partial liquidity.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                  Optional “Unfund” Feature
-                </h3>
-                <p className="mb-3">
-                  If the borrower hasn’t yet withdrawn your contribution, you can back out by “unfunding.”
-                  This action returns your tokens and burns the IOUs you received, freeing you to reallocate
-                  your capital elsewhere if circumstances change.
-                </p>
-              </section>
-              <h3 className="text-xl font-semibold mb-3 text-blue-300">
-              Flexible Loans
-              </h3>
-              <p className="mb-3">
-                🟢 Flexible loans allow the borrower to withdraw and repay at any time from available funds vs being able to draw from a loan and on repayment having the funds locked for IOU holders to guarantee liquidity. 🟢 Flexible 🔵 Non
-                </p>
-
-              <h3 className="text-xl font-semibold mb-3 text-blue-300">
-                My Loans &amp; IOUs
-              </h3>
-              <p className="mb-6">
-                After connecting your wallet, you can set up a new loan or fund existing ones. In “My Loans”
-                you'll see all loans you've created and “My IOUs” for all loans you’ve funded. Each section
-                displays interest due, principal redeemed, and more. Explore IOU.fi and experience
-                decentralized lending firsthand!
-              </p>
-              <p className="text-sm font-semibold mb-3 text-orange-300">
-                Note: IOUs are for use with private loans and not public sale. We do not guarantee any liquidity or value of loans. 
-                Make sure to check local laws or regulations before participating.
-              </p>
-
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="bg-gray-800 text-white w-full max-w-4xl rounded-3xl shadow-lg flex" style={{ maxHeight: '90vh' }}>
+          {/* Sidebar tabs */}
+          <div className="w-1/3 border-r border-gray-600 overflow-y-auto rounded-l-xl">
+            <div className="flex align-items-center items-center justify-center my-2 mb-2 gap-2 bg-gray-700 px-4 py-1 rounded-full w-fit mx-auto">
+              <a
+                href="https://twitter.com/heyvault"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <svg
+                  role="img"
+                  fill="white"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                >
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                </svg>
+              </a>
+              <a
+                href="https://discord.gg/vrV4YpUccq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <svg
+                  role="img"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="white"
+                >
+                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                </svg>
+              </a>
+            </div>
+            {tabItems.map((key) => (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`block w-full text-left px-4 py-3 border-b border-gray-600 hover:bg-gray-700 transition ${
+                  activeTab === key
+                    ? 'bg-blue-600 text-white font-semibold'
+                    : 'text-gray-300'
+                }`}
+              >
+                {docs[key].title}
+              </button>
+            ))}
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => {
                   setShowModal(false);
                   localStorage.setItem('showModal', 'false');
                 }}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-semibold px-4 py-2
-                           rounded-full transition w-full focus:outline-none
-                           focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                className="px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-full mb-4 transition"
               >
                 Got it!
               </button>
             </div>
           </div>
-        )}
+
+          {/* Right-side content */}
+          <div className="w-2/3 p-6 overflow-y-auto">
+            <h2 className="text-xl font-bold text-blue-400 mb-4">
+              {docs[activeTab].title}
+            </h2>
+            <div className="text-gray-200">
+              {docs[activeTab].content}
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
