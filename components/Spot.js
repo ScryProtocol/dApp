@@ -208,7 +208,7 @@ let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanMan
       const iface = managerContract.interface;
   
       const calls = [
-        { target: managerContract.target, callData: iface.encodeFunctionData('ethFromMint') },
+        { target: managerContract.target, callData: iface.encodeFunctionData('getProfit') },
         { target: managerContract.target, callData: iface.encodeFunctionData('name') },
         { target: managerContract.target, callData: iface.encodeFunctionData('symbol') },
         { target: managerContract.target, callData: iface.encodeFunctionData('decimals') },
@@ -238,7 +238,7 @@ let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanMan
         _latestPrice,
         myGGBal,
       ] = [
-        iface.decodeFunctionResult('ethFromMint', returnData[0])[0],
+        iface.decodeFunctionResult('getProfit', returnData[0])[0],
         iface.decodeFunctionResult('name', returnData[1])[0],
         iface.decodeFunctionResult('symbol', returnData[2])[0],
         iface.decodeFunctionResult('decimals', returnData[3])[0],
@@ -1236,9 +1236,23 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             </button>
           </div>
           {burnAmount && parseFloat(burnAmount) > 0 && (
+            <div>
             <p className={getThemeClass('text-pink-500 font-semibold', 'text-purple-400 font-semibold')}>
               {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
             </p>
+            <p className={getThemeClass(
+              'text-pink-300 font-semibold',
+              'text-purple-500 font-semibold'
+            )}>
+Total GG Supply: {GGSupply || 'N/A'} GG
+            </p>
+            <p className={getThemeClass(
+              'text-pink-300 font-semibold',
+              'text-purple-500 font-semibold'
+            )}>
+ETH / GG: {ethFromMint/GGSupply || 'N/A'} ETH
+            </p>
+            </div>
           )}
           <button
             onClick={handleBurnDAOForETH}
