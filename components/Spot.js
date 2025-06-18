@@ -733,8 +733,9 @@ function StakingSection() {
   const [stakedBalance, setStakedBalance] = useState('0');
   const [earnedReward, setEarnedReward] = useState('0');
   const [rewardTokenAddress, setRewardTokenAddress] = useState(ethers.ZeroAddress);
-  const [rewardTokenSymbol, setRewardTokenSymbol] = useState('');
+  const [rewardTokenSymbol, setRewardTokenSymbol] = useState('IOU');
   const [stakeTokenSymbol, setStakeTokenSymbol] = useState('');
+  const [rewardRate, setRewardRate] = useState('0');
   
   const staking = new ethers.Contract(StakingContractAddress, StakingABI, provider);
 
@@ -834,7 +835,7 @@ function StakingSection() {
     <div className="w-full h-full fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center"
     onClick={(e) => { if (e.target === e.currentTarget) setShowStaking(false); }}
     >
-    <div className="w-full fixed inset-0 z-50 top-1/2 h-fit max-w-4xl mx-auto mt-6 p-4 my-auto sm:p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col ring-1 ring-[#36444c] md:hover:scale-105 transition-transform duration-300 -translate-y-1/2 ">
+    <div className="w-full fixed inset-0 z-50 top-1/2 h-fit max-w-4xl mx-auto mt-6 p-4 my-auto sm:p-6 bg-gray-800 rounded-3xl shadow-lg text-center flex flex-col ring-1 ring-[#36444c] md:hover:scale-105 transition-transform duration-300 -translate-y-1/2 overflow-y-auto max-h-[100vh]">
       <h1 className="text-blue-400 text-xl sm:text-2xl font-bold mb-4 uppercase tracking-wide">
         🥩 Staking Rewards
       </h1>
@@ -927,6 +928,9 @@ function StakingSection() {
           </div>
           <div className="bg-gray-700 rounded-2xl p-4">
             <h3 className="text-lg font-semibold text-orange-300 mb-2">How Staking Works</h3>
+            <p className="text-gray-300 mb-3 text-sm ">
+              Staking allows you to lock up your IOU loans or GG to earn $IOU rewards over time. $IOU is the native token of IOU.fi and is used for governance only.
+            </p>
             <ul className="text-gray-300 text-sm space-y-1 text-left">
               <li>• Stake tokens to earn rewards</li>
               <li>• Rewards accrue over time</li>
@@ -960,6 +964,12 @@ function StakingSection() {
                 <p className="text-gray-400 text-sm mb-1">{stakeTokenSymbol || 'Stake'} Available:</p>
                 <p className="text-blue-300 font-bold text-lg">
                   {Number(stakedBalance).toFixed(4)} {stakeTokenSymbol || 'TOKENS'}
+                </p>
+              </div>
+              <div className="bg-gray-600 rounded-xl p-3">
+                <p className="text-gray-400 text-sm mb-1">$IOU Per {stakeTokenSymbol || 'Stake'}:</p>
+                <p className="text-blue-300 font-bold text-lg">
+                  {rewardRate ? `${rewardRate} per day` : 'Calculating...'}
                 </p>
               </div>
             <a
