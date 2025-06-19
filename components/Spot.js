@@ -1051,8 +1051,8 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
   return (
     <div
       className={getThemeClass(
-        'min-h-screen w-full bg-gradient-to-br from-pink-50 to-rose-100 text-gray-800 px-4 py-6',
-        'min-h-screen w-full bg-gray-900 text-gray-100 px-4 py-6'
+        'min-h-screen w-full bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 text-gray-800 px-4 py-6',
+        'min-h-screen w-full bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 px-4 py-6'
       )}
     >
     <title>GigaStrat</title>
@@ -1064,810 +1064,577 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
             ? {
                 background: '#333',
                 color: '#fff',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 border: '1px solid #6b46c1'
               }
-            : {}
+            : {
+                borderRadius: '12px',
+                border: '1px solid #ec4899'
+              }
         }}
       />
       {showModal && <InfoModal />}
       <GigaStratModal show={showGigaStratModal} onClose={() => setShowGigaStratModal(false)} />
 
       {/* Header */}
-      <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-center">
-        <button onClick={() => setDarkMode(!darkMode)} className="text-3xl absolute top-0 left-0 p-2">
+      <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center mb-8">
+        <button 
+          onClick={() => setDarkMode(!darkMode)} 
+          className={getThemeClass(
+            'text-3xl absolute top-4 left-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110',
+            'text-3xl absolute top-4 left-4 p-3 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110'
+          )}
+        >
           {darkMode ? '🌙' : '☀️'}
         </button>
-        <div className="absolute flex top-0 right-0 p-4">
+        <div className="absolute flex top-4 right-4 gap-3">
           <button
             onClick={() => setShowGigaStratModal(true)}
             className={getThemeClass(
-              'text-xl rounded-full border border-pink-500 text-pink-500 px-3.5 py-0 font-semibold hover:bg-pink-100 transition-colors mx-2',
-              'text-xl rounded-full border border-purple-400 text-purple-400 px-3.5 py-0 font-semibold hover:bg-gray-800 transition-colors mx-2'
+              'text-xl rounded-full border-2 border-pink-400 text-pink-500 px-4 py-2 font-semibold hover:bg-pink-50 hover:border-pink-500 transition-all duration-300 backdrop-blur-sm bg-white/80 shadow-lg hover:shadow-xl',
+              'text-xl rounded-full border-2 border-purple-400 text-purple-300 px-4 py-2 font-semibold hover:bg-gray-800/50 hover:border-purple-300 transition-all duration-300 backdrop-blur-sm bg-gray-800/80 shadow-lg hover:shadow-xl'
             )}
           >
             ?
           </button>
-          <ConnectButton />
+          <div className={getThemeClass(
+            "bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg",
+            "bg-white/50 backdrop-blur-sm rounded-2xl p-1 shadow-lg")}>
+            <ConnectButton />
+          </div>
         </div>
       </header>
 
-      <h1
-        className={getThemeClass(
-          'text-5xl font-extrabold text-pink-500 tracking-tight text-center mx-auto mt-10 mb-4',
-          'text-5xl font-extrabold text-purple-400 tracking-tight text-center mx-auto mt-4 mb-4'
-        )}
-      >
-        ✨ GigaStrat ✨
-      </h1>
-
-      <h2
-        className={getThemeClass(
-          'text-3xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto md:w-[400px]',
-          'text-3xl font-semibold bg-purple-700 text-white p-2 rounded-full text-center mx-auto md:w-[400px]'
-        )}
-      >
-        {Number(GGEthBalance).toFixed(4)} ETH HODLD
-      </h2>
-      <h2
-        className={getThemeClass(
-          'text-xl font-semibold bg-pink-300 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1',
-          'text-xl font-semibold bg-purple-700 text-white p-2 rounded-full text-center mx-auto w-[200px] mt-1'
-        )}
-      >
-        {Number(myGGBalance).toFixed(4)} {GGSymbol || 'GG'}
-      </h2>
-
-      {/* Swap IOU → GG & Burn GG → ETH */}
-      <div className="max-w-6xl mx-auto mt-6 text-center">
-        <div
+      <div className="max-w-7xl mx-auto text-center mb-12">
+        <h1
           className={getThemeClass(
-            'bg-white/70 backdrop-blur-sm rounded-[50px] p-4 md:w-[400px] mx-auto',
-            'bg-gray-800 rounded-[50px] p-4 md:w-[400px] mx-auto '
+            'text-6xl md:text-7xl font-black text-pink-500 tracking-tight mb-6 drop-shadow-2xl h-24 relative top-6 md:top-0',
+            'text-6xl md:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent tracking-tight mb-6 drop-shadow-2xl h-24 relative top-6 md:top-0'
           )}
         >
-          <h3
-            className={getThemeClass(
-              'text-lg font-semibold text-green-600 mb-3',
-              'text-lg font-semibold text-green-400 mb-3'
-            )}
-          >
-            🌱 Swap IOU → GG
-          </h3>
-          <select
-            className={getThemeClass(
-              'w-full px-3 py-2 bg-green-100 rounded-full border border-green-100 mb-2 text-green-500 font-semibold',
-              'w-full px-3 py-2 bg-gray-700 rounded-full border border-green-700 mb-2 text-green-400 font-semibold'
-            )}
-            value={swapIndex}
-            onChange={(e) => setSwapIndex(e.target.value)}
-            title="Select which loan's IOU you want to swap for GG tokens."
-          >
-            {loans.map((ln) => (
-              <option key={ln.index} value={ln.index}>
-                #{ln.index} - {ln.userIOUBalance} {ln.iouSymbol} @ rate {ln.iouConversionRate}
-              </option>
-            ))}
-          </select>
-          <div
-            className={getThemeClass(
-              'flex w-full bg-green-200 rounded-full border border-green-100 mb-2 px-3 py-1',
-              'flex w-full bg-gray-700 rounded-full border border-green-700 mb-2 px-3 py-1'
-            )}
-          >
-            <input
-              className={getThemeClass(
-                'bg-green-200 flex-grow outline-none',
-                'bg-gray-700 flex-grow outline-none text-white'
-              )}
-              placeholder="IOU amount"
-              value={swapIOUAmount}
-              onChange={(e) => setSwapIOUAmount(e.target.value)}
-              title="Enter how many IOU tokens you want to swap for GG tokens."
-            />
-            <button
-              onClick={() => {
-                const i = parseInt(swapIndex);
-                if (!loans[i]) return;
-                setSwapIOUAmount(loans[i].userIOUBalance || '0');
-              }}
-              className={getThemeClass(
-                'text-white bg-pink-400 rounded-full px-2 py-1 font-semibold',
-                'text-white bg-purple-600 rounded-full px-2 py-1 font-semibold'
-              )}
-              title="Swap all your IOU tokens for GG tokens."
-            >
-              Max
-            </button>
-          </div>
-          <p className={getThemeClass('text-green-500 font-semibold', 'text-green-400 font-semibold')}>
-            {swapIOUAmount || 0} IOU →{' '}
-            {loans[swapIndex]
-              ? (
-                  Number(swapIOUAmount || 0) /
-                  Number(loans[swapIndex].iouConversionRate || 1)
-                ).toFixed(4)
-              : 0}{' '}
-            {GGSymbol || 'GG'}
-          </p>
-          <button
-            onClick={handleSwapIOU}
-            className={getThemeClass(
-              'w-full py-2 bg-green-200 rounded-full font-medium hover:bg-green-300 text-green-500 transition-colors',
-              'w-full py-2 bg-green-800 rounded-full font-medium hover:bg-green-700 text-green-300 transition-colors'
-            )}
-            title="Swap your IOU tokens to mint new GG tokens."
-          >
-            Mint GG
-          </button>
+           GigaStrat 
+        </h1>
 
-          <h3
-            className={getThemeClass(
-              'text-lg font-semibold text-pink-500 mt-6 mb-3',
-              'text-lg font-semibold text-purple-400 mt-6 mb-3'
-            )}
-          >
-            🔥 Burn GG for ETH
-          </h3>
+        <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
           <div
             className={getThemeClass(
-              'flex w-full bg-white rounded-full border border-pink-100 mb-2 px-3 py-1',
-              'flex w-full bg-gray-700 rounded-full border border-purple-700 mb-2 px-3 py-1'
+              'bg-gradient-to-r from-pink-400 to-rose-400 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
+              'bg-gradient-to-r from-purple-600 to-purple-500 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
             )}
           >
-            <input
-              className={getThemeClass(
-                'flex-grow outline-none',
-                'flex-grow outline-none bg-gray-700 text-white'
-              )}
-              placeholder={`Amount of ${GGSymbol || 'GG'}`}
-              value={burnAmount}
-              onChange={(e) => setBurnAmount(e.target.value)}
-              title="How many GG tokens you want to burn in exchange for ETH."
-            />
-            <button
-              onClick={() => setBurnAmount(myGGBalance)}
-              className={getThemeClass(
-                'text-white bg-pink-400 rounded-full px-2 py-1 font-semibold',
-                'text-white bg-purple-600 rounded-full px-2 py-1 font-semibold'
-              )}
-            >
-              Max
-            </button>
+            <h2 className="text-2xl font-bold mb-1">ETH Treasury</h2>
+            <p className="text-3xl font-black">{Number(GGEthBalance).toFixed(4)} ETH</p>
           </div>
-          {burnAmount && parseFloat(burnAmount) > 0 && (
-            <div>
-            <p className={getThemeClass('text-pink-500 font-semibold', 'text-purple-400 font-semibold')}>
-              {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
-            </p>
-            <p className={getThemeClass(
-              'text-pink-300 font-semibold',
-              'text-purple-500 font-semibold'
-            )}>
-Total GG Supply: {GGSupply || 'N/A'} GG
-            </p>
-            <p className={getThemeClass(
-              'text-pink-300 font-semibold',
-              'text-purple-500 font-semibold'
-            )}>
-ETH / GG: {ethFromMint/GGSupply || 'N/A'} ETH
-            </p>
-            </div>
-          )}
-          <button
-            onClick={handleBurnDAOForETH}
+          
+          <div
             className={getThemeClass(
-              'w-full py-2 bg-pink-200 rounded-full font-medium hover:bg-pink-300 text-pink-500 transition-colors mt-2',
-              'w-full py-2 bg-purple-800 rounded-full font-medium hover:bg-purple-700 text-purple-300 transition-colors mt-2'
+              'bg-gradient-to-r from-emerald-400 to-teal-400 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
+              'bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
             )}
-            title="Burn the specified amount of GG tokens for your share of the treasury ETH."
           >
-            Burn GG
-          </button>
+            <h2 className="text-2xl font-bold mb-1">My {GGSymbol || 'GG'} Tokens</h2>
+            <p className="text-3xl font-black">{Number(myGGBalance).toFixed(4)}</p>
+          </div>
         </div>
       </div>
 
-        <div className="max-w-7xl mx-auto mt-8 p-2">
+      {/* Swap IOU → GG & Burn GG → ETH */}
+      <div className="max-w-5xl mx-auto mb-16">
+        <div
+          className={getThemeClass(
+            'bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-pink-200/50 max-w-md mx-auto',
+            'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-purple-500/30 max-w-md mx-auto'
+          )}
+        >
+          <div className="text-center mb-8">
+            <h3
+              className={getThemeClass(
+                'text-2xl font-bold text-green-600 mb-2',
+                'text-2xl font-bold text-green-400 mb-2'
+              )}
+            >
+              🌱 Swap IOU → GG
+            </h3>
+            <p className={getThemeClass('text-gray-600 text-sm', 'text-gray-300 text-sm')}>
+              Convert your IOU tokens to GG governance tokens
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <select
+              className={getThemeClass(
+                'w-full px-4 py-3 bg-green-50 rounded-xl border-2 border-green-200 text-green-700 font-semibold focus:border-green-400 focus:outline-none transition-colors',
+                'w-full px-4 py-3 bg-gray-700 rounded-xl border-2 border-green-600/50 text-green-300 font-semibold focus:border-green-500 focus:outline-none transition-colors'
+              )}
+              value={swapIndex}
+              onChange={(e) => setSwapIndex(e.target.value)}
+              title="Select which loan's IOU you want to swap for GG tokens."
+            >
+              {loans.map((ln) => (
+                <option key={ln.index} value={ln.index}>
+                  #{ln.index} - {ln.userIOUBalance} {ln.iouSymbol} @ rate {ln.iouConversionRate}
+                </option>
+              ))}
+            </select>
+
+            <div
+              className={getThemeClass(
+                'flex w-full bg-green-50 rounded-xl border-2 border-green-200 p-1',
+                'flex w-full bg-gray-700 rounded-xl border-2 border-green-600/50 p-1'
+              )}
+            >
+              <input
+                className={getThemeClass(
+                  'bg-transparent flex-grow outline-none px-3 py-2 text-green-700 placeholder-green-500',
+                  'bg-transparent flex-grow outline-none px-3 py-2 text-green-300 placeholder-green-400'
+                )}
+                placeholder="IOU amount"
+                value={swapIOUAmount}
+                onChange={(e) => setSwapIOUAmount(e.target.value)}
+                title="Enter how many IOU tokens you want to swap for GG tokens."
+              />
+              <button
+                onClick={() => {
+                  const i = parseInt(swapIndex);
+                  if (!loans[i]) return;
+                  setSwapIOUAmount(loans[i].userIOUBalance || '0');
+                }}
+                className={getThemeClass(
+                  'bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-lg px-4 py-2 font-semibold hover:from-pink-500 hover:to-rose-500 transition-all duration-300 shadow-lg',
+                  'bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg px-4 py-2 font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-lg'
+                )}
+                title="Swap all your IOU tokens for GG tokens."
+                >
+                Max
+                </button>
+              </div>
+
+              <div className={getThemeClass(
+                'bg-green-100 rounded-xl p-4 text-center',
+                'bg-green-900/30 rounded-xl p-4 text-center'
+              )}>
+                <p className={getThemeClass('text-green-700 font-bold text-lg', 'text-green-300 font-bold text-lg')}>
+                {swapIOUAmount || 0} IOU →{' '}
+                {loans[swapIndex]
+                  ? (
+                    Number(swapIOUAmount || 0) /
+                    Number(loans[swapIndex].iouConversionRate || 1)
+                  ).toFixed(4)
+                  : 0}{' '}
+                {GGSymbol || 'GG'}
+                </p>
+              </div>
+
+              <button
+                onClick={handleSwapIOU}
+                className={getThemeClass(
+                'w-full py-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl font-bold text-lg hover:from-green-500 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                'w-full py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-emerald-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+                )}
+                title="Swap your IOU tokens to mint new GG tokens."
+              >
+                Mint GG Tokens
+              </button>
+              </div>
+
+              <div className="border-t border-gray-200 dark:border-gray-600 my-8"></div>
+
+              <div className="text-center mb-6">
+              <h3
+                className={getThemeClass(
+                'text-2xl font-bold text-pink-600 mb-2',
+                'text-2xl font-bold text-purple-400 mb-2'
+                )}
+              >
+                🔥 Burn GG for ETH
+              </h3>
+              <p className={getThemeClass('text-gray-600 text-sm', 'text-gray-300 text-sm')}>
+                Burn your GG tokens to claim your share of the treasury
+              </p>
+              </div>
+
+              <div className="space-y-4">
+              <div
+                className={getThemeClass(
+                'flex w-full bg-pink-50 rounded-xl border-2 border-pink-200 p-1',
+                'flex w-full bg-gray-700 rounded-xl border-2 border-purple-500/50 p-1'
+                )}
+              >
+                <input
+                className={getThemeClass(
+                  'bg-transparent flex-grow outline-none px-3 py-2 text-pink-700 placeholder-pink-500',
+                  'bg-transparent flex-grow outline-none px-3 py-2 text-purple-300 placeholder-purple-400'
+                )}
+                placeholder={`Amount of ${GGSymbol || 'GG'}`}
+                value={burnAmount}
+                onChange={(e) => setBurnAmount(e.target.value)}
+                title="How many GG tokens you want to burn in exchange for ETH."
+                />
+                <button
+                onClick={() => setBurnAmount(myGGBalance)}
+                className={getThemeClass(
+                  'bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-lg px-4 py-2 font-semibold hover:from-pink-500 hover:to-rose-500 transition-all duration-300 shadow-lg',
+                  'bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg px-4 py-2 font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-lg'
+                )}
+              >
+                Max
+              </button>
+            </div>
+
+            {burnAmount && parseFloat(burnAmount) > 0 && (
+              <div className={getThemeClass(
+                'bg-pink-100 rounded-xl p-4 space-y-2',
+                'bg-purple-900/30 rounded-xl p-4 space-y-2'
+              )}>
+                <p className={getThemeClass('text-pink-700 font-bold text-lg text-center', 'text-purple-300 font-bold text-lg text-center')}>
+                  {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
+                </p>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className={getThemeClass('text-pink-600', 'text-purple-400')}>
+                    <span className="font-semibold">Total Supply:</span><br/>
+                    {GGSupply || 'N/A'} GG
+                  </div>
+                  <div className={getThemeClass('text-pink-600', 'text-purple-400')}>
+                    <span className="font-semibold">ETH/GG Ratio:</span><br/>
+                    {(ethFromMint/GGSupply || 0).toFixed(6)} ETH
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={handleBurnDAOForETH}
+              className={getThemeClass(
+                'w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                'w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+              )}
+              title="Burn the specified amount of GG tokens for your share of the treasury ETH."
+            >
+              Burn GG Tokens
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-8">
           <h2
             className={getThemeClass(
-          'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-400',
-          'text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400'
+              'text-4xl font-black mb-4 bg-gradient-to-r from-pink-600 via-rose-500 to-orange-500 bg-clip-text text-transparent',
+              'text-4xl font-black mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent'
             )}
           >
             GG Loans
           </h2>
-          <div className="flex justify-center mb-4">
-            <button
-          onClick={() => setShowSimple(!showSimple)}
-          className={getThemeClass(
-            'px-4 py-2 bg-pink-300 text-white rounded-full font-semibold hover:bg-pink-400 transition-colors',
-            'px-4 py-2 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-500 transition-colors'
-          )}
-          title="Toggle between simple and advanced view"
-            >
-          {showSimple ? 'Show Advanced' : 'Show Simple'}
-            </button>
-          </div>
-          {showSimple && (
-            <div className={getThemeClass("bg-white/70 backdrop-blur-sm rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4",
-"bg-gray-800 rounded-[50px] p-4 relative text-center max-w-xl mx-auto mb-4 "
-)}>
-          <h2
+          <button
+            onClick={() => setShowSimple(!showSimple)}
             className={getThemeClass(
-              'text-2xl font-semibold text-pink-500 mb-4',
-              'text-2xl font-semibold text-purple-400 mb-4'
+              'px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-rose-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+              'px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
             )}
+            title="Toggle between simple and advanced view"
           >
-            Fund Current Loan
-          </h2>
-          <h3
-            className={getThemeClass(
-              'text-lg font-semibold text-pink-500 mb-2',
-              'text-lg font-semibold text-purple-400 mb-2'
-            )}
-          >
-            Current Loan</h3>
-          {/* Simple fund UI */}
-          {loans.length > 0 && (
-            <div className="">
-            <div 
-            className={getThemeClass(
-              'text-lg font-semibold text-pink-500 mb-2',
-              'text-lg font-semibold text-purple-400 mb-2'
-            )}>
-            <span className={getThemeClass(
-"bg-pink-100 rounded-full px-2",
-"bg-purple-500 rounded-full px-2 text-white")}>#{Number(loans[0].index) ?? 'N/A'}</span> <span className={
-              getThemeClass("bg-pink-300 rounded-full px-2 text-white",
-                "bg-purple-500 rounded-full px-2 text-white")
-            }>{Number(loans[0].interestRate) ?? 'N/A'}% APR</span>
-            </div>
-            <div className="items-center justify-center mb-2">
-              <div className={getThemeClass(
-                "bg-pink-100 rounded-full w-full mx-auto text-pink-500 font-semibold h-2",
-                "bg-purple-100 rounded-full w-full mx-auto text-purple-300 font-semibold h-2"
-              )}>
-                <div className={getThemeClass(
-                  "bg-green-200 text-green-500 rounded-full h-2 left-0",
-                  "bg-green-400 text-purple-300 rounded-full h-2 left-0"
+            {showSimple ? '🔧 Show Advanced' : '✨ Show Simple'}
+          </button>
+        </div>
+
+        {showSimple && (
+          <div className={getThemeClass(
+            "bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-pink-200/50 max-w-2xl mx-auto mb-8",
+            "bg-gray-800/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-purple-500/30 max-w-2xl mx-auto mb-8"
+          )}>
+            <div className="text-center mb-6">
+              <h2
+                className={getThemeClass(
+                  'text-3xl font-bold text-pink-500 mb-2',
+                  'text-3xl font-bold text-purple-400 mb-2'
                 )}
-                style={{ width: Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1') * 100 + '%' }}>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="mb-2">
-                <h3 className={getThemeClass(
-                  'text-pink-500 font-semibold',
-                  'text-purple-400 font-semibold'
-                )}>
-                  Loan Goal
-                </h3>
-                <p className={getThemeClass(
-                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold'
-                )}>
-                  {Number(loans[0].loanGoal || '0').toFixed(4)} USDC
-                </p>
-              </div>
-              <div className="mb-2">
-                <h3 className={getThemeClass(
-                  'text-pink-500 font-semibold',
-                  'text-purple-400 font-semibold'
-                )}>
-                  Funded
-                </h3>
-                <p className={getThemeClass(
-                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold'
-                )}>
-                  {Number(loans[0].totalFunded || '0').toFixed(4)} USDC
-                </p>
-              </div>
-              <div className="mb-2">
-                <h3 className={getThemeClass(
-                  'text-pink-500 font-semibold',
-                  'text-purple-400 font-semibold'
-                )}>
-                  My IOUs
-                </h3>
-                <p className={getThemeClass(
-                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1'
-                )}>
-                  {Number(loans[0].userIOUBalance || '0').toFixed(4)} {loans[0].iouSymbol}
-                </p>
-              </div>
-              <div className="mb-2">
-                <h3 className={getThemeClass(
-                  'text-pink-500 font-semibold',
-                  'text-purple-400 font-semibold'
-                )}>
-                  My {loans[0].underlyingSymbol || 'USDC'} Balance
-                </h3>
-                <p className={getThemeClass(
-                  'bg-pink-300 text-white rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                  'bg-purple-700 text-white rounded-full px-3 py-1'
-                )}>
-                  {Number(loans[0].underlyingBalance || '0').toFixed(4)} {loans[0].underlyingSymbol || 'USDC'}
-                </p>
-              </div>
-            </div>
-            {Number(loans[0].interestClaimable || '0') > 0 && (
-            <div className="">
-              <h3 className={getThemeClass(
-                'text-green-500 font-semibold',
-                'text-green-400 font-semibold'
-              )}>
-                Interest Claimable
-              </h3>
-              <p className={getThemeClass(
-                'bg-green-200 text-green-500 rounded-full px-3 py-1 w-full mx-auto font-semibold',
-                'bg-green-800 text-green-300 rounded-full px-3 py-1 w-full mx-auto font-semibold')}>
-                {Number(loans[0].interestClaimable || '0').toFixed(4)} {loans[0].underlyingSymbol || 'USDC'}
+              >
+                Fund Current Loan
+              </h2>
+              <p className={getThemeClass('text-gray-600', 'text-gray-300')}>
+                Support the active loan to earn interest
               </p>
             </div>
-              )}
-            <div className="flex flex-col items-center">
-              <input
-            type="text"
-            placeholder="Amount"
-            className={getThemeClass(
-              'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2 text-center text-pink-500 font-semibold',
-              'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-center text-purple-400 font-semibold')}
-            value={fundInput}
-            onChange={(e) => setFundInput(e.target.value)}
-            title="Amount for Fund/Redeem/Unfund calls."
-              />
-              <div className="flex items-center gap-1 justify-center">
-            <button
-              onClick={() => fundLoan(loans[0].index, loans[0].loanAddress, fundInput)}
-              className={getThemeClass(
-                'bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                'bg-purple-700 hover:bg-purple-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-              )}
-              title="Fund the loan with this USDC amount."
-            >
-              Fund
-            </button>
-            <button
-              onClick={() => redeemIOUs(loans[0].loanAddress, fundInput)}
-              className={getThemeClass(
-                'bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                'bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-              )}
-              title="Redeem this many IOUs, receiving principal from the repaid portion."
-            >
-              Redeem
-            </button>
-            <button
-              onClick={() => claimInterest(loans[0].loanAddress)}
-              className={getThemeClass(
-                'bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                'bg-green-700 hover:bg-green-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-              )}
-              title="Claim your accrued interest for this loan."
-            >
-              Claim
-            </button>
-            <button
-              onClick={() => unfundLoan(loans[0].loanAddress, fundInput)}
-              className={getThemeClass(
-                'bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                'bg-red-700 hover:bg-red-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-              )}
-              title="Unfund (withdraw) your yet-undrawn principal from this loan."
-            >
-              Unfund
-            </button>
+
+            {loans.length > 0 && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <div className="flex justify-center items-center gap-3 mb-4">
+                    <span className={getThemeClass(
+                      "bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-full px-4 py-2 font-bold text-lg shadow-lg",
+                      "bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full px-4 py-2 font-bold text-lg shadow-lg"
+                    )}>
+                      #{Number(loans[0].index) ?? 'N/A'}
+                    </span>
+                    <span className={getThemeClass(
+                      "bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-full px-4 py-2 font-bold text-lg shadow-lg",
+                      "bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-full px-4 py-2 font-bold text-lg shadow-lg"
+                    )}>
+                      {Number(loans[0].interestRate) ?? 'N/A'}% APR
+                    </span>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className={getThemeClass(
+                      "bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner",
+                      "bg-gray-600 rounded-full h-4 overflow-hidden shadow-inner"
+                    )}>
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-500 shadow-lg"
+                        style={{ width: Math.min(100, Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1') * 100) + '%' }}
+                      />
+                    </div>
+                    <p className={getThemeClass('text-pink-600 font-semibold mt-2', 'text-purple-400 font-semibold mt-2')}>
+                      {((Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1')) * 100).toFixed(1)}% funded
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: 'Loan Goal', value: `${Number(loans[0].loanGoal || '0').toFixed(2)} USDC`, color: 'pink' },
+                    { label: 'Funded', value: `${Number(loans[0].totalFunded || '0').toFixed(2)} USDC`, color: 'blue' },
+                    { label: 'My IOUs', value: `${Number(loans[0].userIOUBalance || '0').toFixed(4)} ${loans[0].iouSymbol}`, color: 'purple' },
+                    { label: `My ${loans[0].underlyingSymbol || 'USDC'}`, value: `${Number(loans[0].underlyingBalance || '0').toFixed(2)} ${loans[0].underlyingSymbol || 'USDC'}`, color: 'green' }
+                  ].map((item, idx) => (
+                    <div key={idx} className={getThemeClass(
+                      `bg-${item.color}-500 bg-${item.color}-500 rounded-xl p-4 text-center border border-${item.color}-200`,
+                      `bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl p-4 text-center border border-gray-500`
+                    )}>
+                      <h3 className={getThemeClass(
+                        `text-white/50 font-bold text-lg`,
+                        `text-${item.color}-300 font-bold text-lg`
+                      )}>
+                        {item.label}
+                      </h3>
+                      <p className={getThemeClass(
+                        `text-white font-black text-xl`,
+                        `font-black text-xl`
+                      )}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {Number(loans[0].interestClaimable || '0') > 0 && (
+                  <div className={getThemeClass(
+                    'bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 text-center border border-green-200',
+                    'bg-gradient-to-r from-green-900/30 to-emerald-900/30 rounded-xl p-4 text-center border border-green-600/30'
+                  )}>
+                    <h3 className={getThemeClass('text-green-700 font-bold text-lg', 'text-green-300 font-bold text-lg')}>
+                      💰 Interest Available
+                    </h3>
+                    <p className={getThemeClass('text-green-800 font-black text-xl', 'text-green-200 font-black text-xl')}>
+                      {Number(loans[0].interestClaimable || '0').toFixed(4)} {loans[0].underlyingSymbol || 'USDC'}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Enter amount..."
+                    className={getThemeClass(
+                      'w-full px-4 py-3 bg-pink-100 rounded-xl text-center font-semibold focus:border-pink-400 focus:outline-none transition-colors',
+                      'w-full px-4 py-3 bg-gray-700 rounded-xl border-2 border-gray-600 text-center font-semibold text-white focus:border-purple-500 focus:outline-none transition-colors'
+                    )}
+                    value={fundInput}
+                    onChange={(e) => setFundInput(e.target.value)}
+                    title="Amount for Fund/Redeem/Unfund calls."
+                  />
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Fund', onClick: () => fundLoan(loans[0].index, loans[0].loanAddress, fundInput), color: 'from-pink-400 to-rose-400', icon: '💰' },
+                      { label: 'Redeem', onClick: () => redeemIOUs(loans[0].loanAddress, fundInput), color: 'from-blue-400 to-blue-500', icon: '🔄' },
+                      { label: 'Claim', onClick: () => claimInterest(loans[0].loanAddress), color: 'from-green-400 to-emerald-500', icon: '💎' },
+                      { label: 'Unfund', onClick: () => unfundLoan(loans[0].loanAddress, fundInput), color: 'from-red-400 to-red-500', icon: '❌' }
+                    ].map((btn, idx) => (
+                      <button
+                        key={idx}
+                        onClick={btn.onClick}
+                        className={`bg-gradient-to-r ${btn.color} text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm`}
+                        title={`${btn.label} action for the current loan.`}
+                      >
+                        <span className="block text-lg mb-1">{btn.icon}</span>
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-          )}
-            </div>
-          )}
-          {loans.length === 0 ? (
-            <p
-          className={getThemeClass('text-pink-500 text-center font-medium', 'text-purple-400 text-center font-medium')}
-            >
-          No loans found or none discovered so far.
+        )}
+
+        {loans.length === 0 ? (
+          <div className={getThemeClass(
+            'bg-white/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-pink-200/50 text-center',
+            'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-purple-500/30 text-center'
+          )}>
+            <div className="text-6xl mb-4">🌱</div>
+            <p className={getThemeClass('text-pink-600 text-xl font-semibold', 'text-purple-400 text-xl font-semibold')}>
+              No loans found or none discovered so far.
             </p>
-          ) : !showSimple&&(
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {loans.map((ln) => (
-            <div
-              key={ln.index}
-              className={getThemeClass(
-            'bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 relative text-center max-w-3xl mx-auto',
-            'bg-gray-800 rounded-3xl p-4 shadow-md  relative text-center max-w-3xl mx-auto'
-              )}
-            >
-              {/* Repaid or not */}
-                <div className="mt-1 mx-auto">
+          </div>
+        ) : !showSimple && (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {loans.map((ln) => (
+              <div
+                key={ln.index}
+                className={getThemeClass(
+                  'bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-pink-200/50 relative overflow-hidden',
+                  'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-purple-500/30 relative overflow-hidden'
+                )}
+              >
+                {/* Status badge */}
+                <div className="absolute top-4 right-4">
                   {ln.fullyRepaid ? (
-                    <span
-                      className={getThemeClass(
-                        'inline-block px-2 py-1 text-xs font-bold text-green-600 bg-green-100 rounded-full',
-                        'inline-block px-2 py-1 text-xs font-bold text-green-100 bg-green-500 rounded-full'
-                      )}
-                      title="This loan has been fully repaid."
-                    >
-                      Fully Repaid
+                    <span className="inline-flex items-center px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-green-500 to-emerald-600 rounded-full shadow-lg">
+                      ✅ Fully Repaid
                     </span>
                   ) : (
-                    <span
-                      className={getThemeClass(
-                        'inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full',
-                        'inline-block px-2 py-1 text-xs font-bold text-red-100 bg-red-500 rounded-full'
-                      )}
-                      title="This loan is not fully repaid yet."
-                    >
-                      Not Repaid
-                    </span>
-                  )}
-                  {ln.loanDrawnTime !== '0' && (
-                    <span className={getThemeClass('text-xs text-gray-500 ml-1', 'text-xs text-gray-400 ml-1')}>
-                      (drawn on {new Date(parseInt(ln.loanDrawnTime, 10) * 1000).toLocaleDateString()})
+                    <span className="inline-flex items-center px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-full shadow-lg">
+                      ⏳ Active
                     </span>
                   )}
                 </div>
 
-                <div className="my-2 flex justify-center gap-2">
-                  <span
-                    className={getThemeClass(
-                      'text-white bg-blue-300 rounded-full px-2 py-1 font-semibold',
-                      'text-white bg-blue-700 rounded-full px-2 py-1 font-semibold'
-                    )}
-                    title="IOU token name"
-                  >
-                    {ln.iouName}
-                  </span>{' '}
-                  <span
-                    className={getThemeClass(
-                      'text-white bg-blue-200 rounded-full px-2 py-1 font-semibold',
-                      'text-white bg-blue-800 rounded-full px-2 py-1 font-semibold'
-                    )}
-                    title="IOU token symbol"
-                  >
-                    {ln.iouSymbol}
-                  </span>
-                  <span
-                  className={getThemeClass(
-                    'text-white bg-green-200 rounded-full px-2 py-1 font-semibold',
-                    'text-white bg-blue-900 rounded-full px-2 py-1 font-semibold'
-                  )}
-                  title="Interest rate of the loan."
-                  >
-                    {ln.interestRate}% APR
+                {/* Loan number badge */}
+                <div className="absolute top-4 left-4">
+                  <span className={getThemeClass(
+                    'inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 text-white font-black text-xl rounded-full shadow-lg',
+                    'inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-black text-xl rounded-full shadow-lg'
+                  )}>
+                    {ln.index}
                   </span>
                 </div>
 
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      Goal
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'text-xl font-semibold text-white bg-pink-200 rounded-full px-1 py-1',
-                        'text-xl font-semibold text-white bg-purple-700 rounded-full px-1 py-1'
-                      )}
-                      title="The total principal goal (in USDC)."
-                    >
+                <div className="mt-16 mb-6 text-center">
+                  <div className="flex justify-center gap-2 mb-4 flex-wrap">
+                    <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full px-3 py-1 font-semibold text-sm shadow-lg">
+                      {ln.iouName}
+                    </span>
+                    <span className="bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-full px-3 py-1 font-semibold text-sm shadow-lg">
+                      {ln.iouSymbol}
+                    </span>
+                    <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full px-3 py-1 font-semibold text-sm shadow-lg">
+                      {ln.interestRate}% APR
+                    </span>
+                  </div>
+
+                  <div className="mb-4">
+                    <h3 className={getThemeClass('text-pink-600 font-bold text-lg mb-2', 'text-purple-400 font-bold text-lg mb-2')}>
+                      Loan Goal
+                    </h3>
+                    <p className={getThemeClass(
+                      'text-2xl font-black text-white bg-gradient-to-r from-pink-400 to-rose-400 rounded-xl px-4 py-2 shadow-lg',
+                      'text-2xl font-black text-white bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl px-4 py-2 shadow-lg'
+                    )}>
                       {ln.loanGoal} USDC
                     </p>
-
-                <div className="text-sm text-gray-700 mb-3 text-center grid grid-cols-2 gap-2 mt-2">
-                  <p
-                    className={getThemeClass(
-                      'absolute top-2 left-2 mb-1 font-bold bg-pink-200 text-white rounded-full px-2 py-1 w-9 text-xl',
-                      'absolute top-2 left-2 mb-1 font-bold bg-purple-700 text-white rounded-full px-2 py-1 w-9 text-xl'
-                    )}
-                  >
-                    {ln.index}
-                  </p>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      IOU Rate
-                    </p>
-                <p
-                  className={getThemeClass(
-                    'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                    'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                  )}
-                  title="The rate of IOU tokens per 1 GG token."
-                >
-                  {ln.iouConversionRate} IOU per {GGSymbol || 'GG'}
-                </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      Loan ETH
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Total ETH the manager purchased for this loan that is reserved for debt."
-                    >
-                      {Number(ln.totalBuyETH).toFixed(4)} ETH
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      Funded
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Total USDC currently funded by backers (not necessarily drawn)."
-                    >
-                      {Number(ln.totalFunded || '0').toFixed(4)} USDC
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-orange-600 font-semibold text-lg',
-                        'text-orange-400 font-semibold text-lg'
-                      )}
-                    >
-                      Drawn
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Amount of USDC that has actually been drawn by the borrower."
-                    >
-                      {Number(ln.totalDrawnDown).toFixed(4)} USDC
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      My IOUs
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-blue-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-blue-700 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Your personal IOU balance in this loan."
-                    >
-                      {ln.userIOUBalance} {ln.iouSymbol}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-orange-600 font-semibold text-lg',
-                        'text-orange-400 font-semibold text-lg'
-                      )}
-                    >
-                      Repaid
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="How much has been repaid so far (principal + interest)."
-                    >
-                      {Number(ln.repayments || '0').toFixed(4)} {ln.underlyingSymbol}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-green-500 font-semibold text-lg',
-                        'text-green-400 font-semibold text-lg'
-                      )}
-                    >
-                      Interest Claimable
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-green-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-green-700 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Interest available for you to claim."
-                    >
-                      {ln.claimableInterest} {ln.underlyingSymbol}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      Balance
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Your current balance of the underlying asset."
-                    >
-                      {Number(ln.underlyingBalance || '0').toFixed(4)} {ln.underlyingSymbol}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-pink-500 font-semibold text-lg',
-                        'text-purple-400 font-semibold text-lg'
-                      )}
-                    >
-                      Owed
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-pink-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-purple-600 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Total owed = principal + accrued interest so far."
-                    >
-                      {Number(ln.updatedTotalOwed || '0').toFixed(4)} {ln.underlyingSymbol}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={getThemeClass(
-                        'text-orange-600 font-semibold text-lg',
-                        'text-orange-400 font-semibold text-lg'
-                      )}
-                    >
-                      Redeemable
-                    </p>
-                    <p
-                      className={getThemeClass(
-                        'bg-orange-300 text-white rounded-full px-2 py-1 font-semibold text-xl',
-                        'bg-orange-500 text-white rounded-full px-2 py-1 font-semibold text-xl'
-                      )}
-                      title="Estimated principal returned per IOU (approx share)."
-                    >
-                      {ln.redeemable ? ln.redeemable.toFixed(4) : '0'} {ln.underlyingSymbol}/IOU
-                    </p>
                   </div>
                 </div>
 
-                {/* The quick combo calls with new emojis */}
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  {/* Repay Loan -> 💵 */}
-                  {!ln.fullyRepaid && (
+                <div className="grid grid-cols-2 gap-3 mb-6 text-sm">
+                  {[
+                    { label: 'IOU Rate', value: `${ln.iouConversionRate} per ${GGSymbol || 'GG'}`, color: 'pink' },
+                    { label: 'Loan ETH', value: `${Number(ln.totalBuyETH).toFixed(4)} ETH`, color: 'blue' },
+                    { label: 'Funded', value: `${Number(ln.totalFunded || '0').toFixed(2)} USDC`, color: 'green' },
+                    { label: 'Drawn', value: `${Number(ln.totalDrawnDown).toFixed(2)} USDC`, color: 'orange' },
+                    { label: 'My IOUs', value: `${ln.userIOUBalance} ${ln.iouSymbol}`, color: 'purple' },
+                    { label: 'Repaid', value: `${Number(ln.repayments || '0').toFixed(2)} ${ln.underlyingSymbol}`, color: 'red' },
+                    { label: 'Interest Claimable', value: `${ln.claimableInterest} ${ln.underlyingSymbol}`, color: 'emerald' },
+                    { label: 'Balance', value: `${Number(ln.underlyingBalance || '0').toFixed(2)} ${ln.underlyingSymbol}`, color: 'indigo' }
+                  ].map((item, idx) => (
+                    <div key={idx} className={getThemeClass(
+                      'bg-gradient-to-br from-gray-50 to-white rounded-lg p-3 border border-gray-200 shadow-sm',
+                      'bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg p-3 border border-gray-600 shadow-sm'
+                    )}>
+                      <h4 className={getThemeClass('text-gray-600 font-semibold text-xs mb-1', 'text-gray-300 font-semibold text-xs mb-1')}>
+                        {item.label}
+                      </h4>
+                      <p className={getThemeClass('text-gray-800 font-bold text-sm', 'text-white font-bold text-sm')}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Quick action button */}
+                {!ln.fullyRepaid && (
+                  <div className="flex justify-center mb-4">
                     <button
                       onClick={() => handleQuickRepay(ln.index)}
-                      className={getThemeClass(
-                        'bg-orange-200 hover:bg-orange-300 text-orange-600 px-2 py-1 rounded-full font-bold',
-                        'bg-orange-500 hover:bg-orange-500 text-orange-400 px-2 py-1 rounded-full font-bold'
-                      )}
+                      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                       title="Repay 1% of the total owed USDC by selling the required ETH."
                     >
-                      💵
+                      💵 Quick Repay
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {/* Fund input + actions */}
-                <input
-                  type="text"
-                  placeholder="Amount"
-                  className={getThemeClass(
-                    'w-full px-3 py-2 bg-pink-100 rounded-full border border-pink-200 m-2',
-                    'w-full px-3 py-2 bg-gray-700 rounded-full border border-purple-700 m-2 text-white'
-                  )}
-                  value={fundInput}
-                  onChange={(e) => setFundInput(e.target.value)}
-                  title="Amount for Fund/Redeem/Unfund calls."
-                />
-                <div className="flex items-center gap-1 justify-center">
-                  <button
-                    onClick={() => fundLoan(ln.index, ln.loanAddress, fundInput)}
+                {/* Action inputs and buttons */}
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="Enter amount..."
                     className={getThemeClass(
-                      'bg-pink-200 hover:bg-pink-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                      'bg-purple-700 hover:bg-purple-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
+                      'w-full px-4 py-3 bg-gray-50 rounded-xl border-2 border-gray-200 text-center font-semibold focus:border-pink-400 focus:outline-none transition-colors',
+                      'w-full px-4 py-3 bg-gray-700 rounded-xl border-2 border-gray-600 text-center font-semibold text-white focus:border-purple-500 focus:outline-none transition-colors'
                     )}
-                    title="Fund the loan with this USDC amount."
-                  >
-                    Fund
-                  </button>
-                  <button
-                    onClick={() => redeemIOUs(ln.loanAddress, fundInput)}
-                    className={getThemeClass(
-                      'bg-blue-200 hover:bg-blue-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                      'bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-                    )}
-                    title="Redeem this many IOUs, receiving principal from the repaid portion."
-                  >
-                    Redeem
-                  </button>
-                  <button
-                    onClick={() => claimInterest(ln.loanAddress)}
-                    className={getThemeClass(
-                      'bg-green-200 hover:bg-green-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                      'bg-green-700 hover:bg-green-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-                    )}
-                    title="Claim your accrued interest for this loan."
-                  >
-                    Claim
-                  </button>
-                  <button
-                    onClick={() => unfundLoan(ln.loanAddress, fundInput)}
-                    className={getThemeClass(
-                      'bg-red-200 hover:bg-red-300 text-white font-semibold px-4 py-1 rounded-full transition-colors',
-                      'bg-red-700 hover:bg-red-600 text-white font-semibold px-4 py-1 rounded-full transition-colors'
-                    )}
-                    title="Unfund (withdraw) your yet-undrawn principal from this loan."
-                  >
-                    Unfund
-                  </button>
+                    value={fundInput}
+                    onChange={(e) => setFundInput(e.target.value)}
+                    title="Amount for Fund/Redeem/Unfund calls."
+                  />
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { label: 'Fund', onClick: () => fundLoan(ln.index, ln.loanAddress, fundInput), color: 'from-pink-400 to-rose-400' },
+                      { label: 'Redeem', onClick: () => redeemIOUs(ln.loanAddress, fundInput), color: 'from-blue-400 to-blue-500' },
+                      { label: 'Claim', onClick: () => claimInterest(ln.loanAddress), color: 'from-green-400 to-emerald-500' },
+                      { label: 'Unfund', onClick: () => unfundLoan(ln.loanAddress, fundInput), color: 'from-red-400 to-red-500' }
+                    ].map((btn, idx) => (
+                      <button
+                        key={idx}
+                        onClick={btn.onClick}
+                        className={`bg-gradient-to-r ${btn.color} text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 text-sm`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
 
-            {/* "Open Loan" if canCreateLoan is true, else a placeholder */}
-            <div
-              className={getThemeClass(
-                'bg-green-100 backdrop-blur-sm rounded-3xl p-4 shadow-md ring-1 ring-pink-200 text-center flex items-center justify-center',
-                'bg-gray-800 rounded-3xl p-4 shadow-md  text-center flex items-center justify-center'
-              )}
-            >
+        
               {canOpenLoan ? (
                 <button
                   onClick={handleOpenLoan}
                   className={getThemeClass(
-                    'text-3xl font-semibold text-white bg-pink-400 rounded-full p-4 hover:bg-pink-500',
-                    'text-3xl font-semibold text-white bg-purple-600 rounded-full p-4 hover:bg-purple-500'
+                    'text-3xl font-semibold text-white bg-pink-400 rounded-3xl px-6 py-3 shadow-lg hover:bg-pink-500 transition-all duration-300',
+                    'text-3xl font-semibold text-white bg-purple-600 rounded-3xl px-6 py-3 shadow-lg hover:bg-purple-700 transition-all duration-300'
                   )}
                   title="Create a new loan contract once all existing ones are fully funded."
                 >
                   🌱 Open Next Loan
                 </button>
               ) : (
-                <h3
+                <div 
                   className={getThemeClass(
-                    'text-3xl font-semibold text-white bg-gray-300 rounded-full p-4',
-                    'text-3xl font-semibold text-white bg-gray-700 rounded-full p-4'
+                    'text-3xl font-semibold text-white bg-gray-300 rounded-3xl px-6 py-3 shadow-lg text-center flex items-center justify-center',
+                    'text-3xl font-semibold text-white bg-gray-700 rounded-3xl px-6 py-3 shadow-lg text-center flex items-center justify-center'
                   )}
                   title="You must ensure all existing loans are fully funded before creating a new one."
                 >
                   Fill all loans to create more.
-                </h3>
+                </div>
               )}
-            </div>
+          </div>)}
           </div>
-        )}
-      </div>
 
       {/* Manager summary & advanced calls if user is the special address */}
       {userAddress?.toLowerCase() === '0x00000000000000C0D7D3017B342ff039B55b0879'.toLowerCase() && (
