@@ -749,301 +749,679 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
   function getThemeClass(lightClass, darkClass) {
     return darkMode ? darkClass : lightClass;
   }
+function GigaStratModal({ show, onClose }) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [darkMode, setDarkMode] = useState(false);
 
-  function GigaStratModal({ show, onClose }) {
-    const [activeTab, setActiveTab] = useState('overview');
-    if (!show) return null;
+  useEffect(() => {
+    const storedMode = localStorage.getItem('darkMode');
+    if (storedMode) {
+      setDarkMode(storedMode === 'true');
+    }
+  }, []);
 
-    // You can store each doc section in separate variables or inline
-    const docs = {
-      overview: {
-        title: 'GigaStrat',
-        content: (
-          <>
-            <p className="mb-4">
-              GigaStrat is an on-chain system that blends lending and borrowing with a treasury
-              strategy focused on accumulating ETH. The core contract is GigaStrat, which creates
-              separate loan contracts called IOUs. Each IOU Loan mints IOU tokens for lenders,
-              while the manager simultaneously issues a governance token called GG, backed by
-              the protocol’s ETH treasury.
-            </p>
-            <p className="mb-4">
-              An <strong>IOU Loan</strong> accepts stablecoins (like USDC) from lenders in exchange
-              for newly minted IOU tokens. These IOU tokens track the lender’s share of that
-              specific loan. The GigaStrat contract draws down stablecoins from the funded loan,
-              swaps them for ETH, and then repays the loan in installments by selling small amounts
-              of ETH. Over time, lenders can either redeem IOUs for principal and interest or
-              convert these IOUs into GG tokens.
-            </p>
-            <p className="mb-4">
-              GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH
-              remaining after loan obligations are satisfied stays in the treasury, which benefits
-              holders of the GG token. If the price of ETH increases, the treasury’s value grows,
-              enhancing the backing of each GG token.
-            </p>
-                    <p className="mb-4 font-semibold">
-          Example: If you hold 1 GG token, the system raises $100,000 in loans, and then ETH price doubles. After the protocol repays the original $100,000 plus interest, approximately $100,000 worth of ETH remains as profit in the treasury. If no other GG tokens exist, your single GG token now directly represents this additional ETH, allowing you to burn your GG to claim this increased value.
-        </p>
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
 
-          </>
-        )
-      },
-      fullyOnChain: {
-        title: 'How GigaStrat Works',
-        content: (
-          <>
-            <h2 className="font-semibold text-pink-500">Fully On-Chain</h2>
-            <p className="mb-4">
-              All core actions happen through verified smart contracts, removing any reliance on
-              centralized actors. The manager sets up loans, draws down funds, executes trades,
-              and repays lenders, all according to the code’s logic. Participants see precisely
-              how much ETH the system holds and exactly when trades occur. Once a loan is funded,
-              the manager’s established protocol ensures that selling portions of ETH for repayment
-              takes place automatically, gradually returning principal plus interest to lenders.
-              No single party can divert or mismanage the treasury since every transaction is
-              enforced at the contract level and can be reviewed on-chain.
-            </p>
-            <h2 className="font-semibold text-pink-500">Funding IOU Loans</h2>
-            <p className="mb-4">
-              Funding happens when you send stablecoins to a <strong>IOU Loan</strong> contract.
-              You receive IOU tokens in return. These IOUs represent your share of the loan’s
-              principal and will allow you to claim repayment plus interest as the manager sells
-              ETH. If you simply want your principal back (plus accrued interest), redeeming IOUs
-              will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
-              your IOUs for GG tokens instead.
-            </p>
-            <h2 className="font-semibold text-pink-500">On Demand Loan Deployment</h2>
-            <p className="mb-4">
-              The manager contract can start fresh IOUs at any point, allowing GigaStrat to
-              continually raise new capital to buy ETH. As soon as a loan’s funded, the manager
-              draws down the stablecoins and acquires ETH through an on-chain swap. This cycle
-              repeats, with each new SpotIOULoan following the same pattern of raising capital,
-              purchasing ETH, and repaying lenders in scheduled increments. Because the manager
-              can deploy loans whenever market conditions are favorable or there is a desire to
-              expand the treasury, GigaStrat can keep accumulating ETH even as previous loans
-              wind down.
-            </p>
-            <h2 className="font-semibold text-pink-500">Treasury Growth</h2>
-            <p className="mb-4">
-              GigaStrat’s treasury accumulates ETH when a loan’s repayments are complete. Any ETH
-              remaining after loan obligations are satisfied stays in the treasury, which benefits
-              holders of the GG token. If the price of ETH increases, the treasury’s value grows,
-              enhancing the backing of each GG token. If the price of ETH decreases, the treasury’s
-              value decreases, using ETH from GG holders to pay back the IOU loans.
-            </p>
-            <h2 className="font-semibold text-pink-500">Repayments</h2>
-            <p className="mb-4">
-              The manager contract sells ETH to repay lenders. This is done in small increments
-              over time, allowing the manager to take advantage of favorable market conditions.
-              Anyone can do the repayment using the 💵 button, which will pay back the loan
-              over 4 years.
-            </p>
-          </>
-        )
-      },
-      swapping: {
-        title: 'Swapping IOUs for GG',
-        content: (
-          <>
-            <p className="mb-4">
-              IOU holders can transform their lender position into ownership of the broader system
-              by swapping IOUs for GG. This conversion pivots you from earning interest on a single
-              loan to a more general stake in the protocol’s growing ETH treasury. The conversion
-              rate is set per loan. After swapping, you hold GG tokens, which do not expire or
-              require redemption like IOUs do.
-            </p>
-            <h2 className="font-semibold text-pink-500">Holding and Burning GG for ETH</h2>
-            <p className="mb-4">
-              GG represents a fraction of the entire treasury. Its value depends on how effectively
-              the manager invests in ETH and how many outstanding GG tokens exist. If you hold GG
-              and want to exit, burning GG returns your proportional share of the treasury’s ETH.
-              This creates a liquidity mechanism and ensures that every GG token is backed by real
-              assets in the treasury.
-            </p>
-            <h2 className="font-semibold text-pink-500">Inflation and Fees</h2>
-            <p className="mb-4">
-              There are no protocol fees for loans, swaps, mints, or burns. GigaStrat’s inflation
-              is set at 10% of IOU-to-GG swaps minted to the fee address for security and past
-              development. This address can be updated by the DAO. This fee helps:
-            </p>
-            <ul className="mb-4 list-disc list-inside">
-              <li>
-                🛠️ Offset costs for having built the GG protocol and allow continued open source
-                development.
-              </li>
-              <li>
-                🛡️ Create a deterrent to governance attacks via minted GG.
-              </li>
-              <li>
-                🚫 There is no VC allocation, no team allocation and no presale.
-              </li>
-            </ul>
-          </>
-        )
-      },
-      ious: {
-        title: 'IOUs',
-        content: (
-          <>
-            <p className="mb-4">
-              IOUs are the tokens you receive when you fund a loan. They represent your share of
-              the loan’s principal and let you claim repayment plus interest as the manager sells
-              ETH. If you simply want your principal back (plus accrued interest), redeeming IOUs
-              will give you stablecoins. If you want exposure to the treasury’s ETH, you can swap
-              your IOUs for GG tokens instead.
-            </p>
-            <h2 className="font-semibold text-pink-500">Funding IOU Loans</h2>
-            <p className="mb-4">
-              Funding happens when you lend stablecoins to a <strong>IOU Loan</strong> contract.
-              You receive IOU tokens in return. These IOUs represent your share of the loan’s
-              principal and entitle you to principal + interest back as ETH is sold.
-            </p>
-            <h2 className="font-semibold text-pink-500">Claiming Interest</h2>
-            <p className="mb-4">
-              You can claim interest on your IOUs at any time without burning them. This will not
-              reduce your IOU principal.
-            </p>
-            <h2 className="font-semibold text-pink-500">Redeeming IOUs</h2>
-            <p className="mb-4">
-              Redeeming IOUs allows you to convert them back into stablecoins. This is useful if
-              you want to exit your position in a loan without holding GG or prefer to keep your
-              funds in stablecoins. <strong>Be careful:</strong> Redeeming IOUs will only give you
-              however much principal has been repaid to-date. If the loan is not fully repaid, you
-              won’t get the entire principal unless enough ETH has been sold to cover it.
-            </p>
-          </>
-        )
-      },
-      risks: {
-        title: 'Risks',
-        content: (
-          <>
-            <p className="mb-4">
-              GigaStrat is a new protocol; there are inherent risks. The code is open source but
-              has not undergone formal audits. Please do your own research and only risk funds you
-              can afford to lose. The protocol’s performance depends heavily on ETH price
-              movements. A significant drop in ETH price could leave the treasury insufficient to
-              repay loans fully, impacting IOU or GG holders.
-            </p>
-            <h2 className="font-semibold text-pink-500">Smart Contract Risks</h2>
-            <p className="mb-4">
-              As with any smart contract, there is a risk of bugs or vulnerabilities. No system is
-              completely secure, and you should be cautious.
-            </p>
-            <h2 className="font-semibold text-pink-500">Market Risks</h2>
-            <p className="mb-4">
-              The protocol’s value is tied to ETH price. If ETH drops significantly, the treasury
-              may not be able to cover all IOU redemptions or GG burns. This could lead to losses
-              for holders.
-            </p>
-            <h2 className="font-semibold text-pink-500">Liability</h2>
-            <p className="mb-4">
-              GigaStrat is provided "as is" without warranties of any kind or guarantees of any kind inc safety of funds. By using the protocol,
-              you acknowledge that you understand the risks and agree not to hold the developers
-              liable for any losses incurred.
-            </p>
-          </>
-        )
-      }
-    };
+  function getThemeClass(lightClass, darkClass) {
+    return darkMode ? darkClass : lightClass;
+  }
 
-    const tabItems = Object.keys(docs);
+  if (!show) return null;
 
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-        {/* Modal container */}
-        <div
-          className={getThemeClass(
-            'bg-white w-full max-w-4xl rounded-3xl shadow-lg flex',
-            'bg-gray-800 max-w-4xl text-white rounded-3xl shadow-lg flex'
-          )}
-          style={{ maxHeight: '90vh' }}
-        >
-          {/* Sidebar tabs */}
-          <div className="w-1/3 border-r border-gray-200 overflow-y-auto rounded-l-xl">
-            <div
-              className={getThemeClass(
-                'flex align-items-center items-center justify-center my-2 mb-2 gap-2',
-                'bg-white rounded-3xl w-1/2 flex align-items-center items-center justify-center my-2 mb-2 gap-2 mx-auto p-1'
-              )}
-            >
-              <a
-                href="https://discord.gg/vrV4YpUccq"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                <img
-                  src="https://simpleicons.org/icons/discord.svg"
-                  alt="discord"
-                  className="w-6 h-6 inline-block mr-2"
-                />
-              </a>
-              <a
-                href="https://twitter.com/not_pr0"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                <img
-                  src="https://simpleicons.org/icons/x.svg"
-                  alt="twitter"
-                  className="w-6 h-6 inline-block mr-2"
-                />
-              </a>
-              <a
-                href="https://basescan.org/address/0x67961f3f6ae5b9b251bccaed54e7c0db7b9d5265"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                <img
-                  src="https://basescan.org/assets/base/images/svg/brandassets/logo-symbol.svg?v=25.1.4.0"
-                  alt="basescan"
-                  className="w-6 h-6 inline-block mr-2"
-                />
-              </a>
-            </div>
-            {tabItems.map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveTab(key)}
-                className={`block w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-pink-50 ${
-                  activeTab === key
-                    ? 'bg-pink-100 text-pink-500 font-semibold'
-                    : ''
-                } ${getThemeClass(
-                  '',
-                  activeTab === key ? 'bg-purple-700 text-white' : 'bg-gray-800 text-gray-100'
-                )}`}
-              >
-                {docs[key].title}
-              </button>
-            ))}
-            {/* Close button */}
-            <div className="mt-4 text-center">
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-pink-400 hover:bg-pink-500 text-white rounded-full mb-4"
-              >
-                I Understand
-              </button>
-            </div>
+  const docs = {
+    overview: {
+      title: 'GigaStrat Overview',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-100 to-rose-100 p-6 rounded-2xl mb-6 border border-pink-200',
+          'bg-gradient-to-br from-purple-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-purple-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">💎</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-pink-700', 'text-xl font-bold text-purple-300')}>What is GigaStrat?</h3>
+          </div>
+          <p className={getThemeClass('mb-4 text-gray-700 leading-relaxed', 'mb-4 text-gray-200 leading-relaxed')}>
+          <strong className={getThemeClass('text-pink-700', 'text-purple-300')}>GigaStrat</strong> is an on-chain system that blends lending and borrowing with a treasury
+          strategy focused on accumulating ETH. Each <strong className={getThemeClass('text-rose-700', 'text-pink-300')}>IOU</strong> represents
+          a fraction of a loan, while the manager simultaneously issues a governance token called <strong className={getThemeClass('text-orange-700', 'text-orange-300')}>GG</strong>, backed by
+          the protocol's ETH treasury.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🏦</span>
+            <h4 className={getThemeClass('font-bold text-green-600', 'font-bold text-green-300')}>For Lenders</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            Fund loans and receive IOU tokens representing your share. Interest accrues automatically,
+            and you can convert IOUs to GG tokens for treasury exposure.
+          </p>
+          </div>
+          
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">📈</span>
+            <h4 className={getThemeClass('font-bold text-orange-600', 'font-bold text-orange-300')}>For GG Holders</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            Hold governance tokens backed by the protocol's ETH treasury. Burn GG to claim
+            your proportional share of accumulated ETH.
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-2xl border border-green-200 shadow-lg',
+          'bg-gradient-to-r from-green-900/30 to-emerald-900/30 p-4 rounded-2xl border border-green-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">📊</span>
+          <div>
+            <h4 className={getThemeClass('font-bold text-green-700 mb-2', 'font-bold text-green-300 mb-2')}>Example Scenario</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            If you hold 1 GG token, the system raises $100,000 in loans, and ETH price doubles, 
+            approximately $100,000 worth of ETH remains as profit in the treasury after repaying loans plus interest. 
+            Your single GG token now represents this additional ETH value.
+            </p>
+          </div>
+          </div>
+        </div>
+        </>
+      )
+    },
+    
+    fullyOnChain: {
+      title: 'How GigaStrat Works',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-100 to-orange-100 p-6 rounded-2xl mb-6 border border-pink-200',
+          'bg-gradient-to-br from-purple-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-purple-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">⚡</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-pink-700', 'text-xl font-bold text-purple-300')}>Fully On-Chain Operations</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          All core actions happen through verified smart contracts, removing any reliance on
+          centralized actors. The manager sets up loans, draws down funds, executes trades,
+          and repays lenders, all according to the code's logic.
+          </p>
+        </div>
+
+        <div className="space-y-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded-xl border-l-4 border-pink-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-pink-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🏦</span>
+            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Funding IOU Loans</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            Funding happens when you send stablecoins to an IOU Loan contract. You receive IOU tokens 
+            in return representing your share of the loan's principal.
+          </p>
           </div>
 
-          {/* Right-side content */}
-          <div className="w-2/3 p-6 overflow-y-auto">
-            <h2 className="text-xl font-bold text-pink-500 mb-2">
-              {docs[activeTab].title}
-            </h2>
-            <div className={getThemeClass('text-gray-700', 'text-gray-100')}>
-              {docs[activeTab].content}
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-orange-50 to-pink-50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">🚀</span>
+            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>On Demand Loan Deployment</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            The manager contract can start fresh IOUs at any point, allowing GigaStrat to
+            continually raise new capital to buy ETH as market conditions are favorable.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">📈</span>
+            <h4 className={getThemeClass('font-bold text-green-700', 'font-bold text-green-300')}>Treasury Growth</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            GigaStrat's treasury accumulates ETH when loan repayments are complete. Any ETH
+            remaining after loan obligations benefits holders of the GG token.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-rose-50 to-orange-50 p-4 rounded-xl border-l-4 border-rose-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-rose-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-2">
+            <span className="text-xl mr-3">💰</span>
+            <h4 className={getThemeClass('font-bold text-rose-700', 'font-bold text-rose-300')}>Repayments</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            The manager contract sells ETH to repay lenders in small increments over time, 
+            taking advantage of favorable market conditions. Anyone can trigger repayments.
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-pink-100 to-rose-100 p-4 rounded-2xl border border-pink-200 shadow-lg',
+          'bg-gradient-to-r from-purple-900/30 to-pink-900/30 p-4 rounded-2xl border border-purple-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">🔄</span>
+          <div>
+            <h4 className={getThemeClass('font-bold text-pink-700 mb-2', 'font-bold text-pink-300 mb-2')}>Continuous Cycle</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            This cycle repeats with each new loan following the same pattern of raising capital,
+            purchasing ETH, and repaying lenders while growing the treasury.
+            </p>
+          </div>
+          </div>
+        </div>
+        </>
+      )
+    },
+
+    swapping: {
+      title: 'Swapping IOUs for GG',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-green-100 to-emerald-100 p-6 rounded-2xl mb-6 border border-green-200',
+          'bg-gradient-to-br from-green-900/30 to-emerald-900/30 p-6 rounded-2xl mb-6 border border-green-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-700 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">🔄</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-green-700', 'text-xl font-bold text-green-300')}>Transform Your Position</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          IOU holders can transform their lender position into ownership of the broader system
+          by swapping IOUs for GG. This conversion pivots you from earning interest on a single
+          loan to a stake in the protocol's growing ETH treasury.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🌱</span>
+            <h4 className={getThemeClass('font-bold text-green-700', 'font-bold text-green-300')}>How It Works</h4>
+          </div>
+          <ol className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
+            <li>1. Select a loan with your IOUs</li>
+            <li>2. Choose how many IOUs to swap</li>
+            <li>3. Convert at the loan's conversion rate</li>
+            <li>4. Receive newly minted GG tokens</li>
+            <li>5. Hold treasury-backed governance tokens</li>
+          </ol>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🔥</span>
+            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Burning GG for ETH</h4>
+          </div>
+          <ul className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
+            <li>• GG represents treasury fraction</li>
+            <li>• Burn GG for proportional ETH</li>
+            <li>• Creates liquidity mechanism</li>
+            <li>• Real asset backing guaranteed</li>
+            <li>• Exit anytime you want</li>
+          </ul>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-orange-50 to-pink-50 p-5 rounded-2xl border border-orange-200 mb-4 shadow-lg',
+          'bg-gradient-to-r from-orange-800/20 to-pink-800/20 p-5 rounded-2xl border border-orange-600/30 mb-4 shadow-lg'
+        )}>
+          <h4 className={getThemeClass('font-bold text-orange-700 mb-3 flex items-center', 'font-bold text-orange-300 mb-3 flex items-center')}>
+          <span className="text-xl mr-2">📊</span>
+          Inflation and Fees
+          </h4>
+          
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-orange-100 to-pink-100 p-3 rounded-xl border border-orange-200 mb-3',
+          'bg-gradient-to-r from-orange-900/30 to-pink-900/30 p-3 rounded-xl border border-orange-500/30 mb-3'
+          )}>
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            There are no protocol fees for loans, swaps, mints, or burns. GigaStrat's inflation
+            is set at 10% of IOU-to-GG swaps minted to the fee address for security and development.
+          </p>
+          <ul className={getThemeClass('text-sm text-gray-700 space-y-1', 'text-sm text-gray-300 space-y-1')}>
+            <li>🛠️ Offset development costs and continued open source work</li>
+            <li>🛡️ Create deterrent to governance attacks via minted GG</li>
+            <li>🚫 No VC allocation, no team allocation, no presale</li>
+          </ul>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-2xl border border-yellow-200 shadow-lg',
+          'bg-gradient-to-r from-yellow-900/30 to-orange-900/30 p-4 rounded-2xl border border-yellow-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">💡</span>
+          <div>
+            <h4 className={getThemeClass('font-bold text-yellow-700 mb-2', 'font-bold text-yellow-300 mb-2')}>Strategic Choice</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            The conversion rate is set per loan. After swapping, you hold GG tokens which do not expire
+            or require redemption like IOUs do - they represent permanent treasury ownership.
+            </p>
+          </div>
+          </div>
+        </div>
+        </>
+      )
+    },
+
+    ious: {
+      title: 'IOUs',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-orange-100 to-pink-100 p-6 rounded-2xl mb-6 border border-orange-200',
+          'bg-gradient-to-br from-orange-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-orange-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">📄</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-orange-700', 'text-xl font-bold text-orange-300')}>Understanding IOUs</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          IOUs are the tokens you receive when you fund a loan. They represent your share of
+          the loan's principal and let you claim repayment plus interest as the manager sells ETH.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">💰</span>
+            <h4 className={getThemeClass('font-bold text-pink-700 mt-2', 'font-bold text-pink-300 mt-2')}>Funding</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Send stablecoins to a loan contract and receive IOU tokens representing your share
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">💎</span>
+            <h4 className={getThemeClass('font-bold text-green-700 mt-2', 'font-bold text-green-300 mt-2')}>Interest</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Claim interest on your IOUs at any time without burning your principal
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">🔄</span>
+            <h4 className={getThemeClass('font-bold text-orange-700 mt-2', 'font-bold text-orange-300 mt-2')}>Redeem</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Convert IOUs back to stablecoins based on repaid principal amounts
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-red-100 to-pink-100 p-5 rounded-2xl border border-red-200 mb-6 shadow-lg',
+          'bg-gradient-to-r from-red-900/30 to-pink-900/30 p-5 rounded-2xl border border-red-500/20 mb-6 shadow-lg'
+        )}>
+          <h4 className={getThemeClass('font-bold text-red-700 mb-3 flex items-center', 'font-bold text-red-300 mb-3 flex items-center')}>
+          <span className="text-xl mr-2">⚠️</span>
+          Important About Redemption
+          </h4>
+          
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-red-50 to-pink-50 p-3 rounded-xl border border-red-200',
+          'bg-gradient-to-r from-red-900/30 to-pink-900/30 p-3 rounded-xl border border-red-500/30'
+          )}>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            <strong>Be careful:</strong> Redeeming IOUs will only give you however much principal 
+            has been repaid to-date. If the loan is not fully repaid, you won't get the entire 
+            principal unless enough ETH has been sold to cover it.
+          </p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/20 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🏦</span>
+            <h4 className={getThemeClass('font-bold text-green-700', 'font-bold text-green-300')}>Lender Benefits</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            Hold IOUs to continue earning interest over time, or swap them for GG tokens
+            to gain exposure to the protocol's ETH treasury growth.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/20 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🔧</span>
+            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Flexible Options</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+            Choose between claiming interest, redeeming for stablecoins, or converting
+            to GG tokens based on your investment strategy and risk tolerance.
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-orange-100 to-pink-100 p-4 rounded-2xl border border-orange-200 shadow-lg',
+          'bg-gradient-to-r from-orange-900/30 to-pink-900/30 p-4 rounded-2xl border border-orange-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">💫</span>
+          <div>
+            <h4 className={getThemeClass('font-bold text-orange-700 mb-2', 'font-bold text-orange-300 mb-2')}>Path to Treasury Exposure</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            IOUs serve as the bridge between traditional lending and treasury participation.
+            Start as a lender, then decide if you want broader protocol exposure through GG tokens.
+            </p>
+          </div>
+          </div>
+        </div>
+        </>
+      )
+    },
+
+    risks: {
+      title: 'Risks and Considerations',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-red-100 to-pink-100 p-6 rounded-2xl mb-6 border border-red-200',
+          'bg-gradient-to-br from-red-900/30 to-pink-900/30 p-6 rounded-2xl mb-6 border border-red-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-red-400 to-pink-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-red-700', 'text-xl font-bold text-red-300')}>Important Disclaimers</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          GigaStrat is a new protocol with inherent risks. Please read and understand these risks before participating:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🔒</span>
+            <h4 className={getThemeClass('font-bold text-yellow-700', 'font-bold text-yellow-300')}>Smart Contract Risks</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            As with any smart contract, there is a risk of bugs or vulnerabilities. The code is open source
+            but has not undergone formal audits. No system is completely secure.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-red-50 to-pink-50 p-4 rounded-2xl border border-red-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-red-800/20 to-pink-800/20 p-4 rounded-2xl border border-red-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">📉</span>
+            <h4 className={getThemeClass('font-bold text-red-700', 'font-bold text-red-300')}>Market Risks</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            The protocol's value is tied to ETH price. If ETH drops significantly, the treasury
+            may not be able to cover all IOU redemptions or GG burns, leading to potential losses.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-orange-800/20 to-pink-800/20 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🧪</span>
+            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>Alpha Version</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            This is an ALPHA version for test purposes only and is not for use with real funds.
+            Funds could be considered lost on deposit with no notice if contracts get updated.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-purple-800/20 to-pink-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">⚖️</span>
+            <h4 className={getThemeClass('font-bold text-purple-700', 'font-bold text-purple-300')}>Liability</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            GigaStrat is provided "as is" without warranties of any kind. By using this protocol,
+            you acknowledge the risks and agree that developers are not liable for losses.
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-blue-100 to-cyan-100 p-4 rounded-2xl border border-blue-200 mb-4 shadow-lg',
+          'bg-gradient-to-r from-blue-900/30 to-cyan-900/30 p-4 rounded-2xl border border-blue-500/20 mb-4 shadow-lg'
+        )}>
+          <div className="flex items-start">
+            <span className="text-2xl mr-3 mt-1">💡</span>
+            <div>
+              <h4 className={getThemeClass('font-bold text-blue-700 mb-2', 'font-bold text-blue-300 mb-2')}>Risk Management</h4>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+                Only risk funds you can afford to lose. The protocol's performance depends heavily on ETH price
+                movements and smart contract security. Do your own research before participating.
+              </p>
             </div>
           </div>
         </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-red-100 to-pink-100 p-4 rounded-2xl border border-red-200 shadow-lg',
+          'bg-gradient-to-r from-red-800/30 to-pink-800/30 p-4 rounded-2xl border border-red-400/30 shadow-lg'
+        )}>
+          <div className="text-center">
+            <span className="text-3xl mb-2 block">🛡️</span>
+            <h4 className={getThemeClass('font-bold text-red-700 mb-2', 'font-bold text-red-300 mb-2')}>Use at Your Own Risk</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+              By proceeding, you acknowledge that you have read, understood, and accepted all risks associated with using GigaStrat.
+            </p>
+          </div>
+        </div>
+        </>
+      )
+    }
+  };
+
+  const tabItems = Object.keys(docs);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className={getThemeClass(
+        'bg-white text-gray-800 w-full max-w-4xl rounded-3xl shadow-lg flex',
+        'bg-gray-800 text-white w-full max-w-4xl rounded-3xl shadow-lg flex'
+      )} style={{ maxHeight: '90vh' }}>
+        
+        {/* Theme Toggle */}
+        <button 
+          onClick={() => setDarkMode(!darkMode)} 
+          className={getThemeClass(
+            'absolute top-4 right-4 z-10 text-2xl p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110',
+            'absolute top-4 right-4 z-10 text-2xl p-2 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110'
+          )}
+        >
+          {darkMode ? '🌙' : '☀️'}
+        </button>
+
+        {/* Sidebar tabs */}
+        <div className={getThemeClass(
+          'w-1/3 border-r border-gray-200 overflow-y-auto rounded-l-3xl',
+          'w-1/3 border-r border-gray-600 overflow-y-auto rounded-l-3xl'
+        )}>
+          <div className={getThemeClass(
+            'flex align-items-center items-center justify-center my-4 mb-6 gap-2 bg-gray-100 px-4 py-2 rounded-full w-fit mx-auto',
+            'flex align-items-center items-center justify-center my-4 mb-6 gap-2 bg-gray-700 px-4 py-2 rounded-full w-fit mx-auto'
+          )}>
+            <a
+              href="https://twitter.com/not_pr0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={getThemeClass('text-blue-600 hover:text-blue-700 transition-colors', 'text-blue-400 hover:text-blue-300 transition-colors')}
+            >
+              <svg
+                role="img"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+              >
+                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+              </svg>
+            </a>
+            <a
+              href="https://discord.gg/vrV4YpUccq"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={getThemeClass('text-blue-600 hover:text-blue-700 transition-colors', 'text-blue-400 hover:text-blue-300 transition-colors')}
+            >
+              <svg
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="currentColor"
+              >
+                <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+              </svg>
+            </a>
+            <a
+              href="https://basescan.org/address/0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={getThemeClass('text-blue-600 hover:text-blue-700 transition-colors', 'text-blue-400 hover:text-blue-300 transition-colors')}
+            >
+              <img
+                src="https://basescan.org/assets/base/images/svg/brandassets/logo-symbol.svg?v=25.1.4.0"
+                alt="basescan"
+                className="w-6 h-6 inline-block"
+              />
+            </a>
+          </div>
+          
+          {tabItems.map((key) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`block w-full text-left px-6 py-4 border-b transition-all duration-300 ${
+                activeTab === key
+                  ? getThemeClass(
+                      'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold border-pink-600 shadow-lg', 
+                      'bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold border-purple-500 shadow-lg'
+                    )
+                  : getThemeClass(
+                      'text-gray-700 border-gray-200 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:text-pink-700',
+                      'text-gray-300 border-gray-600 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-purple-300'
+                    )
+              }`}
+            >
+              {docs[key].title}
+            </button>
+          ))}
+          
+          <div className="mt-6 text-center px-4 pb-6">
+            <button
+              onClick={onClose}
+              className={getThemeClass(
+                'w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                'w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+              )}
+            >
+              ✨ Got it!
+            </button>
+          </div>
+        </div>
+
+        {/* Right-side content */}
+        <div className="w-2/3 p-8 overflow-y-auto">
+          <h2 className={getThemeClass(
+            'text-3xl font-black mb-6 bg-gradient-to-r from-pink-600 via-rose-500 to-orange-500 bg-clip-text text-transparent',
+            'text-3xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent'
+          )}>
+            {docs[activeTab].title}
+          </h2>
+          <div className={getThemeClass('text-gray-700', 'text-gray-200')}>
+            {docs[activeTab].content}
+          </div>
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // -------------------------------------------------------------------
   // Render
@@ -1262,7 +1640,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
               >
                 <input
                 className={getThemeClass(
-                  'bg-transparent flex-grow outline-none px-3 py-2 text-pink-700 placeholder-pink-500',
+                  'bg-transparent flex-grow outline-none px-3 py-2 text-pink-500 placeholder-pink-500',
                   'bg-transparent flex-grow outline-none px-3 py-2 text-purple-300 placeholder-purple-400'
                 )}
                 placeholder={`Amount of ${GGSymbol || 'GG'}`}
