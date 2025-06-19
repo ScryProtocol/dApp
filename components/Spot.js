@@ -2013,7 +2013,9 @@ staking: {
                     <div key={idx} className={getThemeClass(
                       `bg-${item.color}-500 rounded-xl p-4 text-center border border-${item.color}-200`,
                       `bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl p-4 text-center border border-gray-500`
-                    )}>
+                    )}><div className="bg-purple-500 text-purple-300 border-purple-200`
+">
+                      </div>
                       <h3 className={getThemeClass(
                         `text-white/50 font-bold text-lg`,
                         `text-${item.color}-300 font-bold text-lg`
