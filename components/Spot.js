@@ -1383,7 +1383,8 @@ function GigaStratModal({ show, onClose }) {
             </a>
           </div>
 
-          {/* Tab buttons */}
+          {/* Tab buttons */}<div className=""
+          style={{ scrollbarWidth: '2px', overflowY: 'auto'}}>
           {tabItems.map((key) => (
             <button
               key={key}
@@ -1405,7 +1406,7 @@ function GigaStratModal({ show, onClose }) {
               {docs[key].title}
             </button>
           ))}
-
+</div>
           {/* Close button */}
           <div className="mt-6 text-center px-4 pb-6">
             <button
