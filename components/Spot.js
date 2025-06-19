@@ -1841,7 +1841,7 @@ function GigaStratModal({ show, onClose }) {
                     { label: `My ${loans[0].underlyingSymbol || 'USDC'}`, value: `${Number(loans[0].underlyingBalance || '0').toFixed(2)} ${loans[0].underlyingSymbol || 'USDC'}`, color: 'green' }
                   ].map((item, idx) => (
                     <div key={idx} className={getThemeClass(
-                      `bg-${item.color}-500 bg-${item.color}-500 rounded-xl p-4 text-center border border-${item.color}-200`,
+                      `bg-${item.color}-500 rounded-xl p-4 text-center border border-${item.color}-200`,
                       `bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl p-4 text-center border border-gray-500`
                     )}>
                       <h3 className={getThemeClass(
