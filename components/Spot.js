@@ -1285,40 +1285,40 @@ function GigaStratModal({ show, onClose }) {
   const tabItems = Object.keys(docs);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 md:p-6">
       <div
         className={getThemeClass(
-          'bg-white text-gray-800 w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row',
-          'bg-gray-800 text-white w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row',
+          "relative bg-white text-gray-800 w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row",
+          "relative bg-gray-800 text-white w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row",
           darkMode
         )}
-        style={{ maxHeight: '90vh' }}
+        style={{ maxHeight: "90vh" }}
       >
-        {/* Theme Toggle */}
+        {/* Theme toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}
           className={getThemeClass(
-            'absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110',
-            'absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110',
+            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110",
+            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-gray-700 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110",
             darkMode
           )}
         >
-          {darkMode ? '🌙' : '☀️'}
+          {darkMode ? "🌙" : "☀️"}
         </button>
 
-        {/* Sidebar / Header */}
+        {/* Sidebar / header */}
         <div
           className={getThemeClass(
-            'w-full md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 overflow-y-auto rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none',
-            'w-full md:w-1/3 border-b md:border-b-0 md:border-r border-gray-600 overflow-y-auto rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none',
+            "w-full md:w-1/3 md:border-b-0 md:border-r border-gray-200 overflow-y-auto rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none",
+            "w-full md:w-1/3 border-b md:border-b-0 md:border-r border-gray-600 overflow-y-auto rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none",
             darkMode
           )}
         >
-          {/* Social icons */}
+          {/* Social links */}
           <div
             className={getThemeClass(
-              'flex items-center justify-center my-4 mb-6 gap-2 bg-gray-100 px-4 py-2 rounded-full w-fit mx-auto',
-              'flex items-center justify-center my-4 mb-6 gap-2 bg-gray-700 px-4 py-2 rounded-full w-fit mx-auto',
+              "flex items-center justify-center my-4 mb-6 gap-3 bg-gray-100 px-4 py-2 rounded-full w-fit mx-auto",
+              "flex items-center justify-center my-4 mb-6 gap-3 bg-gray-700 px-4 py-2 rounded-full w-fit mx-auto",
               darkMode
             )}
           >
@@ -1328,14 +1328,15 @@ function GigaStratModal({ show, onClose }) {
               target="_blank"
               rel="noopener noreferrer"
               className={getThemeClass(
-                'text-blue-600 hover:text-blue-700 transition-colors',
-                'text-blue-400 hover:text-blue-300 transition-colors',
+                "text-blue-600 hover:text-blue-700 transition-colors",
+                "text-blue-400 hover:text-blue-300 transition-colors",
                 darkMode
               )}
             >
               <svg
                 role="img"
-                fill="#ec4899"
+                fill={darkMode ? "#fff" : "#ec4899"}
+                className="color-blue-100 w-6 h-6"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-6 h-6"
@@ -1349,8 +1350,8 @@ function GigaStratModal({ show, onClose }) {
               target="_blank"
               rel="noopener noreferrer"
               className={getThemeClass(
-                'text-blue-600 hover:text-blue-700 transition-colors',
-                'text-blue-400 hover:text-blue-300 transition-colors',
+                "text-blue-600 hover:text-blue-700 transition-colors",
+                "text-blue-400 hover:text-blue-300 transition-colors",
                 darkMode
               )}
             >
@@ -1359,7 +1360,7 @@ function GigaStratModal({ show, onClose }) {
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-6 h-6"
-                fill="#ec4899"
+                fill={darkMode ? "#fff" : "#ec4899"}
               >
                 <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
               </svg>
@@ -1370,8 +1371,8 @@ function GigaStratModal({ show, onClose }) {
               target="_blank"
               rel="noopener noreferrer"
               className={getThemeClass(
-                'text-blue-600 hover:text-blue-700 transition-colors',
-                'text-blue-400 hover:text-blue-300 transition-colors',
+                "text-blue-600 hover:text-blue-700 transition-colors",
+                "text-blue-400 hover:text-blue-300 transition-colors",
                 darkMode
               )}
             >
@@ -1383,37 +1384,38 @@ function GigaStratModal({ show, onClose }) {
             </a>
           </div>
 
-          {/* Tab buttons */}<div className=""
-          style={{ scrollbarWidth: '2px', overflowY: 'auto'}}>
-          {tabItems.map((key) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`block w-full text-left px-6 py-4 border-b transition-all duration-300 ${
-                activeTab === key
-                  ? getThemeClass(
-                      'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold border-pink-500 shadow-lg',
-                      'bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold border-purple-500 shadow-lg',
-                      darkMode
-                    )
-                  : getThemeClass(
-                      'text-gray-700 border-gray-200 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:text-pink-500',
-                      'text-gray-300 border-gray-600 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-purple-300',
-                      darkMode
-                    )
-              }`}
-            >
-              {docs[key].title}
-            </button>
-          ))}
-</div>
+          {/* Tab list (desktop) */}
+          <div className="hidden md:block">
+            {tabItems.map((key) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`block w-full text-left px-6 py-4 border-b transition-all duration-300 ${
+                  activeTab === key
+                    ? getThemeClass(
+                        "bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold border-pink-500 shadow-lg",
+                        "bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold border-purple-500 shadow-lg",
+                        darkMode
+                      )
+                    : getThemeClass(
+                        "text-gray-700 border-gray-200 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:text-pink-500",
+                        "text-gray-300 border-gray-600 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-purple-300",
+                        darkMode
+                      )
+                }`}
+              >
+                {docs[key].title}
+              </button>
+            ))}
+          </div>
+
           {/* Close button */}
-          <div className="mt-6 text-center px-4 pb-6">
+          <div className="hidden md:block mt-6 text-center px-4 pb-6">
             <button
               onClick={onClose}
               className={getThemeClass(
-                'w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
-                'w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
                 darkMode
               )}
             >
@@ -1423,24 +1425,66 @@ function GigaStratModal({ show, onClose }) {
         </div>
 
         {/* Main content */}
-        <div className="w-full md:w-2/3 p-6 md:p-8 overflow-y-auto">
+        <div className="w-full md:w-2/3 py-2 p-6 md:p-8 overflow-y-auto">
+        
+          <div className="px-6 pb-2 md:hidden">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              className={getThemeClass(
+                "w-full border border-gray-300 rounded-xl p-3 text-white text-center font-semibold bg-gradient-to-r from-pink-500 to-rose-500 focus:outline-none focus:ring-2 focus:ring-pink-500",
+                "w-full border border-gray-600 bg-gray-700 rounded-xl p-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500",
+                darkMode
+              )}
+            >
+              {tabItems.map((key) => (
+                <option key={key} value={key} className=
+                  {getThemeClass(
+                    "text-pink-500 font-semibold",
+                    "text-gray-300",
+                    darkMode
+                  )}>
+                  {docs[key].title}
+                </option>
+              ))}
+            </select>
+          </div>
           <h2
             className={getThemeClass(
-              'text-2xl sm:text-3xl font-black mb-6 bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 bg-clip-text text-transparent',
-              'text-2xl sm:text-3xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent',
+              "text-2xl sm:text-3xl font-black mb-6 bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 bg-clip-text text-transparent",
+              "text-2xl sm:text-3xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent",
               darkMode
             )}
           >
             {docs[activeTab].title}
           </h2>
-          <div className={getThemeClass('text-gray-700', 'text-gray-200', darkMode)}>
+          <div
+            className={getThemeClass(
+              "text-gray-700",
+              "text-gray-200",
+              darkMode
+            )}
+          >
             {docs[activeTab].content}
           </div>
+      <div className="px-6 mt-4 md:hidden">
+            <button
+              onClick={onClose}
+              className={getThemeClass(
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
+                darkMode
+              )}
+            >
+              ✨ Got it!
+            </button>
+        </div> 
         </div>
       </div>
     </div>
   );
 }
+
 
 
   // -------------------------------------------------------------------
