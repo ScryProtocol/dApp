@@ -829,7 +829,6 @@ function GigaStratModal({ show, onClose }) {
         </>
       )
     },
-    
     fullyOnChain: {
       title: 'How GigaStrat Works',
       content: (
@@ -840,75 +839,159 @@ function GigaStratModal({ show, onClose }) {
         )}>
           <div className="flex items-center mb-4">
           <div className={getThemeClass(
-            'w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-pink-300 rounded-full flex items-center justify-center mr-4 shadow-lg',
             'w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-lg'
           )}>
             <span className="text-2xl">⚡</span>
           </div>
-          <h3 className={getThemeClass('text-xl font-bold text-pink-500', 'text-xl font-bold text-purple-300')}>Fully On-Chain Operations</h3>
+          <h3 className={getThemeClass('text-xl font-bold text-pink-500', 'text-xl font-bold text-purple-300')}>Deep Dive: The GigaStrat Protocol</h3>
           </div>
           <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
-          All core actions happen through verified smart contracts, removing any reliance on
-          centralized actors. The manager sets up loans, draws down funds, executes trades,
-          and repays lenders, all according to the code's logic.
+          GigaStrat operates as a fully on-chain ETH accumulation protocol where smart contracts manage
+          every aspect: loan creation, fund deployment, ETH purchases, and multi-year repayment schedules.
+          The protocol continuously opens loans that anyone can fund, immediately converts capital to ETH,
+          and methodically repays lenders over 4 years while keeping all profits as treasury backing for GG tokens.
           </p>
         </div>
 
         <div className="space-y-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded-xl border-l-4 border-pink-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-pink-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-xl transition-all duration-300'
           )}>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-3">
             <span className="text-xl mr-3">🏦</span>
-            <h4 className={getThemeClass('font-bold text-pink-500', 'font-bold text-pink-300')}>Funding IOU Loans</h4>
+            <h4 className={getThemeClass('font-bold text-blue-600', 'font-bold text-blue-300')}>Step 1: Loan Deployment & Funding</h4>
           </div>
-          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
-            Funding happens when you send stablecoins to an IOU Loan contract. You receive IOU tokens 
-            in return representing your share of the loan's principal.
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            The protocol deploys IOU loan contracts through the IOU.fi factory. Lenders fund these loans with USDC,
+            receiving IOU tokens representing their share of the principal plus accruing interest.
           </p>
+          <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
+            <li>• Each loan has a target funding goal (e.g., $50,000 USDC)</li>
+            <li>• Interest rates are set at deployment (typically 0% for GigaStrat loans)</li>
+            <li>• IOUs are transferable ERC-20 tokens with built-in interest accrual</li>
+            <li>• Loans auto-deploy once previous loans reach full funding</li>
+          </ul>
           </div>
 
           <div className={getThemeClass(
           'bg-gradient-to-r from-orange-50 to-pink-50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300',
           'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300'
           )}>
-          <div className="flex items-center mb-2">
-            <span className="text-xl mr-3">🚀</span>
-            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>On Demand Loan Deployment</h4>
+          <div className="flex items-center mb-3">
+            <span className="text-xl mr-3">⚡</span>
+            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>Step 2: Instant ETH Conversion</h4>
           </div>
-          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
-            The manager contract can start fresh IOUs at any point, allowing GigaStrat to
-            continually raise new capital to buy ETH as market conditions are favorable.
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            As soon as funds arrive, the protocol automatically draws down the loan and swaps USDC for ETH
+            via Uniswap V3, building the treasury position immediately rather than waiting for full funding.
           </p>
+          <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
+            <li>• Uses Chainlink price feeds to calculate slippage protection</li>
+            <li>• Swaps occur through Uniswap V3 with 0.05% fee pools</li>
+            <li>• ETH is held directly by the contract, no wrapped tokens</li>
+            <li>• Each loan tracks its individual ETH purchases separately</li>
+          </ul>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-xl mr-3">🔄</span>
+            <h4 className={getThemeClass('font-bold text-purple-700', 'font-bold text-purple-300')}>Step 3: IOU → GG Conversion Mechanism</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            IOU holders can swap their loan positions for GG tokens at predetermined conversion rates,
+            transitioning from lender to treasury stakeholder. The protocol adjusts conversion rates
+            based on ETH price and treasury value.
+          </p>
+          <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
+            <li>• Conversion rates reflect current ETH price and treasury backing</li>
+            <li>• When IOUs convert to GG, the underlying ETH transfers to treasury</li>
+            <li>• Loan goals adjust downward to reflect reduced repayment obligations</li>
+            <li>• 10% inflation minted to fee address for protocol sustainability</li>
+          </ul>
           </div>
 
           <div className={getThemeClass(
           'bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300',
           'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300'
           )}>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-3">
             <span className="text-xl mr-3">📈</span>
-            <h4 className={getThemeClass('font-bold text-green-700', 'font-bold text-green-300')}>Treasury Growth</h4>
+            <h4 className={getThemeClass('font-bold text-green-700', 'font-bold text-green-300')}>Step 4: Treasury-Backed GG Tokens</h4>
           </div>
-          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
-            GigaStrat's treasury accumulates ETH when loan repayments are complete. Any ETH
-            remaining after loan obligations benefits holders of the GG token.
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            GG tokens represent proportional ownership of the protocol's ETH treasury. As loans are repaid
+            and new ETH is acquired, the treasury grows, increasing the ETH backing per GG token.
           </p>
+          <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
+            <li>• Treasury consists of ETH from IOU conversions + loan profits</li>
+            <li>• GG holders can burn tokens anytime for proportional ETH</li>
+            <li>• No lock-ups or vesting - instant liquidity guaranteed by contract</li>
+            <li>• Treasury value automatically compounds as ETH appreciates</li>
+          </ul>
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-r from-rose-50 to-orange-50 p-4 rounded-xl border-l-4 border-rose-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-rose-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-xl transition-all duration-300'
           )}>
-          <div className="flex items-center mb-2">
-            <span className="text-xl mr-3">💰</span>
-            <h4 className={getThemeClass('font-bold text-rose-700', 'font-bold text-rose-300')}>Repayments</h4>
+          <div className="flex items-center mb-3">
+            <span className="text-xl mr-3">⏰</span>
+            <h4 className={getThemeClass('font-bold text-red-700', 'font-bold text-red-300')}>Step 5: 4-Year Repayment Cycle</h4>
           </div>
-          <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
-            The manager contract sells ETH to repay lenders in small increments over time, 
-            taking advantage of favorable market conditions. Anyone can trigger repayments.
+          <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
+            The protocol repays loans gradually over 4 years by selling small amounts of ETH. This extended
+            timeframe allows ETH price appreciation to work in the protocol's favor, maximizing profits retained.
           </p>
+          <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
+            <li>• Repayments limited to 1% of total owed every 10 days</li>
+            <li>• Anyone can trigger repayments to earn small ETH rewards</li>
+            <li>• Unused ETH after full repayment becomes permanent treasury</li>
+            <li>• Multiple loans operate in parallel at different repayment stages</li>
+          </ul>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-yellow-100 to-orange-100 p-5 rounded-2xl border border-yellow-200 shadow-lg mb-6',
+          'bg-gradient-to-r from-yellow-900/30 to-orange-900/30 p-5 rounded-2xl border border-yellow-500/20 shadow-lg mb-6'
+        )}>
+          <h4 className={getThemeClass('font-bold text-yellow-700 mb-3 flex items-center', 'font-bold text-yellow-300 mb-3 flex items-center')}>
+          <span className="text-xl mr-2">🎯</span>
+          The ETH Treasury Backing System
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className={getThemeClass(
+            'bg-gradient-to-r from-yellow-50 to-orange-50 p-3 rounded-xl border border-yellow-200',
+            'bg-gradient-to-r from-yellow-900/30 to-orange-900/30 p-3 rounded-xl border border-yellow-500/30'
+            )}>
+            <h5 className={getThemeClass('font-bold text-yellow-700 mb-2', 'font-bold text-yellow-300 mb-2')}>Treasury Sources</h5>
+            <ul className={getThemeClass('text-sm text-gray-700 space-y-1', 'text-sm text-gray-300 space-y-1')}>
+              <li>💎 ETH from IOU→GG swaps (instant treasury)</li>
+              <li>📈 Profit ETH after loan repayments complete</li>
+              <li>🔄 Accumulated appreciation over 4-year cycles</li>
+              <li>⚡ Compounding from multiple parallel loans</li>
+            </ul>
+            </div>
+            
+            <div className={getThemeClass(
+            'bg-gradient-to-r from-orange-50 to-pink-50 p-3 rounded-xl border border-orange-200',
+            'bg-gradient-to-r from-orange-900/30 to-pink-900/30 p-3 rounded-xl border border-orange-500/30'
+            )}>
+            <h5 className={getThemeClass('font-bold text-orange-700 mb-2', 'font-bold text-orange-300 mb-2')}>Backing Mechanism</h5>
+            <ul className={getThemeClass('text-sm text-gray-700 space-y-1', 'text-sm text-gray-300 space-y-1')}>
+              <li>🏦 Each GG token = proportional ETH claim</li>
+              <li>🔥 Burn anytime for instant ETH redemption</li>
+              <li>📊 Real-time treasury value tracking on-chain</li>
+              <li>🛡️ No counterparty risk - pure smart contract</li>
+            </ul>
+            </div>
           </div>
         </div>
 
@@ -919,10 +1002,12 @@ function GigaStratModal({ show, onClose }) {
           <div className="flex items-start">
           <span className="text-2xl mr-3 mt-1">🔄</span>
           <div>
-            <h4 className={getThemeClass('font-bold text-pink-500 mb-2', 'font-bold text-pink-300 mb-2')}>Continuous Cycle</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500 mb-2', 'font-bold text-pink-300 mb-2')}>Continuous Scaling & Automation</h4>
             <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
-            This cycle repeats with each new loan following the same pattern of raising capital,
-            purchasing ETH, and repaying lenders while growing the treasury.
+            This entire cycle runs autonomously with no human intervention required. New loans deploy automatically,
+            ETH purchases execute instantly, repayments process permissionlessly, and the treasury grows organically.
+            The protocol can scale to hundreds of parallel loans, each contributing to the collective ETH treasury
+            that backs every GG token with real, redeemable value.
             </p>
           </div>
           </div>
