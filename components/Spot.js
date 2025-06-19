@@ -1168,7 +1168,177 @@ function GigaStratModal({ show, onClose }) {
         </>
       )
     },
+staking: {
+      title: 'Staking GG and IOUs',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-purple-100 to-indigo-100 p-6 rounded-2xl mb-6 border border-purple-200',
+          'bg-gradient-to-br from-purple-900/30 to-indigo-900/30 p-6 rounded-2xl mb-6 border border-purple-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">💎</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-purple-600', 'text-xl font-bold text-purple-300')}>How Staking Works</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          Staking allows you to lock up your IOU loans or GG tokens to earn $IOU rewards over time. 
+          $IOU is the native token of IOU.fi and is used for governance purposes within the broader ecosystem.
+          </p>
+        </div>
 
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-purple-800/20 to-indigo-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">🪙</span>
+            <h4 className={getThemeClass('font-bold text-purple-600', 'font-bold text-purple-300')}>Staking GG Tokens</h4>
+          </div>
+          <ul className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
+            <li>• Lock GG tokens to earn $IOU rewards</li>
+            <li>• Maintain exposure to ETH treasury growth</li>
+            <li>• Participate in protocol governance</li>
+            <li>• Compound rewards by restaking</li>
+            <li>• Flexible withdrawal options</li>
+          </ul>
+          </div>
+          
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-blue-800/20 to-purple-800/20 p-4 rounded-2xl border border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="flex items-center mb-3">
+            <span className="text-2xl mr-3">📄</span>
+            <h4 className={getThemeClass('font-bold text-blue-600', 'font-bold text-blue-300')}>Staking IOU Tokens</h4>
+          </div>
+          <ul className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
+            <li>• Stake individual loan IOUs for rewards</li>
+            <li>• Continue earning loan interest</li>
+            <li>• Additional $IOU token rewards</li>
+            <li>• Support specific loan pools</li>
+            <li>• Maintain liquidity options</li>
+          </ul>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-green-100 to-emerald-100 p-5 rounded-2xl border border-green-200 mb-6 shadow-lg',
+          'bg-gradient-to-r from-green-900/30 to-emerald-900/30 p-5 rounded-2xl border border-green-500/20 mb-6 shadow-lg'
+        )}>
+          <h4 className={getThemeClass('font-bold text-green-700 mb-3 flex items-center', 'font-bold text-green-300 mb-3 flex items-center')}>
+          <span className="text-xl mr-2">⏰</span>
+          Staking Mechanics
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className={getThemeClass(
+            'bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-xl border border-green-200',
+            'bg-gradient-to-r from-green-900/30 to-emerald-900/30 p-3 rounded-xl border border-green-500/30'
+            )}>
+            <h5 className={getThemeClass('font-bold text-green-700 mb-2', 'font-bold text-green-300 mb-2')}>Earning Rewards</h5>
+            <ul className={getThemeClass('text-sm text-gray-700 space-y-1', 'text-sm text-gray-300 space-y-1')}>
+              <li>🎯 Stake tokens to earn rewards</li>
+              <li>📈 Rewards accrue over time</li>
+              <li>💰 Claim rewards anytime</li>
+              <li>🔓 Withdraw staked tokens anytime</li>
+            </ul>
+            </div>
+            
+            <div className={getThemeClass(
+            'bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-xl border border-blue-200',
+            'bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-3 rounded-xl border border-blue-500/30'
+            )}>
+            <h5 className={getThemeClass('font-bold text-blue-700 mb-2', 'font-bold text-blue-300 mb-2')}>Governance Benefits</h5>
+            <ul className={getThemeClass('text-sm text-gray-700 space-y-1', 'text-sm text-gray-300 space-y-1')}>
+              <li>🗳️ $IOU tokens provide voting rights</li>
+              <li>🏛️ Participate in protocol decisions</li>
+              <li>💡 Propose new features or changes</li>
+              <li>🤝 Shape the future of IOU.fi</li>
+            </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">🔒</span>
+            <h4 className={getThemeClass('font-bold text-yellow-600 mt-2', 'font-bold text-yellow-300 mt-2')}>Lock Period</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Flexible staking with no mandatory lock periods. Withdraw anytime while keeping earned rewards.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">💎</span>
+            <h4 className={getThemeClass('font-bold text-pink-500 mt-2', 'font-bold text-pink-300 mt-2')}>Rewards</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Earn $IOU tokens based on staking duration and amount. Higher stakes earn proportionally more.
+          </p>
+          </div>
+
+          <div className={getThemeClass(
+          'bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-2xl border border-indigo-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-indigo-800/20 to-purple-800/20 p-4 rounded-2xl border border-indigo-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          )}>
+          <div className="text-center mb-3">
+            <span className="text-3xl">🏛️</span>
+            <h4 className={getThemeClass('font-bold text-indigo-600 mt-2', 'font-bold text-indigo-300 mt-2')}>Governance</h4>
+          </div>
+          <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
+            Use earned $IOU tokens to vote on protocol upgrades, parameter changes, and new features.
+          </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-2xl border border-purple-200 shadow-lg',
+          'bg-gradient-to-r from-purple-900/30 to-indigo-900/30 p-4 rounded-2xl border border-purple-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+          <span className="text-2xl mr-3 mt-1">🎯</span>
+          <div>
+            <h4 className={getThemeClass('font-bold text-purple-600 mb-2', 'font-bold text-purple-300 mb-2')}>Strategic Benefits</h4>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
+            Staking creates additional value streams while maintaining your original investment exposure. 
+            GG stakers keep treasury benefits, while IOU stakers continue earning loan interest plus governance rewards.
+            </p>
+          </div>
+          </div>
+        </div>
+        <button
+              onClick={onClose}
+              className={getThemeClass(
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
+                darkMode
+              )}
+              onClick={() => window.open('https://iou.fi/', '_blank')}
+              target="_blank"
+            >
+              Go to IOU.fi to Stake
+            </button>
+
+        </>
+      )
+    },
+    
+      
     risks: {
       title: 'Risks and Considerations',
       content: (
