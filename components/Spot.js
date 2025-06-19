@@ -786,10 +786,10 @@ function GigaStratModal({ show, onClose }) {
           )}>
             <span className="text-2xl">💎</span>
           </div>
-          <h3 className={getThemeClass('text-xl font-bold text-pink-700', 'text-xl font-bold text-purple-300')}>What is GigaStrat?</h3>
+          <h3 className={getThemeClass('text-xl font-bold text-pink-500', 'text-xl font-bold text-purple-300')}>What is GigaStrat?</h3>
           </div>
           <p className={getThemeClass('mb-4 text-gray-700 leading-relaxed', 'mb-4 text-gray-200 leading-relaxed')}>
-          <strong className={getThemeClass('text-pink-700', 'text-purple-300')}>GigaStrat</strong> is an on-chain system that blends lending and borrowing with a treasury
+          <strong className={getThemeClass('text-pink-500', 'text-purple-300')}>GigaStrat</strong> is an on-chain system that blends lending and borrowing with a treasury
           strategy focused on accumulating ETH. Each <strong className={getThemeClass('text-rose-700', 'text-pink-300')}>IOU</strong> represents
           a fraction of a loan, while the manager simultaneously issues a governance token called <strong className={getThemeClass('text-orange-700', 'text-orange-300')}>GG</strong>, backed by
           the protocol's ETH treasury.
@@ -861,7 +861,7 @@ function GigaStratModal({ show, onClose }) {
           )}>
             <span className="text-2xl">⚡</span>
           </div>
-          <h3 className={getThemeClass('text-xl font-bold text-pink-700', 'text-xl font-bold text-purple-300')}>Fully On-Chain Operations</h3>
+          <h3 className={getThemeClass('text-xl font-bold text-pink-500', 'text-xl font-bold text-purple-300')}>Fully On-Chain Operations</h3>
           </div>
           <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
           All core actions happen through verified smart contracts, removing any reliance on
@@ -877,7 +877,7 @@ function GigaStratModal({ show, onClose }) {
           )}>
           <div className="flex items-center mb-2">
             <span className="text-xl mr-3">🏦</span>
-            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Funding IOU Loans</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500', 'font-bold text-pink-300')}>Funding IOU Loans</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
             Funding happens when you send stablecoins to an IOU Loan contract. You receive IOU tokens 
@@ -935,7 +935,7 @@ function GigaStratModal({ show, onClose }) {
           <div className="flex items-start">
           <span className="text-2xl mr-3 mt-1">🔄</span>
           <div>
-            <h4 className={getThemeClass('font-bold text-pink-700 mb-2', 'font-bold text-pink-300 mb-2')}>Continuous Cycle</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500 mb-2', 'font-bold text-pink-300 mb-2')}>Continuous Cycle</h4>
             <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
             This cycle repeats with each new loan following the same pattern of raising capital,
             purchasing ETH, and repaying lenders while growing the treasury.
@@ -995,7 +995,7 @@ function GigaStratModal({ show, onClose }) {
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🔥</span>
-            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Burning GG for ETH</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500', 'font-bold text-pink-300')}>Burning GG for ETH</h4>
           </div>
           <ul className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
             <li>• GG represents treasury fraction</li>
@@ -1081,7 +1081,7 @@ function GigaStratModal({ show, onClose }) {
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">💰</span>
-            <h4 className={getThemeClass('font-bold text-pink-700 mt-2', 'font-bold text-pink-300 mt-2')}>Funding</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500 mt-2', 'font-bold text-pink-300 mt-2')}>Funding</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700 text-center', 'text-sm text-gray-300 text-center')}>
             Send stablecoins to a loan contract and receive IOU tokens representing your share
@@ -1157,7 +1157,7 @@ function GigaStratModal({ show, onClose }) {
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🔧</span>
-            <h4 className={getThemeClass('font-bold text-pink-700', 'font-bold text-pink-300')}>Flexible Options</h4>
+            <h4 className={getThemeClass('font-bold text-pink-500', 'font-bold text-pink-300')}>Flexible Options</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
             Choose between claiming interest, redeeming for stablecoins, or converting
@@ -1335,7 +1335,7 @@ function GigaStratModal({ show, onClose }) {
             >
               <svg
                 role="img"
-                fill="currentColor"
+                fill="#ec4899"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-6 h-6"
@@ -1354,7 +1354,7 @@ function GigaStratModal({ show, onClose }) {
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-6 h-6"
-                fill="currentColor"
+                fill="#ec4899"
               >
                 <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
               </svg>
@@ -1380,11 +1380,11 @@ function GigaStratModal({ show, onClose }) {
               className={`block w-full text-left px-6 py-4 border-b transition-all duration-300 ${
                 activeTab === key
                   ? getThemeClass(
-                      'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold border-pink-600 shadow-lg', 
+                      'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold border-pink-500 shadow-lg', 
                       'bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold border-purple-500 shadow-lg'
                     )
                   : getThemeClass(
-                      'text-gray-700 border-gray-200 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:text-pink-700',
+                      'text-gray-700 border-gray-200 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 hover:text-pink-500',
                       'text-gray-300 border-gray-600 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-purple-300'
                     )
               }`}
@@ -1397,7 +1397,7 @@ function GigaStratModal({ show, onClose }) {
             <button
               onClick={onClose}
               className={getThemeClass(
-                'w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                'w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
                 'w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
               )}
             >
@@ -1409,7 +1409,7 @@ function GigaStratModal({ show, onClose }) {
         {/* Right-side content */}
         <div className="w-2/3 p-8 overflow-y-auto">
           <h2 className={getThemeClass(
-            'text-3xl font-black mb-6 bg-gradient-to-r from-pink-600 via-rose-500 to-orange-500 bg-clip-text text-transparent',
+            'text-3xl font-black mb-6 bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 bg-clip-text text-transparent',
             'text-3xl font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent'
           )}>
             {docs[activeTab].title}
@@ -1620,7 +1620,7 @@ function GigaStratModal({ show, onClose }) {
               <div className="text-center mb-6">
               <h3
                 className={getThemeClass(
-                'text-2xl font-bold text-pink-600 mb-2',
+                'text-2xl font-bold text-pink-500 mb-2',
                 'text-2xl font-bold text-purple-400 mb-2'
                 )}
               >
@@ -1664,15 +1664,15 @@ function GigaStratModal({ show, onClose }) {
                 'bg-pink-100 rounded-xl p-4 space-y-2',
                 'bg-purple-900/30 rounded-xl p-4 space-y-2'
               )}>
-                <p className={getThemeClass('text-pink-700 font-bold text-lg text-center', 'text-purple-300 font-bold text-lg text-center')}>
+                <p className={getThemeClass('text-pink-500 font-bold text-lg text-center', 'text-purple-300 font-bold text-lg text-center')}>
                   {burnAmount} {GGSymbol || 'GG'} → ~{burnPreview} ETH
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className={getThemeClass('text-pink-600', 'text-purple-400')}>
+                  <div className={getThemeClass('text-pink-500', 'text-purple-400')}>
                     <span className="font-semibold">Total Supply:</span><br/>
                     {GGSupply || 'N/A'} GG
                   </div>
-                  <div className={getThemeClass('text-pink-600', 'text-purple-400')}>
+                  <div className={getThemeClass('text-pink-500', 'text-purple-400')}>
                     <span className="font-semibold">ETH/GG Ratio:</span><br/>
                     {(ethFromMint/GGSupply || 0).toFixed(6)} ETH
                   </div>
@@ -1683,7 +1683,7 @@ function GigaStratModal({ show, onClose }) {
             <button
               onClick={handleBurnDAOForETH}
               className={getThemeClass(
-                'w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
+                'w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-lg hover:from-pink-500 hover:to-rose-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
                 'w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
               )}
               title="Burn the specified amount of GG tokens for your share of the treasury ETH."
@@ -1698,7 +1698,7 @@ function GigaStratModal({ show, onClose }) {
         <div className="text-center mb-8">
           <h2
             className={getThemeClass(
-              'text-4xl font-black mb-4 bg-gradient-to-r from-pink-600 via-rose-500 to-orange-500 bg-clip-text text-transparent',
+              'text-4xl font-black mb-4 bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 bg-clip-text text-transparent',
               'text-4xl font-black mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent'
             )}
           >
@@ -1763,7 +1763,7 @@ function GigaStratModal({ show, onClose }) {
                         style={{ width: Math.min(100, Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1') * 100) + '%' }}
                       />
                     </div>
-                    <p className={getThemeClass('text-pink-600 font-semibold mt-2', 'text-purple-400 font-semibold mt-2')}>
+                    <p className={getThemeClass('text-pink-500 font-semibold mt-2', 'text-purple-400 font-semibold mt-2')}>
                       {((Number(loans[0].totalFunded || '0') / Number(loans[0].loanGoal || '1')) * 100).toFixed(1)}% funded
                     </p>
                   </div>
@@ -1853,7 +1853,7 @@ function GigaStratModal({ show, onClose }) {
             'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-purple-500/30 text-center'
           )}>
             <div className="text-6xl mb-4">🌱</div>
-            <p className={getThemeClass('text-pink-600 text-xl font-semibold', 'text-purple-400 text-xl font-semibold')}>
+            <p className={getThemeClass('text-pink-500 text-xl font-semibold', 'text-purple-400 text-xl font-semibold')}>
               No loans found or none discovered so far.
             </p>
           </div>
@@ -1904,7 +1904,7 @@ function GigaStratModal({ show, onClose }) {
                   </div>
 
                   <div className="mb-4">
-                    <h3 className={getThemeClass('text-pink-600 font-bold text-lg mb-2', 'text-purple-400 font-bold text-lg mb-2')}>
+                    <h3 className={getThemeClass('text-pink-500 font-bold text-lg mb-2', 'text-purple-400 font-bold text-lg mb-2')}>
                       Loan Goal
                     </h3>
                     <p className={getThemeClass(
