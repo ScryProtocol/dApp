@@ -1407,7 +1407,6 @@ staking: {
           </div>
         </div>
         <button
-              onClick={onClose}
               className={getThemeClass(
                 "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
                 "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
@@ -1594,7 +1593,6 @@ staking: {
                 className="color-blue-100 w-6 h-6"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
               >
                 <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
               </svg>
@@ -1685,7 +1683,7 @@ staking: {
           <div
             className={getThemeClass(
               "block md:hidden flex items-center justify-center my-4 mb-2 gap-3 bg-gray-100 px-4 py-2 rounded-full w-fit mx-auto",
-              "block md:hiddenflex items-center justify-center my-4 mb-2 gap-3 bg-gray-700 px-4 py-2 rounded-full w-fit mx-auto",
+              "block md:hidden flex items-center justify-center my-4 mb-2 gap-3 bg-gray-700 px-4 py-2 rounded-full w-fit mx-auto",
               darkMode
             )}
           >
@@ -1706,7 +1704,6 @@ staking: {
                 className="color-blue-100 w-6 h-6"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
               >
                 <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
               </svg>
