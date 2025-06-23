@@ -1490,7 +1490,7 @@ function GigaStratModal({ show, onClose }) {
       )
     },
     refs: {
-      title: 'Referals',
+      title: 'Referrals',
       content: (
         <>
         <div className={getThemeClass(
