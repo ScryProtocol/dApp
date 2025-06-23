@@ -1036,7 +1036,8 @@ function GigaStratModal({ show, onClose }) {
           <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
           IOU holders can transform their lender position into ownership of the broader system
           by swapping IOUs for GG. This conversion pivots you from earning interest on a single
-          loan to a stake in the protocol's growing ETH treasury.
+          loan to a stake in the protocol's growing ETH treasury. <strong className={getThemeClass('text-orange-700', 'text-orange-300')}>IOUs have a 1 year expiry on being able to
+            convert to GG tokens</strong>, after which they can only be redeemed for ETH and earn interest.
           </p>
         </div>
 
@@ -1248,6 +1249,232 @@ function GigaStratModal({ show, onClose }) {
             Start as a lender, then decide if you want broader protocol exposure through GG tokens.
             </p>
           </div>
+          </div>
+        </div>
+        </>
+      )
+    },
+    gg: {
+      title: 'GG Value Accumulation and Value',
+      content: (
+        <>
+        <div className={getThemeClass(
+          'bg-gradient-to-br from-yellow-100 to-orange-100 p-6 rounded-2xl mb-6 border border-yellow-200',
+          'bg-gradient-to-br from-yellow-900/30 to-orange-900/30 p-6 rounded-2xl mb-6 border border-yellow-500/20'
+        )}>
+          <div className="flex items-center mb-4">
+          <div className={getThemeClass(
+            'w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+            'w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          )}>
+            <span className="text-2xl">🏆</span>
+          </div>
+          <h3 className={getThemeClass('text-xl font-bold text-yellow-700', 'text-xl font-bold text-yellow-300')}>Understanding GG Value Mechanics</h3>
+          </div>
+          <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
+          GG tokens represent proportional ownership of GigaStrat's ETH treasury. As the protocol executes its strategy
+          of borrowing USDC, buying ETH, and repaying loans over time, the value accumulation happens through multiple
+          compounding mechanisms that directly benefit GG holders.
+          </p>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-green-100 to-emerald-100 p-6 rounded-2xl mb-6 border border-green-200 shadow-lg',
+          'bg-gradient-to-r from-green-900/30 to-emerald-900/30 p-6 rounded-2xl mb-6 border border-green-500/20 shadow-lg'
+        )}>
+          <div className="flex items-center mb-4">
+          <span className="text-3xl mr-4">📊</span>
+          <h4 className={getThemeClass('text-2xl font-bold text-green-700', 'text-2xl font-bold text-green-300')}>The $100,000 Example Breakdown</h4>
+          </div>
+          
+          <div className="space-y-4">
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-200',
+              'bg-gradient-to-r from-blue-900/30 to-cyan-900/30 p-4 rounded-xl border border-blue-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-blue-700 mb-2', 'font-bold text-blue-300 mb-2')}>Initial State: 1 GG Token Outstanding</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                You hold the only GG token in existence. The protocol has raised $100,000 in loans and immediately
+                converted it to ETH at current market prices. Let's say ETH is $2,000, so the treasury now holds 50 ETH.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200',
+              'bg-gradient-to-r from-purple-900/30 to-pink-900/30 p-4 rounded-xl border border-purple-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-purple-700 mb-2', 'font-bold text-purple-300 mb-2')}>ETH Price Doubles: $2,000 → $4,000</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                The 50 ETH in the treasury is now worth $200,000. The protocol still owes $100,000 to IOU holders
+                (the original loan amount), but now has double the value needed to repay them.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200',
+              'bg-gradient-to-r from-green-900/30 to-emerald-900/30 p-4 rounded-xl border border-green-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-green-700 mb-2', 'font-bold text-green-300 mb-2')}>Loan Repayment: $100,000 Returned</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                Over 4 years, the protocol sells 25 ETH (worth $100,000 at new prices) to repay all IOU holders.
+                This leaves 25 ETH ($100,000 worth) permanently in the treasury as pure profit.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl border border-yellow-200',
+              'bg-gradient-to-r from-yellow-900/30 to-orange-900/30 p-4 rounded-xl border border-yellow-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-yellow-700 mb-2', 'font-bold text-yellow-300 mb-2')}>Your GG Token Value: $100,000</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                As the sole GG holder, your single token represents 100% ownership of the 25 ETH treasury.
+                You can burn your GG token anytime to claim the full $100,000 worth of ETH.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={getThemeClass(
+            'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg',
+            'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg'
+          )}>
+            <div className="flex items-center mb-3">
+              <span className="text-2xl mr-3">⚡</span>
+              <h4 className={getThemeClass('font-bold text-pink-500', 'font-bold text-pink-300')}>Instant Treasury Building</h4>
+            </div>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+              When IOU holders swap for GG tokens, their underlying ETH transfers immediately to the treasury.
+              This creates instant backing value without waiting for loan repayments to complete.
+            </p>
+          </div>
+          
+          <div className={getThemeClass(
+            'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg',
+            'bg-gradient-to-br from-orange-800/20 to-pink-800/20 p-4 rounded-2xl border border-orange-500/30 shadow-lg'
+          )}>
+            <div className="flex items-center mb-3">
+              <span className="text-2xl mr-3">🔄</span>
+              <h4 className={getThemeClass('font-bold text-orange-600', 'font-bold text-orange-300')}>Continuous Compounding</h4>
+            </div>
+            <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+              Multiple loans operate in parallel, each contributing ETH to the treasury as they complete their cycles.
+              The treasury grows from both IOU conversions and completed loan profits.
+            </p>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-indigo-100 to-purple-100 p-5 rounded-2xl border border-indigo-200 mb-6 shadow-lg',
+          'bg-gradient-to-r from-indigo-900/30 to-purple-900/30 p-5 rounded-2xl border border-indigo-500/20 mb-6 shadow-lg'
+        )}>
+          <h4 className={getThemeClass('font-bold text-indigo-700 mb-4 flex items-center text-xl', 'font-bold text-indigo-300 mb-4 flex items-center text-xl')}>
+            <span className="text-2xl mr-3">💰</span>
+            Value Accumulation Sources
+          </h4>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-xl border border-indigo-200',
+              'bg-gradient-to-r from-indigo-900/30 to-purple-900/30 p-3 rounded-xl border border-indigo-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-indigo-700 mb-2', 'font-bold text-indigo-300 mb-2')}>ETH Price Appreciation</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                The primary value driver. As ETH price increases, the treasury's value grows faster than
+                the fixed USDC obligations to IOU holders.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-xl border border-purple-200',
+              'bg-gradient-to-r from-purple-900/30 to-pink-900/30 p-3 rounded-xl border border-purple-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-purple-700 mb-2', 'font-bold text-purple-300 mb-2')}>IOU → GG Conversions</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                When lenders convert IOUs to GG, their ETH allocation transfers to the permanent treasury,
+                reducing future repayment obligations.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-pink-50 to-rose-50 p-3 rounded-xl border border-pink-200',
+              'bg-gradient-to-r from-pink-900/30 to-rose-900/30 p-3 rounded-xl border border-pink-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-pink-700 mb-2', 'font-bold text-pink-300 mb-2')}>Excess ETH After Repayment</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                Any ETH remaining after full loan repayment becomes permanent treasury assets,
+                directly increasing the backing per GG token.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-red-50 to-pink-50 p-5 rounded-2xl border border-red-200 mb-6 shadow-lg',
+          'bg-gradient-to-r from-red-900/30 to-pink-900/30 p-5 rounded-2xl border border-red-500/20 mb-6 shadow-lg'
+        )}>
+          <h4 className={getThemeClass('font-bold text-red-700 mb-3 flex items-center', 'font-bold text-red-300 mb-3 flex items-center')}>
+            <span className="text-xl mr-2">⚠️</span>
+            Risk Considerations for GG Holders
+          </h4>
+          
+          <div className="grid md:grid-cols-2 gap-4"></div>
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-red-50 to-pink-50 p-3 rounded-xl border border-red-200',
+              'bg-gradient-to-r from-red-900/30 to-pink-900/30 p-3 rounded-xl border border-red-500/30'
+            )}>
+              <h5 className={getThemeClass('font-bold text-red-700 mb-2', 'font-bold text-red-300 mb-2')}>ETH Price Decline</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                If ETH price falls significantly, the treasury may not have enough value to cover both
+                IOU redemptions and maintain GG backing. GG holders absorb this risk.
+              </p>
+            </div>
+            
+            <div className={getThemeClass(
+              'bg-gradient-to-r from-orange-50 to-red-50 p-3 rounded-xl border border-orange-200 mt-2',
+              'bg-gradient-to-r from-orange-900/30 to-red-900/30 p-3 rounded-xl border border-orange-500/30 mt-2'
+            )}>
+              <h5 className={getThemeClass('font-bold text-orange-700 mb-2', 'font-bold text-orange-300 mb-2')}>Treasury Dilution</h5>
+              <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
+                New GG tokens are minted when IOUs convert, diluting existing holders unless the
+                incoming ETH value exceeds the dilution impact. This is mitigated by the
+                50% premium on the conversion rate.
+              </p>
+            </div>
+          </div>
+
+        <div className={getThemeClass(
+          'bg-gradient-to-r from-yellow-100 to-orange-100 p-5 rounded-2xl border border-yellow-200 shadow-lg',
+          'bg-gradient-to-r from-yellow-900/30 to-orange-900/30 p-5 rounded-2xl border border-yellow-500/20 shadow-lg'
+        )}>
+          <div className="flex items-start">
+            <span className="text-3xl mr-4 mt-1">🎯</span>
+            <div>
+              <h4 className={getThemeClass('font-bold text-yellow-700 mb-3 text-xl', 'font-bold text-yellow-300 mb-3 text-xl')}>Long-Term Value Proposition</h4>
+              <p className={getThemeClass('text-gray-700 mb-3', 'text-gray-200 mb-3')}>
+                GG tokens represent a leveraged bet on ETH price appreciation with automatic profit realization.
+                Unlike simply holding ETH, GG holders benefit from:
+              </p>
+              
+              <ul className={getThemeClass('text-sm text-gray-700 space-y-2', 'text-sm text-gray-300 space-y-2')}>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">•</span>
+                  <span><strong>Leveraged ETH exposure</strong> through borrowed capital converted to ETH</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">•</span>
+                  <span><strong>Automatic profit taking</strong> as loans are repaid during ETH appreciation cycles</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">•</span>
+                  <span><strong>Compound treasury growth</strong> from multiple parallel loan cycles</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">•</span>
+                  <span><strong>Instant liquidity</strong> through burn-to-redeem mechanism</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         </>
