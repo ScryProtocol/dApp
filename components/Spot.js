@@ -783,7 +783,7 @@ function GigaStratModal({ show, onClose }) {
           <h3 className={getThemeClass('text-xl font-bold text-pink-500', 'text-xl font-bold text-purple-300')}>What is GigaStrat?</h3>
           </div>
           <p className={getThemeClass('mb-4 text-gray-700 leading-relaxed', 'mb-4 text-gray-200 leading-relaxed')}>
-          <strong className={getThemeClass('text-pink-500', 'text-purple-300')}>GigaStrat</strong> is an on-chain system that blends lending and borrowing with a treasury
+          <strong className={getThemeClass('text-pink-500', 'text-purple-300')}>GigaStrat</strong> is an onchain system that blends lending and borrowing with a treasury
           strategy focused on accumulating ETH. Each <strong className={getThemeClass('text-rose-700', 'text-pink-300')}>IOU</strong> represents
           a fraction of a loan, while the manager simultaneously issues a governance token called <strong className={getThemeClass('text-orange-700', 'text-orange-300')}>GG</strong>, backed by
           the protocol's ETH treasury.
