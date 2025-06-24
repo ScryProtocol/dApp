@@ -1544,6 +1544,10 @@ function GigaStratModal({ show, onClose }) {
           'bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-bold py-2 px-4 rounded-full w-full hover:from-purple-800 hover:to-indigo-800 transition-all duration-300'
 )}
         onClick={() => {
+          if (userAddress=='0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'){
+            toast('Connect your wallet to get your link!')
+            return;
+          }
           navigator.clipboard.writeText(window.location.href + '?ref=' + userAddress);
           toast.success('Referral link copied to clipboard!', {
             position: "top-right",
@@ -2131,14 +2135,18 @@ staking: {
         toastOptions={{
           style: darkMode
             ? {
-                background: '#333',
+                background: '#6b46c1',
                 color: '#fff',
-                borderRadius: '12px',
-                border: '1px solid #6b46c1'
+                borderRadius: '16px',
+                fontSize: '16px',
+                fontWeight: 'bold'
               }
             : {
-                borderRadius: '12px',
-                border: '1px solid #ec4899'
+                background:'#ec4899',
+                color: '#fff',
+                borderRadius: '16px',
+                fontSize: '16px',
+                fontWeight: 'bold'
               }
         }}
       />
