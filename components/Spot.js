@@ -1494,17 +1494,17 @@ function GigaStratModal({ show, onClose }) {
       content: (
         <>
         <div className={getThemeClass(
-          'bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-2xl mb-6 border border-blue-200',
-          'bg-gradient-to-br from-blue-900/30 to-purple-900/30 p-6 rounded-2xl mb-6 border border-blue-500/20'
-        )}>
+          'bg-gradient-to-br from-pink-100 to-rose-100 p-6 rounded-2xl mb-6 border border-pink-200',
+          'bg-gradient-to-br from-pink-900/30 to-rose-900/30 p-6 rounded-2xl mb-6 border border-pink-500/20'
+          )}>
           <div className="flex items-center mb-4">
           <div className={getThemeClass(
-            'w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
-            'w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
+          'w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full flex items-center justify-center mr-4 shadow-lg',
+          'w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center mr-4 shadow-lg'
           )}>
             <span className="text-2xl">🔗</span>
           </div>
-          <h3 className={getThemeClass('text-xl font-bold text-blue-700', 'text-xl font-bold text-blue-300')}>Referral Program Overview</h3>
+<h3 className={getThemeClass('text-xl font-bold text-pink-600', 'text-xl font-bold text-pink-300')}>Referral Program Overview</h3>
           </div>
           <p className={getThemeClass('text-gray-700 mb-4', 'text-gray-200 mb-4')}>
           GigaStrat offers a referral program to incentivize community members to bring new users to the platform.
@@ -1513,12 +1513,12 @@ function GigaStratModal({ show, onClose }) {
         </div>
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-purple-800/20 to-indigo-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🎯</span>
-            <h4 className={getThemeClass('font-bold text-purple-600', 'font-bold text-purple-300')}>How It Works</h4>
+            <h4 className={getThemeClass('font-bold text-green-600', 'font-bold text-green-300')}>How It Works</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
             Share your unique referral link with friends, family, or on social media. 
@@ -1540,9 +1540,9 @@ function GigaStratModal({ show, onClose }) {
           </div>
         </div>
         <button className={getThemeClass(
-          'bg-gradient-to-r from-purple-400 to-indigo-400 text-white font-bold py-2 px-4 w-full rounded-lg shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2 px-4 w-full rounded-lg shadow-lg hover:shadow-xl transition-all duration-300'
-        )}
+          'bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2 px-4 rounded-full w-full hover:from-purple-500 hover:to-indigo-500 transition-all duration-300',
+          'bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-bold py-2 px-4 rounded-full w-full hover:from-purple-800 hover:to-indigo-800 transition-all duration-300'
+)}
         onClick={() => {
           navigator.clipboard.writeText(window.location.href + '?ref=' + userAddress);
           toast.success('Referral link copied to clipboard!', {
