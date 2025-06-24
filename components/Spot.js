@@ -113,8 +113,9 @@ const ERC20ABI = [
 // ------------------------------
 function GGLoanManagerUI() {
   // Wagmi/Provider context
-  const provider = useChainId()==8453?new ethers.JsonRpcProvider('https://1rpc.io/base'):useEthersProvider();
+  const provider = useEthersProvider();
   const signer = useEthersSigner();
+  let chainID = useChainId();
   const IOUMintAddress =useChainId()==1? '0xeFF111b48622C1cab239E2105e19B05C73Bc9dA6':'0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
@@ -709,7 +710,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
       fetchManagerData();
     }
     // eslint-disable-next-line
-  }, [userAddress]);
+  }, [userAddress,chainID]);
   const [showModal, setShowModal] = useState(true);
   const [showSimple, setShowSimple] = useState(true);
   const InfoModal = () => {
