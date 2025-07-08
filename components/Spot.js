@@ -716,7 +716,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
   const InfoModal = () => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className={getThemeClass('bg-orange-200 p-6 rounded-3xl max-w-lg mx-auto text-center', 'bg-gray-700 p-6 rounded-3xl max-w-lg mx-auto text-center')}>
+        <div className={getThemeClass('bg-orange-200 p-6 rounded-[40px] max-w-lg mx-auto text-center', 'bg-gray-700 p-6 rounded-[40px] max-w-lg mx-auto text-center')}>
           <h2 className="text-lg font-semibold text-pink-500 mb-2">GG Loan Manager ALPHA</h2>
           <p className="font-semibold">
             This is a demo UI for the GigaStrat Protocol on Base. It allows you to interact with
@@ -792,8 +792,8 @@ function GigaStratModal({ show, onClose }) {
         
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🏦</span>
@@ -806,8 +806,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
           
           <div className={getThemeClass(
-          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">📈</span>
@@ -866,8 +866,8 @@ function GigaStratModal({ show, onClose }) {
 
         <div className="space-y-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-blue-400 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-xl mr-3">🏦</span>
@@ -886,8 +886,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-r from-orange-50 to-pink-50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-orange-50 to-pink-50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-orange-400 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-xl mr-3">⚡</span>
@@ -906,8 +906,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-purple-400 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-xl mr-3">🔄</span>
@@ -927,8 +927,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-green-400 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-xl mr-3">📈</span>
@@ -947,8 +947,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-4 rounded-xl border-l-4 border-red-400 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-xl mr-3">⏰</span>
@@ -1053,8 +1053,8 @@ function GigaStratModal({ show, onClose }) {
 
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🌱</span>
@@ -1070,8 +1070,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🔥</span>
@@ -1156,8 +1156,8 @@ function GigaStratModal({ show, onClose }) {
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">💰</span>
@@ -1169,8 +1169,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">💎</span>
@@ -1182,8 +1182,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-gray-700/50 to-gray-800/50 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">🔄</span>
@@ -1218,8 +1218,8 @@ function GigaStratModal({ show, onClose }) {
 
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/20 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/20 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🏦</span>
@@ -1232,8 +1232,8 @@ function GigaStratModal({ show, onClose }) {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/20 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/20 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🔧</span>
@@ -1514,8 +1514,8 @@ function GigaStratModal({ show, onClose }) {
         </div>
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-green-800/20 to-emerald-800/20 p-4 rounded-2xl border border-green-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🎯</span>
@@ -1527,8 +1527,8 @@ function GigaStratModal({ show, onClose }) {
           </p>
           </div>
           <div className={getThemeClass(
-          'bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-blue-800/20 to-purple-800/20 p-4 rounded-2xl border border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl border border-blue-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-blue-800/20 to-purple-800/20 p-4 rounded-2xl border border-blue-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">💰</span>
@@ -1590,8 +1590,8 @@ staking: {
 
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-purple-800/20 to-indigo-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-purple-800/20 to-indigo-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🪙</span>
@@ -1607,8 +1607,8 @@ staking: {
           </div>
           
           <div className={getThemeClass(
-          'bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-blue-800/20 to-purple-800/20 p-4 rounded-2xl border border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl border border-blue-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-blue-800/20 to-purple-800/20 p-4 rounded-2xl border border-blue-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">📄</span>
@@ -1664,8 +1664,8 @@ staking: {
 
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">🔒</span>
@@ -1677,8 +1677,8 @@ staking: {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-pink-800/20 to-rose-800/20 p-4 rounded-2xl border border-pink-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">💎</span>
@@ -1690,8 +1690,8 @@ staking: {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-2xl border border-indigo-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-indigo-800/20 to-purple-800/20 p-4 rounded-2xl border border-indigo-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-2xl border border-indigo-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-indigo-800/20 to-purple-800/20 p-4 rounded-2xl border border-indigo-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="text-center mb-3">
             <span className="text-3xl">🏛️</span>
@@ -1720,8 +1720,8 @@ staking: {
         </div>
         <button
               className={getThemeClass(
-                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
-                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 mt-4",
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105 mt-4",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105 mt-4",
                 darkMode
               )}
               onClick={() => window.open('https://iou.fi/', '_blank')}
@@ -1759,8 +1759,8 @@ staking: {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className={getThemeClass(
-          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-2xl border border-yellow-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-yellow-800/20 to-orange-800/20 p-4 rounded-2xl border border-yellow-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🔒</span>
@@ -1773,8 +1773,8 @@ staking: {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-red-50 to-pink-50 p-4 rounded-2xl border border-red-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-red-800/20 to-pink-800/20 p-4 rounded-2xl border border-red-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-red-50 to-pink-50 p-4 rounded-2xl border border-red-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-red-800/20 to-pink-800/20 p-4 rounded-2xl border border-red-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">📉</span>
@@ -1787,8 +1787,8 @@ staking: {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-orange-800/20 to-pink-800/20 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-orange-50 to-pink-50 p-4 rounded-2xl border border-orange-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-orange-800/20 to-pink-800/20 p-4 rounded-2xl border border-orange-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🧪</span>
@@ -1801,8 +1801,8 @@ staking: {
           </div>
 
           <div className={getThemeClass(
-          'bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300',
-          'bg-gradient-to-br from-purple-800/20 to-pink-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300'
+          'bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-200 shadow-lg hover:shadow-lg transition-all duration-300',
+          'bg-gradient-to-br from-purple-800/20 to-pink-800/20 p-4 rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-lg transition-all duration-300'
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">⚖️</span>
@@ -1854,8 +1854,8 @@ staking: {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 md:p-6">
       <div
         className={getThemeClass(
-          "relative bg-white text-gray-800 w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row",
-          "relative bg-gray-800 text-white w-full max-w-4xl rounded-3xl shadow-lg flex flex-col md:flex-row",
+          "relative bg-white text-gray-800 w-full max-w-4xl rounded-[40px] shadow-lg flex flex-col md:flex-row",
+          "relative bg-gray-800 text-white w-full max-w-4xl rounded-[40px] shadow-lg flex flex-col md:flex-row",
           darkMode
         )}
         style={{ maxHeight: "90vh" }}
@@ -1864,8 +1864,8 @@ staking: {
         <button
           onClick={() => setDarkMode(!darkMode)}
           className={getThemeClass(
-            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110",
-            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-gray-700 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110",
+            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-lg transition-transform duration-300 hover:scale-110",
+            "absolute top-3 right-3 md:top-4 md:right-4 z-10 text-2xl p-2 bg-gray-700 backdrop-blur-sm rounded-full shadow-lg hover:shadow-lg transition-transform duration-300 hover:scale-110",
             darkMode
           )}
         >
@@ -1979,8 +1979,8 @@ staking: {
             <button
               onClick={onClose}
               className={getThemeClass(
-                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
-                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105",
                 darkMode
               )}
             >
@@ -2103,8 +2103,8 @@ staking: {
             <button
               onClick={onClose}
               className={getThemeClass(
-                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
-                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105",
+                "w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-2xl font-bold transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105",
                 darkMode
               )}
             >
@@ -2159,8 +2159,8 @@ staking: {
         <button 
           onClick={() => setDarkMode(!darkMode)} 
           className={getThemeClass(
-            'text-3xl absolute top-4 left-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110',
-            'text-3xl absolute top-4 left-4 p-3 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110'
+            'text-3xl absolute top-4 left-4 p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-lg transition-all duration-300 hover:scale-110',
+            'text-3xl absolute top-4 left-4 p-3 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-lg transition-all duration-300 hover:scale-110'
           )}
         >
           {darkMode ? '🌙' : '☀️'}
@@ -2169,8 +2169,8 @@ staking: {
           <button
             onClick={() => setShowGigaStratModal(true)}
             className={getThemeClass(
-              'text-xl rounded-full border-2 border-pink-400 text-pink-500 px-4 py-2 font-semibold hover:bg-pink-50 hover:border-pink-500 transition-all duration-300 backdrop-blur-sm bg-white/80 shadow-lg hover:shadow-xl',
-              'text-xl rounded-full border-2 border-purple-400 text-purple-300 px-4 py-2 font-semibold hover:bg-gray-800/50 hover:border-purple-300 transition-all duration-300 backdrop-blur-sm bg-gray-800/80 shadow-lg hover:shadow-xl'
+              'text-xl rounded-full border-2 border-pink-400 text-pink-500 px-4 py-2 font-semibold hover:bg-pink-50 hover:border-pink-500 transition-all duration-300 backdrop-blur-sm bg-white/80 shadow-lg hover:shadow-lg',
+              'text-xl rounded-full border-2 border-purple-400 text-purple-300 px-4 py-2 font-semibold hover:bg-gray-800/50 hover:border-purple-300 transition-all duration-300 backdrop-blur-sm bg-gray-800/80 shadow-lg hover:shadow-lg'
             )}
           >
             ?
@@ -2186,8 +2186,8 @@ staking: {
       <div className="max-w-7xl mx-auto text-center mb-12">
         <h1
           className={getThemeClass(
-            'text-6xl md:text-7xl font-black text-pink-500 tracking-tight mb-6 drop-shadow-2xl h-24 relative top-6 md:top-0',
-            'text-6xl md:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent tracking-tight mb-6 drop-shadow-2xl h-24 relative top-6 md:top-0'
+            'text-6xl md:text-7xl font-black text-pink-500 tracking-tight mb-6 drop-shadow-lg h-24 relative top-6 md:top-0',
+            'text-6xl md:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent tracking-tight mb-6 drop-shadow-lg h-24 relative top-6 md:top-0'
           )}
         >
            GigaStrat 
@@ -2196,8 +2196,8 @@ staking: {
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
           <div
             className={getThemeClass(
-              'bg-gradient-to-r from-pink-400 to-rose-400 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
-              'bg-gradient-to-r from-purple-600 to-purple-500 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
+              'bg-gradient-to-r from-pink-400 to-rose-400 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
+              'bg-gradient-to-r from-purple-600 to-purple-500 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
             )}
           >
             <h2 className="text-2xl font-bold mb-1">ETH Treasury</h2>
@@ -2206,8 +2206,8 @@ staking: {
           
           <div
             className={getThemeClass(
-              'bg-gradient-to-r from-emerald-400 to-teal-400 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
-              'bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
+              'bg-gradient-to-r from-emerald-400 to-teal-400 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300',
+              'bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm min-w-[280px] transform hover:scale-105 transition-all duration-300'
             )}
           >
             <h2 className="text-2xl font-bold mb-1">My {GGSymbol || 'GG'} Tokens</h2>
@@ -2220,8 +2220,8 @@ staking: {
       <div className="max-w-5xl mx-auto mb-16">
         <div
           className={getThemeClass(
-            'bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-pink-200/50 max-w-md mx-auto',
-            'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-purple-500/30 max-w-md mx-auto'
+            'bg-white/90 backdrop-blur-lg rounded-[40px] p-8 shadow-lg border border-pink-200/50 max-w-md mx-auto',
+            'bg-gray-800/90 backdrop-blur-lg rounded-[40px] p-8 shadow-lg border border-purple-500/30 max-w-md mx-auto'
           )}
         >
           <div className="text-center mb-8">
@@ -2306,8 +2306,8 @@ staking: {
               <button
                 onClick={handleSwapIOU}
                 className={getThemeClass(
-                'w-full py-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl font-bold text-lg hover:from-green-500 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
-                'w-full py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-emerald-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+                'w-full py-3 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl font-bold text-lg hover:from-green-500 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105',
+                'w-full py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-emerald-800 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105'
                 )}
                 title="Swap your IOU tokens to mint new GG tokens."
               >
@@ -2383,8 +2383,8 @@ staking: {
             <button
               onClick={handleBurnDAOForETH}
               className={getThemeClass(
-                'w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-lg hover:from-pink-500 hover:to-rose-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
-                'w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+                'w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-lg hover:from-pink-500 hover:to-rose-600 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105',
+                'w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105'
               )}
               title="Burn the specified amount of GG tokens for your share of the treasury ETH."
             >
@@ -2407,8 +2407,8 @@ staking: {
           <button
             onClick={() => setShowSimple(!showSimple)}
             className={getThemeClass(
-              'px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-rose-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105',
-              'px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105'
+              'px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-xl font-semibold hover:from-pink-500 hover:to-rose-500 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105',
+              'px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105'
             )}
             title="Toggle between simple and advanced view"
           >
@@ -2418,8 +2418,8 @@ staking: {
 
         {showSimple && (
           <div className={getThemeClass(
-            "bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-pink-200/50 max-w-2xl mx-auto mb-8",
-            "bg-gray-800/90 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-purple-500/30 max-w-2xl mx-auto mb-8"
+            "bg-white/90 backdrop-blur-lg rounded-[40px] p-8 shadow-lg border border-pink-200/50 max-w-2xl mx-auto mb-8",
+            "bg-gray-800/90 backdrop-blur-lg rounded-[40px] p-8 shadow-lg border border-purple-500/30 max-w-2xl mx-auto mb-8"
           )}>
             <div className="text-center mb-6">
               <h2
@@ -2535,7 +2535,7 @@ staking: {
                       <button
                         key={idx}
                         onClick={btn.onClick}
-                        className={`bg-gradient-to-r ${btn.color} text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm`}
+                        className={`bg-gradient-to-r ${btn.color} text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-lg transform hover:scale-105 text-sm`}
                         title={`${btn.label} action for the current loan.`}
                       >
                         <span className="block text-lg mb-1">{btn.icon}</span>
@@ -2551,8 +2551,8 @@ staking: {
 
         {loans.length === 0 ? (
           <div className={getThemeClass(
-            'bg-white/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-pink-200/50 text-center',
-            'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-purple-500/30 text-center'
+            'bg-white/90 backdrop-blur-lg rounded-[40px] p-12 shadow-lg border border-pink-200/50 text-center',
+            'bg-gray-800/90 backdrop-blur-lg rounded-[40px] p-12 shadow-lg border border-purple-500/30 text-center'
           )}>
             <div className="text-6xl mb-4">🌱</div>
             <p className={getThemeClass('text-pink-500 text-xl font-semibold', 'text-purple-400 text-xl font-semibold')}>
@@ -2565,8 +2565,8 @@ staking: {
               <div
                 key={ln.index}
                 className={getThemeClass(
-                  'bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-pink-200/50 relative overflow-hidden',
-                  'bg-gray-800/90 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-purple-500/30 relative overflow-hidden'
+                  'bg-white/90 backdrop-blur-lg rounded-[40px] p-6 shadow-lg border border-pink-200/50 relative overflow-hidden',
+                  'bg-gray-800/90 backdrop-blur-lg rounded-[40px] p-6 shadow-lg border border-purple-500/30 relative overflow-hidden'
                 )}
               >
                 {/* Status badge */}
@@ -2648,7 +2648,7 @@ staking: {
                   <div className="flex justify-center mb-4">
                     <button
                       onClick={() => handleQuickRepay(ln.index)}
-                      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                       title="Repay 1% of the total owed USDC by selling the required ETH."
                     >
                       💵 Quick Repay
@@ -2695,8 +2695,8 @@ staking: {
                 <button
                   onClick={handleOpenLoan}
                   className={getThemeClass(
-                    'text-3xl font-semibold text-white bg-pink-400 rounded-3xl px-6 py-3 shadow-lg hover:bg-pink-500 transition-all duration-300',
-                    'text-3xl font-semibold text-white bg-purple-600 rounded-3xl px-6 py-3 shadow-lg hover:bg-purple-700 transition-all duration-300'
+                    'text-3xl font-semibold text-white bg-pink-400 rounded-[40px] px-6 py-3 shadow-lg hover:bg-pink-500 transition-all duration-300',
+                    'text-3xl font-semibold text-white bg-purple-600 rounded-[40px] px-6 py-3 shadow-lg hover:bg-purple-700 transition-all duration-300'
                   )}
                   title="Create a new loan contract once all existing ones are fully funded."
                 >
@@ -2705,8 +2705,8 @@ staking: {
               ) : (
                 <div 
                   className={getThemeClass(
-                    'text-3xl font-semibold text-white bg-gray-300 rounded-3xl px-6 py-3 shadow-lg text-center flex items-center justify-center',
-                    'text-3xl font-semibold text-white bg-gray-700 rounded-3xl px-6 py-3 shadow-lg text-center flex items-center justify-center'
+                    'text-3xl font-semibold text-white bg-gray-300 rounded-[40px] px-6 py-3 shadow-lg text-center flex items-center justify-center',
+                    'text-3xl font-semibold text-white bg-gray-700 rounded-[40px] px-6 py-3 shadow-lg text-center flex items-center justify-center'
                   )}
                   title="You must ensure all existing loans are fully funded before creating a new one."
                 >
