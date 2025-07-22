@@ -860,7 +860,7 @@ function GigaStratModal({ show, onClose }) {
           GigaStrat operates as a fully on-chain ETH accumulation protocol where smart contracts manage
           every aspect: loan creation, fund deployment, ETH purchases, and multi-year repayment schedules.
           The protocol continuously opens loans that anyone can fund, immediately converts capital to ETH,
-          and methodically repays lenders over 4 years while keeping all profits as treasury backing for GG tokens.
+          and methodically repays lenders over 2 years while keeping all profits as treasury backing for GG tokens.
           </p>
         </div>
 
@@ -955,7 +955,7 @@ function GigaStratModal({ show, onClose }) {
             <h4 className={getThemeClass('font-bold text-red-700', 'font-bold text-red-300')}>Step 5: 4-Year Repayment Cycle</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700 mb-2', 'text-sm text-gray-300 mb-2')}>
-            The protocol repays loans gradually over 4 years by selling small amounts of ETH. This extended
+            The protocol repays loans gradually over 2 years by selling small amounts of ETH. This extended
             timeframe allows ETH price appreciation to work in the protocol's favor, maximizing profits retained.
           </p>
           <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
@@ -1326,7 +1326,7 @@ function GigaStratModal({ show, onClose }) {
             )}>
               <h5 className={getThemeClass('font-bold text-green-700 mb-2', 'font-bold text-green-300 mb-2')}>Loan Repayment: $100,000 Returned</h5>
               <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-300')}>
-                Over 4 years, the protocol sells 25 ETH (worth $100,000 at new prices) to repay all IOU holders.
+                Over 2 years, the protocol sells 25 ETH (worth $100,000 at new prices) to repay all IOU holders.
                 This leaves 25 ETH ($100,000 worth) permanently in the treasury as pure profit.
               </p>
             </div>
