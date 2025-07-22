@@ -1795,8 +1795,8 @@ staking: {
             <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>Alpha Version</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
-            This is an ALPHA version for test purposes only and is not for use with real funds.
-            Funds could be considered lost on deposit with no notice if contracts get updated.
+            This is an BETA version of the protocol. It is experimental and may have bugs or unexpected behavior.
+            Use caution and only risk funds you can afford to lose.
           </p>
           </div>
 
