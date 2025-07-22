@@ -44,7 +44,7 @@ const GGLoanManagerABI = [
   "function buyETH(uint256 loanIndex, uint256 usdcAmount) external",
   "function repayLoanUSDC(uint256 loanIndex, uint256 usdcAmount) external",
   "function redeemHeldIOUsAndSwapToETH(uint256 loanIndex) external",
-  "function swapIOUForMintTokens(uint256 loanIndex, uint256 iouAmount) external",
+  "function swapIOUForMintTokens(uint256 loanIndex, uint256 iouAmount, address ref) external",
   "function burnForETH(uint256 GGTokenAmount) external"
 ];
 
@@ -116,17 +116,17 @@ function GGLoanManagerUI() {
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   let chainID = useChainId();
-  const IOUMintAddress =useChainId()==1? '0xeFF111b48622C1cab239E2105e19B05C73Bc9dA6':'0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
+  const IOUMintAddress =useChainId()==1? '0x0000000010e36ad8814dc73877866a80c084ac84':'0xc497c2065C753A6fcC11ad6471d6bD16Bc3280CB';
   let userAddress = useAccount().address||'0x9D31e30003f253563Ff108BC60B16Fdf2c93abb5'
   console.log('userAddress',userAddress)
   userAddress = userAddress.address||userAddress
-  let GGLoanManagerAddress = useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
+  let GGLoanManagerAddress = useChainId()==1?'0x000000006987a5940d3d81997045ea4594299a57':'0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7'
 const multicallContract = new ethers.Contract(
   '0xcA11bde05977b3631167028862bE2a173976CA11',
   ['function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)'],
   provider
 );
-let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanManagerAddress
+let addrs=useChainId()==1?'0x000000006987a5940d3d81997045ea4594299a57':GGLoanManagerAddress
   // Contracts in React.useMemo
   const managerContract = new ethers.Contract(addrs, GGLoanManagerABI, provider);
 
@@ -482,14 +482,14 @@ let addrs=useChainId()==1?'0x982Bd56c21eaDAf8BCaDc0b7b3512F3A9068c6e2':GGLoanMan
 console.log('swapIOUForMintTokens',idx,amt,allowance)
 
 let ref=new URLSearchParams(window.location.search).get('ref')
-      let data = managerContract.interface.encodeFunctionData('swapIOUForMintTokens', [idx, amt]);
-      console.log('data',data+'6773746167'+ref.slice(2))
-      const tx = await signer.sendTransaction({
-        to: GGLoanManagerAddress,
-        data: data + (ref?'6773746167'+ref.slice(2):''), // Append ref if exists
-        value: 0 // No native asset funding in this example
-      });
-      //const tx = await mgr.swapIOUForMintTokens(idx, amt);
+      if (!ref) ref = ethers.ZeroAddress; // Default to zero address if no ref param
+      let data = managerContract.interface.encodeFunctionData('swapIOUForMintTokens', [idx, amt, ref]);
+      //const tx = await signer.sendTransaction({
+        //to: GGLoanManagerAddress,
+        //data: data, // Append ref if exists
+        //value: 0 // No native asset funding in this example
+      //});
+      const tx = await mgr.swapIOUForMintTokens(idx, amt, ref);
       await tx.wait();
       toast.success("swapIOUForMintTokens successful");
       fetchManagerData();
@@ -711,7 +711,7 @@ let userShare = ethers.formatEther(await managerContract.getProfit());
     }
     // eslint-disable-next-line
   }, [userAddress,chainID]);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState();
   const [showSimple, setShowSimple] = useState(true);
   const InfoModal = () => {
     return (
@@ -959,7 +959,7 @@ function GigaStratModal({ show, onClose }) {
             timeframe allows ETH price appreciation to work in the protocol's favor, maximizing profits retained.
           </p>
           <ul className={getThemeClass('text-xs text-gray-600 space-y-1 ml-4', 'text-xs text-gray-400 space-y-1 ml-4')}>
-            <li>• Repayments limited to 1% of total owed every 10 days</li>
+            <li>• Repayments limited to 1% of total owed every 7 days</li>
             <li>• Anyone can trigger repayments to earn small ETH rewards</li>
             <li>• Unused ETH after full repayment becomes permanent treasury</li>
             <li>• Multiple loans operate in parallel at different repayment stages</li>
