@@ -1792,7 +1792,7 @@ staking: {
           )}>
           <div className="flex items-center mb-3">
             <span className="text-2xl mr-3">🧪</span>
-            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>Alpha Version</h4>
+            <h4 className={getThemeClass('font-bold text-orange-700', 'font-bold text-orange-300')}>Beta Version</h4>
           </div>
           <p className={getThemeClass('text-sm text-gray-700', 'text-sm text-gray-200')}>
             This is an BETA version of the protocol. It is experimental and may have bugs or unexpected behavior.
