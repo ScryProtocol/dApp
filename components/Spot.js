@@ -1932,7 +1932,7 @@ staking: {
             </a>
             {/* Basescan */}
             <a
-              href="https://basescan.org/address/0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7"
+              href="https://basescan.org/address/0x000000006987a5940d3d81997045ea4594299a57"
               target="_blank"
               rel="noopener noreferrer"
               className={getThemeClass(
@@ -2043,7 +2043,7 @@ staking: {
             </a>
             {/* Basescan */}
             <a
-              href="https://basescan.org/address/0xa5d97df3b74019d794cafbaF2d63Cc56250a8dF7"
+              href="https://basescan.org/address/ethers"
               target="_blank"
               rel="noopener noreferrer"
               className={getThemeClass(
