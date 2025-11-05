@@ -1,20 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  TextField,
+  Stack,
+  Chip,
+  Button,
+  ToggleButton,
+  ToggleButtonGroup,
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Card,
+  CardContent,
+  Collapse,
+  alpha,
+  InputAdornment,
+  Divider,
+} from '@mui/material';
+import {
+  Add,
+  Close,
+  ContentCopy,
+  CheckCircle,
+  Edit,
+  Share,
+  Settings,
+  Link as LinkIcon,
+  Cancel,
+  MonetizationOn,
+} from '@mui/icons-material';
 import { Toaster, toast } from 'react-hot-toast';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId } from 'wagmi';
-import { useEthersProvider, useEthersSigner } from './tl'; // replace with your hooks
-import 'tailwindcss/tailwind.css';
+import { useEthersProvider, useEthersSigner } from './tl';
+import { GlassCard, AnimatedButton } from './v2';
+import { gradients } from '../theme/v2Theme';
 import tokens from './tokens.js';
 
-// --------------------
-// Contract Info
-// --------------------
 const streamContractAddress = '0x2726ef320b8ba1dd043dbacfe5beb088806ef478';
 const streamContractABI = [
   'function streamDetails(bytes32) view returns (address streamer, address recipient, address token, uint256 totalStreamed, uint256 outstanding, uint256 allowable, uint256 window, uint256 timestamp, bool once)',
   'function allowStream(address token, address recipient, uint256 amount, uint256 window, bool once)',
-  // ... any other calls you need ...
   'function getStreamDetails(bytes32[] calldata hashes) public view returns (uint[] memory, uint8[] memory, string[] memory, string[] memory, tuple(address streamer, address recipient, address token, uint256 totalStreamed, uint256 outstanding, uint256 allowable, uint256 window, uint256 timestamp, bool once)[] memory)',
   'function viewRecipientAllowances(address recipient) view returns (bytes32[] memory hashes)',
   'function batchStreamAvailableAllowances(bytes32[] calldata hashes) external returns (bool)',
@@ -29,21 +60,17 @@ const tokenABI = [
   'function approve(address spender, uint amount)',
 ];
 
-// --------------------
-// Local Storage Keys
-// --------------------
 const LOCAL_FRONTS_KEY = 'mySubscriptionFronts_v2';
 const LOCAL_BRAND_KEY = 'myCustomBrandSettings_v2';
 
-export default function FullDapp() {
-  // --------------------------------------------------------------------------
-  // 1) If ?sub= present, parse brand + fronts. Otherwise load from local.
-  // --------------------------------------------------------------------------
+export default function Sub() {
   const chainID = useChainId();
   const { address: userAddress } = useAccount();
+  const signer = useEthersSigner();
+  const provider = useEthersProvider();
 
-  const [paramData, setParamData] = useState(null); // brand + fronts from the URL param
-  const [fronts, setFronts] = useState([]);         // array of subscription fronts
+  const [paramData, setParamData] = useState(null);
+  const [fronts, setFronts] = useState([]);
   const [brandSettings, setBrandSettings] = useState({
     brandName: 'My Custom Brand',
     about: '',
@@ -53,29 +80,49 @@ export default function FullDapp() {
     gradientColor3: '#fef08a',
   });
 
+  const [streamContract, setStreamContract] = useState(null);
+  const [frontSubs, setFrontSubs] = useState({});
+  const [frontPlans, setFrontPlans] = useState({});
+  const [showForm, setShowForm] = useState(false);
+  const [showBrandForm, setShowBrandForm] = useState(false);
+  const [showClaims, setShowClaims] = useState(false);
+  const [frontClaims, setFrontClaims] = useState({});
+
+  // New front form state
+  const [newFront, setNewFront] = useState({
+    name: '',
+    address: '',
+    about: '',
+    image: '',
+    tokens: [{ symbol: 'USDC', address: '', presetAmounts: [5, 10, 20] }],
+  });
+
+  useEffect(() => {
+    if (signer) {
+      const sc = new ethers.Contract(streamContractAddress, streamContractABI, signer);
+      setStreamContract(sc);
+    }
+  }, [signer]);
+
+  // Load from URL param or localStorage
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get('sub');
     if (encoded) {
-      // We have a ?sub= param => parse it
       try {
         const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
         setParamData(decoded);
 
-        // If they included brand in the param, apply it
         if (decoded.brand) {
           setBrandSettings(decoded.brand);
         }
-        // If they included an array of fronts, apply it
         if (Array.isArray(decoded.fronts)) {
-          // ensure chain matches or fallback
           const mapped = decoded.fronts.map((f) => ({
             ...f,
             chain: f.chain || chainID,
           }));
           setFronts(mapped);
         } else if (decoded.singleFront) {
-          // or just a single front
           decoded.singleFront.chain = decoded.singleFront.chain || chainID;
           setFronts([decoded.singleFront]);
         }
@@ -84,7 +131,6 @@ export default function FullDapp() {
         toast.error('Invalid shared link');
       }
     } else {
-      // No param => load from local
       const savedFronts = localStorage.getItem(LOCAL_FRONTS_KEY);
       if (savedFronts) {
         try {
@@ -106,35 +152,32 @@ export default function FullDapp() {
     }
   }, [chainID]);
 
-  // Do we have param data or not?
   const hasParam = !!paramData;
 
-  // Save fronts to local storage (only if no param)
-  const saveLocalFronts = useCallback((frontsArr) => {
-    if (hasParam) return;
-    setFronts(frontsArr);
-    localStorage.setItem(LOCAL_FRONTS_KEY, JSON.stringify(frontsArr));
-    toast.success('Fronts saved locally!');
-  }, [hasParam]);
+  const saveLocalFronts = useCallback(
+    (frontsArr) => {
+      if (hasParam) return;
+      setFronts(frontsArr);
+      localStorage.setItem(LOCAL_FRONTS_KEY, JSON.stringify(frontsArr));
+      toast.success('Fronts saved locally!');
+    },
+    [hasParam]
+  );
 
-  // Save brand to local storage (only if no param)
-  const saveLocalBrand = useCallback((brandObj) => {
-    if (hasParam) return;
-    setBrandSettings(brandObj);
-    localStorage.setItem(LOCAL_BRAND_KEY, JSON.stringify(brandObj));
-    toast.success('Brand settings saved locally!');
-  }, [hasParam]);
+  const saveLocalBrand = useCallback(
+    (brandObj) => {
+      if (hasParam) return;
+      setBrandSettings(brandObj);
+      localStorage.setItem(LOCAL_BRAND_KEY, JSON.stringify(brandObj));
+      toast.success('Brand settings saved locally!');
+    },
+    [hasParam]
+  );
 
-  // --------------------------------------------------------------------------
-  // 2) “Copy Link” – brand + all local fronts => single param link
-  // --------------------------------------------------------------------------
   function handleCopyLink() {
-    // You can decide how many fronts to share. 
-    // If you have multiple local fronts, you might share them all:
     const dataToShare = {
       brand: brandSettings,
       fronts,
-      // or if you prefer only the first front => singleFront: fronts[0]
     };
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataToShare))));
     const url = `${window.location.origin}${window.location.pathname}?sub=${encoded}`;
@@ -143,10 +186,18 @@ export default function FullDapp() {
     });
   }
 
-  // --------------------------------------------------------------------------
-  // 3) Brand form
-  // --------------------------------------------------------------------------
-  const [showBrandForm, setShowBrandForm] = useState(false);
+  async function handleCopyShortLink() {
+    const dataToShare = {
+      brand: brandSettings,
+      fronts,
+    };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataToShare))));
+    const url = `${window.location.origin}${window.location.pathname}?sub=${encoded}`;
+    const res = await fetch('https://tinyurl.com/api-create.php?url=' + url);
+    navigator.clipboard.writeText(await res.text()).then(() => {
+      toast.success('Short link copied!');
+    });
+  }
 
   function handleBrandChange(e) {
     const { name, value } = e.target;
@@ -155,34 +206,12 @@ export default function FullDapp() {
 
   function handleSaveBrand() {
     saveLocalBrand(brandSettings);
+    setShowBrandForm(false);
   }
 
-  const pageBackground = `linear-gradient(to right, 
-    ${brandSettings.gradientColor1}, 
-    ${brandSettings.gradientColor2}, 
-    ${brandSettings.gradientColor3}
-  )`;
-
-  // --------------------------------------------------------------------------
-  // 4) The contract + subscription logic
-  // --------------------------------------------------------------------------
-  const signer = useEthersSigner();
-  const provider = useEthersProvider();
-  const [streamContract, setStreamContract] = useState(null);
-
-  useEffect(() => {
-    if (signer) {
-      const sc = new ethers.Contract(streamContractAddress, streamContractABI, signer);
-      setStreamContract(sc);
-    }
-  }, [signer]);
-
-  // Subscription details (fetched once we have user + contract)
-  const [frontSubs, setFrontSubs] = useState({});
-
+  // Fetch subscription details
   useEffect(() => {
     if (!streamContract || !userAddress || !fronts.length) return;
-    // fetch subscription details
     (async () => {
       try {
         const tokensArr = [];
@@ -197,7 +226,6 @@ export default function FullDapp() {
           });
         });
 
-        // Build the keccak list
         const hashes = tokensArr.map((tokenAddr, i) =>
           ethers.keccak256(
             ethers.solidityPacked(['address', 'address', 'address'], [
@@ -235,9 +263,6 @@ export default function FullDapp() {
       }
     })();
   }, [streamContract, userAddress, fronts]);
-
-  // Plan selection
-  const [frontPlans, setFrontPlans] = useState({});
 
   function handlePlanChange(frontAddress, plan) {
     setFrontPlans((prev) => ({
@@ -302,13 +327,12 @@ export default function FullDapp() {
 
     if (!front) return;
     if (!selectedToken) {
-      // fallback to first token
       selectedToken = front.tokens[0]?.address;
     }
     if (!plan) return toast.error('Pick an amount or custom value');
 
     let numeric = parseFloat(plan === 'custom' ? customValue : plan);
-    numeric = subType === 'once'? numeric * (onceInterval || 1) : numeric;
+    numeric = subType === 'once' ? numeric * (onceInterval || 1) : numeric;
     if (isNaN(numeric) || numeric <= 0) {
       return toast.error('Invalid subscription amount');
     }
@@ -319,13 +343,11 @@ export default function FullDapp() {
       const decimals = await tokenContract.decimals();
       const parsed = ethers.parseUnits(String(numeric), decimals);
 
-      // Check user balance
       const userBal = await tokenContract.balanceOf(userAddress);
       if (userBal < parsed) {
         return toast.error('Insufficient balance');
       }
 
-      // Approve if needed
       const allowance = await tokenContract.allowance(userAddress, streamContractAddress);
       if (allowance < parsed) {
         toast('Approving token...');
@@ -334,15 +356,13 @@ export default function FullDapp() {
       }
 
       toast('Creating subscription...');
-      // If once => user picks onceInterval months, else 1 month
-      const months = once ? (onceInterval || 1) : 1;
+      const months = once ? onceInterval || 1 : 1;
       const windowSeconds = months * 24 * 60 * 60 * 30;
 
       const tx = await streamContract.allowStream(selectedToken, frontAddress, parsed, windowSeconds, once);
       await tx.wait();
 
       toast.success('Subscription created!');
-      // Optionally re-fetch subscription details
     } catch (err) {
       console.error('Subscription failed:', err);
       toast.error('Subscription failed');
@@ -368,24 +388,7 @@ export default function FullDapp() {
     }
   }
 
-  // --------------------------------------------------------------------------
-  // 5) “Front claims” for owners
-  // --------------------------------------------------------------------------
-  const [frontClaims, setFrontClaims] = useState({});
-  const [showClaims, setShowClaims] = useState(false);
-
-  // Toggle claims with backtick
-  useEffect(() => {
-    function onKeyDown(e) {
-      if (e.key === '`') {
-        e.preventDefault();
-        setShowClaims((p) => !p);
-      }
-    }
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
-
+  // Claims functionality
   const fetchFrontClaims = useCallback(async () => {
     if (!streamContract) return;
     try {
@@ -420,6 +423,17 @@ export default function FullDapp() {
     return () => clearInterval(interval);
   }, [fetchFrontClaims]);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === '`') {
+        e.preventDefault();
+        setShowClaims((p) => !p);
+      }
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   async function claimForFront(frontAddr, tokenAddr = null) {
     if (!streamContract) return;
     try {
@@ -444,927 +458,412 @@ export default function FullDapp() {
     }
   }
 
-  // --------------------------------------------------------------------------
-  // 6) “Add new front” form (only if no param)
-  // --------------------------------------------------------------------------
-  const [showForm, setShowForm] = useState(false);
-  const [newFront, setNewFront] = useState({
-    name: '',
-    address: '',
-    about: '',
-    link: '',
-    image: '',
-    tokens: [{ token: 'USDC', address: '', presetAmounts: [5, 10, 20], custom: 'true' }],
-    chain: chainID,
-  });
-
-  function handleAddTokenRow() {
-    setNewFront((prev) => ({
-      ...prev,
-      tokens: [...prev.tokens, { token: '', address: '', presetAmounts: [5, 10, 20], custom: 'true' }],
-    }));
-  }
-  function handleRemoveTokenRow(i) {
-    setNewFront((prev) => {
-      const arr = [...prev.tokens];
-      arr.splice(i, 1);
-      return { ...prev, tokens: arr };
-    });
-  }
-  function handleTokenFieldChange(idx, field, value, custom = 'true') {
-    setNewFront((prev) => {
-      const tokensArr = [...prev.tokens];
-      const obj = { ...tokensArr[idx] };
-      if (field === 'preset') {
-        const splitted = value.split(',').map((x) => x.trim()).filter(Boolean);
-        const asNums = splitted.map((n) => parseFloat(n) || 0).filter((n) => n > 0);
-        obj.presetAmounts = asNums.length ? asNums : [5];
-        obj.custom = custom;
-      } else if (field === 'custom') {
-        obj.custom = value;
-      } else {
-        obj[field] = value;
-      }
-      tokensArr[idx] = obj;
-      return { ...prev, tokens: tokensArr };
-    });
-  }
-
+  // Add new front
   function handleAddFront() {
-    if (hasParam) {
-      return toast.error('You are in param mode; cannot add local fronts here.');
-    }
     if (!newFront.name || !newFront.address) {
-      return toast.error('Please fill out name + receiving address');
+      return toast.error('Name and address are required');
     }
-    // Basic validation
-    for (const tk of newFront.tokens) {
-      if (!tk.address) {
-        return toast.error('One of the tokens is missing its address');
-      }
-    }
-    const toSave = { ...newFront, chain: chainID };
-    const updated = [...fronts, toSave];
-    saveLocalFronts(updated);
-
-    // Optionally copy link automatically or not
-    // For demonstration, we won't do it automatically here
-    toast.success('Front added to local. You can share link if you like!');
-
-    // reset
+    const newFrontObj = {
+      ...newFront,
+      chain: chainID,
+    };
+    saveLocalFronts([...fronts, newFrontObj]);
     setNewFront({
       name: '',
       address: '',
       about: '',
-      link: '',
       image: '',
-      tokens: [{ token: 'USDC', address: '', presetAmounts: [5, 10, 20], custom: 'true' }],
-      chain: chainID,
+      tokens: [{ symbol: 'USDC', address: '', presetAmounts: [5, 10, 20] }],
     });
     setShowForm(false);
   }
 
-  function handleDeleteFront(frontAddress) {
-    if (hasParam) {
-      return toast.error('Param mode; cannot delete local fronts here.');
-    }
-    const filtered = fronts.filter((f) => f.address.toLowerCase() !== frontAddress.toLowerCase());
-    saveLocalFronts(filtered);
-  }
+  const pageBackground = `linear-gradient(to right, ${brandSettings.gradientColor1}, ${brandSettings.gradientColor2}, ${brandSettings.gradientColor3})`;
 
-  // --------------------------------------------------------------------------
-  // 7) (Optional) “My Subs” view for the user
-  // --------------------------------------------------------------------------
-  function Subs() {
-    const [allowances, setAllowances] = useState([]);
-    const [borrows, setBorrows] = useState([]);
-    const [streamable, setStreamable] = useState({});
-    const [totalClaim, setTotalClaim] = useState({});
-
-    const fetchAllowances = useCallback(async () => {
-      if (!streamContract || !userAddress) return;
-      try {
-        let [lenderHashes, friendHashes] = await Promise.all([
-          streamContract.viewStreamerAllowances(userAddress),
-          streamContract.viewRecipientAllowances(userAddress),
-        ]);
-        lenderHashes = Array.from(lenderHashes);
-        friendHashes = Array.from(friendHashes);
-        const lenderDetails = await streamContract.getStreamDetails(lenderHashes);
-        const friendDetails = await streamContract.getStreamDetails(friendHashes);
-
-        setAllowances(formatDetails(lenderHashes, lenderDetails));
-        setBorrows(formatDetails(friendHashes, friendDetails));
-      } catch (err) {
-        console.error('fetchAllowances fail:', err);
-      }
-    }, [streamContract, userAddress]);
-
-    function formatDetails(hashes, details) {
-      return hashes.map((hash, idx) => ({
-        hash,
-        streamer: details[4][idx].streamer,
-        recipient: details[4][idx].recipient,
-        token: details[3][idx] || details[4][idx].token,
-        totalStreamed: Number(ethers.formatUnits(details[4][idx].totalStreamed, details[1][idx])).toFixed(4),
-        outstanding: Number(ethers.formatUnits(details[4][idx].outstanding, details[1][idx])).toFixed(4),
-        allowable: Number(ethers.formatUnits(details[4][idx].allowable, details[1][idx])).toFixed(4),
-        available: Number(ethers.formatUnits(details[0][idx], details[1][idx])).toFixed(4),
-        window: details[4][idx].window,
-        timestamp: details[4][idx].timestamp,
-        once: details[4][idx].once,
-      }));
-    }
-
-    useEffect(() => {
-      fetchAllowances();
-      const interval = setInterval(fetchAllowances, 15000);
-      return () => clearInterval(interval);
-    }, [fetchAllowances]);
-
-    // compute streamable
-    useEffect(() => {
-      if (!streamContract || !borrows.length) return;
-      (async () => {
-        try {
-          const hashes = borrows.map((b) => b.hash);
-          const [canArr] = await streamContract.getStreamable(hashes);
-
-          const canMap = hashes.reduce((acc, h, i) => ({ ...acc, [h]: !!canArr[i] }), {});
-          setStreamable(canMap);
-
-          // sum up by token
-          const totals = {};
-          borrows.forEach((b, i) => {
-            if (!canMap[b.hash]) return;
-            const amt = parseFloat(b.available) || 0;
-            totals[b.token] = (totals[b.token] ?? 0) + amt;
-          });
-          const friendly = Object.fromEntries(
-            Object.entries(totals).map(([sym, val]) => [sym, val.toFixed(4)])
-          );
-          setTotalClaim(friendly);
-        } catch (err) {
-          console.error('streamable compute fail:', err);
-        }
-      })();
-    }, [streamContract, borrows]);
-
-    async function handleClaim(tokenSymbol) {
-      if (!streamContract) return;
-      try {
-        const targetHashes = borrows
-          .filter((b) => streamable[b.hash] && (!tokenSymbol || b.token === tokenSymbol))
-          .map((b) => b.hash);
-        if (!targetHashes.length) return toast('No claimable right now');
-        toast('Claiming…');
-        const tx = await streamContract.batchStreamAvailableAllowances(targetHashes);
-        await tx.wait();
-        toast.success('Claim success');
-        fetchAllowances();
-      } catch (err) {
-        console.error('Claim fail', err);
-        toast.error('Claim fail');
-      }
-    }
-
-    const AllowanceCard = ({ title, data, isBorrow }) => (
-      <div className="p-5 mb-6 max-w-7xl mx-auto bg-white bg-opacity-90 rounded-3xl shadow-lg">
-        <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-pink-500 to-yellow-400 bg-clip-text text-transparent">
-          {title}
-        </h3>
-        {/* If isBorrow => show claimable */}
-        {isBorrow && (
-          <>
-            <h2 className="text-xl text-pink-500 font-bold">Claimable</h2>
-            <div className="bg-gradient-to-r from-pink-200 to-pink-100 p-2 rounded-3xl mb-4">
-              <div className="flex flex-wrap gap-4 justify-center flex-col md:flex-row">
-                {/* Claim all */}
-                <button
-                  onClick={() => handleClaim()}
-                  className="bg-pink-500 text-white font-semibold rounded-full px-4 py-2 transform transition-all duration-300 hover:scale-105"
-                >
-                  Claim All
-                </button>
-                {/* One per token */}
-                {Object.entries(totalClaim).map(([sym, amt], idx) => {
-                  const bgColors = [
-                    '#FBBF24', // yellow
-                    '#F472B6', // pink
-                    '#60A5FA', // blue
-                    '#A78BFA', // purple
-                    '#34D399', // green
-                  ];
-                  return (
-                    <button
-                      key={sym}
-                      onClick={() => handleClaim(sym)}
-                      className="flex items-center justify-center text-white font-semibold rounded-full p-2 transform transition-all duration-300 hover:scale-105"
-                      style={{ backgroundColor: bgColors[idx % bgColors.length] }}
-                    >
-                      <span className="font-bold">
-                        {amt} {sym}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </>
-        )}
-        {data.length ? (
-          <div className="gap-6 justify-center">
-            {data.map((item) => (
-              <div
-                key={item.hash}
-                className={`relative ${streamable[item.hash] ?'bg-green-100 border-green-200': 'bg-orange-100 border-orange-200 '} bg-opacity-90 rounded-3xl border w-full justify-between p-2 gap-2 mb-4 grid lg:flex`}
-              >
-                {/* label */}
-                <div className="bg-green-400 text-white font-semibold rounded-full px-3 py-1">
-                  {isBorrow
-                    ? `${item.streamer.slice(0, 10)}...${item.streamer.slice(-10)}`
-                    : `${item.recipient.slice(0, 10)}...${item.recipient.slice(-10)}`}
-                </div>
-
-                <p className="text-gray-500 mb-0 font-semibold text-md mt-1">
-                  Subscribed for{' '}
-                  <span className="font-semibold text-blue-500">
-                    {item.allowable} {item.token}
-                    <span className="font-bold text-purple-500 rounded-full p-2">
-                      {item.once
-                        ? `One-time for ${Number(item.window) / (60 * 60 * 24)}d`
-                        : `Every ${Number(item.window) / (60 * 60 * 24)}d`}
-                    </span>
-                  </span>
-                </p>
-                <h2 className="text-sm font-bold bg-purple-100 text-purple-500 rounded-full px-2 py-1">
-                  {item.available} Owed
-                </h2>
-                <span className="text-sm font-bold bg-pink-100 text-pink-500 rounded-full px-2 py-1">
-                  {item.totalStreamed} Streamed
-                </span>
-
-                {isBorrow ? (
-                  <button
-                    onClick={() => claimForFront(item.recipient, item.token)}
-                    className="py-1 px-2 rounded-full font-semibold text-white bg-pink-300 hover:bg-pink-500 transition-colors"
-                  >
-                    Claim
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleCancelSubscription(item.recipient)}
-                    className="py-1 px-2 rounded-full font-semibold text-white bg-red-300 hover:bg-red-500 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-center py-6">Nothing here yet!</p>
-        )}
-      </div>
-    );
-
-    return (
-      <div className="max-w-7xl mx-auto my-10">
-        <div className="gap-6 text-center">
-          <AllowanceCard title="💸 My Subs" data={allowances} isBorrow={false} />
-          <AllowanceCard title="🤝 Subs To Me" data={borrows} isBorrow />
-        </div>
-      </div>
-    );
-  }
-
-  // --------------------------------------------------------------------------
-  // RENDER
-  // --------------------------------------------------------------------------
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: pageBackground }}>
-      <div className="absolute backdrop-filter backdrop-blur-md"></div>
+    <Box sx={{ minHeight: '100vh', background: pageBackground }}>
       <Toaster />
 
-      <title>{brandSettings.brandName || 'My Custom Subscriptions'}</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-4">
-        {/* Header */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 mb-4 items-center justify-center">
-          <div></div>
-          <div>
-            <p className="bg-gradient-to-r from-pink-400 to-yellow-400 text-white text-center py-2 rounded-full w-fit mx-auto px-4 font-semibold">
-              Powered by Boop.Finance
-            </p>
-            <div className="text-center mt-2 flex items-center justify-center gap-2">
-              <a href="https://boop.finance" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="https://boop.finance/logo.png"
-                  alt="Boop.Finance Logo"
-                  className="w-10 h-10 mx-auto mb-2"
-                />
-              </a>
-              <a
-                href="https://discord.gg/vrV4YpUccq"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="https://cdn.simpleicons.org/discord/db2777"
-                  alt="Discord"
-                  className="w-8 h-8 mx-auto mb-2"
-                />
-              </a>
-              <a href="https://x.com/0xboop" target="_blank" rel="noopener noreferrer">
-                <img
-                  src="https://cdn.simpleicons.org/x/db2777"
-                  alt="Twitter"
-                  className="w-7 h-7 mx-auto mb-2"
-                />
-              </a><button onClick={() => window.location.assign(window.location.origin+'?sub')} className="text-2xl mb-2" title='Create Your Own'>🛠️</button>
-            </div>
-          </div>
-          <div className="mx-auto my-0 text-center">
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)',
+          py: 4,
+          mb: 4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+            <Box>
+              <Chip
+                label="Powered by Boop.Finance"
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(10px)',
+                  color: '#fff',
+                  fontWeight: 700,
+                }}
+              />
+              <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                <IconButton href="https://boop.finance" target="_blank" sx={{ color: '#fff' }}>
+                  <img src="https://boop.finance/logo.png" alt="Boop" style={{ width: 32, height: 32 }} />
+                </IconButton>
+                <IconButton href="https://discord.gg/vrV4YpUccq" target="_blank" sx={{ color: '#fff' }}>
+                  <img src="https://cdn.simpleicons.org/discord/fff" alt="Discord" style={{ width: 32, height: 32 }} />
+                </IconButton>
+                <IconButton href="https://x.com/0xboop" target="_blank" sx={{ color: '#fff' }}>
+                  <img src="https://cdn.simpleicons.org/x/fff" alt="X" style={{ width: 32, height: 32 }} />
+                </IconButton>
+                {!hasParam && (
+                  <IconButton
+                    onClick={() => window.location.assign(window.location.origin + '?sub')}
+                    sx={{ color: '#fff', fontSize: '2rem' }}
+                    title="Create Your Own"
+                  >
+                    🛠️
+                  </IconButton>
+                )}
+              </Stack>
+            </Box>
             <ConnectButton />
-          </div>
-        </div>
+          </Stack>
 
-        {/* Title */}
-        <h1
-          className="text-4xl md:text-5xl font-extrabold text-center mb-4 drop-shadow-sm"
-          style={{ color: brandSettings.primaryColor }}
-        >
-          {brandSettings.brandName}
-        </h1>
-        <p className="text-base md:text-lg text-center text-gray-700 mb-6 max-w-4xl mx-auto">
-          {brandSettings.about ||
-            'Let fans or supporters subscribe on-chain. Recurring or one-shot—choose intervals, tokens, etc. Tokens are streamed directly from your wallet, no deposits. Press "`" to see claimable if you’re the owner.'}
-          <br />
-          {/* Show these only if no param */}
+          <Typography
+            variant="h3"
+            fontWeight={800}
+            textAlign="center"
+            sx={{ color: brandSettings.primaryColor, mb: 2 }}
+          >
+            {brandSettings.brandName}
+          </Typography>
+          <Typography variant="body1" textAlign="center" color="text.primary" sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
+            {brandSettings.about ||
+              'Let fans or supporters subscribe on-chain. Recurring or one-shot—choose intervals, tokens, etc. Tokens are streamed directly from your wallet, no deposits. Press "`" to see claimable if you\'re the owner.'}
+          </Typography>
+
           {!hasParam && (
-            <>
-              <button
-                onClick={() => setShowForm((p) => !p)}
-                className="bg-pink-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-pink-500 transition-colors"
-              >
-                Add new sub
-              </button>
-              <button
-                onClick={() => setShowBrandForm((p) => !p)}
-                className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-blue-500 transition-colors"
-              >
-                Brand settings
-              </button>
-              <button
-                onClick={handleCopyLink}
-                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-500 transition-colors"
-              >
-                Share link
-              </button>
-              
-              <button
-                onClick={async () => {
-    const dataToShare = {
-      brand: brandSettings,
-      fronts,
-      // or if you prefer only the first front => singleFront: fronts[0]
-    };
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(dataToShare))));
-    const url = `${window.location.origin}${window.location.pathname}?sub=${encoded}`;
-    let res = await fetch('https://tinyurl.com/api-create.php?url='+url)
-    navigator.clipboard.writeText(await(res.text())).then(() => {
-      toast.success('Link copied!');
-    });}}
-                className="bg-green-500 text-white font-semibold rounded-full px-4 py-2 mt-4 ml-2 hover:bg-green-500 transition-colors"
-              >
-                Share link (short)
-              </button>
-            </>
+            <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap">
+              <AnimatedButton startIcon={<Add />} onClick={() => setShowForm(true)}>
+                Add New Sub
+              </AnimatedButton>
+              <AnimatedButton startIcon={<Settings />} onClick={() => setShowBrandForm(true)} variant="outlined">
+                Brand Settings
+              </AnimatedButton>
+              <AnimatedButton startIcon={<Share />} onClick={handleCopyLink} variant="outlined">
+                Share Link
+              </AnimatedButton>
+              <AnimatedButton startIcon={<LinkIcon />} onClick={handleCopyShortLink} variant="outlined">
+                Short Link
+              </AnimatedButton>
+            </Stack>
           )}
-        </p>
+        </Container>
+      </Box>
 
-        {/* Brand form */}
-        {showBrandForm && !hasParam && (
-          <div className="bg-white p-4 mt-3 rounded-3xl max-w-xl text-pink-500 mx-auto mb-4 text-center">
-            <h2
-              className="text-2xl font-extrabold mb-4"
-              style={{ color: brandSettings.primaryColor }}
-            >
-              Brand Settings
-            </h2>
-            <div className="grid gap-3 mb-4">
-              <input
-                type="text"
-                name="brandName"
-                placeholder="Brand Name"
-                value={brandSettings.brandName}
-                onChange={handleBrandChange}
-                className="p-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <input
-                type="text"
-                name="about"
-                placeholder="About my subscription page"
-                value={brandSettings.about}
-                onChange={handleBrandChange}
-                className="p-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <label className="text-sm text-pink-500 font-medium mb-1">Gradient Colors:</label>
-              <div className="flex justify-center gap-4">
-                <input
-                  type="color"
-                  name="gradientColor1"
-                  value={brandSettings.gradientColor1}
-                  onChange={handleBrandChange}
-                  className="w-12 h-12 cursor-pointer rounded-full"
-                />
-                <input
-                  type="color"
-                  name="gradientColor2"
-                  value={brandSettings.gradientColor2}
-                  onChange={handleBrandChange}
-                  className="w-12 h-12 cursor-pointer rounded-full"
-                />
-                <input
-                  type="color"
-                  name="gradientColor3"
-                  value={brandSettings.gradientColor3}
-                  onChange={handleBrandChange}
-                  className="w-12 h-12 cursor-pointer rounded-full"
-                />
-              </div>
-              <label className="text-sm text-pink-500 font-medium mt-4">Primary Color:</label>
-              <input
-                type="color"
-                name="primaryColor"
-                value={brandSettings.primaryColor}
-                onChange={handleBrandChange}
-                className="w-12 h-12 cursor-pointer mx-auto"
-              />
-            </div>
-            <button
-              onClick={handleSaveBrand}
-              className="bg-blue-500 text-white font-semibold rounded-full px-4 py-2 mt-4 hover:bg-blue-500 transition-colors"
-            >
-              Save Brand
-            </button>
-          </div>
-        )}
+      <Container maxWidth="lg" sx={{ pb: 8 }}>
+        {/* Claims Section */}
+        <Collapse in={showClaims}>
+          <GlassCard sx={{ p: 3, mb: 4 }}>
+            <Typography variant="h5" fontWeight={700} color="primary.main" gutterBottom>
+              <MonetizationOn sx={{ mr: 1 }} />
+              Claimable Funds
+            </Typography>
+            <Grid container spacing={2}>
+              {Object.entries(frontClaims).map(([frontAddr, tokens]) => {
+                const front = fronts.find((f) => f.address === frontAddr);
+                return (
+                  <Grid item xs={12} md={6} key={frontAddr}>
+                    <Card sx={{ p: 2 }}>
+                      <Typography variant="h6" gutterBottom>
+                        {front?.name || frontAddr.slice(0, 10)}
+                      </Typography>
+                      {Object.entries(tokens).map(([tokenAddr, data]) => (
+                        <Box key={tokenAddr} sx={{ mb: 1 }}>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="body2">
+                              {ethers.formatUnits(data.amount, data.decimals)} {data.symbol}
+                            </Typography>
+                            <Button size="small" onClick={() => claimForFront(frontAddr, tokenAddr)}>
+                              Claim
+                            </Button>
+                          </Stack>
+                        </Box>
+                      ))}
+                      <Button fullWidth variant="contained" onClick={() => claimForFront(frontAddr)} sx={{ mt: 2 }}>
+                        Claim All
+                      </Button>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </GlassCard>
+        </Collapse>
 
-        {/* The subscription fronts */}
-        <div className="flex flex-wrap gap-8 justify-center">
+        {/* Subscription Fronts */}
+        <Grid container spacing={3}>
           {fronts.map((front) => {
             const planState = frontPlans[front.address] || {};
-            const isCustom = planState.plan === 'custom';
-            const chosenTokenObj =
-              front.tokens.find((t) => t.address === planState.selectedToken) || front.tokens[0];
-            const subInfoObj = frontSubs[front.address]?.[chosenTokenObj.address];
-
-            const chainMismatch = front.chain && front.chain !== chainID;
+            const chosenTokenObj = front.tokens.find((t) => t.address === planState.selectedToken) || front.tokens[0];
+            const subInfoObj = frontSubs[front.address]?.[chosenTokenObj?.address];
+            const isSubscribed = subInfoObj && Number(subInfoObj.amountAllowed) > 0;
 
             return (
-              <div
-                key={front.address}
-                className="relative bg-white bg-opacity-90 rounded-3xl shadow-lg flex flex-col
-                  overflow-hidden text-center h-fit max-w-sm w-full sm:w-96
-                  transform transition-all hover:shadow-2xl hover:-translate-y-1"
-                style={{ backgroundColor: subInfoObj ? '#ccffcc' : 'white' }}
-              >
-                {/* Sub badge */}
-                {subInfoObj && (
-                  <div className="absolute top-2 bg-green-400 text-white font-semibold rounded-full px-3 py-1 mx-auto left-1/2 -translate-x-1/2">
-                    Subscribed for {Number(subInfoObj.amountAllowed)} {chosenTokenObj.token}{' '}
-                    {subInfoObj.details.once &&
-                      `• ${Number(subInfoObj.details.window) / 60 / 60 / 30} months`}
-                  </div>
-                )}
-
-                {/* Chain mismatch note */}
-                {chainMismatch && (
-                  <div className="absolute top-2 bg-orange-300 text-white font-semibold rounded-full px-4 py-2 m-0 mx-4">
-                    Subscription not on current chain. Please switch to chainID {front.chain}.
-                  </div>
-                )}
-
-                {/* Delete if local */}
-                {!hasParam && (
-                  <button
-                    onClick={() => handleDeleteFront(front.address)}
-                    className="bg-red-300 text-white font-semibold rounded-full px-2 py-2 hover:bg-red-500 transition-colors absolute top-3 right-3"
-                  >
-                    🗑️
-                  </button>
-                )}
-
-                {/* optional front image */}
-                {front.image && (
-                  <img
-                    src={front.image}
-                    alt={front.name}
-                    className="w-full h-40 object-cover rounded-t-3xl border-b border-gray-200"
-                  />
-                )}
-
-                <div className="p-2 flex flex-col flex-grow">
-                  <h2
-                    className="text-xl font-extrabold mb-1"
-                    style={{ color: brandSettings.primaryColor }}
-                  >
-                    {front.name}
-                  </h2>
-                  <p className="text-sm text-gray-700 font-medium">{front.about}</p>
-                  {front.link && (
-                    <a
-                      href={front.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm underline mt-2 block"
-                      style={{ color: brandSettings.primaryColor }}
-                    >
-                      More info
-                    </a>
-                  )}
-
-                  {/* token selection */}
-                  <div className="flex items-center gap-2 mb-2 justify-center mt-4">
-                    {front.tokens.map((tk, i) => (
-                      <button
-                        key={tk.address + i}
-                        onClick={() => handleTokenSelect(front.address, tk.address)}
-                        className="px-3 py-1 rounded-full border text-sm transition-colors"
-                        style={
-                          planState.selectedToken === tk.address || (!planState.selectedToken && i === 0)
-                            ? {
-                                backgroundColor: brandSettings.primaryColor,
-                                borderColor: brandSettings.primaryColor,
-                                color: 'white',
-                              }
-                            : {
-                                borderColor: brandSettings.primaryColor,
-                                color: brandSettings.primaryColor,
-                                backgroundColor: 'white',
-                              }
-                        }
-                      >
-                        {tk.token}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* amount selection */}
-                  <span className="block text-gray-700 mb-1 text-sm font-medium">Pick Amount Per Month:</span>
-                  <div className="flex items-center gap-2 flex-wrap justify-center mb-3">
-                    {chosenTokenObj.presetAmounts.map((amt) => (
-                      <button
-                        key={amt}
-                        type="button"
-                        onClick={() => handlePlanChange(front.address, String(amt))}
-                        className="px-3 py-1 rounded-full border text-sm transition-colors bg-white"
-                        style={
-                          planState.plan === String(amt)
-                            ? {
-                                backgroundColor: brandSettings.primaryColor,
-                                borderColor: brandSettings.primaryColor,
-                                color: 'white',
-                              }
-                            : {
-                                borderColor: brandSettings.primaryColor,
-                                color: brandSettings.primaryColor,
-                              }
-                        }
-                      >
-                        {amt}
-                      </button>
-                    ))}
-                    {chosenTokenObj.custom === 'true' && (
-                      <button
-                        type="button"
-                        onClick={() => handlePlanChange(front.address, 'custom')}
-                        className="px-3 py-1 rounded-full border text-sm transition-colors bg-white"
-                        style={
-                          isCustom
-                            ? {
-                                backgroundColor: brandSettings.primaryColor,
-                                borderColor: brandSettings.primaryColor,
-                                color: 'white',
-                              }
-                            : {
-                                borderColor: brandSettings.primaryColor,
-                                color: brandSettings.primaryColor,
-                              }
-                        }
-                      >
-                        Custom
-                      </button>
-                    )}
-                  </div>
-                  {isCustom && (
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder="Your custom amount"
-                      value={planState.customValue || ''}
-                      onChange={(e) => handleCustomValueChange(front.address, e.target.value)}
-                      className="w-full p-2 border rounded-full mb-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              <Grid item xs={12} sm={6} md={4} key={front.address}>
+                <GlassCard
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    ...(isSubscribed && {
+                      border: '2px solid',
+                      borderColor: 'success.main',
+                    }),
+                  }}
+                >
+                  {front.image && (
+                    <Box
+                      component="img"
+                      src={front.image}
+                      alt={front.name}
+                      sx={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: '20px 20px 0 0' }}
                     />
                   )}
 
-                  {/* subscription type */}
-                  <div className="mb-3">
-                    <span className="block text-gray-700 mb-1 text-sm font-medium">
-                      Subscription:
-                    </span>
-                    <div className="flex justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleSubTypeChange(front.address, 'recurring')}
-                        className="px-3 py-1 rounded-full border text-sm transition-colors bg-white"
-                        style={
-                          planState.subType !== 'once'
-                            ? {
-                                backgroundColor: brandSettings.primaryColor,
-                                borderColor: brandSettings.primaryColor,
-                                color: 'white',
-                              }
-                            : {
-                                borderColor: brandSettings.primaryColor,
-                                color: brandSettings.primaryColor,
-                              }
-                        }
+                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                    <Typography variant="h6" fontWeight={700} color="primary.main" gutterBottom>
+                      {front.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {front.about}
+                    </Typography>
+
+                    {isSubscribed && (
+                      <Chip
+                        icon={<CheckCircle />}
+                        label={`Subscribed: ${Number(subInfoObj.amountAllowed)} ${chosenTokenObj.symbol}`}
+                        color="success"
+                        sx={{ mb: 2, width: '100%' }}
+                      />
+                    )}
+
+                    {/* Token Selection */}
+                    {front.tokens.length > 1 && (
+                      <ToggleButtonGroup
+                        value={planState.selectedToken || front.tokens[0].address}
+                        exclusive
+                        onChange={(e, val) => val && handleTokenSelect(front.address, val)}
+                        fullWidth
+                        size="small"
+                        sx={{ mb: 2 }}
                       >
-                        Recurring
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSubTypeChange(front.address, 'once')}
-                        className="px-3 py-1 rounded-full border text-sm transition-colors bg-white"
-                        style={
-                          planState.subType === 'once'
-                            ? {
-                                backgroundColor: brandSettings.primaryColor,
-                                color: 'white',
-                              }
-                            : {
-                                borderColor: brandSettings.primaryColor,
-                                color: brandSettings.primaryColor,
-                              }
-                        }
-                      >
-                        Once
-                      </button>
-                    </div>
-                  </div>
-                  {planState.subType === 'once' && (
-                    <div className="flex flex-col items-center mb-3">
-                      <label className="text-sm text-gray-700 font-medium mb-1">
-                        Interval (months):
-                      </label>
-                      <input
-                        type="range"
-                        min="1"
-                        max="24"
+                        {front.tokens.map((token) => (
+                          <ToggleButton key={token.address} value={token.address}>
+                            {token.symbol}
+                          </ToggleButton>
+                        ))}
+                      </ToggleButtonGroup>
+                    )}
+
+                    {/* Amount Selection */}
+                    <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+                      Choose an amount:
+                    </Typography>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2, gap: 1 }}>
+                      {chosenTokenObj?.presetAmounts.map((amt) => (
+                        <Chip
+                          key={amt}
+                          label={amt}
+                          onClick={() => handlePlanChange(front.address, String(amt))}
+                          color={planState.plan === String(amt) ? 'primary' : 'default'}
+                          sx={{ cursor: 'pointer' }}
+                        />
+                      ))}
+                      <Chip
+                        label="Custom"
+                        onClick={() => handlePlanChange(front.address, 'custom')}
+                        color={planState.plan === 'custom' ? 'primary' : 'default'}
+                        sx={{ cursor: 'pointer' }}
+                      />
+                    </Stack>
+
+                    {planState.plan === 'custom' && (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        type="number"
+                        placeholder="Enter custom amount"
+                        value={planState.customValue || ''}
+                        onChange={(e) => handleCustomValueChange(front.address, e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+                    )}
+
+                    {/* Subscription Type */}
+                    <ToggleButtonGroup
+                      value={planState.subType || 'recurring'}
+                      exclusive
+                      onChange={(e, val) => val && handleSubTypeChange(front.address, val)}
+                      fullWidth
+                      size="small"
+                      sx={{ mb: 2 }}
+                    >
+                      <ToggleButton value="recurring">Recurring</ToggleButton>
+                      <ToggleButton value="once">One-time</ToggleButton>
+                    </ToggleButtonGroup>
+
+                    {planState.subType === 'once' && (
+                      <TextField
+                        size="small"
+                        fullWidth
+                        type="number"
+                        label="Months"
                         value={planState.onceInterval || 1}
                         onChange={(e) => handleOnceIntervalChange(front.address, e.target.value)}
-                        className="w-full"
+                        sx={{ mb: 2 }}
                       />
-                      <div className="text-xs text-gray-500">
-                        {planState.onceInterval || 1} months
-                      </div>
-                    </div>
-                  )}
-
-                  {/* subscribe / cancel */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-2 mb-2 mx-2">
-                    <button
-                      onClick={() => handleSubscribeFront(front.address)}
-                      className="py-2 px-4 text-white font-semibold rounded-full hover:brightness-110 transition-colors w-full"
-                      style={{ backgroundColor: brandSettings.primaryColor }}
-                    >
-                      Subscribe
-                    </button>
-                    {subInfoObj && (
-                      <button
-                        onClick={() => handleCancelSubscription(front.address)}
-                        className="py-2 px-4 bg-gray-500 text-white font-semibold rounded-full hover:bg-gray-500 transition-colors"
-                      >
-                        Cancel
-                      </button>
                     )}
-                  </div>
-                </div>
 
-                {/* If showClaims + we have claimable */}
-                {showClaims && frontClaims[front.address] && (
-                  <div className="w-full mx-auto m-4 mb-6 p-3 bg-white bg-opacity-80 rounded-3xl shadow-lg border border-gray-200 max-w-xs">
-                    <h3
-                      className="text-base font-bold mb-2"
-                      style={{ color: brandSettings.primaryColor }}
-                    >
-                      Claimable
-                    </h3>
-                    {Object.entries(frontClaims[front.address]).map(([tAddr, info]) => (
-                      <div
-                        key={tAddr}
-                        className="flex items-center justify-between
-                          bg-gray-100 border border-gray-200
-                          rounded-full px-4 py-1 shadow-sm mx-auto mb-1"
+                    <Stack spacing={1}>
+                      <AnimatedButton
+                        fullWidth
+                        onClick={() => handleSubscribeFront(front.address)}
+                        disabled={!planState.plan}
                       >
-                        <span className="text-sm font-semibold text-gray-700">
-                          {info.symbol} • {ethers.formatUnits(info.amount, info.decimals)}
-                        </span>
-                        <button
-                          onClick={() => claimForFront(front.address, tAddr)}
-                          className="text-xs font-semibold text-white bg-green-400 rounded-full px-3 py-0.5 hover:bg-green-500 transition-colors"
+                        Subscribe
+                      </AnimatedButton>
+                      {isSubscribed && (
+                        <Button
+                          fullWidth
+                          variant="outlined"
+                          color="error"
+                          startIcon={<Cancel />}
+                          onClick={() => handleCancelSubscription(front.address)}
                         >
-                          Claim
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => claimForFront(front.address)}
-                      className="block w-full text-sm font-semibold text-white bg-green-400 rounded-full py-2 hover:bg-green-500 transition-colors mt-2"
-                    >
-                      Claim All
-                    </button>
-                  </div>
-                )}
-              </div>
+                          Cancel
+                        </Button>
+                      )}
+                    </Stack>
+                  </CardContent>
+                </GlassCard>
+              </Grid>
             );
           })}
-        </div>
+        </Grid>
+      </Container>
 
-        {/* Add front form (only if local mode) */}
-        {showForm && !hasParam && (
-          <div className="max-w-xl mx-auto mb-10 p-6 bg-white bg-opacity-90 rounded-3xl shadow-2xl border border-gray-200 text-gray-700 mt-10">
-            <h2
-              className="text-2xl font-extrabold mb-4 drop-shadow-sm"
-              style={{ color: brandSettings.primaryColor }}
-            >
-              Create Your Own Subscription Front
-            </h2>
-            <p className="mb-4 text-sm">
-              Let supporters subscribe directly to your address. Once saved, you can share a link
-              that also includes your brand design.
-            </p>
+      {/* Brand Settings Dialog */}
+      <Dialog open={showBrandForm} onClose={() => setShowBrandForm(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          Brand Settings
+          <IconButton
+            onClick={() => setShowBrandForm(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              label="Brand Name"
+              name="brandName"
+              value={brandSettings.brandName}
+              onChange={handleBrandChange}
+            />
+            <TextField
+              fullWidth
+              label="About"
+              name="about"
+              multiline
+              rows={3}
+              value={brandSettings.about}
+              onChange={handleBrandChange}
+            />
+            <TextField
+              fullWidth
+              label="Primary Color"
+              name="primaryColor"
+              type="color"
+              value={brandSettings.primaryColor}
+              onChange={handleBrandChange}
+            />
+            <Typography variant="subtitle2">Gradient Colors:</Typography>
+            <Stack direction="row" spacing={2}>
+              <TextField
+                label="Color 1"
+                name="gradientColor1"
+                type="color"
+                value={brandSettings.gradientColor1}
+                onChange={handleBrandChange}
+              />
+              <TextField
+                label="Color 2"
+                name="gradientColor2"
+                type="color"
+                value={brandSettings.gradientColor2}
+                onChange={handleBrandChange}
+              />
+              <TextField
+                label="Color 3"
+                name="gradientColor3"
+                type="color"
+                value={brandSettings.gradientColor3}
+                onChange={handleBrandChange}
+              />
+            </Stack>
+            <AnimatedButton fullWidth onClick={handleSaveBrand}>
+              Save Brand Settings
+            </AnimatedButton>
+          </Stack>
+        </DialogContent>
+      </Dialog>
 
-            <div className="grid gap-3 mb-4">
-              <input
-                type="text"
-                placeholder="Front Name"
-                value={newFront.name}
-                onChange={(e) => setNewFront((prev) => ({ ...prev, name: e.target.value }))}
-                className="w-full p-3 rounded-full border border-gray-300
-                  focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <input
-                type="text"
-                placeholder="Receiving Address (0x...)"
-                value={newFront.address}
-                onChange={(e) => setNewFront((prev) => ({ ...prev, address: e.target.value }))}
-                className="w-full p-3 rounded-full border border-gray-300
-                  focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <textarea
-                placeholder="Describe your front / project"
-                value={newFront.about}
-                onChange={(e) => setNewFront((prev) => ({ ...prev, about: e.target.value }))}
-                className="w-full p-3 rounded-2xl border border-gray-300
-                  focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[80px]"
-              />
-              <input
-                type="text"
-                placeholder="Website Link (optional)"
-                value={newFront.link}
-                onChange={(e) => setNewFront((prev) => ({ ...prev, link: e.target.value }))}
-                className="w-full p-3 rounded-full border border-gray-300
-                  focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <input
-                type="text"
-                placeholder="Image URL (optional)"
-                value={newFront.image}
-                onChange={(e) => setNewFront((prev) => ({ ...prev, image: e.target.value }))}
-                className="w-full p-3 rounded-full border border-gray-300
-                  focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-            </div>
-
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xl font-semibold" style={{ color: brandSettings.primaryColor }}>
-                Tokens
-              </h3>
-              <button
-                onClick={handleAddTokenRow}
-                className="px-3 py-1 text-white rounded-full text-sm hover:bg-pink-500"
-                style={{ backgroundColor: brandSettings.primaryColor }}
-              >
-                Add Token
-              </button>
-            </div>
-            {newFront.tokens.map((tk, i) => (
-              <div
-                key={i}
-                className="p-3 mb-4 bg-white rounded-2xl shadow-sm border border-gray-200"
-              >
-                <div className="grid gap-3">
-                  <select
-                    value={tk.address}
-                    onChange={(e) => {
-                      handleTokenFieldChange(i, 'address', e.target.value);
-                      const textSym = e.target.options[e.target.selectedIndex].text;
-                      handleTokenFieldChange(i, 'token', textSym);
-                    }}
-                    className="p-3 border border-gray-300 rounded-full 
-                      focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  >
-                    <option value="">Select Token</option>
-                    {tokens[chainID]?.map((token) => (
-                      <option key={token.address} value={token.address}>
-                        {token.symbol}
-                      </option>
-                    ))}
-                  </select>
-                  {!tk.address && (
-                    <>
-                      <input
-                        type="text"
-                        placeholder="Token Symbol (e.g. USDC)"
-                        onChange={(e) => handleTokenFieldChange(i, 'token', e.target.value)}
-                        className="p-3 border border-gray-300 rounded-full 
-                          focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Token Address (0x...)"
-                        value={tk.address}
-                        onChange={(e) => handleTokenFieldChange(i, 'address', e.target.value)}
-                        className="p-3 border border-gray-300 rounded-full 
-                          focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      />
-                    </>
-                  )}
-                </div>
-                <div className="mt-3">
-                  <label
-                    className="block text-sm font-semibold mb-1"
-                    style={{ color: brandSettings.primaryColor }}
-                  >
-                    Preset Amounts (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={tk.presetAmounts.join(', ')}
-                    onChange={(e) => handleTokenFieldChange(i, 'preset', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-full 
-                      focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                  <label className="text-sm font-semibold mb-1 mt-3 text-pink-500">
-                    Allow Custom Amount
-                  </label>
-                  <div>
-                    <button
-                      onClick={() =>
-                        handleTokenFieldChange(i, 'custom', tk.custom === 'true' ? 'false' : 'true')
-                      }
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                        tk.custom === 'true'
-                          ? 'bg-green-400 text-white'
-                          : 'bg-gray-200 text-gray-700'
-                      }`}
-                      style={{
-                        backgroundColor:
-                          tk.custom === 'true' ? brandSettings.primaryColor : 'lightgray',
-                      }}
-                    >
-                      {tk.custom === 'true' ? 'Enabled' : 'Disabled'}
-                    </button>
-                  </div>
-                </div>
-                {newFront.tokens.length > 1 && (
-                  <button
-                    onClick={() => handleRemoveTokenRow(i)}
-                    className="mt-3 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-500 text-sm"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              onClick={handleAddFront}
-              className="block mt-4 mx-auto px-6 py-3 text-white font-semibold 
-                rounded-full hover:brightness-110 text-base"
-              style={{ backgroundColor: brandSettings.primaryColor }}
-            >
-              Save Front
-            </button>
-          </div>
-        )}
-
-        {/* Optionally show the “Subs” panel if no param */}
-        {!hasParam && <Subs />}
-      </div>
-    </div>
+      {/* Add New Front Dialog */}
+      <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          Add New Subscription Front
+          <IconButton onClick={() => setShowForm(false)} sx={{ position: 'absolute', right: 8, top: 8 }}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              label="Name"
+              value={newFront.name}
+              onChange={(e) => setNewFront({ ...newFront, name: e.target.value })}
+            />
+            <TextField
+              fullWidth
+              label="Address"
+              value={newFront.address}
+              onChange={(e) => setNewFront({ ...newFront, address: e.target.value })}
+              placeholder="0x..."
+            />
+            <TextField
+              fullWidth
+              label="About"
+              multiline
+              rows={2}
+              value={newFront.about}
+              onChange={(e) => setNewFront({ ...newFront, about: e.target.value })}
+            />
+            <TextField
+              fullWidth
+              label="Image URL"
+              value={newFront.image}
+              onChange={(e) => setNewFront({ ...newFront, image: e.target.value })}
+            />
+            <AnimatedButton fullWidth onClick={handleAddFront}>
+              Add Front
+            </AnimatedButton>
+          </Stack>
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 }
