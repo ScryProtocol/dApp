@@ -7,6 +7,48 @@ import { chainId } from 'wagmi'; import { ConnectButton } from '@rainbow-me/rain
 import { useEthersProvider } from './tl'
 import { useEthersSigner } from './tl'
 import { useAccount, useConnect, useEnsName } from 'wagmi'
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Avatar,
+  Chip,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Collapse,
+  Stack,
+  Divider,
+  Paper
+} from '@mui/material';
+import {
+  Palette as PaletteIcon,
+  Close as CloseIcon,
+  Favorite as FavoriteIcon,
+  Share as ShareIcon,
+  CloudUpload as CloudUploadIcon,
+  CheckCircle as CheckCircleIcon,
+  HourglassEmpty as HourglassEmptyIcon,
+  PlayArrow as PlayArrowIcon,
+  Download as DownloadIcon,
+  Person as PersonIcon,
+  ContentCopy as ContentCopyIcon
+} from '@mui/icons-material';
+import { GlassCard } from './v2/GlassCard';
+import { gradients } from '../theme/v2Theme';
+
 const tokenaddress = '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14'
 let signer
 const App = () => {
@@ -36,7 +78,7 @@ const App = () => {
   const ethersProvider = useEthersProvider();
 
   const ethersSigner = useEthersSigner();
- 
+
   const toggleModal = () => {
     setShowModal(!showModal);
   };
@@ -370,44 +412,6 @@ const App = () => {
       console.error('Error requesting commission from artist:', error);
     }
   };
-  const Modal = ({ isOpen, onClose, children }) => {
-    if (!isOpen) return null;
-    const handleClickOutside = (event) => {
-      if (event.target.classList.contains('modal-overlay')) {
-        setShowModal(false); // Call the function to close the modal
-        console.log('lol')
-      }
-    };
-    return (
-      <div className="modal-overlay" style={{
-        position: 'fixed',
-        width: '100%',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000
-      }} onClick={handleClickOutside}>
-        <div className="modal" style={{
-          position: 'fixed',
-          width: '100%',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000, overflow: 'scroll'
-        }}>
-          {children}
-        </div>
-      </div>
-    );
-  };
 
   const ArtistProfile = ({ artist }) => {
     const [description, setDescription] = useState('');
@@ -471,435 +475,654 @@ const App = () => {
         console.error('Error updating profile:', error);
       }
     };
+
     return (
-      <section id="artist-profile" className="artist-profile">
-        <div className="card artist-card">
-          <div className="artist-info" >
-            <img
-              className="profile-picture"
-              src={
-                profilePicture
-                  ? `https://ipfs.io/ipfs/${profilePicture}`
-                  : (
-                    artistProfile.profilePictureIPFSHash
-                      ? `https://ipfs.io/ipfs/${artistProfile.profilePictureIPFSHash}`
-                      : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
-                  )}
-              alt="Artist"
-              style={{
-                width: '250px',
-                height: '250px',
-                borderRadius: '8px',
-              }}
-            />            <h2 style={{ color: '#e91e63' }}>{artistProfile.name ? artistProfile.name : 'Artist'}</h2>
+      <Box sx={{ p: 3, maxWidth: '900px', margin: '0 auto' }}>
+        <GlassCard>
+          <CardContent>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+              <Avatar
+                src={
+                  profilePicture
+                    ? `https://ipfs.io/ipfs/${profilePicture}`
+                    : (
+                      artistProfile.profilePictureIPFSHash
+                        ? `https://ipfs.io/ipfs/${artistProfile.profilePictureIPFSHash}`
+                        : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
+                    )}
+                sx={{ width: 150, height: 150, mb: 2, border: '4px solid', borderColor: 'primary.main' }}
+              />
+              <Typography variant="h5" sx={{ color: '#e91e63', fontWeight: 600, mb: 1 }}>
+                {artistProfile.name ? artistProfile.name : 'Artist'}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                {artistProfile.bio}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.disabled', wordBreak: 'break-all' }}>
+                Address: {selectedArtist}
+              </Typography>
+            </Box>
 
-            <h3 >{artistProfile.bio}</h3>
-            <p >Address: {selectedArtist}</p>
-          </div> {
-            <div className="artist-info" style={{ alignItems: 'center' }}>
-              {selectedArtist == account && (<button style={{ alignSelf: 'center', }
-              } onClick={() => { setcomm(!comms) }}>Update Info</button>
+            <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 3 }}>
+              {selectedArtist == account && (
+                <Button
+                  variant="contained"
+                  startIcon={<PersonIcon />}
+                  onClick={() => { setcomm(!comms) }}
+                  sx={{ background: gradients.primary }}
+                >
+                  Update Info
+                </Button>
               )}
-              <button style={{ marginLeft: '10px', alignSelf: 'center', }
-              } onClick={() => { toast.success('Copied :)'); navigator.clipboard.writeText('https://kaku.art/?artist=' + selectedArtist) }}>copy link</button>
-              <button style={{ marginLeft: '10px', alignSelf: 'center', }
-              } onClick={() => { setShowModal(false) }}>close</button>
-            </div>
-          }        {comms == 1 && (
+              <Button
+                variant="contained"
+                startIcon={<ContentCopyIcon />}
+                onClick={() => {
+                  toast.success('Copied :)');
+                  navigator.clipboard.writeText('https://kaku.art/?artist=' + selectedArtist)
+                }}
+                sx={{ background: gradients.ocean }}
+              >
+                Copy Link
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<CloseIcon />}
+                onClick={() => { setShowModal(false) }}
+              >
+                Close
+              </Button>
+            </Stack>
 
-            <div>
-              <form onSubmit={handleSubmit}>
-                <label>
-                  Name:        </label>
-
-                <input
-                  type="text"
+            <Collapse in={comms == 1}>
+              <Box component="form" onSubmit={handleSubmit} sx={{ mb: 3 }}>
+                <TextField
+                  fullWidth
+                  label="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  sx={{ mb: 2 }}
                 />
-                <label>
-                  Bio:        </label>
-
-                <textarea
+                <TextField
+                  fullWidth
+                  label="Bio"
+                  multiline
+                  rows={3}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                ></textarea>
-                <label>
-                  Profile Picture:        </label>
-
-                <input
-                  type="file"
-                  onChange={handleFileChange}
+                  sx={{ mb: 2 }}
                 />
-                <button type="submit">Update Profile</button>
-              </form>
-            </div>)}
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ mb: 2 }}
+                >
+                  Upload Profile Picture
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </Button>
+                <Button type="submit" variant="contained" fullWidth sx={{ background: gradients.success }}>
+                  Update Profile
+                </Button>
+              </Box>
+            </Collapse>
 
-          <form style={{ marginTop: '10px' }} onSubmit={requestCommission}>
-            <h2 style={{ color: '#e91e63' }}>Commission</h2>
+            <Divider sx={{ my: 3 }} />
 
-            <label htmlFor="description">Description:</label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            ></textarea>
-
-            <label htmlFor="bounty">Bounty:</label>
-            <input
-              type="number"
-              id="bounty"
-              value={bounty}
-              onChange={(e) => setBounty(e.target.value)}
-              required
-            />
-
-            <label htmlFor="payment-type">Payment Type:</label>
-            <select
-              id="payment-type"
-              value={paymentType}
-              onChange={(e) => setPaymentType(e.target.value)}
-            >
-              <option value="eth">ETH</option>
-              <option value="token">Token</option>
-            </select>
-
-            <button type="submit">Request Commission</button>
-          </form>
-          <section id="commission-list">
-
-            <div className="artist-commissions">
-              <section id="commission-list">
-                <h2 style={{ color: '#e91e63' }}>Commissions</h2>
-                <ul id="commissions">
-                  {commissions.map((commission) => (
-                    <li key={commission.requestId.toString()} className="commission-item">
-                      <h3>Commission {commission.requestId.toString()}</h3>
-                      <p>
-                        <strong>Artist:</strong> {commission.intendedArtist}
-                      </p>
-                      <p>
-                        <strong>Description:</strong> {commission.description}
-                      </p>
-                      <p>
-                        <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
-                      </p>
-                      <p>
-                        <strong>Status:</strong>   {commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
-                      </p>
-                      <button onClick={() => { setSelectedCommission(commission); console.log(selectedCommission); setShowModal(false) }}>View Details</button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              <div className="artist-commissions">
-                <section id="commission-list">
-                  <h2 style={{ color: '#e91e63' }}>Commission Requests</h2>
-                  <ul id="commissions">
-                    {profileCommissions.map((commission) => (
-                      <li key={commission.requestId.toString()} className="commission-item">
-                        <h3>Commission {commission.requestId.toString()}</h3>
-                        <p>
-                          <strong>Artist:</strong> {commission.intendedArtist}
-                        </p>
-                        <p>
-                          <strong>Description:</strong> {commission.description}
-                        </p>
-                        <p>
-                          <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
-                        </p>
-                        <p>
-                          <strong>Status:</strong>   {commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
-                        </p>
-                        <button onClick={() => { setSelectedCommission(commission); console.log(selectedCommission); setShowModal(false) }}>View Details</button>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
-            </div>
-          </section>     </div>
-      </section>)
-  };
-
-  return (
-    <div className="app">
-      <main className="app-main"><button style={{ position: 'absolute', top: '10px', left: '10px' }} onClick={() => {
-        fetchArtistProfile(account);
-      }}>View My Profile</button>         <ConnectButton />
-      <Modal isOpen={showModal} onClose={toggleModal}>
-          {selectedArtist && (
-
-            <ArtistProfile
-              artist={selectedArtist}
-            />
-          )}
-        </Modal>
-        <h1 style={{ color: '#e91e63', textAlign: 'center', paddingBottom: '40px' }}>
-          <img
-            style={{
-              maxWidth: '64px',
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              borderRadius: '8px',
-
-            }}
-            src={'./lol.png'}
-            alt="Selected NFT Image"
-          /><a href='https://discord.gg/W87Rw6wtk2'>
-            <img
-              style={{
-                maxWidth: '50px',
-                position: 'absolute',
-                top: '16px',
-                right: '80px',
-                borderRadius: '8px',
-
-              }}
-              src={'./discord.png'}
-              alt="Selected NFT Image"
-            /></a><a href='https://twitter.com/kakudotart/'><img
-              style={{
-                maxWidth: '50px',
-                position: 'absolute',
-                top: '16px',
-                right: '140px',
-                borderRadius: '8px',
-
-              }}
-              src={'./twitter.png'}
-              alt="Selected NFT Image"
-            /></a>
-
-
-          Kaku Art Commission
-        </h1>
-        <body>
-          <section id="commission-form"><Toaster />
-            <form onSubmit={requestCommission}>
-              <h2 style={{ color: '#e91e63', textAlign: 'center', margin: '0px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <span style={{ color: '#e91e63' }}>
-                    KAKU Balance: {kakuBalance}
-                  </span>
-
-                  <a
-                    style={{ color: '#ffb7cf', alignSelf: 'flex-end', position: 'relative', bottom: '28px', }}
-                    href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55A341EC586A4aC5d58d6297CdE5125aB55bC&chain=base"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Buy KAKU
-                  </a>
-                </div>
-              </h2>
-              <h2>Request a Commission</h2>
-              <label htmlFor="artist">Intended Artist Address:</label>
-              <input
-                type="text"
-                id="artist"
-                name="artist"
-                value={artist}
-                onChange={(e) => setArtist(e.target.value)}
-                required
-              />
-              <label htmlFor="description">Description:</label>
-              <textarea
-                id="description"
-                name="description"
+            <Box component="form" onSubmit={requestCommission} sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{ color: '#e91e63', mb: 2 }}>
+                Commission Artist
+              </Typography>
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-              ></textarea>
-              <label htmlFor="bounty">Bounty:</label>
-              <input
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Bounty"
                 type="number"
-                id="bounty"
-                name="bounty"
-                step="0.01"
                 value={bounty}
                 onChange={(e) => setBounty(e.target.value)}
                 required
+                sx={{ mb: 2 }}
               />
-              <label htmlFor="payment-type">Payment Type:</label>
-              <select
-                id="payment-type"
-                name="payment-type"
-                value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value)}
-              >
-                <option value="eth">ETH (0% fee)</option>
-                <option value="token">KAKU</option>
-              </select>
-              <button type="submit">Request Commission</button>
-            </form>
-          </section>
-          <section id="commission-list">
-            <h2 style={{ color: '#e91e63' }}>Commissions</h2>
-            <ul id="commissions">
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel>Payment Type</InputLabel>
+                <Select
+                  value={paymentType}
+                  onChange={(e) => setPaymentType(e.target.value)}
+                  label="Payment Type"
+                >
+                  <MenuItem value="eth">ETH</MenuItem>
+                  <MenuItem value="token">Token</MenuItem>
+                </Select>
+              </FormControl>
+              <Button type="submit" variant="contained" fullWidth sx={{ background: gradients.lavender }}>
+                Request Commission
+              </Button>
+            </Box>
+
+            <Typography variant="h6" sx={{ color: '#e91e63', mb: 2 }}>
+              Artist Commissions
+            </Typography>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
               {commissions.map((commission) => (
-                <li key={commission.requestId.toString()} className="commission-item">
-                  <h3>Commission {commission.requestId.toString()}</h3>
-                  <p>
-                    <strong>Artist:</strong> {commission.intendedArtist}
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {commission.description}
-                  </p>
-                  <p>
-                    <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>   {commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
-                  </p>
-                  <button onClick={() => { setSelectedCommission(commission); console.log(selectedCommission) }}>View Details</button>
-                </li>
+                <Grid item xs={12} key={commission.requestId.toString()}>
+                  <Card sx={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 1 }}>
+                        Commission #{commission.requestId.toString()}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Artist:</strong> {commission.intendedArtist}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Description:</strong> {commission.description}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
+                      </Typography>
+                      <Chip
+                        label={commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
+                        color={commission.isFulfilled ? 'success' : (commission.isStarted ? 'warning' : 'default')}
+                        icon={commission.isFulfilled ? <CheckCircleIcon /> : (commission.isStarted ? <PlayArrowIcon /> : <HourglassEmptyIcon />)}
+                        sx={{ mr: 1 }}
+                      />
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => { setSelectedCommission(commission); setShowModal(false) }}
+                      >
+                        View Details
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
               ))}
-            </ul>
-          </section>
-          <section id="commission-list">
-            <h2 style={{ color: '#e91e63' }}>My Bounties</h2>
-            <ul id="commissions">
-              {myBounties.map((bounty) => (
-                <li key={bounty.requestId.toString()} className="commission-item">
-                  <h3>Commission {bounty.requestId.toString()}</h3>
-                  <p>
-                    <strong>Artist:</strong> {bounty.intendedArtist}
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {bounty.description}
-                  </p>
-                  <p>
-                    <strong>Bounty:</strong> {ethers.utils.formatEther(bounty.bounty)} {bounty.isETH ? 'ETH' : 'KAKU'}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>   {bounty.isFulfilled ? 'Fulfilled' : (bounty.isStarted ? 'Started' : 'Waiting')}
+            </Grid>
 
-                  </p>
-                  <button onClick={() => { setSelectedCommission(bounty); console.log(selectedCommission) }}>View Details</button>
-
-                </li>
+            <Typography variant="h6" sx={{ color: '#e91e63', mb: 2 }}>
+              Commission Requests
+            </Typography>
+            <Grid container spacing={2}>
+              {profileCommissions.map((commission) => (
+                <Grid item xs={12} key={commission.requestId.toString()}>
+                  <Card sx={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 1 }}>
+                        Commission #{commission.requestId.toString()}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Artist:</strong> {commission.intendedArtist}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Description:</strong> {commission.description}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
+                      </Typography>
+                      <Chip
+                        label={commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
+                        color={commission.isFulfilled ? 'success' : (commission.isStarted ? 'warning' : 'default')}
+                        icon={commission.isFulfilled ? <CheckCircleIcon /> : (commission.isStarted ? <PlayArrowIcon /> : <HourglassEmptyIcon />)}
+                        sx={{ mr: 1 }}
+                      />
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => { setSelectedCommission(commission); setShowModal(false) }}
+                      >
+                        View Details
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
               ))}
-            </ul>
-            <button
-              className="claim-button"
-              onClick={() => { fetchMyBounties(); fetchCommissions() }}
+            </Grid>
+          </CardContent>
+        </GlassCard>
+      </Box>
+    );
+  };
+
+  return (
+    <Box sx={{
+      minHeight: '100vh',
+      background: gradients.mesh,
+      py: 4
+    }}>
+      <Toaster />
+      <Container maxWidth="lg">
+        {/* Header */}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+          flexWrap: 'wrap',
+          gap: 2
+        }}>
+          <Button
+            variant="contained"
+            startIcon={<PersonIcon />}
+            onClick={() => { fetchArtistProfile(account); }}
+            sx={{ background: gradients.primary }}
+          >
+            My Profile
+          </Button>
+          <ConnectButton />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton
+              component="a"
+              href="https://twitter.com/kakudotart/"
+              target="_blank"
+              sx={{ background: 'rgba(255,255,255,0.1)' }}
             >
+              <img src="./twitter.png" alt="Twitter" style={{ width: 24, height: 24 }} />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://discord.gg/W87Rw6wtk2"
+              target="_blank"
+              sx={{ background: 'rgba(255,255,255,0.1)' }}
+            >
+              <img src="./discord.png" alt="Discord" style={{ width: 24, height: 24 }} />
+            </IconButton>
+            <Avatar src="./lol.png" sx={{ width: 40, height: 40 }} />
+          </Box>
+        </Box>
+
+        {/* Title */}
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography
+            variant="h3"
+            sx={{
+              color: '#e91e63',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1
+            }}
+          >
+            <PaletteIcon sx={{ fontSize: 40 }} />
+            Kaku Art Commission
+          </Typography>
+        </Box>
+
+        {/* Artist Profile Modal */}
+        <Dialog
+          open={showModal}
+          onClose={toggleModal}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: {
+              background: 'rgba(255,255,255,0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px'
+            }
+          }}
+        >
+          {selectedArtist && (
+            <ArtistProfile artist={selectedArtist} />
+          )}
+        </Dialog>
+
+        {/* Request Commission Form */}
+        <GlassCard sx={{ mb: 4 }}>
+          <CardContent>
+            <Box sx={{ textAlign: 'center', mb: 3 }}>
+              <Typography variant="body1" sx={{ color: '#e91e63', fontWeight: 600 }}>
+                KAKU Balance: {kakuBalance}
+              </Typography>
+              <Button
+                component="a"
+                href="https://app.uniswap.org/swap?inputCurrency=ETH&outputCurrency=0x64ba55A341EC586A4aC5d58d6297CdE5125aB55bC&chain=base"
+                target="_blank"
+                size="small"
+                sx={{ color: '#ffb7cf', mt: 1 }}
+              >
+                Buy KAKU
+              </Button>
+            </Box>
+
+            <Typography variant="h5" sx={{ mb: 3, textAlign: 'center' }}>
+              Request a Commission
+            </Typography>
+
+            <Box component="form" onSubmit={requestCommission}>
+              <TextField
+                fullWidth
+                label="Intended Artist Address"
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                required
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Bounty"
+                type="number"
+                inputProps={{ step: '0.01' }}
+                value={bounty}
+                onChange={(e) => setBounty(e.target.value)}
+                required
+                sx={{ mb: 2 }}
+              />
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel>Payment Type</InputLabel>
+                <Select
+                  value={paymentType}
+                  onChange={(e) => setPaymentType(e.target.value)}
+                  label="Payment Type"
+                >
+                  <MenuItem value="eth">ETH (0% fee)</MenuItem>
+                  <MenuItem value="token">KAKU</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                sx={{
+                  background: gradients.lavender,
+                  py: 1.5,
+                  fontSize: '1.1rem'
+                }}
+              >
+                Request Commission
+              </Button>
+            </Box>
+          </CardContent>
+        </GlassCard>
+
+        {/* Commissions List */}
+        <GlassCard sx={{ mb: 4 }}>
+          <CardContent>
+            <Typography variant="h5" sx={{ color: '#e91e63', mb: 3 }}>
+              Commissions
+            </Typography>
+            <Grid container spacing={2}>
+              {commissions.map((commission) => (
+                <Grid item xs={12} md={6} key={commission.requestId.toString()}>
+                  <Card sx={{
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'transform 0.2s',
+                    '&:hover': { transform: 'translateY(-4px)' }
+                  }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 1 }}>
+                        Commission #{commission.requestId.toString()}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Artist:</strong> {commission.intendedArtist.slice(0, 10)}...
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Description:</strong> {commission.description.slice(0, 50)}...
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 2 }}>
+                        <strong>Bounty:</strong> {ethers.utils.formatEther(commission.bounty)} {commission.isETH ? 'ETH' : 'KAKU'}
+                      </Typography>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Chip
+                          label={commission.isFulfilled ? 'Fulfilled' : (commission.isStarted ? 'Started' : 'Waiting')}
+                          color={commission.isFulfilled ? 'success' : (commission.isStarted ? 'warning' : 'default')}
+                          icon={commission.isFulfilled ? <CheckCircleIcon /> : (commission.isStarted ? <PlayArrowIcon /> : <HourglassEmptyIcon />)}
+                          size="small"
+                        />
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => { setSelectedCommission(commission); }}
+                        >
+                          View Details
+                        </Button>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </CardContent>
+        </GlassCard>
+
+        {/* My Bounties */}
+        <GlassCard sx={{ mb: 4 }}>
+          <CardContent>
+            <Typography variant="h5" sx={{ color: '#e91e63', mb: 3 }}>
               My Bounties
-            </button> <button
-              className="claim-button"
-              onClick={() => { fetchAllCommissions() }}
-            >
-              Check All Bounties
-            </button>
-          </section>
-          {selectedCommission && (
-            <section id="nft-bounty-details">
+            </Typography>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              {myBounties.map((bounty) => (
+                <Grid item xs={12} md={6} key={bounty.requestId.toString()}>
+                  <Card sx={{
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'transform 0.2s',
+                    '&:hover': { transform: 'translateY(-4px)' }
+                  }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 1 }}>
+                        Commission #{bounty.requestId.toString()}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Artist:</strong> {bounty.intendedArtist.slice(0, 10)}...
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 0.5 }}>
+                        <strong>Description:</strong> {bounty.description.slice(0, 50)}...
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 2 }}>
+                        <strong>Bounty:</strong> {ethers.utils.formatEther(bounty.bounty)} {bounty.isETH ? 'ETH' : 'KAKU'}
+                      </Typography>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Chip
+                          label={bounty.isFulfilled ? 'Fulfilled' : (bounty.isStarted ? 'Started' : 'Waiting')}
+                          color={bounty.isFulfilled ? 'success' : (bounty.isStarted ? 'warning' : 'default')}
+                          icon={bounty.isFulfilled ? <CheckCircleIcon /> : (bounty.isStarted ? <PlayArrowIcon /> : <HourglassEmptyIcon />)}
+                          size="small"
+                        />
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => { setSelectedCommission(bounty); }}
+                        >
+                          View Details
+                        </Button>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+            <Stack direction="row" spacing={2} justifyContent="center">
+              <Button
+                variant="contained"
+                onClick={() => { fetchMyBounties(); fetchCommissions() }}
+                sx={{ background: gradients.primary }}
+              >
+                My Bounties
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => { fetchAllCommissions() }}
+                sx={{ background: gradients.ocean }}
+              >
+                Check All Bounties
+              </Button>
+            </Stack>
+          </CardContent>
+        </GlassCard>
 
-              <div className="card" style={{ padding: '42px' }}>
-                <div className="nft-viewer">
-                  <div className="nft-image">
+        {/* Selected Commission Details */}
+        {selectedCommission && (
+          <GlassCard>
+            <CardContent>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{
+                    position: 'relative',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+                  }}>
                     {selectedImage ? (
                       <img
-                        style={{
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
-                        }}
                         src={selectedImage instanceof File ? URL.createObjectURL(selectedImage) : selectedImage}
-                        alt="Selected NFT Image"
+                        alt="Selected NFT"
+                        style={{ width: '100%', display: 'block' }}
                       />
                     ) : (
                       <img
-                        style={{
-                          maxWidth: '400px',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
-                        }}
                         src={
                           selectedCommission.IPFS
                             ? `https://ipfs.io/ipfs/${selectedCommission.IPFS}`
                             : 'https://cdn.discordapp.com/attachments/810019961165578294/1224489258027319427/image.png?ex=661dad7d&is=660b387d&hm=3f39b216ea2152d1b967f4cc1aa2c3a31fc61ca8b981f726a8a8ea7b1bdb1348&'
                         }
-                        alt="NFT Image"
+                        alt="NFT"
+                        style={{ width: '100%', display: 'block' }}
                       />
-                    )}                 {selectedCommission.IPFS && (
-                      <button style={{ marginTop: '5px' }}
-                        className="claim-button"
-                        onClick={() => {
-                          if (selectedCommission && selectedCommission.IPFS) {
-                            const imageUrl = `https://ipfs.io/ipfs/${selectedCommission.IPFS}`;
-                            const link = document.createElement('a');
-                            link.href = imageUrl;
-                            link.download = 'nft-image'; // You can specify the desired filename
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                          } else {
-                            console.log('No image available to save.');
-                          }
-                        }}
-                      >
-                        Save</button>)}
-                  </div>
-                  <div className="nft-details">
-                    <h2>Kaku #{selectedCommission.requestId.toString()}</h2>
-                    <p>
+                    )}
+                  </Box>
+                  {selectedCommission.IPFS && (
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      startIcon={<DownloadIcon />}
+                      sx={{ mt: 2, background: gradients.success }}
+                      onClick={() => {
+                        if (selectedCommission && selectedCommission.IPFS) {
+                          const imageUrl = `https://ipfs.io/ipfs/${selectedCommission.IPFS}`;
+                          const link = document.createElement('a');
+                          link.href = imageUrl;
+                          link.download = 'nft-image';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }
+                      }}
+                    >
+                      Save Image
+                    </Button>
+                  )}
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
+                    Kaku #{selectedCommission.requestId.toString()}
+                  </Typography>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Artist:</strong> {selectedCommission.intendedArtist}
-                    </p>   <button onClick={() => {
-                      fetchArtistProfile(selectedCommission.intendedArtist);
-                    }}>View Artist Profile</button>
-                    <p>
+                    </Typography>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => { fetchArtistProfile(selectedCommission.intendedArtist); }}
+                      sx={{ mb: 2 }}
+                    >
+                      View Artist Profile
+                    </Button>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Description:</strong> {selectedCommission.description}
-                    </p>
-                    <p>
-                      <strong>Commissioner Address:</strong> {selectedCommission.commissioner}
-                    </p>
-                    <h2>Bounty Details</h2>
-                    <div className="bounty-info">
-                      <p>
-                        <strong>Bounty Amount:</strong>
-                      </p>
-                      <p>
-                        {selectedCommission.isETH
-                          ? `${ethers.utils.formatEther(selectedCommission.bounty)} ETH`
-                          : `${ethers.utils.formatEther(selectedCommission.bounty)} KAKU`}
-                      </p>
-                      <p>
-                        <strong>Bounty Status:</strong>   {selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Commissioner:</strong> {selectedCommission.commissioner}
+                    </Typography>
+                  </Box>
 
-                      </p>
-                    </div>
-                    {(selectedCommission.intendedArtist == account) && (
-                      <>{!selectedCommission.isStarted && (
-                        <button className="claim-button" onClick={() => startCommission(selectedCommission.requestId)}>
-                          Start
-                        </button>
+                  <Divider sx={{ my: 2 }} />
+
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Bounty Details
+                  </Typography>
+                  <Paper sx={{ p: 2, background: 'rgba(255,255,255,0.05)', mb: 3 }}>
+                    <Typography variant="h5" sx={{ color: '#e91e63', mb: 1 }}>
+                      {selectedCommission.isETH
+                        ? `${ethers.utils.formatEther(selectedCommission.bounty)} ETH`
+                        : `${ethers.utils.formatEther(selectedCommission.bounty)} KAKU`}
+                    </Typography>
+                    <Chip
+                      label={selectedCommission.isFulfilled ? 'Fulfilled' : (selectedCommission.isStarted ? 'Started' : 'Waiting')}
+                      color={selectedCommission.isFulfilled ? 'success' : (selectedCommission.isStarted ? 'warning' : 'default')}
+                      icon={selectedCommission.isFulfilled ? <CheckCircleIcon /> : (selectedCommission.isStarted ? <PlayArrowIcon /> : <HourglassEmptyIcon />)}
+                    />
+                  </Paper>
+
+                  {(selectedCommission.intendedArtist == account) && (
+                    <>
+                      {!selectedCommission.isStarted && (
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          size="large"
+                          startIcon={<PlayArrowIcon />}
+                          onClick={() => startCommission(selectedCommission.requestId)}
+                          sx={{ background: gradients.primary, mb: 2 }}
+                        >
+                          Start Commission
+                        </Button>
                       )}
-                        {selectedCommission.isStarted && !selectedCommission.isFulfilled && (
-                          <div>
-
-                            <input type="file" accept="image/*" onChange={(event) => setSelectedImage(event.target.files[0])}
+                      {selectedCommission.isStarted && !selectedCommission.isFulfilled && (
+                        <Box>
+                          <Button
+                            component="label"
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<CloudUploadIcon />}
+                            sx={{ mb: 2 }}
+                          >
+                            Select Artwork
+                            <input
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={(event) => setSelectedImage(event.target.files[0])}
                             />
-
-                            <button style={{ marginTop: '5px' }}
-                              className="claim-button"
-                              onClick={() => submitArtwork(selectedCommission.requestId, URL.createObjectURL(selectedImage))}
-                            >
-                              Upload and Claim Bounty
-                            </button>          </div>
-
-                        )}</>)}
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
-        </body>
-      </main>
-    </div>
+                          </Button>
+                          <Button
+                            fullWidth
+                            variant="contained"
+                            size="large"
+                            onClick={() => submitArtwork(selectedCommission.requestId, URL.createObjectURL(selectedImage))}
+                            sx={{ background: gradients.success }}
+                          >
+                            Upload and Claim Bounty
+                          </Button>
+                        </Box>
+                      )}
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+            </CardContent>
+          </GlassCard>
+        )}
+      </Container>
+    </Box>
   );
 };
 export default App;
