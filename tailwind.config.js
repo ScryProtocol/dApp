@@ -1,35 +1,17 @@
-const colors = require('tailwindcss/colors')
-
+// tailwind.config.js
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class', // or 'media' or 'class'
+  purge: [
+    './pages/**/*.{js,jsx,ts,tsx}', 
+    './components/**/*.{js,jsx,ts,tsx}', 
+    './layout/**/*.{js,jsx,ts,tsx}', 
+    './public/**/*.{js,jsx,ts,tsx}', 
+    './styles/**/*.{js,jsx,ts,tsx,css}'
+  ],  darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {
-      keyframes: {
-        rotate: {
-          '100%': {
-            transform: 'rotate(360deg)',
-          },
-        },
-        dash: {
-          '0%': {
-            strokeDasharray: '0, 150',
-            opacity: '1',
-            stroke: '#2185d0',
-          },
-          '100%': {
-            strokeDasharray: '120',
-          },
-        },
-      },
-      animation: {
-        spinnerTimer: 'dash 5s linear infinite',
-        rainbow: 'rainbow 5s linear infinite',
-      },
-    },
+    extend: {},
   },
   variants: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/forms')],
-}
+  plugins: [],
+};
